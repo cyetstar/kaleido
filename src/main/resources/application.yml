@@ -1,0 +1,40 @@
+server:
+  servlet:
+    context-path: /
+spring:
+  mvc:
+    static-path-pattern: /static/**
+    async:
+      request-timeout: 3600000
+  web:
+    resources:
+      cache:
+        cachecontrol:
+          max-age: 1d
+          s-max-age: 1d
+  thymeleaf:
+    mode: HTML
+    cache: true
+  datasource:
+    url: jdbc:mysql://39.170.109.75:46201/devoa?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: zjjc
+    password: jcecc0801new
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 1000MB
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath*:mapper/*.xml
+
+kaptcha:
+  textproducer:
+    char:
+      length: 4
+
+zjjcnt:
+  file-transport:
+    type: database

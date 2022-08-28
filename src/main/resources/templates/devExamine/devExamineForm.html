@@ -1,0 +1,23 @@
+<div class="modal fade" tabindex="-1" xmlns:th="http://www.thymeleaf.org">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">考核办法</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/devExamine/{action}.json(action=${action})}" th:object="${devExamineDTO}" method="post" class="mt-4">
+                    <input type="hidden" th:field="*{id}"/>
+                    <div class="mb-3">
+                        <label class="form-label">办法名称<i class="required"></i></label>
+                        <input type="text" th:field="*{khbfmc}" class="form-control" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save">保存</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

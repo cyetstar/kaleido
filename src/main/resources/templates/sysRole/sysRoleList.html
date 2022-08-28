@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorate="~{layout}">
+<body layout:fragment="content">
+<nav th:replace="common/nav::nav('basic')"/>
+<div class="container-fluid">
+    <div class="row py-4">
+        <div class="col-2">
+            <div th:replace="common/menu::basic('devDepartment')"></div>
+        </div>
+        <div class="col-10">
+            <div th:replace="common/menu::organization('sysRole')"></div>
+            <div class="row mt-4">
+                <div class="col-sm text-end">
+                    <button sec:authorize="hasAuthority('sysRole:create')" th:attr="data-url=@{/sysRole/create}" type="button" class="btn btn-primary btn-form">新增</button>
+                </div>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>序号</th>
+                    <th>角色名</th>
+                    <th>代码</th>
+                    <th>操作</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(pageData.records)}">
+                    <td colspan="6" class="text-center">没有符合条件的记录</td>
+                </tr>
+                <tr th:each="item:${pageData.records}">
+                    <td th:text="${itemStat.count}"></td>
+                    <td th:text="${item.name}"></td>
+                    <td th:text="${item.code}"></td>
+                    <td>
+                        <button sec:authorize="hasAuthority('sysRole:authorize')" th:attr="data-url=@{/sysRole/authorize(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-form">授权</button>
+                        <button sec:authorize="hasAuthority('sysRole:update')" th:attr="data-url=@{/sysRole/update(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-form">编辑</button>
+                        <button sec:authorize="hasAuthority('sysRole:delete')" th:attr="data-url=@{/sysRole/delete.json(id=${item.id})}" type="button" class="btn btn-outline-danger btn-sm btn-delete">删除</button>
+                    </td>
+                </tr>
+            </table>
+            <div th:replace="common/pagination::paginate(${pageData})"></div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        initForm(function($m, $h){
+            $h.find('.btn-check-all').on('click', function () {
+                const checked = $(this).data('checked')
+                $h.find(':checkbox').prop('checked',checked)
+            });
+        });
+        initDelete();
+    });
+</script>
+</body>
+</html>

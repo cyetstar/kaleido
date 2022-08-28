@@ -1,0 +1,42 @@
+<div xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" class="modal fade" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">付款信息</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <tr>
+            <th>序号</th>
+            <th>付款节点</th>
+            <th>付款日期</th>
+            <th>付款金额</th>
+            <th>付款比例</th>
+            <th>是否付款</th>
+            <th>操作</th>
+          </tr>
+          <tr th:if="${#lists.isEmpty(devContractPaymentDTOList)}">
+            <td colspan="7" class="text-center">没有符合条件的记录</td>
+          </tr>
+          <tr th:each="item:${devContractPaymentDTOList}">
+            <td th:text="${itemStat.count}"></td>
+            <td th:text="${#dicts.value('fkjd', item.fkjd)}"></td>
+            <td th:text="${#datetimes.format(item.fkrq)}"></td>
+            <td th:text="${#numbers.formatCurrency(item.fkje)}"></td>
+            <td th:text="${#numbers.formatPercent(item.fkbl, 2, 0)}"></td>
+            <td th:text="${#dicts.value('sfbz', item.sffk)}"></td>
+            <td>
+              <button sec:authorize="hasAuthority('devContractPayment:update')" th:attr="data-url=@{/devContractPayment/update(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-form" data-bs-dismiss="modal">编辑</button>
+              <button sec:authorize="hasAuthority('devContractPayment:delete')" th:attr="data-url=@{/devContractPayment/delete.json(id=${item.id})}" type="button" class="btn btn-outline-danger btn-sm btn-delete">删除</button>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button sec:authorize="hasAuthority('devContractPayment:create')" th:attr="data-url=@{/devContractPayment/create(contractId=${#request.getParameter('id')})}" type="button" class="btn btn-primary btn-form" data-bs-dismiss="modal">新增付款</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>

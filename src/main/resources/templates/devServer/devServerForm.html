@@ -1,0 +1,145 @@
+<div xmlns:th="http://www.thymeleaf.org" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">服务器</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/devServer/{action}.json(action=${action})}" th:object="${devServerDTO}" method="post">
+                    <input type="hidden" th:field="*{id}"/>
+                    <input type="hidden" th:field="*{projectId}"/>
+                    <div class="row">
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">部署环境<i class="required"></i></label>
+                            <select th:field="*{hjlx}" class="form-control" required>
+                                <option value="">请选择</option>
+                                <option th:each="it:${#dicts.items('hjlx')}" th:value="${it.key}" th:text="${it.value}"></option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">网络类型<i class="required"></i></label>
+                            <select th:field="*{wllx}" class="form-control" required>
+                                <option value="">请选择</option>
+                                <option th:each="it:${#dicts.items('wllx')}" th:value="${it.key}" th:text="${it.value}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">服务器别名<i class="required"></i></label>
+                            <input type="text" th:field="*{serverName}" class="form-control" required/>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">操作系统<i class="required"></i></label>
+                            <select th:field="*{czxt}" class="form-control" required>
+                                <option value="">请选择</option>
+                                <option th:each="it:${#dicts.items('czxt')}" th:value="${it.key}" th:text="${it.value}"></option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">远程ip地址<i class="required"></i></label>
+                            <input type="text" th:field="*{remoteIpaddress}" class="form-control" required/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">远程端口<i class="required"></i></label>
+                            <input type="text" th:field="*{remotePort}" class="form-control" required/>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">用户名<i class="required"></i></label>
+                            <input type="text" th:field="*{username}" class="form-control" required/>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">密码<i class="required"></i></label>
+                            <input type="text" th:field="*{password}" class="form-control" required/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">服务器ip地址<i class="required"></i></label>
+                            <textarea th:field="*{ipaddress}" class="form-control" placeholder="填写本服务器网卡具有的所有地址"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">是否需要连接运维系统<i class="required"></i></label>
+                            <select th:field="*{sfxyljywxt}" class="form-control" required>
+                                <option th:each="it:${#dicts.items('sfbz')}" th:value="${it.key}" th:text="${it.value}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="ywxt" class="row" th:classappend="*{sfxyljywxt=='1'?'':'d-none'}">
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">运维系统<i class="required"></i></label>
+                            <select th:field="*{manageEngineId}" class="form-control" required>
+                                <option value="">请选择</option>
+                                <option th:each="it:${#dicts.items('DevManageEngine')}" th:value="${it.key}" th:text="${it.value}"></option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">运维系统地址<i class="required"></i></label>
+                            <input type="text" th:field="*{ywxtIpaddress}" class="form-control" placeholder="xxx.xxx.xxx.xxx:xxxx" required/>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">运维系统用户名<i class="required"></i></label>
+                            <input type="text" th:field="*{ywxtUsername}" class="form-control" required/>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">运维系统密码<i class="required"></i></label>
+                            <input type="text" th:field="*{ywxtPassword}" class="form-control" required/>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">验证码手机号</label>
+                            <input type="text" th:field="*{ywxtLxdh}" class="form-control" />
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">验证码联系人</label>
+                            <input type="text" th:field="*{ywxtLxr}" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">是否需要连接VPN<i class="required"></i></label>
+                            <select th:field="*{sfxyljvpn}" class="form-control" required>
+                                <option th:each="it:${#dicts.items('sfbz')}" th:value="${it.key}" th:text="${it.value}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="vpn" class="row" th:classappend="*{sfxyljvpn=='1'?'':'d-none'}">
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">VPN软件<i class="required"></i></label>
+                            <select th:field="*{vpnId}" class="form-control" required>
+                                <option value="">请选择</option>
+                                <option th:each="it:${#dicts.items('DevVpn')}" th:value="${it.key}" th:text="${it.value}"></option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">VPN地址<i class="required"></i></label>
+                            <input type="text" th:field="*{vpnIpaddress}" class="form-control" placeholder="xxx.xxx.xxx.xxx:xxxx" required/>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">VPN用户<i class="required"></i></label>
+                            <input type="text" th:field="*{vpnUsername}" class="form-control" required/>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">VPN密码<i class="required"></i></label>
+                            <input type="text" th:field="*{vpnPassword}" class="form-control" required/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">备注</label>
+                            <textarea th:field="*{bz}" class="form-control"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save">保存</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

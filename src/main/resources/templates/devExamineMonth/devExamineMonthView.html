@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorate="~{layout}">
+<body layout:fragment="content">
+<nav th:replace="common/nav::nav('examine')"/>
+<div class="container-fluid">
+    <div class="row py-4">
+        <div class="col-2">
+            <div th:replace="common/menu::examine('month')"></div>
+        </div>
+        <div class="col-10">
+            <table class="table mt-3">
+                <tr>
+                    <th>序号</th>
+                    <th>部门</th>
+                    <th>员工</th>
+                    <th>岗位</th>
+                    <th>考核分</th>
+                    <th>填报时间</th>
+                    <th>操作</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(devExamineResultDTOList)}">
+                    <td colspan="7" class="text-center">没有符合条件的记录</td>
+                </tr>
+                <tr th:each="item:${devExamineResultDTOList}">
+                    <td th:text="${itemStat.count}"></td>
+                    <td th:text="${#dicts.value('devDepartment', item.departmentId)}"></td>
+                    <td th:text="${#dicts.value('devEmployee', item.employeeId)}"></td>
+                    <td th:text="${#dicts.value('gw', item.gw)}"></td>
+                    <td th:text="${item.khfs}"></td>
+                    <td th:text="${#strings.defaultString(#datetimes.format(item.tbsj), '--')}"></td>
+                    <td>
+                        <button sec:authorize="hasAuthority('devExamineResult:score')" th:attr="data-url=@{/devExamineResult/score(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-form">填报</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        initForm(function($m, $h){
+            $h.find('[name="dfxs"]').on('blur', function () {
+                if (checkZdf()) {
+                    const dfxs = $(this).val() * 1 || 0;
+                    const fz = $(this).data('fz') * 1 || 0;
+                    const df = (dfxs * fz).toFixed(2);
+                    $(this).closest('tr').find('[name="sjdf"]').val(df);
+                }else{
+                    $(this).val(0);
+                }
+            });
+            checkZdf();
+
+            function checkZdf() {
+                let zdf = 0;
+                $h.find('[name="dfxs"]').each(function (i, t) {
+                    const dfxs = $(this).val() * 1 || 0;
+                    const fz = $(this).data('fz') * 1 || 0;
+                    zdf += dfxs * fz;
+                });
+                if (zdf <= 99) {
+                    $h.find('#khfs').text(zdf.toFixed(2));
+                    return true;
+                } else {
+                    alert('考核分超过限制');
+                    return false;
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

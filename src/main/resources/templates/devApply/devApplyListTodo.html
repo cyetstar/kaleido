@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<body layout:fragment="content">
+<nav th:replace="common/nav::nav('approve')"/>
+<div class="container-fluid">
+    <div class="row py-4">
+        <div class="col-2">
+            <div th:replace="common/menu::approve('listTodo')"></div>
+        </div>
+        <div class="col-10">
+            <form th:action="@{/devApply/listTodo}" th:object="${devApplyDTO}" method="get">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <select th:field="*{ywlx}" class="form-control">
+                            <option value="">业务类型</option>
+                            <option th:each="it:${#dicts.items('zylx')}" th:value="${it.key}" th:text="${it.value}"></option>
+                        </select>
+                    </div>
+                    <div class="col-sm">
+                        <button type="submit" class="btn btn-primary">查询</button>
+                    </div>
+                </div>
+            </form>
+            <table class="table mt-3">
+                <tr>
+                    <th>序号</th>
+                    <th>业务类型</th>
+                    <th>申请人</th>
+                    <th>申请时间</th>
+                    <th>审批状态</th>
+                    <th>操作</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(pageData.records)}">
+                    <td colspan="8" class="text-center">没有符合条件的记录</td>
+                </tr>
+                <tr th:each="item:${pageData.records}">
+                    <td th:text="${itemStat.count}"></td>
+                    <td th:text="${#dicts.value('zylx',item.ywlx)}"></td>
+                    <td th:text="${item.sqr}"></td>
+                    <td th:text="${#datetimes.format(item.sqsj)}"></td>
+                    <td th:text="${#dicts.value('spzt', item.zjspzt)}"></td>
+                    <td>
+                        <button sec:authorize="hasAuthority('devApply:approve')" th:attr="data-url=@{/devApply/approve(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-form">审批</button>
+                    </td>
+                </tr>
+            </table>
+            <div th:replace="common/pagination::paginate(${pageData})"></div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        initForm(function ($m, $h) {
+            const $form = $h.find('form');
+            $h.find('.btn-approve').on('click', function () {
+                $form.find('[name="spzt"]').val($(this).data('spzt'));
+                $.ajax({
+                    url: $form.attr('action'),
+                    data: $form.serialize(),
+                    type: 'post',
+                }).done(function (respdata) {
+                    if (respdata.resultCode == '0') {
+                        window.location.reload();
+                    } else {
+                        alert('发生错误:' + respdata.message);
+                    }
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

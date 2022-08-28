@@ -1,0 +1,34 @@
+<div xmlns:th="http://www.thymeleaf.org" class="modal fade" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">应用系统</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered mb-5" th:object="${devApplicationDTO}">
+          <tr>
+            <th:block th:replace="common/component::label('部署环境', *{#dicts.value('hjlx', hjlx)})"/>
+            <th:block th:replace="common/component::label2('网络类型', *{#dicts.value('wllx', wllx)})"/>
+          </tr>
+          <tr>
+            <th:block th:replace="common/component::label3('系统名称', *{xtmc})"/>
+          </tr>
+          <tr>
+            <th:block th:replace="common/component::label3('访问地址', *{ipaddress})"/>
+          </tr>
+          <tr>
+            <th:block th:replace="common/component::label('用户名', *{username})"/>
+            <th:block th:replace="common/component::label2('密码', *{password})"/>
+          </tr>
+          <tr>
+            <th:block th:replace="common/component::label3('备注', *{bz})"/>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>

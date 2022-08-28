@@ -1,0 +1,45 @@
+<div xmlns:th="http://www.thymeleaf.org" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">部署信息</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/devDeploy/{action}.json(action=${action})}" th:object="${devDeployDTO}" method="post">
+                    <input type="hidden" th:field="*{id}"/>
+                    <input type="hidden" th:field="*{projectId}"/>
+                    <div class="row">
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">应用名称<i class="required"></i></label>
+                            <input type="text" th:field="*{yymc}" class="form-control" required/>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <label class="form-label">部署环境<i class="required"></i></label>
+                            <select th:field="*{hjlx}" class="form-control" required>
+                                <option value="">请选择</option>
+                                <option th:each="it:${#dicts.items('hjlx')}" th:value="${it.key}" th:text="${it.value}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">部署路径<i class="required"></i></label>
+                            <textarea th:field="*{filepath}" class="form-control" placeholder="例: /home/project/app.jar"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">备注</label>
+                            <textarea th:field="*{bz}" class="form-control"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save">保存</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

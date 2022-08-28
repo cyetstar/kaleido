@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorate="~{layout}">
+<body layout:fragment="content">
+<nav th:replace="common/nav::nav('devProject')"/>
+<div class="container-fluid">
+    <th:block th:replace="common/project::title(${devProjectDTO.xmmc})"/>
+    <div class="row">
+        <div class="col-2">
+            <th:block th:replace="common/project::menu(${devProjectDTO.id}, 'view')"/>
+        </div>
+        <div class="col-10">
+            <th:block th:replace="common/project::viewMenu(${devProjectDTO.id}, 'basic')"/>
+            <div class="row">
+                <div class="text-end">
+                    <a sec:authorize="hasAuthority('devProject:update')" th:href="@{/devProject/update(id=${devProjectDTO.id})}" class="btn btn-primary">编辑</a>
+                </div>
+            </div>
+            <table class="table table-bordered mt-2 mb-4" th:object="${devProjectDTO}">
+                <tr>
+                    <th:block th:replace="common/component::label('项目代码', *{xmdm})"/>
+                    <th:block th:replace="common/component::label2('项目类型', *{#dicts.value('xmlx', xmlx)})"/>
+                </tr>
+                <tr>
+                    <th:block th:replace="common/component::label('项目状态', *{#dicts.value('xmzt', xmzt)})"/>
+                    <th:block th:replace="common/component::label2('项目预算', *{#numbers.formatCurrency(ysje)})"/>
+                </tr>
+                <tr>
+                    <th:block th:replace="common/component::label('开发合同金额', *{#numbers.formatCurrency(kfhtje)})"/>
+                    <th:block th:replace="common/component::label('合同收款金额', *{#numbers.formatCurrency(yfkje)})"/>
+                    <th:block th:replace="common/component::label('绩效分配金额', *{#numbers.formatCurrency(yfpje)})"/>
+                </tr>
+                <tr>
+                    <th:block th:replace="common/component::label3('项目简介', *{xmjj})"/>
+                </tr>
+                <tr>
+                    <th:block th:replace="common/component::label('把握程度', *{#dicts.value('bwcd', nycd)})"/>
+                    <th:block th:replace="common/component::label('重要程度', *{#dicts.value('zycd', zycd)})"/>
+                    <th:block th:replace="common/component::label('紧急程度', *{#dicts.value('jjcd', jjcd)})"/>
+                </tr>
+                <tr>
+                    <th:block th:replace="common/component::label3('客户', *{#dicts.value('devCustomer', customerId)})"/>
+                </tr>
+                <tr>
+                    <th:block th:replace="common/component::label3('部门', *{#dicts.value('devDepartment', departmentId)})"/>
+                </tr>
+                <tr>
+                    <th:block th:replace="common/component::label('计划开工日期', *{#datetimes.format(jhkgrq)})"/>
+                    <th:block th:replace="common/component::label2('计划完工日期', *{#datetimes.format(jhwgrq)})"/>
+                </tr>
+                <tr>
+                    <th:block th:replace="common/component::label3('备注', *{bz})"/>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout}">
+<body class="bg">
+    <div class="position-absolute start-50 top-50 translate-middle col-3" layout:fragment="content">
+        <form th:action="@{/login}" method="post" class="login">
+            <h4 class="text-primary text-center" style="line-height: 30px">
+                宏田开发中心
+            </h4>
+            <div class="alert alert-danger" th:if="${param.error}">
+                <span th:if="${session.SPRING_SECURITY_LAST_EXCEPTION!=null}" th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></span>
+            </div>
+            <div class="mt-3 mb-3">
+                <label class="form-label">用户名</label>
+                <input name="username" type="text" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">密码</label>
+                <input name="password" type="password" class="form-control" required>
+            </div>
+            <div th:if="${session.KAPTCHA_ENABLE}" class="mb-3">
+                <label class="form-label">验证码</label>
+                <div class="row">
+                    <div class="col"><input name="code" type="text" class="form-control" required></div>
+                    <div class="col">
+                        <img th:src="@{/captcha}" onclick="javascript:this.src = this.src;" style="width: 120px; height:38px">
+                    </div>
+                </div>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">登录</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

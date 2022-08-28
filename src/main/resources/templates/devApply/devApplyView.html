@@ -1,0 +1,45 @@
+<div xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+     class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">申请信息</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body position-relative">
+                <img th:if="${devApplyDTO.sqzt!='0'}" th:src="@{/static/images/sqzt{sqzt}.png(sqzt=${devApplyDTO.sqzt})}" class="position-absolute top-0 end-0 mt-1 me-5" style="width: 85px"/>
+                <h6>业务信息</h6>
+                <th:block th:with="template=${devApplyBizDTO.ywbm+'/'+devApplyBizDTO.ywbm+'View'}">
+                    <th:block th:replace="${template}::detail(${bizDTO})"></th:block>
+                </th:block>
+                <h6>流程</h6>
+                <div class="bg-light p-4">
+                    <div th:each="item:${devApplyFlowDTOList}" class="d-flex">
+                        <div class="flow-icon">
+                            <i class="fa fa-chevron-circle-right"></i>
+                            <div th:if="${!itemStat.last}" class="d-flex ms-2">
+                                <div class="vr"></div>
+                            </div>
+                        </div>
+                        <div class="ps-3">
+                            <strong th:text="${#dicts.value('devApplyFlowSetting', item.settingId)}"></strong>
+                            <div>
+                                <span th:text="${item.czr}"></span>
+                                <span th:if="${item.sfwfqr=='1'}" th:text="${#dicts.value('sqzt', item.czzt)}"></span>
+                                <span th:if="${item.sfwfqr=='0'}" th:text="${#dicts.value('spzt', item.czzt)}" th:class="${item.czzt=='0'?'text-primary':(item.czzt=='1'?'text-success':'text-danger')}"></span>
+                            </div>
+                            <div th:if="${item.czyj}" th:text="${item.czyj}"></div>
+                            <small th:text="${#datetimes.format(item.czsj)}" class="text-muted"></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button sec:authorize="hasAuthority('devApply:revoke')" th:if="${devApplyDTO.sqzt=='0' && #users.isCurrentUser(devApplyDTO.sqrzh)}"
+                        th:attr="data-url=@{/devApply/revoke.json(id=${devApplyDTO.id})}" class="btn btn-primary btn-action">撤回</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

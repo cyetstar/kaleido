@@ -1,0 +1,24 @@
+<div class="modal fade" tabindex="-1" xmlns:th="http://www.thymeleaf.org">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">运维系统信息</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/devManageEngine/{action}.json(action=${action})}" th:object="${devManageEngineDTO}" method="post">
+                    <input type="hidden" th:field="*{id}"/>
+                    <input type="text" class="d-none"/>
+                    <div class="mb-3">
+                        <label class="form-label">系统名称<i class="required"></i></label>
+                        <input type="text" th:field="*{mc}" class="form-control" required />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save">保存</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

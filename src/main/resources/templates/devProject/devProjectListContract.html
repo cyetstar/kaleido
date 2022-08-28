@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorate="~{layout}">
+<body layout:fragment="content">
+<nav th:replace="common/nav::nav('devProject')"/>
+<div class="container-fluid">
+    <th:block th:replace="common/project::title(${devProjectDTO.xmmc})"/>
+    <div class="row">
+        <div class="col-2">
+            <th:block th:replace="common/project::menu(${devProjectDTO.id}, 'business')"/>
+        </div>
+        <div class="col-10">
+            <th:block th:replace="common/project::businessMenu(${devProjectDTO.id}, 'contract')"/>
+            <div class="row">
+                <div class="text-end">
+                    <button sec:authorize="hasAuthority('devContract:create')" th:attr="data-url=@{/devContract/create(projectId=${devProjectDTO.id})}" type="button" class="btn btn-primary btn-form">新增</button>
+                </div>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>序号</th>
+                    <th>合同编号</th>
+                    <th>合同类型</th>
+                    <th>合同名称</th>
+                    <th>合同金额</th>
+                    <th>签订日期</th>
+                    <th>操作</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(devContractDTOList)}">
+                    <td colspan="7" class="text-center">没有符合条件的记录</td>
+                </tr>
+                <tr th:each="item:${devContractDTOList}">
+                    <td th:text="${itemStat.count}"></td>
+                    <td th:text="${item.htbh}"></td>
+                    <td th:text="${#dicts.value('htlx', item.htlx)}"></td>
+                    <td th:text="${item.htmc}"></td>
+                    <td th:text="${#numbers.formatCurrency(item.htje)}"></td>
+                    <td th:text="${#datetimes.format(item.qdrq)}"></td>
+                    <td>
+                        <a sec:authorize="hasAuthority('devProject:viewContract')" th:href="@{/devProject/viewContract(id=${devProjectDTO.id},contractId=${item.id})}" class="btn btn-outline-primary btn-sm">付款管理</a>
+                        <button sec:authorize="hasAuthority('devContract:update')" th:attr="data-url=@{/devContract/update(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-form">编辑</button>
+                        <button sec:authorize="hasAuthority('devContract:delete')" th:attr="data-url=@{/devContract/delete.json(id=${item.id})}" type="button" class="btn btn-outline-danger btn-sm btn-delete">删除</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(function (){
+        initForm(function ($modal, $html){
+            $html.find('[name="qdrq"]').cxCalendar({format: 'Y-m-d'});
+        })
+        initDelete();
+    });
+</script>
+</body>
+</html>

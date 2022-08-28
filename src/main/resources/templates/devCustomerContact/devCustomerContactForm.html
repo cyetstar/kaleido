@@ -1,0 +1,44 @@
+<div class="modal fade" tabindex="-1" xmlns:th="http://www.thymeleaf.org">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">客户联系人</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/devCustomerContact/{action}.json(action=${action})}" th:object="${devCustomerContactDTO}" method="post">
+                    <input type="hidden" th:field="*{id}"/>
+                    <input type="hidden" th:field="*{customerId}"/>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">姓名<i class="required"></i></label>
+                            <input type="text" th:field="*{xm}" data-find-prop="xm" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">联系电话</label>
+                            <input type="text" th:field="*{lxdh}" data-fill-prop="lxdh" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">部门</label>
+                            <input type="text" th:field="*{bm}" data-fill-prop="bm" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">职务</label>
+                            <input type="text" th:field="*{zw}" data-fill-prop="zw" class="form-control" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save">保存</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

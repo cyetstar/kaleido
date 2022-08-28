@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorate="~{layout}">
+<body layout:fragment="content">
+<nav th:replace="common/nav::nav('devProject')"/>
+<div class="container-fluid">
+    <th:block th:replace="common/project::title(${devProjectDTO.xmmc})"/>
+    <div class="row">
+        <div class="col-2">
+            <th:block th:replace="common/project::menu(${devProjectDTO.id}, 'business')"/>
+        </div>
+        <div class="col-10">
+            <th:block th:replace="common/project::businessMenu(${devProjectDTO.id}, 'contract')"/>
+
+            <table class="table table-bordered my-4" th:object="${devContractDTO}">
+                <tr>
+                    <th:block th:replace="common/component::label('合同类型', *{#dicts.value('htlx', htlx)})"/>
+                    <th:block th:replace="common/component::label2('合同编号', *{htbh})"/>
+                </tr>
+                <tr>
+                    <th:block th:replace="common/component::label3('合同名称', *{htmc})"/>
+                </tr>
+                <tr>
+                    <th:block th:replace="common/component::label('合同甲方', *{jf})"/>
+                    <th:block th:replace="common/component::label('合同乙方', *{yf})"/>
+                    <th:block th:replace="common/component::label('签订日期', *{#datetimes.format(qdrq)})"/>
+                </tr>
+                <tr>
+                    <th:block th:replace="common/component::label('合同金额(元)', *{#numbers.formatCurrency(htje)})"/>
+                    <th:block th:replace="common/component::label2('质保金(元)', *{#numbers.formatCurrency(zbj)})"/>
+                </tr>
+                <tr>
+                    <th:block th:replace="common/component::label('是否能绩效分配', *{#dicts.value('sfbz', sffpjx)})"/>
+                    <th:block th:replace="common/component::label2('可分配金额(元)', *{#numbers.formatCurrency(kfpje)})"/>
+                </tr>
+            </table>
+            <div class="row">
+                <div class="col text-end">
+                    <button sec:authorize="hasAuthority('devContractPayment:create')" th:attr="data-url=@{/devContractPayment/create(contractId=${devContractDTO.id})}" type="button" class="btn btn-primary btn-form">新增</button>
+                </div>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>序号</th>
+                    <th>付款节点</th>
+                    <th>付款日期</th>
+                    <th>付款金额</th>
+                    <th>付款比例</th>
+                    <th>是否付款</th>
+                    <th>操作</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(devContractPaymentDTOList)}">
+                    <td colspan="7" class="text-center">没有符合条件的记录</td>
+                </tr>
+                <tr th:each="item:${devContractPaymentDTOList}">
+                    <td th:text="${itemStat.count}"></td>
+                    <td th:text="${#dicts.value('fkjd', item.fkjd)}"></td>
+                    <td th:text="${#datetimes.format(item.fkrq)}"></td>
+                    <td th:text="${#numbers.formatCurrency(item.fkje)}"></td>
+                    <td th:text="${#numbers.formatPercent(item.fkbl, 0, 0)}"></td>
+                    <td th:text="${#dicts.value('sfbz', item.sffk)}"></td>
+                    <td>
+                        <button sec:authorize="hasAuthority('devContractPayment:update')" th:attr="data-url=@{/devContractPayment/update(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-form" data-bs-dismiss="modal">编辑</button>
+                        <button sec:authorize="hasAuthority('devContractPayment:pay')" th:attr="data-url=@{/devContractPayment/pay(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-form">回款</button>
+                        <button sec:authorize="hasAuthority('devContractPayment:delete')" th:attr="data-url=@{/devContractPayment/delete.json(id=${item.id})}" type="button" class="btn btn-outline-danger btn-sm btn-delete">删除</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(function (){
+        initDelete();
+        initForm(function($modal, $html){
+            $html.find('[name="fkrq"]').cxCalendar({format: 'Y-m-d'});
+            $html.find('[name="fkbl"]').on('blur', function (){
+                const fkje = $(this).val() * $html.find('[name="htje"]').val() / 100;
+                $html.find('[name="fkje"]').val(fkje);
+            })
+        });
+    });
+</script>
+</body>
+</html>

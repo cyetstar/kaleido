@@ -1,0 +1,68 @@
+<div xmlns:th="http://www.thymeleaf.org" class="modal fade" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">服务器</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered mb-5" th:object="${devServerDTO}">
+          <tr>
+            <th:block th:replace="common/component::label('环境类型', *{#dicts.value('hjlx', hjlx)})"/>
+            <th:block th:replace="common/component::label2('网络类型', *{#dicts.value('wllx', wllx)})"/>
+          </tr>
+          <tr>
+            <th:block th:replace="common/component::label('服务器别名', *{#dicts.value('czxt', serverName)})"/>
+            <th:block th:replace="common/component::label('操作系统', *{#dicts.value('czxt', czxt)})"/>
+            <th:block th:replace="common/component::label('远程ip地址', *{#dicts.value('czxt', remoteIpaddress)})"/>
+          </tr>
+          <tr>
+            <th:block th:replace="common/component::label('远程端口', *{remotePort})"/>
+            <th:block th:replace="common/component::label('用户名', *{username})"/>
+            <th:block th:replace="common/component::label('密码', *{password})"/>
+          </tr>
+          <tr>
+            <th:block th:replace="common/component::label3('ip地址', *{ipaddress})"/>
+          </tr>
+          <tr th:if="*{sfxyljywxt=='1'}">
+            <th:block th:replace="common/component::label('运维系统', *{#dicts.value('devManageEngine', manageEngineId)})"/>
+            <td class="col-8" colspan="8">
+              <p th:each="it:${manageEngineFileInfoList}">
+                <th:block th:replace="common/component::fileLink(${it}, false)"/>
+              </p>
+            </td>
+          </tr>
+          <th:block th:if="*{sfxyljywxt=='1'}">
+            <tr>
+              <th:block th:replace="common/component::label('运维系统地址', *{ywxtIpaddress})"/>
+              <th:block th:replace="common/component::label('用户名', *{ywxtUsername})"/>
+              <th:block th:replace="common/component::label('密码', *{ywxtPassword})"/>
+            </tr>
+            <tr>
+              <th:block th:replace="common/component::label('验证码手机号', *{ywxtLxdh})"/>
+              <th:block th:replace="common/component::label2('验证码联系人', *{ywxtLxr})"/>
+            </tr>
+          </th:block>
+          <tr th:if="*{sfxyljvpn=='1'}">
+            <th:block th:replace="common/component::label('VPN软件', *{#dicts.value('devVpn', vpnId)})"/>
+            <td class="col-8" colspan="8">
+              <p th:each="it:${vpnFileInfoList}">
+                <th:block th:replace="common/component::fileLink(${it}, false)"/>
+              </p>
+            </td>
+          </tr>
+          <tr th:if="*{sfxyljvpn=='1'}">
+            <th:block th:replace="common/component::label('VPN地址', *{vpnIpaddress})"/>
+            <th:block th:replace="common/component::label2('VPN用户名/密码', *{vpnUsername+' / '+vpnPassword})"/>
+          </tr>
+          <tr>
+            <th:block th:replace="common/component::label3('备注', *{bz})"/>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>

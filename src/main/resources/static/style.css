@@ -1,0 +1,84 @@
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+body.bg {
+    background: #fff url(images/bg.png) 50% 50% no-repeat fixed;
+    background-size: 100% 100%;
+}
+
+form.login {
+    position: relative;
+    z-index: 1;
+    background: #FFFFFF;
+    max-width: 360px;
+    margin: 0 auto 100px;
+    padding: 45px;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+main {
+    padding-bottom: 3em;
+}
+
+h1.error {
+    font-family: "Montserrat", sans-serif;
+    font-size: 100px;
+    font-weight: 800;
+}
+
+i.required {
+    color: #da4453;
+    font-weight: bold;
+    padding-left: 0.2rem;
+}
+
+i.required::after {
+    content: '*'
+}
+
+.jstree-default .icon-ok {
+    background-image: url("plugins/jstree/themes/default/32px.png");
+    background-repeat: no-repeat;
+    background-color: transparent;
+    background-position: -4px -68px;
+}
+
+.icon-folder {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    display: inline-block;
+    background: url("plugins/jstree/themes/default/32px.png") -260px -4px no-repeat;
+}
+
+.icon-file {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    display: inline-block;
+    background: url("plugins/jstree/themes/default/32px.png") -100px -68px no-repeat;
+}
+
+.flow-icon .vr {
+    height: 80px;
+}
+
+.bg-sqzt-1 {
+    background: url("images/sqzt-1.png") -100px -68px no-repeat;
+}
+
+.bg-sqzt-2 {
+    background: url("images/sqzt-2.png") -100px -68px no-repeat;
+}
+
+.bg-sqzt-3 {
+    background: url("images/sqzt-3.png") -100px -68px no-repeat;
+}

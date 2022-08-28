@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorate="~{layout}">
+<body layout:fragment="content">
+<nav th:replace="common/nav::nav('devProject')"/>
+<div class="container-fluid">
+    <th:block th:replace="common/project::title(${devProjectDTO.xmmc})"/>
+    <div class="row">
+        <div class="col-2">
+            <th:block th:replace="common/project::menu(${devProjectDTO.id}, 'deploy')"/>
+        </div>
+        <div class="col-10">
+            <th:block th:replace="common/project::deployMenu(${devProjectDTO.id}, 'deploy')"/>
+            <div class="row">
+                <div class="col text-danger">
+                    * 记录前端、后端的应用服务
+                </div>
+                <div class="col text-end">
+                    <button sec:authorize="hasAuthority('devDeploy:create')" th:attr="data-url=@{/devDeploy/create(projectId=${devProjectDTO.id})}" type="button" class="btn btn-primary btn-form">新增</button>
+                </div>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>序号</th>
+                    <th>部署环境</th>
+                    <th>应用名称</th>
+                    <th>部署地址</th>
+                    <th>操作</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(devDeployDTOList)}">
+                    <td colspan="7" class="text-center">没有符合条件的记录</td>
+                </tr>
+                <tr th:each="item:${devDeployDTOList}">
+                    <td th:text="${itemStat.count}"></td>
+                    <td th:text="${#dicts.value('hjlx', item.hjlx)}"></td>
+                    <td th:text="${item.yymc}"></td>
+                    <td th:text="${item.filepath}"></td>
+                    <td>
+                        <button sec:authorize="hasAuthority('devDeploy:view')" th:attr="data-url=@{/devDeploy/view(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-view">详情</button>
+                        <button sec:authorize="hasAuthority('devDeploy:update')" th:attr="data-url=@{/devDeploy/update(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-form">编辑</button>
+                        <button sec:authorize="hasAuthority('devDeploy:delete')" th:attr="data-url=@{/devDeploy/delete.json(id=${item.id})}" type="button" class="btn btn-outline-danger btn-sm btn-delete">删除</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(function (){
+        initView()
+        initDelete();
+        initForm(function ($modal, $html) {
+            $html.find('#sfxyljvpn').on('change', function () {
+                if ($(this).val() == '1') {
+                    $html.find('#vpn').removeClass('d-none');
+                } else {
+                    $html.find('#vpn').addClass('d-none');
+                }
+            });
+            $html.find('#sfxyljywxt').on('change', function () {
+                if ($(this).val() == '1') {
+                    $html.find('#ywxt').removeClass('d-none');
+                } else {
+                    $html.find('#ywxt').addClass('d-none');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

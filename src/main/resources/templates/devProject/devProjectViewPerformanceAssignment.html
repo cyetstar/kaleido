@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorate="~{layout}">
+<body layout:fragment="content">
+<nav th:replace="common/nav::nav('devProject')"/>
+<div class="container-fluid">
+    <th:block th:replace="common/project::title(${devProjectDTO.xmmc})"/>
+    <div class="row">
+        <div class="col-2">
+            <th:block th:replace="common/project::menu(${devProjectDTO.id}, 'performance')"/>
+        </div>
+        <div class="col-10">
+            <th:block th:replace="common/project::performanceMenu(${devProjectDTO.id}, 'assignment')"/>
+            <table class="table table-bordered mt-2 mb-4" th:object="${devPerformanceAssignmentDTO}">
+                <tr>
+                    <th:block th:replace="common/component::label('分配批次', *{'第'+fppc+'次'})"/>
+                    <th:block th:replace="common/component::label2('分配金额(元)', *{#numbers.formatCurrency(fpje)})"/>
+                </tr>
+                <tr>
+                    <th:block th:replace="common/component::label('是否分配', *{#dicts.value('sfbz', sffp)})"/>
+                    <th:block th:replace="common/component::label('分配人', *{fpr})"/>
+                    <th:block th:replace="common/component::label('分配时间', *{#datetimes.format(fpsj)})"/>
+                </tr>
+            </table>
+            <th:block th:each="item:${devPerformanceScheduleDTOList}">
+                <div class="row">
+                    <div class="text-end">
+                        <button sec:authorize="hasAuthority('devPerformanceSchedule:confirm')" th:attr="data-url=@{/devPerformanceSchedule/confirm(id=${item.id})}" type="button" class="btn btn-form btn-primary">确认发放</button>
+                    </div>
+                </div>
+                <table class="table table-bordered mt-2 mb-4">
+                    <tr>
+                        <th:block th:replace="common/component::label('发放节点', ${item.ffjd})"/>
+                        <th:block th:replace="common/component::label('发放比例', *{#numbers.formatPercent(item.ffbl, 1, 0)})"/>
+                        <th:block th:replace="common/component::label('发放金额(元)', *{#numbers.formatCurrency(item.ffje)})"/>
+                    </tr>
+                    <tr>
+                        <th:block th:replace="common/component::label('发放日期', ${#datetimes.format(item.ffrq)})"/>
+                        <th:block th:replace="common/component::label2('是否已发放', *{#dicts.value('sfbz', item.sfff)})"/>
+                    </tr>
+                    <tr>
+                        <td class="col-1 bg-light text-end pe-3">发放成员</td>
+                        <td colspan="5" class="col-5">
+                            <table class="table">
+                                <tr>
+                                    <td>序号</td>
+                                    <td>姓名</td>
+                                    <td>岗位</td>
+                                    <td>状态</td>
+                                    <td>分配绩效</td>
+                                    <td>核定绩效</td>
+                                    <td>核定原因</td>
+                                </tr>
+                                <th:block th:each="it:${item.devPerformanceDetailDTOList}">
+                                    <tr th:if="${it.fpje>0}">
+                                        <td th:text="${itStat.count}"></td>
+                                        <td th:text="${it.devEmployeeDTO.xm}"></td>
+                                        <td th:text="${#dicts.value('gw', it.devEmployeeDTO.gw)}"></td>
+                                        <td th:text="${#dicts.value('ygzt', it.devEmployeeDTO.zt)}"></td>
+                                        <td th:text="|${#numbers.formatCurrency(it.fpje)} (${#numbers.formatPercent(it.fpbl, 1, 0)})|"></td>
+                                        <td th:text="|${#numbers.formatCurrency(it.sfje)} (${#numbers.formatPercent(it.sfbl, 1, 0)})|"></td>
+                                        <td th:text="${it.sfyy}"></td>
+                                    </tr>
+                                </th:block>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </th:block>
+        </div>
+    </div>
+</div>
+<script>
+    $(function (){
+        initForm(function ($modal, $html) {
+            $html.find('[name="ffrq"]').cxCalendar({format: 'Y-m-d'});
+        });
+    });
+</script>
+</body>
+</html>

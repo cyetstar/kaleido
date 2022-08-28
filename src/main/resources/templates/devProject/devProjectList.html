@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<body layout:fragment="content">
+<nav th:replace="common/nav::nav('devProject')"/>
+<div class="container-fluid">
+    <div class="row py-4">
+        <form th:action="@{/devProject/list}" th:object="${devProjectDTO}" method="get">
+            <div class="row">
+                <div class="col-sm-2">
+                    <input type="text" th:field="*{xmmc}" class="form-control" placeholder="项目名称">
+                </div>
+                <div class="col-sm-2">
+                    <select th:field="*{departmentId}" class="form-control">
+                        <option value="">研发组</option>
+                        <option th:each="it:${ #dicts.items('DevDepartment')}" th:if="${#strings.length(it.key)==9}" th:value="${it.key}" th:text="${it.value}"></option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select th:field="*{xmzt}" class="form-control">
+                        <option value="">项目状态</option>
+                        <option th:each="it:${ #dicts.items('xmzt')}" th:value="${it.key}" th:text="${it.value}"></option>
+                    </select>
+                </div>
+                <div class="col-sm">
+                    <button type="submit" class="btn btn-primary">查询</button>
+                </div>
+                <div class="col-sm text-end">
+                    <a sec:authorize="hasAuthority('devProject:create')" th:href="@{/devProject/create}" class="btn btn-primary">新增</a>
+                </div>
+            </div>
+        </form>
+        <table class="table mt-3">
+            <tr>
+                <th>序号</th>
+                <th>项目名</th>
+                <th>部门</th>
+                <th>客户</th>
+                <th>项目状态</th>
+                <th>操作</th>
+            </tr>
+            <tr th:if="${#lists.isEmpty(pageData.records)}">
+                <td colspan="8" class="text-center">没有符合条件的记录</td>
+            </tr>
+            <tr th:each="item:${pageData.records}">
+                <td th:text="${itemStat.count}"></td>
+                <td th:text="${item.xmmc}"></td>
+                <td th:text="${#dicts.value('devDepartment', item.departmentId)}"></td>
+                <td th:text="${#dicts.value('devCustomer', item.customerId)}"></td>
+                <td th:text="${#dicts.value('xmzt', item.xmzt)}"></td>
+                <td>
+                    <a sec:authorize="hasAuthority('devProject:view')" th:href="@{/devProject/view(id=${item.id})}" class="btn btn-outline-primary btn-sm">详情</a>
+                    <a sec:authorize="hasAuthority('devProject:update')" th:href="@{/devProject/update(id=${item.id})}" class="btn btn-outline-primary btn-sm">编辑</a>
+                    <button sec:authorize="hasAuthority('devProject:delete')" th:attr="data-url=@{/devProject/delete.json(id=${item.id})}" type="button" class="btn btn-outline-danger btn-sm btn-delete">删除</button>
+                </td>
+            </tr>
+        </table>
+        <div th:replace="common/pagination::paginate(${pageData})"></div>
+    </div>
+</div>
+<script>
+    $(function () {
+        initDelete();
+    });
+</script>
+</body>
+</html>

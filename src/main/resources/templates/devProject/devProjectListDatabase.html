@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorate="~{layout}">
+<body layout:fragment="content">
+<nav th:replace="common/nav::nav('devProject')"/>
+<div class="container-fluid">
+    <th:block th:replace="common/project::title(${devProjectDTO.xmmc})"/>
+    <div class="row">
+        <div class="col-2">
+            <th:block th:replace="common/project::menu(${devProjectDTO.id}, 'deploy')"/>
+        </div>
+        <div class="col-10">
+            <th:block th:replace="common/project::deployMenu(${devProjectDTO.id}, 'database')"/>
+            <div class="row">
+                <div class="text-end">
+                    <button sec:authorize="hasAuthority('devDatabase:create')" th:attr="data-url=@{/devDatabase/create(projectId=${devProjectDTO.id})}" type="button" class="btn btn-primary btn-form">新增</button>
+                </div>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>序号</th>
+                    <th>部署环境</th>
+                    <th>IP地址</th>
+                    <th>端口</th>
+                    <th>数据库类型</th>
+                    <th>版本</th>
+                    <th>操作</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(devDatabaseDTOList)}">
+                    <td colspan="7" class="text-center">没有符合条件的记录</td>
+                </tr>
+                <tr th:each="item:${devDatabaseDTOList}">
+                    <td th:text="${itemStat.count}"></td>
+                    <td th:text="${#dicts.value('hjlx', item.hjlx)}"></td>
+                    <td th:text="${item.ipaddress}"></td>
+                    <td th:text="${item.port}"></td>
+                    <td th:text="${#dicts.value('sjklx', item.sjklx)}"></td>
+                    <td th:text="${item.version}"></td>
+                    <td>
+                        <button sec:authorize="hasAuthority('devDatabase:view')" th:attr="data-url=@{/devDatabase/view(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-view">详情</button>
+                        <button sec:authorize="hasAuthority('devDatabase:update')" th:attr="data-url=@{/devDatabase/update(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-form">编辑</button>
+                        <button sec:authorize="hasAuthority('devDatabase:delete')" th:attr="data-url=@{/devDatabase/delete.json(id=${item.id})}" type="button" class="btn btn-outline-danger btn-sm btn-delete">删除</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(function (){
+        initView()
+        initDelete();
+        initForm();
+    });
+</script>
+</body>
+</html>

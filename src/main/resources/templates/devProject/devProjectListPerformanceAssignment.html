@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorate="~{layout}">
+<body layout:fragment="content">
+<nav th:replace="common/nav::nav('devProject')"/>
+<div class="container-fluid">
+    <th:block th:replace="common/project::title(${devProjectDTO.xmmc})"/>
+    <div class="row">
+        <div class="col-2">
+            <th:block th:replace="common/project::menu(${devProjectDTO.id}, 'performance')"/>
+        </div>
+        <div class="col-10">
+            <th:block th:replace="common/project::performanceMenu(${devProjectDTO.id}, 'assignment')"/>
+            <div class="row">
+                <div class="col text-end">
+                    <button sec:authorize="hasAuthority('devPerformanceAssignment:create')" th:attr="data-url=@{/devPerformanceAssignment/create(projectId=${devProjectDTO.id})}" type="button" class="btn btn-primary btn-form">新增</button>
+                </div>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>序号</th>
+                    <th>分配批次</th>
+                    <th>分配金额</th>
+                    <th>是否分配</th>
+                    <th>分配人</th>
+                    <th>分配时间</th>
+                    <th>操作</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(devPerformanceAssignmentDTOList)}">
+                    <td colspan="7" class="text-center">没有符合条件的记录</td>
+                </tr>
+                <tr th:each="item:${devPerformanceAssignmentDTOList}">
+                    <td th:text="${itemStat.count}"></td>
+                    <td th:text="${'第'+item.fppc+'次'}"></td>
+                    <td th:text="${#numbers.formatCurrency(item.fpje)}"></td>
+                    <td th:text="${#dicts.value('sfbz', item.sffp)}"></td>
+                    <td th:text="${item.fpr}"></td>
+                    <td th:text="${#datetimes.format(item.fpsj)}"></td>
+                    <td>
+                        <button sec:authorize="hasAuthority('devPerformanceAssignment:view')"  th:attr="data-url=@{/devPerformanceAssignment/view(id=${item.id})}" class="btn btn-outline-primary btn-sm btn-view">详情</button>
+                        <button sec:authorize="hasAuthority('devPerformanceAssignment:assign')" th:disabled="${item.sfsb=='1'}" th:attr="data-url=@{/devPerformanceAssignment/assign(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-form">分配</button>
+                        <button sec:authorize="hasAuthority('devPerformanceAssignment:apply')"  th:if="${item.sfsb=='0'}" th:attr="data-url=@{/devPerformanceAssignment/apply.json(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-action">上报</button>
+                        <button sec:authorize="hasAuthority('devDepartment:update')" th:attr="data-url=@{/devPerformanceAssignment/update(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-form">编辑</button>
+                        <button sec:authorize="hasAuthority('devPerformanceAssignment:delete')" th:attr="data-url=@{/devPerformanceAssignment/delete.json(id=${item.id})}" type="button" class="btn btn-outline-danger btn-sm btn-delete">删除</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(function (){
+        initForm(function($m, $h){
+            $h.find('[name="fpbl"]').on('blur', function () {
+                if (checkFpbl()) {
+                    const fpbl = $(this).val();
+                    $(this).closest('tr').find('[name="fpje"]').each(function (i, t) {
+                        const fpje = ($(t).data('money') * fpbl).toFixed(2);
+                        $(t).val(fpje);
+                    });
+                }
+            });
+            checkFpbl();
+
+            function checkFpbl() {
+                let fpbl = 0;
+                $h.find('[name="fpbl"]').each(function (i, t) {
+                    fpbl += $(t).val() * 1;
+                });
+                if (fpbl <= 1) {
+                    $h.find('#fpbl').text(fpbl * 100);
+                    return true;
+                } else {
+                    $(this).val(0);
+                    alert('超过可分配总额');
+                    return false;
+                }
+            }
+        });
+        initDelete();
+        initAction();
+        initView();
+    });
+</script>
+</body>
+</html>

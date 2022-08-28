@@ -1,0 +1,35 @@
+<div xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+     class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">申请信息</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>业务信息</h6>
+                <th:block th:with="template=${devApplyBizDTO.ywbm+'/'+devApplyBizDTO.ywbm+'View'}">
+                    <th:block th:replace="${template}::detail(${bizDTO})"></th:block>
+                </th:block>
+                <form th:action="@{/devApply/approve.json}" th:object="${devApplyDTO}" method="post">
+                    <input th:field="*{id}" type="hidden"/>
+                    <input name="spzt" type="hidden"/>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">审批意见</label>
+                            <textarea name="spyj" class="form-control"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <th:block sec:authorize="hasAuthority('devApply:approve')" th:if="${devApplyDTO.zjspzt=='0' && #users.isCurrentUser(devApplyDTO.zjsprzh)}">
+                    <button data-spzt="1" type="button" class="btn btn-success btn-approve">通过</button>
+                    <button data-spzt="2" type="button" class="btn btn-danger btn-approve">拒绝</button>
+                </th:block>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

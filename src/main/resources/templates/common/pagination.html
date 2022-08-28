@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="paginate (data)" class="clearfix text-center">
+    <ul th:if="${data!=null}" class="pagination"
+        th:with="from=${data.current ge 3 ? data.current-2 : 1},
+        to=${data.current le data.totalPages-3 ? data.current+2 : data.totalPages}">
+        <li class="page-item" th:classappend="${data.first}?disabled">
+            <a th:href="${#urls.page(1)}" class="page-link">
+                <span>&laquo;</span>
+            </a>
+        </li>
+        <li th:each="i:${#numbers.sequence(from, (to<1?1:to))}" class="page-item"
+            th:classappend="${i==data.current}?'active'">
+            <a th:href="${#urls.page(i)}" th:text="${i}" class="page-link"></a>
+        </li>
+        <li class="page-item" th:classappend="${data.last}?disabled">
+            <a th:href="${#urls.page(data.totalPages)}" class="page-link">
+                <span>&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</div>
+</html>

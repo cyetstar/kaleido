@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.onelooker.kaleido.mapper.SysRoleMapper">
+
+    <select id="listByUserId" resultType="cc.onelooker.kaleido.entity.SysRoleDO">
+        select a.* from sys_role a
+         left join sys_user_role b
+                on b.role_id = a.id
+             where b.user_id = #{userId}
+    </select>
+</mapper>

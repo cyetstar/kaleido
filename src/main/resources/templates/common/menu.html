@@ -1,0 +1,66 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div th:fragment="basic(active)" class="list-group">
+    <a sec:authorize="hasAuthority('devCustomer:list')" th:href="@{/devCustomer/list}" th:classappend="${active=='devCustomer'}?'active'" class="list-group-item list-group-item-action">客户管理</a>
+    <a sec:authorize="hasAuthority('devDepartment:list')" th:href="@{/devDepartment/list}" th:classappend="${active=='devDepartment'}?'active'" class="list-group-item list-group-item-action">组织管理</a>
+    <a sec:authorize="hasAuthority('devVpn:list')" th:href="@{/devVpn/list}" th:classappend="${active=='devVpn'}?'active'" class="list-group-item list-group-item-action">VPN软件</a>
+    <a sec:authorize="hasAuthority('devManageEngine:list')" th:href="@{/devManageEngine/list}" th:classappend="${active=='devManageEngine'}?'active'" class="list-group-item list-group-item-action">运维系统</a>
+    <a sec:authorize="hasAuthority('devDocumentCatalog:list')" th:href="@{/devDocumentCatalog/project}" th:classappend="${active=='devDocumentCatalog'}?'active'" class="list-group-item list-group-item-action">文档目录</a>
+    <a sec:authorize="hasAuthority('devApplyFlowSetting:setting')" th:href="@{/devApplyFlowSetting/setting}" th:classappend="${active=='devApplyFlowSetting'}?'active'" class="list-group-item list-group-item-action">审批流程</a>
+    <a sec:authorize="hasAuthority('sysDictType:list')" th:href="@{/sysDictType/list}" th:classappend="${active=='sysDictType'}?'active'" class="list-group-item list-group-item-action">基础设置</a>
+</div>
+
+<div th:fragment="organization(active)" class="list-group">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a sec:authorize="hasAuthority('devDepartment:list')" th:href="@{/devDepartment/list}" th:classappend="${active=='devDepartment'}?'active'" class="nav-link">部门</a>
+        </li>
+        <li class="nav-item">
+            <a sec:authorize="hasAuthority('devEmployee:list')" th:href="@{/devEmployee/list}" th:classappend="${active=='devEmployee'}?'active'" class="nav-link">员工</a>
+        </li>
+        <li class="nav-item">
+            <a sec:authorize="hasAuthority('sysRole:list')" th:href="@{/sysRole/list}" th:classappend="${active=='sysRole'}?'active'" class="nav-link">角色</a>
+        </li>
+        <li class="nav-item">
+            <a sec:authorize="hasAuthority('sysUser:list')" th:href="@{/sysUser/list}" th:classappend="${active=='sysUser'}?'active'" class="nav-link">账号</a>
+        </li>
+    </ul>
+</div>
+
+<div th:fragment="approve(active)" class="list-group">
+    <a sec:authorize="hasAuthority('devApply:listMy')" th:href="@{/devApply/listMy}" th:classappend="${active=='listMy'}?'active'" class="list-group-item list-group-item-action">我的申请</a>
+    <a sec:authorize="hasAuthority('devApply:listTodo')" th:href="@{/devApply/listTodo}" th:classappend="${active=='listTodo'}?'active'" class="list-group-item list-group-item-action">待我审批</a>
+    <a sec:authorize="hasAuthority('devApply:list')" th:href="@{/devApply/list}" th:classappend="${active=='list'}?'active'" class="list-group-item list-group-item-action">全部审批</a>
+</div>
+
+<div th:fragment="examine(active)" class="list-group">
+    <a sec:authorize="hasAuthority('devExamineMonth:list')" th:href="@{/devExamineMonth/list}" th:classappend="${active=='month'}?'active'" class="list-group-item list-group-item-action">月度考核</a>
+    <a sec:authorize="hasAuthority('devExamine:list')" th:href="@{/devExamine/list}" th:classappend="${active=='examine'}?'active'" class="list-group-item list-group-item-action">考核办法</a>
+</div>
+
+<div th:fragment="devDocumentCatalog(active)" class="list-group">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a sec:authorize="hasAuthority('devDocumentCatalog:project')" th:href="@{/devDocumentCatalog/project}" th:classappend="${active=='project'}?'active'" class="nav-link">项目文档目录</a>
+        </li>
+    </ul>
+</div>
+
+<div th:fragment="sysDictType(active)" class="list-group">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a sec:authorize="hasAuthority('sysDictType:list')" th:href="@{/sysDictType/list}" th:classappend="${active=='sysDictType'}?'active'" class="nav-link">字典</a>
+        </li>
+        <li class="nav-item">
+            <a sec:authorize="hasAuthority('sysResource:list')" th:href="@{/sysResource/list}" th:classappend="${active=='sysResource'}?'active'" class="nav-link">资源</a>
+        </li>
+    </ul>
+</div>
+
+<div th:fragment="devApplyFlowSetting(active)" class="list-group">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a sec:authorize="hasAuthority('devApplyFlowSetting:setting')" th:href="@{/devApplyFlowSetting/setting(ywlx='devPerformanceAssignment')}" th:classappend="${active=='devPerformanceAssignment'}?'active'" class="nav-link">项目绩效分配</a>
+        </li>
+    </ul>
+</div>
+</html>

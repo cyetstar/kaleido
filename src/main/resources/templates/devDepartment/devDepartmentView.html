@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorate="~{layout}">
+<body layout:fragment="content">
+<nav th:replace="common/nav::nav('basic')"/>
+<div class="container-fluid">
+    <div class="row py-4">
+        <div class="col-2">
+            <div th:replace="common/menu::basic('organization')"></div>
+        </div>
+        <div class="col-10">
+            <div th:replace="common/menu::organization('devDepartment')"></div>
+            <div class="row mt-4">
+                <div class="col-sm">
+                    <h5 th:if="${devDepartmentDTO!=null}" th:text="${devDepartmentDTO.mc}"></h5>
+                </div>
+                <div class="col-sm text-end">
+                    <button sec:authorize="hasAuthority('devDepartment:create')" th:attr="data-url=@{/devDepartment/create(fid=${#request.getParameter('id')})}" type="button" class="btn btn-primary btn-form">新增</button>
+                </div>
+            </div>
+            <table class="table mt-3">
+                <tr>
+                    <th>序号</th>
+                    <th>名称</th>
+                    <th>操作</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(devDepartmentDTOList)}">
+                    <td colspan="3" class="text-center">没有符合条件的记录</td>
+                </tr>
+                <tr th:each="item:${devDepartmentDTOList}">
+                    <td th:text="${itemStat.count}"></td>
+                    <td th:text="${item.mc}"></td>
+                    <td>
+                        <a sec:authorize="hasAuthority('devDepartment:view')" th:href="@{/devDepartment/view(id=${item.id})}" class="btn btn-outline-primary btn-sm">详细</a>
+                        <button sec:authorize="hasAuthority('devDepartment:update')" th:attr="data-url=@{/devDepartment/update(id=${item.id})}" type="button" class="btn btn-outline-primary btn-sm btn-form">编辑</button>
+                        <button sec:authorize="hasAuthority('devDepartment:delete')" th:attr="data-url=@{/devDepartment/delete.json(id=${item.id})}" type="button" class="btn btn-outline-danger btn-sm btn-delete">删除</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        initForm();
+        initDelete();
+    });
+</script>
+</body>
+</html>
