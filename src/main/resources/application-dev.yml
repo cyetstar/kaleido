@@ -1,17 +1,19 @@
 spring:
-  thymeleaf:
-    cache: false
-  web:
-    resources:
-      cache:
-        cachecontrol:
-          max-age: -1
-          s-max-age: -1
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/devoa?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: ENC(Wgya2NEwm7fli087vdUyGg==)
-    password: ENC(NqU5iqHqaYFABpJ/dNlDrB9OuD1Aique)
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    dynamic:
+      # 性能分析插件(有性能损耗 不建议生产环境使用)
+      primary: auth
+      datasource:
+        auth:
+          url: jdbc:mysql://127.0.0.1:3306/kaleido?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          username: root
+          password: 123456
+          driver-class-name: com.mysql.cj.jdbc.Driver
+        master:
+          url: jdbc:mysql://127.0.0.1:3306/kaleido?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          username: root
+          password: 123456
+          driver-class-name: com.mysql.cj.jdbc.Driver
 
 
 zjjcnt:

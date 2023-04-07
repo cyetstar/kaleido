@@ -16,6 +16,11 @@ public class CurrentUserUtils {
         return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
+    public static Long getUserId() {
+        CustomUserDetails user = getUser();
+        return user.getUserId();
+    }
+
     public static String getUsername() {
         CustomUserDetails user = getUser();
         return user.getUsername();

@@ -1,12 +1,12 @@
 package cc.onelooker.kaleido.support.dict;
 
-import cc.onelooker.kaleido.service.SysDictTypeService;
+import cc.onelooker.kaleido.service.system.SysDictTypeService;
 import com.google.common.collect.Maps;
 import com.zjjcnt.common.core.dict.BaseDictionaryInitializer;
-import cc.onelooker.kaleido.dto.SysDictDTO;
-import cc.onelooker.kaleido.dto.SysDictTypeDTO;
+import cc.onelooker.kaleido.dto.system.SysDictDTO;
+import cc.onelooker.kaleido.dto.system.SysDictTypeDTO;
 import cc.onelooker.kaleido.service.IDictionaryService;
-import cc.onelooker.kaleido.service.SysDictService;
+import cc.onelooker.kaleido.service.system.SysDictService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

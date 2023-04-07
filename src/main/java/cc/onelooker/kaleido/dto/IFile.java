@@ -19,4 +19,7 @@ public interface IFile<ID extends Serializable> extends BaseDTO<ID> {
         return Maps.newHashMap();
     }
 
+    default List<String> getFileIds() {
+        return null;
+    }
 }

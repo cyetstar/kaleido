@@ -1,37 +1,102 @@
 package cc.onelooker.kaleido.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.zjjcnt.common.core.format.StringDateTimeFormatAnnotationFormatterFactory;
+import com.zjjcnt.common.core.handler.CacheControlHandlerInterceptor;
+import com.zjjcnt.common.core.jackson.BigNumberSerializer;
+import com.zjjcnt.common.core.jackson.ExJacksonAnnotationIntrospector;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addRedirectViewController("/", "/devProject/list");
-        registry.addRedirectViewController("/basic", "/devCustomer/list");
-        registry.addRedirectViewController("/organization", "/devDepartment/list");
-        registry.addRedirectViewController("/user", "/sysUser/list");
-        registry.addViewController("/login").setViewName("login");
-        registry.addViewController("/error").setViewName("/error/500");
+    /**
+     * 跨域配置
+     */
+    @Bean
+    public CorsFilter corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        // 设置访问源地址
+        config.addAllowedOriginPattern("*");
+        // 设置访问源请求头
+        config.addAllowedHeader("*");
+        // 设置访问源请求方法
+        config.addAllowedMethod("*");
+        // 有效期 1800秒
+        config.setMaxAge(1800L);
+        // 添加映射路径，拦截一切请求
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        // 返回新的CorsFilter
+        return new CorsFilter(source);
     }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("doc.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
+
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addFormatterForFieldAnnotation(new StringDateTimeFormatAnnotationFormatterFactory());
     }
 
+    /**
+     * 自定义拦截规则
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new CacheControlHandlerInterceptor()).addPathPatterns("/**");
+    }
+
     @Bean
-    public MessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.addBasenames("classpath:org/springframework/security/messages_zh_CN");
-        return messageSource;
+    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(@Autowired JacksonProperties jacksonProperties) {
+        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().createXmlMapper(false).build();
+        // 全局配置序列化返回 JSON 处理
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addSerializer(Long.class, BigNumberSerializer.INSTANCE);
+        simpleModule.addSerializer(Long.TYPE, BigNumberSerializer.INSTANCE);
+        simpleModule.addSerializer(BigInteger.class, BigNumberSerializer.INSTANCE);
+        simpleModule.addSerializer(BigDecimal.class, ToStringSerializer.instance);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(jacksonProperties.getDateFormat());
+        simpleModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(formatter));
+        simpleModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(formatter));
+        objectMapper.registerModule(simpleModule);
+        objectMapper.setTimeZone(TimeZone.getDefault());
+        objectMapper.setAnnotationIntrospector(new ExJacksonAnnotationIntrospector());
+        return new MappingJackson2HttpMessageConverter(objectMapper);
     }
 
 }

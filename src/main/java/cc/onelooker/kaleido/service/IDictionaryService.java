@@ -1,6 +1,5 @@
 package cc.onelooker.kaleido.service;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**

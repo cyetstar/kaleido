@@ -15,10 +15,10 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <common-core.version>1.0.2-SNAPSHOT</common-core.version>
-        <common-security.version>1.0.0-SNAPSHOT</common-security.version>
-        <common-util.version>1.0.1-SNAPSHOT</common-util.version>
-        <common-file.version>1.0.0-SNAPSHOT</common-file.version>
+        <common-core.version>1.2.1-SNAPSHOT</common-core.version>
+        <common-security.version>1.1.0-SNAPSHOT</common-security.version>
+        <common-util.version>1.0.3-SNAPSHOT</common-util.version>
+        <common-file.version>1.1.0</common-file.version>
         <lombok.version>1.18.20</lombok.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <mybatis-plus.version>3.4.2</mybatis-plus.version>
@@ -27,6 +27,10 @@
         <hutool-all.version>5.6.5</hutool-all.version>
         <jasypt-spring-boot-starter.version>3.0.2</jasypt-spring-boot-starter.version>
         <kaptcha.version>2.3.2</kaptcha.version>
+        <jaudiotagger.version>3.0.1</jaudiotagger.version>
+        <knife4j-spring-boot-starter.version>2.0.9</knife4j-spring-boot-starter.version>
+        <easyexcel.version>3.1.1</easyexcel.version>
+        <dynamic-datasource-spring-boot-starter.version>3.5.1</dynamic-datasource-spring-boot-starter.version>
         <skipTests>true</skipTests>
     </properties>
     <dependencies>
@@ -83,19 +87,9 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis-plus.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>nz.net.ultraq.thymeleaf</groupId>
-            <artifactId>thymeleaf-layout-dialect</artifactId>
-            <version>${thymeleaf-layout-dialect.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.thymeleaf.extras</groupId>
-            <artifactId>thymeleaf-extras-springsecurity5</artifactId>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -122,21 +116,40 @@
             <artifactId>kaptcha</artifactId>
             <version>${kaptcha.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.jthink</groupId>
+            <artifactId>jaudiotagger</artifactId>
+            <version>${jaudiotagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <!--使用Swagger2-->
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <version>${knife4j-spring-boot-starter.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>mapstruct</artifactId>
+                    <groupId>org.mapstruct</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>${easyexcel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+            <version>${dynamic-datasource-spring-boot-starter.version}</version>
+        </dependency>
+
     </dependencies>
     <repositories>
-        <!-- 公司本地仓库 -->
         <repository>
-            <id>nexus</id>
-            <name>Zjjcnt Nexus Repository</name>
-            <url>http://120.199.105.126:8881/nexus/content/groups/public</url>
-        </repository>
-        <repository>
-            <!-- id必须唯一 -->
-            <id>aliyun-repository</id>
-            <!-- 见名知意即可 -->
-            <name>aliyun repository</name>
-            <!-- 仓库的url地址 -->
-            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <id>hongtian</id>
+            <name>Hongtian Nexus Repository</name>
+            <url>https://maven.zjjcnt.com/repository/maven-public/</url>
         </repository>
     </repositories>
     <build>

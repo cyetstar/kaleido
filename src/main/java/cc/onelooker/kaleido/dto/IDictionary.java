@@ -11,10 +11,6 @@ import java.io.Serializable;
  */
 public interface IDictionary<ID extends Serializable> extends BaseDTO<ID> {
 
-    default ID getKey() {
-        return getId();
-    }
-
-    String getLabel();
+    String getTitle();
 
 }

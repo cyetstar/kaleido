@@ -1,40 +1,142 @@
 server:
+  port: 8001
   servlet:
     context-path: /
+  tomcat:
+    remoteip:
+      remote-ip-header: 'x-forwarded-for'
+
 spring:
-  mvc:
-    static-path-pattern: /static/**
-    async:
-      request-timeout: 3600000
-  web:
-    resources:
-      cache:
-        cachecontrol:
-          max-age: 1d
-          s-max-age: 1d
-  thymeleaf:
-    mode: HTML
-    cache: true
+  main:
+    allow-bean-definition-overriding: true #当遇到同样名字的时候，是否允许覆盖注册
+    allow-circular-references: true
   datasource:
-    url: jdbc:mysql://39.170.109.75:46201/devoa?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    username: zjjc
-    password: jcecc0801new
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    dynamic:
+      # 性能分析插件(有性能损耗 不建议生产环境使用)
+      p6spy: false
+      primary: auth
+      datasource:
+        auth:
+          url: jdbc:mysql://127.0.0.1:3306/kaleido?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          username: root
+          password: 123456
+          driver-class-name: com.mysql.cj.jdbc.Driver
+        master:
+          url: jdbc:mysql://127.0.0.1:3306/kaleido?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          username: root
+          password: 123456
+          driver-class-name: com.mysql.cj.jdbc.Driver
+      lazy: true
+    hikari:
+      auto-commit: true
+      maximum-pool-size: 10
+      idle-timeout: 60000
+      pool-name: DatebookHikariCP
+      max-lifetime: 60000
+      connection-timeout: 10000
+      connection-test-query: select 1
+  redis:
+    database: 1
+    host: 127.0.0.1
+    port: 6379
+    password:
+    timeout: 5000
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:dd
+    serialization:
+      # 格式化输出
+      indent_output: false
+      # 忽略无法转换的对象
+      fail_on_empty_beans: false
+    deserialization:
+      # 允许对象忽略json中不存在的属性
+      fail_on_unknown_properties: false
   servlet:
     multipart:
-      max-file-size: 100MB
-      max-request-size: 1000MB
+      max-file-size: 2048MB
+      max-request-size: 2048MB
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          public-key-location: classpath:/zagd.pub
 
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
-  mapper-locations: classpath*:mapper/*.xml
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+  global-config:
+    db-config:
+      id-type: AUTO
+  mapper-locations: classpath*:mapper/*/*.xml
 
-kaptcha:
-  textproducer:
-    char:
-      length: 4
+
+# Swagger配置
+swagger:
+  # 是否开启swagger
+  enabled: false
+  # 标题
+  title: '租住安移动端接口'
+  # 描述
+  description: 'Kaleido API'
+  # 版本
+  version: '版本号: 1.0'
+  # 作者信息
+  contact:
+    name: cyetstar
+  groups:
+    - name: system-api
+      basePackage: cc.onelooker.kaleido.web.controller.system
+    - name: business-api
+      basePackage: cc.onelooker.kaleido.web.controller.business
+
+knife4j:
+  # 是否开启Knife4j增强模式
+  enable: true
+  # 是否开启生产环境保护策略
+  production: false
+  # 前端Ui的个性化配置属性
+  setting:
+    # 默认语言
+    language: zh-CN
+    # 是否显示Footer
+    enableFooter: false
+    # 是否开启动态参数调试功能
+    enableDynamicParameter: true
+    # 是否在每个Debug调试栏后显示刷新变量按钮
+    enableReloadCacheParameter: true
+  # 生成模式需要登陆验证才能查看接口文档
+  basic:
+    username: zjjc
+    password: 5A881C07726D56F79EEFE102EB577440
+    enable: false
+
+logging:
+  config: classpath:logback-spring.xml
+
+# 全局线程池相关配置
+thread-pool:
+  # 是否开启线程池
+  enabled: true
+  # 核心线程池大小
+  corePoolSize: 8
+  # 最大可创建的线程数
+  maxPoolSize: 16
+  # 队列最大长度
+  queueCapacity: 128
+  # 线程池维护线程所允许的空闲时间
+  keepAliveSeconds: 300
+  # 线程池对拒绝任务(无线程可用)的处理策略
+  # CALLER_RUNS_POLICY 调用方执行
+  # DISCARD_OLDEST_POLICY 放弃最旧的
+  # DISCARD_POLICY 丢弃
+  # ABORT_POLICY 中止
+  rejectedExecutionHandler: CALLER_RUNS_POLICY
 
 zjjcnt:
   file-transport:
-    type: database
+    type: local
