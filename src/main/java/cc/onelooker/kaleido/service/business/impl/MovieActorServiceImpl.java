@@ -15,12 +15,15 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.*;
 
 import java.lang.Long;
+import com.zjjcnt.common.core.annotation.Crypto;
+import java.lang.String;
+import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 /**
- * ServiceImpl
+ * 演职员ServiceImpl
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  */
 @Service
 public class MovieActorServiceImpl extends AbstractBaseServiceImpl<MovieActorMapper, MovieActorDO, MovieActorDTO> implements MovieActorService {
@@ -30,6 +33,11 @@ public class MovieActorServiceImpl extends AbstractBaseServiceImpl<MovieActorMap
     @Override
     protected Wrapper<MovieActorDO> genQueryWrapper(MovieActorDTO dto) {
         LambdaQueryWrapper<MovieActorDO> query = new LambdaQueryWrapper<>();
+        query.eq(StringUtils.isNotEmpty(dto.getXm()), MovieActorDO::getXm, dto.getXm());
+        query.eq(StringUtils.isNotEmpty(dto.getBm()), MovieActorDO::getBm, dto.getBm());
+        query.eq(StringUtils.isNotEmpty(dto.getDoubanId()), MovieActorDO::getDoubanId, dto.getDoubanId());
+        query.eq(StringUtils.isNotEmpty(dto.getCjsj()), MovieActorDO::getCjsj, dto.getCjsj());
+        query.eq(StringUtils.isNotEmpty(dto.getXgsj()), MovieActorDO::getXgsj, dto.getXgsj());
         return query;
     }
 

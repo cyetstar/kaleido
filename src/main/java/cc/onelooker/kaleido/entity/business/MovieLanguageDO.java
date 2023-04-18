@@ -8,32 +8,31 @@ import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.zjjcnt.common.core.entity.IdEntity;
 import java.lang.Long;
+import java.lang.String;
 
 /**
- * DO
+ * 语言DO
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  * @see cc.onelooker.kaleido.dto.business.MovieLanguageDTO
  */
 @Data
 @TableName("movie_language")
 public class MovieLanguageDO implements IdEntity<Long> {
-    private static final long serialVersionUID = -2393048444582522679L;
+    private static final long serialVersionUID = -8434433623907682972L;
 
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    /**
+     * 主键
+     */
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-    /**
-     * 
-     */
-    @TableField(value = "movie_id")
-    private Long movieId;
 
     /**
-     * 
+     * 名称
      */
-    @TableField(value = "language_id")
-    private Long languageId;
+    @TableField(value = "mc")
+    private String mc;
 
 
     @Override

@@ -20,16 +20,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import java.lang.Long;
+import java.lang.String;
 
 
 /**
-* 前端控制器
+* 语言前端控制器
 *
 * @author cyetstar
-* @date 2023-04-06 13:32:12
+* @date 2023-04-18 23:04:56
 */
 
-@Api(tags = "")
+@Api(tags = "语言")
 @RestController
 @RequestMapping("/movieLanguage")
 public class MovieLanguageController extends AbstractCrudController<MovieLanguageDTO>{
@@ -43,31 +44,31 @@ public class MovieLanguageController extends AbstractCrudController<MovieLanguag
     }
 
     @GetMapping("page")
-    @ApiOperation(value = "查询")
+    @ApiOperation(value = "查询语言")
     public CommonResult<PageResult<MovieLanguagePageResp>> page(MovieLanguagePageReq req, PageParam pageParam) {
         return super.page(req, pageParam, MovieLanguageConvert.INSTANCE::convertToDTO, MovieLanguageConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
-    @ApiOperation(value = "查看详情")
+    @ApiOperation(value = "查看语言详情")
     public CommonResult<MovieLanguageViewResp> view(Long id) {
         return super.view(id, MovieLanguageConvert.INSTANCE::convertToViewResp);
     }
 
     @PostMapping("create")
-    @ApiOperation(value = "新增")
+    @ApiOperation(value = "新增语言")
     public CommonResult<MovieLanguageCreateResp> create(@RequestBody MovieLanguageCreateReq req) {
         return super.create(req, MovieLanguageConvert.INSTANCE::convertToDTO, MovieLanguageConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
-    @ApiOperation(value = "编辑")
+    @ApiOperation(value = "编辑语言")
     public CommonResult<Boolean> update(@RequestBody MovieLanguageUpdateReq req) {
         return super.update(req, MovieLanguageConvert.INSTANCE::convertToDTO);
     }
 
     @DeleteMapping(value = "delete")
-    @ApiOperation(value = "删除")
+    @ApiOperation(value = "删除语言")
     public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
         return super.delete(ids);
     }
@@ -80,9 +81,9 @@ public class MovieLanguageController extends AbstractCrudController<MovieLanguag
     }
 
     @GetMapping("export")
-    @ApiOperation(value = "导出")
+    @ApiOperation(value = "导出语言")
     public void export(MovieLanguagePageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "" + DateTimeUtils.now() + ".xlsx";
+        String filename = "语言" + DateTimeUtils.now() + ".xlsx";
         super.export(req, columns, pageParam, filename, MovieLanguageExp.class,
                     MovieLanguageConvert.INSTANCE::convertToDTO, MovieLanguageConvert.INSTANCE::convertToExp, response);
     }

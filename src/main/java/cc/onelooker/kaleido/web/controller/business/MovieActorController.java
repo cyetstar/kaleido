@@ -20,16 +20,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import java.lang.Long;
+import com.zjjcnt.common.core.annotation.Crypto;
+import java.lang.String;
+import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 
 /**
-* 前端控制器
+* 演职员前端控制器
 *
 * @author cyetstar
-* @date 2023-04-06 13:32:12
+* @date 2023-04-18 23:04:56
 */
 
-@Api(tags = "")
+@Api(tags = "演职员")
 @RestController
 @RequestMapping("/movieActor")
 public class MovieActorController extends AbstractCrudController<MovieActorDTO>{
@@ -43,31 +46,31 @@ public class MovieActorController extends AbstractCrudController<MovieActorDTO>{
     }
 
     @GetMapping("page")
-    @ApiOperation(value = "查询")
+    @ApiOperation(value = "查询演职员")
     public CommonResult<PageResult<MovieActorPageResp>> page(MovieActorPageReq req, PageParam pageParam) {
         return super.page(req, pageParam, MovieActorConvert.INSTANCE::convertToDTO, MovieActorConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
-    @ApiOperation(value = "查看详情")
+    @ApiOperation(value = "查看演职员详情")
     public CommonResult<MovieActorViewResp> view(Long id) {
         return super.view(id, MovieActorConvert.INSTANCE::convertToViewResp);
     }
 
     @PostMapping("create")
-    @ApiOperation(value = "新增")
+    @ApiOperation(value = "新增演职员")
     public CommonResult<MovieActorCreateResp> create(@RequestBody MovieActorCreateReq req) {
         return super.create(req, MovieActorConvert.INSTANCE::convertToDTO, MovieActorConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
-    @ApiOperation(value = "编辑")
+    @ApiOperation(value = "编辑演职员")
     public CommonResult<Boolean> update(@RequestBody MovieActorUpdateReq req) {
         return super.update(req, MovieActorConvert.INSTANCE::convertToDTO);
     }
 
     @DeleteMapping(value = "delete")
-    @ApiOperation(value = "删除")
+    @ApiOperation(value = "删除演职员")
     public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
         return super.delete(ids);
     }
@@ -80,9 +83,9 @@ public class MovieActorController extends AbstractCrudController<MovieActorDTO>{
     }
 
     @GetMapping("export")
-    @ApiOperation(value = "导出")
+    @ApiOperation(value = "导出演职员")
     public void export(MovieActorPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "" + DateTimeUtils.now() + ".xlsx";
+        String filename = "演职员" + DateTimeUtils.now() + ".xlsx";
         super.export(req, columns, pageParam, filename, MovieActorExp.class,
                     MovieActorConvert.INSTANCE::convertToDTO, MovieActorConvert.INSTANCE::convertToExp, response);
     }

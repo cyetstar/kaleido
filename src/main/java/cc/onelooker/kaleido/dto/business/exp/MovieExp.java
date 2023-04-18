@@ -1,193 +1,76 @@
 package cc.onelooker.kaleido.dto.business.exp;
 
-import lombok.Data;
 import com.alibaba.excel.annotation.ExcelProperty;
-
-import java.lang.Long;
-import java.lang.String;
-import java.util.Date;
-import java.lang.Double;
-import java.lang.Integer;
-import java.lang.Boolean;
+import com.zjjcnt.common.core.annotation.Dict;
+import com.zjjcnt.common.core.annotation.StringDateFormat;
+import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
+import lombok.Data;
 
 /**
- * 导出对象
+ * 电影导出对象
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  *
  */
 @Data
 public class MovieExp{
 
-    @ExcelProperty("")
+    @ExcelProperty("主键")
     private Long id;
 
-    @ExcelProperty("")
-    private String actor;
+    @ExcelProperty("电影名称")
+    private String dymc;
 
-    @ExcelProperty("")
-    private String aired;
+    @ExcelProperty("原片名")
+    private String ypm;
 
-    @ExcelProperty("")
-    private String category;
+    @ExcelProperty("用户评分")
+    private Integer yhpf;
 
-    @ExcelProperty("")
-    private String certification;
+    @ExcelProperty("电影简介")
+    private String dyjj;
 
-    @ExcelProperty("")
-    private String code;
+    @ExcelProperty("电影标语")
+    private String dyby;
 
-    @ExcelProperty("")
-    private String country;
+    @ExcelProperty("影片时长")
+    private Integer ypsc;
 
-    @ExcelProperty("")
-    private Date createdAt;
+    @ExcelProperty("电影等级")
+    private String dydj;
 
-    @ExcelProperty("")
-    private String dateadded;
+    @StringDateFormat
+    @ExcelProperty("上映日期")
+    private String syrq;
 
-    @ExcelProperty("")
-    private String doubanId;
+    @ExcelProperty("官网地址")
+    private String gwdz;
 
-    @ExcelProperty("")
-    private Double doubanRating;
+    @Dict("gkbz")
+    @ExcelProperty("是否观看")
+    private String gkbz;
 
-    @ExcelProperty("")
-    private String doubanResult;
+    @StringDateTimeFormat
+    @ExcelProperty("观看时间")
+    private String gksj;
 
-    @ExcelProperty("")
-    private Integer doubanTop250;
+    @Dict("scbz")
+    @ExcelProperty("是否收藏")
+    private String scbz;
 
-    @ExcelProperty("")
-    private Date doubanUpdatedAt;
+    @StringDateTimeFormat
+    @ExcelProperty("收藏时间")
+    private String scsj;
 
-    @ExcelProperty("")
-    private Integer doubanVotes;
+    @ExcelProperty("plex编号")
+    private String plexId;
 
-    @ExcelProperty("")
-    private String edition;
+    @StringDateTimeFormat
+    @ExcelProperty("创建时间")
+    private String cjsj;
 
-    @ExcelProperty("")
-    private String epbookmark;
-
-    @ExcelProperty("")
-    private String filePath;
-
-    @ExcelProperty("")
-    private Boolean hasFanart;
-
-    @ExcelProperty("")
-    private Boolean hasFile;
-
-    @ExcelProperty("")
-    private Boolean hasNfo;
-
-    @ExcelProperty("")
-    private Boolean hasPoster;
-
-    @ExcelProperty("")
-    private Boolean hasSubtitle;
-
-    @ExcelProperty("")
-    private String imdb;
-
-    @ExcelProperty("")
-    private Double imdbRating;
-
-    @ExcelProperty("")
-    private Integer imdbVotes;
-
-    @ExcelProperty("")
-    private String kodiid;
-
-    @ExcelProperty("")
-    private String lastplayed;
-
-    @ExcelProperty("")
-    private String mpaa;
-
-    @ExcelProperty("")
-    private String nfoPath;
-
-    @ExcelProperty("")
-    private String number;
-
-    @ExcelProperty("")
-    private Double numberRating;
-
-    @ExcelProperty("")
-    private Integer numberVotes;
-
-    @ExcelProperty("")
-    private String originalFilename;
-
-    @ExcelProperty("")
-    private String originaltitle;
-
-    @ExcelProperty("")
-    private String outline;
-
-    @ExcelProperty("")
-    private Integer playcount;
-
-    @ExcelProperty("")
-    private String plot;
-
-    @ExcelProperty("")
-    private String premiered;
-
-    @ExcelProperty("")
-    private Integer runtime;
-
-    @ExcelProperty("")
-    private String showlink;
-
-    @ExcelProperty("")
-    private String sorttitle;
-
-    @ExcelProperty("")
-    private String source;
-
-    @ExcelProperty("")
-    private String status;
-
-    @ExcelProperty("")
-    private String tagline;
-
-    @ExcelProperty("")
-    private String title;
-
-    @ExcelProperty("")
-    private String tmdbCollectionId;
-
-    @ExcelProperty("")
-    private String tmdbid;
-
-    @ExcelProperty("")
-    private Integer top250;
-
-    @ExcelProperty("")
-    private String trailer;
-
-    @ExcelProperty("")
-    private Date updatedAt;
-
-    @ExcelProperty("")
-    private String userNote;
-
-    @ExcelProperty("")
-    private Double userrating;
-
-    @ExcelProperty("")
-    private Boolean validatedPath;
-
-    @ExcelProperty("")
-    private Boolean watched;
-
-    @ExcelProperty("")
-    private String website;
-
-    @ExcelProperty("")
-    private String year;
+    @StringDateTimeFormat
+    @ExcelProperty("修改时间")
+    private String xgsj;
 }

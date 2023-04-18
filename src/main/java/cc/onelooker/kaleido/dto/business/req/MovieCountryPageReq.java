@@ -5,15 +5,19 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.lang.Long;
+import java.lang.String;
 
 /**
- * 请求对象
+ * 国家地区请求对象
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  *
  */
 @Data
-@ApiModel("请求对象")
+@ApiModel("国家地区请求对象")
 public class MovieCountryPageReq{
+
+    @ApiModelProperty("名称")
+    private String mc;
 }

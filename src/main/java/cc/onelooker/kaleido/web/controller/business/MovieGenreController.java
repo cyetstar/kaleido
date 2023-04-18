@@ -20,16 +20,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import java.lang.Long;
+import java.lang.String;
 
 
 /**
-* 前端控制器
+* 影片类型前端控制器
 *
 * @author cyetstar
-* @date 2023-04-06 13:32:12
+* @date 2023-04-18 23:04:56
 */
 
-@Api(tags = "")
+@Api(tags = "影片类型")
 @RestController
 @RequestMapping("/movieGenre")
 public class MovieGenreController extends AbstractCrudController<MovieGenreDTO>{
@@ -43,31 +44,31 @@ public class MovieGenreController extends AbstractCrudController<MovieGenreDTO>{
     }
 
     @GetMapping("page")
-    @ApiOperation(value = "查询")
+    @ApiOperation(value = "查询影片类型")
     public CommonResult<PageResult<MovieGenrePageResp>> page(MovieGenrePageReq req, PageParam pageParam) {
         return super.page(req, pageParam, MovieGenreConvert.INSTANCE::convertToDTO, MovieGenreConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
-    @ApiOperation(value = "查看详情")
+    @ApiOperation(value = "查看影片类型详情")
     public CommonResult<MovieGenreViewResp> view(Long id) {
         return super.view(id, MovieGenreConvert.INSTANCE::convertToViewResp);
     }
 
     @PostMapping("create")
-    @ApiOperation(value = "新增")
+    @ApiOperation(value = "新增影片类型")
     public CommonResult<MovieGenreCreateResp> create(@RequestBody MovieGenreCreateReq req) {
         return super.create(req, MovieGenreConvert.INSTANCE::convertToDTO, MovieGenreConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
-    @ApiOperation(value = "编辑")
+    @ApiOperation(value = "编辑影片类型")
     public CommonResult<Boolean> update(@RequestBody MovieGenreUpdateReq req) {
         return super.update(req, MovieGenreConvert.INSTANCE::convertToDTO);
     }
 
     @DeleteMapping(value = "delete")
-    @ApiOperation(value = "删除")
+    @ApiOperation(value = "删除影片类型")
     public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
         return super.delete(ids);
     }
@@ -80,9 +81,9 @@ public class MovieGenreController extends AbstractCrudController<MovieGenreDTO>{
     }
 
     @GetMapping("export")
-    @ApiOperation(value = "导出")
+    @ApiOperation(value = "导出影片类型")
     public void export(MovieGenrePageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "" + DateTimeUtils.now() + ".xlsx";
+        String filename = "影片类型" + DateTimeUtils.now() + ".xlsx";
         super.export(req, columns, pageParam, filename, MovieGenreExp.class,
                     MovieGenreConvert.INSTANCE::convertToDTO, MovieGenreConvert.INSTANCE::convertToExp, response);
     }

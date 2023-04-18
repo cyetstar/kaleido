@@ -34,6 +34,9 @@ public class SysMenuPageResp {
     @ApiModelProperty("模块")
     private String app;
 
+    @ApiModelProperty("路径")
+    private String path;
+
     @Dict("sfbz")
     @ApiModelProperty("是否显示")
     private String isHidden;

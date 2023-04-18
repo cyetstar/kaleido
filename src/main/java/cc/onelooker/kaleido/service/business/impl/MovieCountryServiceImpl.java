@@ -15,12 +15,13 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.*;
 
 import java.lang.Long;
+import java.lang.String;
 
 /**
- * ServiceImpl
+ * 国家地区ServiceImpl
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  */
 @Service
 public class MovieCountryServiceImpl extends AbstractBaseServiceImpl<MovieCountryMapper, MovieCountryDO, MovieCountryDTO> implements MovieCountryService {
@@ -30,6 +31,7 @@ public class MovieCountryServiceImpl extends AbstractBaseServiceImpl<MovieCountr
     @Override
     protected Wrapper<MovieCountryDO> genQueryWrapper(MovieCountryDTO dto) {
         LambdaQueryWrapper<MovieCountryDO> query = new LambdaQueryWrapper<>();
+        query.eq(StringUtils.isNotEmpty(dto.getMc()), MovieCountryDO::getMc, dto.getMc());
         return query;
     }
 

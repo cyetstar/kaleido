@@ -140,3 +140,33 @@ thread-pool:
 zjjcnt:
   file-transport:
     type: local
+  security:
+    url-filter:
+      urls:
+        - /api/auth/login
+        - /api/auth/logout
+        - /register
+        - /captchaImage
+        - /fileInfo/small/**
+        - /fileInfo/medium/**
+        - /fileInfo/original/**
+        - /captcha/code
+        # 静态资源
+        - /*.html
+        - /**/*.html
+        - /**/*.css
+        - /**/*.js
+        - /system/info/code
+        - /demo/**
+        #swagger
+        - /doc.html
+        - /webjars/**
+        - /favicon.ico
+        - /swagger-resources
+        - /v2/api-docs
+        - /ssxq/listByParent
+        - /fileInfo/upload
+        - /fileInfo/delete
+        - /pztCzfAqjc/list
+        #远程调用
+        - /pztDzCzf/czfwcx

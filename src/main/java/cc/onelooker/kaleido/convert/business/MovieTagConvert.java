@@ -1,24 +1,22 @@
 package cc.onelooker.kaleido.convert.business;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.business.MovieTagDTO;
-import cc.onelooker.kaleido.entity.business.MovieTagDO;
-import cc.onelooker.kaleido.dto.business.req.MovieTagPageReq;
+import cc.onelooker.kaleido.dto.business.exp.MovieTagExp;
 import cc.onelooker.kaleido.dto.business.req.MovieTagCreateReq;
+import cc.onelooker.kaleido.dto.business.req.MovieTagPageReq;
 import cc.onelooker.kaleido.dto.business.req.MovieTagUpdateReq;
+import cc.onelooker.kaleido.dto.business.resp.MovieTagCreateResp;
 import cc.onelooker.kaleido.dto.business.resp.MovieTagPageResp;
 import cc.onelooker.kaleido.dto.business.resp.MovieTagViewResp;
-import cc.onelooker.kaleido.dto.business.resp.MovieTagCreateResp;
-import cc.onelooker.kaleido.dto.business.exp.MovieTagExp;
-
+import cc.onelooker.kaleido.entity.business.MovieTagDO;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 /**
-* Convert
+* 电影标签Convert
 *
 * @author cyetstar
-* @date 2023-04-06 13:32:12
+* @date 2023-04-18 23:04:56
 */
 @Mapper
 public interface MovieTagConvert {

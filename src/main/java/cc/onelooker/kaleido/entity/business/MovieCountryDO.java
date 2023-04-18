@@ -8,32 +8,31 @@ import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.zjjcnt.common.core.entity.IdEntity;
 import java.lang.Long;
+import java.lang.String;
 
 /**
- * DO
+ * 国家地区DO
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  * @see cc.onelooker.kaleido.dto.business.MovieCountryDTO
  */
 @Data
 @TableName("movie_country")
 public class MovieCountryDO implements IdEntity<Long> {
-    private static final long serialVersionUID = 8395126748664917554L;
+    private static final long serialVersionUID = 7563917276763870562L;
 
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    /**
+     * 主键
+     */
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-    /**
-     * 
-     */
-    @TableField(value = "movie_id")
-    private Long movieId;
 
     /**
-     * 
+     * 名称
      */
-    @TableField(value = "country_id")
-    private Long countryId;
+    @TableField(value = "mc")
+    private String mc;
 
 
     @Override

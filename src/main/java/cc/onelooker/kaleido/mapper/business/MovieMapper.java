@@ -7,17 +7,17 @@ import cc.onelooker.kaleido.entity.business.MovieDO;
 
 import java.lang.Long;
 import java.lang.String;
-import java.util.Date;
-import java.lang.Double;
 import java.lang.Integer;
-import java.lang.Boolean;
+import com.zjjcnt.common.core.annotation.StringDateFormat;
+import com.zjjcnt.common.core.annotation.Dict;
+import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 
 /**
- * Mapper接口
+ * 电影Mapper接口
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  */
 @Mapper
 public interface MovieMapper extends BaseMapper<MovieDO> {

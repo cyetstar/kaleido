@@ -112,7 +112,7 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
     @PostMapping("init")
     @ApiOperation(value = "初始化菜单")
     public CommonResult<Boolean> init(@RequestBody List<SysMenuInitReq> reqList) {
-        List<SysMenuDTO> sysMenuDTOList = convertToDTO(reqList,null);
+        List<SysMenuDTO> sysMenuDTOList = convertToDTO(reqList, null);
         sysMenuService.init(sysMenuDTOList);
         return CommonResult.success(true);
     }
@@ -132,7 +132,7 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
         } else {
             List<SysMenuDTO> sysMenuDTOList = sysMenuService.list(null);
             List<SysMenuTreeResp> respList = genSysMenuTreeRespList(sysMenuDTOList);
-            Map<String, List<SysMenuTreeResp>> result = ImmutableMap.of(StringUtils.EMPTY, respList);
+            Map<String, List<SysMenuTreeResp>> result = ImmutableMap.of("default", respList);
             return CommonResult.success(result);
         }
     }
@@ -151,7 +151,7 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
         }
         respList = buildTree(respList);
         //过滤无子节点的数据
-        respList = respList.stream().filter(s -> CollectionUtils.isNotEmpty(s.getChildren())).collect(Collectors.toList());
+//        respList = respList.stream().filter(s -> CollectionUtils.isNotEmpty(s.getChildren())).collect(Collectors.toList());
         return respList;
     }
 
@@ -181,13 +181,13 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
         return trees;
     }
 
-    private List<SysMenuDTO> convertToDTO(List<SysMenuInitReq> reqList,String app) {
+    private List<SysMenuDTO> convertToDTO(List<SysMenuInitReq> reqList, String app) {
         List<SysMenuDTO> dtoList = Lists.newArrayList();
         for (SysMenuInitReq req : reqList) {
             SysMenuDTO dto = SysMenuConvert.INSTANCE.convertToDTO(req);
             dto.setApp(StringUtils.isBlank(app) ? req.getName() : app);
             if (req.getChildren() != null) {
-                dto.setChildren(convertToDTO(req.getChildren(),dto.getApp()));
+                dto.setChildren(convertToDTO(req.getChildren(), dto.getApp()));
             }
             dtoList.add(dto);
         }

@@ -6,187 +6,72 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.lang.Long;
 import java.lang.String;
-import java.util.Date;
-import java.lang.Double;
 import java.lang.Integer;
-import java.lang.Boolean;
+import com.zjjcnt.common.core.annotation.StringDateFormat;
+import com.zjjcnt.common.core.annotation.Dict;
+import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 /**
- * 请求对象
+ * 电影请求对象
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  *
  */
 @Data
-@ApiModel("请求对象")
+@ApiModel("电影请求对象")
 public class MovieCreateReq{
 
-    @ApiModelProperty("")
-    private String actor;
+    @ApiModelProperty("电影名称")
+    private String dymc;
 
-    @ApiModelProperty("")
-    private String aired;
+    @ApiModelProperty("原片名")
+    private String ypm;
 
-    @ApiModelProperty("")
-    private String category;
+    @ApiModelProperty("用户评分")
+    private Integer yhpf;
 
-    @ApiModelProperty("")
-    private String certification;
+    @ApiModelProperty("电影简介")
+    private String dyjj;
 
-    @ApiModelProperty("")
-    private String code;
+    @ApiModelProperty("电影标语")
+    private String dyby;
 
-    @ApiModelProperty("")
-    private String country;
+    @ApiModelProperty("影片时长")
+    private Integer ypsc;
 
-    @ApiModelProperty("")
-    private Date createdAt;
+    @ApiModelProperty("电影等级")
+    private String dydj;
 
-    @ApiModelProperty("")
-    private String dateadded;
+    @StringDateFormat
+    @ApiModelProperty("上映日期")
+    private String syrq;
 
-    @ApiModelProperty("")
-    private String doubanId;
+    @ApiModelProperty("官网地址")
+    private String gwdz;
 
-    @ApiModelProperty("")
-    private Double doubanRating;
+    @ApiModelProperty("是否观看")
+    private String gkbz;
 
-    @ApiModelProperty("")
-    private String doubanResult;
+    @StringDateTimeFormat
+    @ApiModelProperty("观看时间")
+    private String gksj;
 
-    @ApiModelProperty("")
-    private Integer doubanTop250;
+    @ApiModelProperty("是否收藏")
+    private String scbz;
 
-    @ApiModelProperty("")
-    private Date doubanUpdatedAt;
+    @StringDateTimeFormat
+    @ApiModelProperty("收藏时间")
+    private String scsj;
 
-    @ApiModelProperty("")
-    private Integer doubanVotes;
+    @ApiModelProperty("plex编号")
+    private String plexId;
 
-    @ApiModelProperty("")
-    private String edition;
+    @StringDateTimeFormat
+    @ApiModelProperty("创建时间")
+    private String cjsj;
 
-    @ApiModelProperty("")
-    private String epbookmark;
-
-    @ApiModelProperty("")
-    private String filePath;
-
-    @ApiModelProperty("")
-    private Boolean hasFanart;
-
-    @ApiModelProperty("")
-    private Boolean hasFile;
-
-    @ApiModelProperty("")
-    private Boolean hasNfo;
-
-    @ApiModelProperty("")
-    private Boolean hasPoster;
-
-    @ApiModelProperty("")
-    private Boolean hasSubtitle;
-
-    @ApiModelProperty("")
-    private String imdb;
-
-    @ApiModelProperty("")
-    private Double imdbRating;
-
-    @ApiModelProperty("")
-    private Integer imdbVotes;
-
-    @ApiModelProperty("")
-    private String kodiid;
-
-    @ApiModelProperty("")
-    private String lastplayed;
-
-    @ApiModelProperty("")
-    private String mpaa;
-
-    @ApiModelProperty("")
-    private String nfoPath;
-
-    @ApiModelProperty("")
-    private String number;
-
-    @ApiModelProperty("")
-    private Double numberRating;
-
-    @ApiModelProperty("")
-    private Integer numberVotes;
-
-    @ApiModelProperty("")
-    private String originalFilename;
-
-    @ApiModelProperty("")
-    private String originaltitle;
-
-    @ApiModelProperty("")
-    private String outline;
-
-    @ApiModelProperty("")
-    private Integer playcount;
-
-    @ApiModelProperty("")
-    private String plot;
-
-    @ApiModelProperty("")
-    private String premiered;
-
-    @ApiModelProperty("")
-    private Integer runtime;
-
-    @ApiModelProperty("")
-    private String showlink;
-
-    @ApiModelProperty("")
-    private String sorttitle;
-
-    @ApiModelProperty("")
-    private String source;
-
-    @ApiModelProperty("")
-    private String status;
-
-    @ApiModelProperty("")
-    private String tagline;
-
-    @ApiModelProperty("")
-    private String title;
-
-    @ApiModelProperty("")
-    private String tmdbCollectionId;
-
-    @ApiModelProperty("")
-    private String tmdbid;
-
-    @ApiModelProperty("")
-    private Integer top250;
-
-    @ApiModelProperty("")
-    private String trailer;
-
-    @ApiModelProperty("")
-    private Date updatedAt;
-
-    @ApiModelProperty("")
-    private String userNote;
-
-    @ApiModelProperty("")
-    private Double userrating;
-
-    @ApiModelProperty("")
-    private Boolean validatedPath;
-
-    @ApiModelProperty("")
-    private Boolean watched;
-
-    @ApiModelProperty("")
-    private String website;
-
-    @ApiModelProperty("")
-    private String year;
+    @StringDateTimeFormat
+    @ApiModelProperty("修改时间")
+    private String xgsj;
 }

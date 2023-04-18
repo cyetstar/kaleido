@@ -5,306 +5,106 @@ import com.zjjcnt.common.core.dto.BaseDTO;
 
 import java.lang.Long;
 import java.lang.String;
-import java.util.Date;
-import java.lang.Double;
 import java.lang.Integer;
-import java.lang.Boolean;
+import com.zjjcnt.common.core.annotation.StringDateFormat;
+import com.zjjcnt.common.core.annotation.Dict;
+import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 /**
- * DTO
+ * 电影DTO
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  * @see cc.onelooker.kaleido.entity.business.MovieDO
  */
 @Data
 public class MovieDTO implements BaseDTO<Long> {
-    private static final long serialVersionUID = -4433222994530132500L;
+    private static final long serialVersionUID = -4454324070494604321L;
 
     /**
-     * 
+     * 主键
      */
     private Long id;
 
     /**
-     * 
+     * 电影名称
      */
-    private String actor;
+    private String dymc;
 
     /**
-     * 
+     * 原片名
      */
-    private String aired;
+    private String ypm;
 
     /**
-     * 
+     * 用户评分
      */
-    private String category;
+    private Integer yhpf;
 
     /**
-     * 
+     * 电影简介
      */
-    private String certification;
+    private String dyjj;
 
     /**
-     * 
+     * 电影标语
      */
-    private String code;
+    private String dyby;
 
     /**
-     * 
+     * 影片时长
      */
-    private String country;
+    private Integer ypsc;
 
     /**
-     * 
+     * 电影等级
      */
-    private Date createdAt;
+    private String dydj;
 
     /**
-     * 
+     * 上映日期
      */
-    private String dateadded;
+    private String syrq;
 
     /**
-     * 
+     * 官网地址
      */
-    private String doubanId;
+    private String gwdz;
 
     /**
-     * 
+     * 是否观看
      */
-    private Double doubanRating;
+    private String gkbz;
 
     /**
-     * 
+     * 观看时间
      */
-    private String doubanResult;
+    private String gksj;
 
     /**
-     * 
+     * 是否收藏
      */
-    private Integer doubanTop250;
+    private String scbz;
 
     /**
-     * 
+     * 收藏时间
      */
-    private Date doubanUpdatedAt;
+    private String scsj;
 
     /**
-     * 
+     * plex编号
      */
-    private Integer doubanVotes;
+    private String plexId;
 
     /**
-     * 
+     * 创建时间
      */
-    private String edition;
+    private String cjsj;
 
     /**
-     * 
+     * 修改时间
      */
-    private String epbookmark;
-
-    /**
-     * 
-     */
-    private String filePath;
-
-    /**
-     * 
-     */
-    private Boolean hasFanart;
-
-    /**
-     * 
-     */
-    private Boolean hasFile;
-
-    /**
-     * 
-     */
-    private Boolean hasNfo;
-
-    /**
-     * 
-     */
-    private Boolean hasPoster;
-
-    /**
-     * 
-     */
-    private Boolean hasSubtitle;
-
-    /**
-     * 
-     */
-    private String imdb;
-
-    /**
-     * 
-     */
-    private Double imdbRating;
-
-    /**
-     * 
-     */
-    private Integer imdbVotes;
-
-    /**
-     * 
-     */
-    private String kodiid;
-
-    /**
-     * 
-     */
-    private String lastplayed;
-
-    /**
-     * 
-     */
-    private String mpaa;
-
-    /**
-     * 
-     */
-    private String nfoPath;
-
-    /**
-     * 
-     */
-    private String number;
-
-    /**
-     * 
-     */
-    private Double numberRating;
-
-    /**
-     * 
-     */
-    private Integer numberVotes;
-
-    /**
-     * 
-     */
-    private String originalFilename;
-
-    /**
-     * 
-     */
-    private String originaltitle;
-
-    /**
-     * 
-     */
-    private String outline;
-
-    /**
-     * 
-     */
-    private Integer playcount;
-
-    /**
-     * 
-     */
-    private String plot;
-
-    /**
-     * 
-     */
-    private String premiered;
-
-    /**
-     * 
-     */
-    private Integer runtime;
-
-    /**
-     * 
-     */
-    private String showlink;
-
-    /**
-     * 
-     */
-    private String sorttitle;
-
-    /**
-     * 
-     */
-    private String source;
-
-    /**
-     * 
-     */
-    private String status;
-
-    /**
-     * 
-     */
-    private String tagline;
-
-    /**
-     * 
-     */
-    private String title;
-
-    /**
-     * 
-     */
-    private String tmdbCollectionId;
-
-    /**
-     * 
-     */
-    private String tmdbid;
-
-    /**
-     * 
-     */
-    private Integer top250;
-
-    /**
-     * 
-     */
-    private String trailer;
-
-    /**
-     * 
-     */
-    private Date updatedAt;
-
-    /**
-     * 
-     */
-    private String userNote;
-
-    /**
-     * 
-     */
-    private Double userrating;
-
-    /**
-     * 
-     */
-    private Boolean validatedPath;
-
-    /**
-     * 
-     */
-    private Boolean watched;
-
-    /**
-     * 
-     */
-    private String website;
-
-    /**
-     * 
-     */
-    private String year;
+    private String xgsj;
 
 
     @Override

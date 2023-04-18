@@ -1,5 +1,7 @@
 package cc.onelooker.kaleido.utils;
 
+import com.zjjcnt.common.core.exception.ServiceException;
+import com.zjjcnt.common.security.context.UserSecurityContextHolder;
 import com.zjjcnt.common.security.domain.CustomUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -13,7 +15,11 @@ import java.util.List;
 public class CurrentUserUtils {
 
     public static CustomUserDetails getUser() {
-        return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            return UserSecurityContextHolder.getCurrentUser();
+        } catch (Exception e) {
+            throw new ServiceException(1000, "获取用户信息失败");
+        }
     }
 
     public static Long getUserId() {

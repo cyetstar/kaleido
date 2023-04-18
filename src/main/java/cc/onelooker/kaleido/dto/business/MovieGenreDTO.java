@@ -1,33 +1,31 @@
 package cc.onelooker.kaleido.dto.business;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
 
 import java.lang.Long;
+import java.lang.String;
 
 /**
- * DTO
+ * 影片类型DTO
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  * @see cc.onelooker.kaleido.entity.business.MovieGenreDO
  */
 @Data
 public class MovieGenreDTO implements BaseDTO<Long> {
-    private static final long serialVersionUID = -3082669821107784939L;
+    private static final long serialVersionUID = 6592155134289237324L;
 
+    /**
+     * 主键
+     */
     private Long id;
-    /**
-     * 
-     */
-    private Long movieId;
 
     /**
-     * 
+     * 名称
      */
-    private Long genreId;
+    private String mc;
 
 
     @Override

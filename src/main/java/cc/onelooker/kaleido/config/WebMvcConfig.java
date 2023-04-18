@@ -11,6 +11,7 @@ import com.zjjcnt.common.core.jackson.BigNumberSerializer;
 import com.zjjcnt.common.core.jackson.ExJacksonAnnotationIntrospector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,8 +53,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // 添加映射路径，拦截一切请求
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-        // 返回新的CorsFilter
-        return new CorsFilter(source);
+        CorsFilter corsFilter = new CorsFilter(source);
+        FilterRegistrationBean bean = new FilterRegistrationBean(corsFilter);
+        bean.setOrder(0);
+        return corsFilter;
     }
 
     @Override
@@ -66,7 +69,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
-
 
     @Override
     public void addFormatters(FormatterRegistry registry) {

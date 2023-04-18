@@ -20,16 +20,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import java.lang.Long;
+import java.lang.String;
 
 
 /**
-* 前端控制器
+* 电影标签前端控制器
 *
 * @author cyetstar
-* @date 2023-04-06 13:32:12
+* @date 2023-04-18 23:04:56
 */
 
-@Api(tags = "")
+@Api(tags = "电影标签")
 @RestController
 @RequestMapping("/movieTag")
 public class MovieTagController extends AbstractCrudController<MovieTagDTO>{
@@ -43,31 +44,31 @@ public class MovieTagController extends AbstractCrudController<MovieTagDTO>{
     }
 
     @GetMapping("page")
-    @ApiOperation(value = "查询")
+    @ApiOperation(value = "查询电影标签")
     public CommonResult<PageResult<MovieTagPageResp>> page(MovieTagPageReq req, PageParam pageParam) {
         return super.page(req, pageParam, MovieTagConvert.INSTANCE::convertToDTO, MovieTagConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
-    @ApiOperation(value = "查看详情")
+    @ApiOperation(value = "查看电影标签详情")
     public CommonResult<MovieTagViewResp> view(Long id) {
         return super.view(id, MovieTagConvert.INSTANCE::convertToViewResp);
     }
 
     @PostMapping("create")
-    @ApiOperation(value = "新增")
+    @ApiOperation(value = "新增电影标签")
     public CommonResult<MovieTagCreateResp> create(@RequestBody MovieTagCreateReq req) {
         return super.create(req, MovieTagConvert.INSTANCE::convertToDTO, MovieTagConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
-    @ApiOperation(value = "编辑")
+    @ApiOperation(value = "编辑电影标签")
     public CommonResult<Boolean> update(@RequestBody MovieTagUpdateReq req) {
         return super.update(req, MovieTagConvert.INSTANCE::convertToDTO);
     }
 
     @DeleteMapping(value = "delete")
-    @ApiOperation(value = "删除")
+    @ApiOperation(value = "删除电影标签")
     public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
         return super.delete(ids);
     }
@@ -80,9 +81,9 @@ public class MovieTagController extends AbstractCrudController<MovieTagDTO>{
     }
 
     @GetMapping("export")
-    @ApiOperation(value = "导出")
+    @ApiOperation(value = "导出电影标签")
     public void export(MovieTagPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "" + DateTimeUtils.now() + ".xlsx";
+        String filename = "电影标签" + DateTimeUtils.now() + ".xlsx";
         super.export(req, columns, pageParam, filename, MovieTagExp.class,
                     MovieTagConvert.INSTANCE::convertToDTO, MovieTagConvert.INSTANCE::convertToExp, response);
     }

@@ -1,23 +1,21 @@
 package cc.onelooker.kaleido.dto.business.exp;
 
-import lombok.Data;
 import com.alibaba.excel.annotation.ExcelProperty;
-
-import java.lang.Long;
+import lombok.Data;
 
 /**
- * 导出对象
+ * 国家地区导出对象
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  *
  */
 @Data
 public class MovieCountryExp{
 
-    @ExcelProperty("")
-    private Long movieId;
+    @ExcelProperty("主键")
+    private Long id;
 
-    @ExcelProperty("")
-    private Long countryId;
+    @ExcelProperty("名称")
+    private String mc;
 }

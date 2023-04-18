@@ -5,21 +5,25 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.lang.Long;
+import java.lang.String;
 
 /**
- * 响应对象
+ * 电影标签响应对象
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  *
  */
 @Data
-@ApiModel("响应对象")
+@ApiModel("电影标签响应对象")
 public class MovieTagViewResp{
 
-    @ApiModelProperty("")
+    @ApiModelProperty("电影id")
     private Long movieId;
 
-    @ApiModelProperty("")
-    private Long tagId;
+    @ApiModelProperty("主键")
+    private Long id;
+
+    @ApiModelProperty("名称")
+    private String mc;
 }

@@ -15,12 +15,13 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.*;
 
 import java.lang.Long;
+import java.lang.String;
 
 /**
- * ServiceImpl
+ * 电影标签ServiceImpl
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  */
 @Service
 public class MovieTagServiceImpl extends AbstractBaseServiceImpl<MovieTagMapper, MovieTagDO, MovieTagDTO> implements MovieTagService {
@@ -30,6 +31,8 @@ public class MovieTagServiceImpl extends AbstractBaseServiceImpl<MovieTagMapper,
     @Override
     protected Wrapper<MovieTagDO> genQueryWrapper(MovieTagDTO dto) {
         LambdaQueryWrapper<MovieTagDO> query = new LambdaQueryWrapper<>();
+        query.eq(Objects.nonNull(dto.getMovieId()), MovieTagDO::getMovieId, dto.getMovieId());
+        query.eq(StringUtils.isNotEmpty(dto.getMc()), MovieTagDO::getMc, dto.getMc());
         return query;
     }
 

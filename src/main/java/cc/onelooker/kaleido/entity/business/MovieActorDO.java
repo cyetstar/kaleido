@@ -8,33 +8,59 @@ import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.zjjcnt.common.core.entity.IdEntity;
 import java.lang.Long;
+import com.zjjcnt.common.core.annotation.Crypto;
+import java.lang.String;
+import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 /**
- * DO
+ * 演职员DO
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  * @see cc.onelooker.kaleido.dto.business.MovieActorDTO
  */
+@Crypto
 @Data
 @TableName("movie_actor")
 public class MovieActorDO implements IdEntity<Long> {
-    private static final long serialVersionUID = -1336193791223493724L;
+    private static final long serialVersionUID = -8431537076357256147L;
 
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    /**
+     * 主键
+     */
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 
+     * 姓名
      */
-    @TableField(value = "movie_id")
-    private Long movieId;
+    @Crypto
+    @TableField(value = "xm")
+    private String xm;
 
     /**
-     * 
+     * 本名
      */
-    @TableField(value = "actor_id")
-    private Long actorId;
+    @TableField(value = "bm")
+    private String bm;
+
+    /**
+     * 豆瓣编号
+     */
+    @TableField(value = "douban_id")
+    private String doubanId;
+
+    /**
+     * 创建时间
+     */
+    @TableField(value = "cjsj")
+    private String cjsj;
+
+    /**
+     * 修改时间
+     */
+    @TableField(value = "xgsj")
+    private String xgsj;
 
 
     @Override

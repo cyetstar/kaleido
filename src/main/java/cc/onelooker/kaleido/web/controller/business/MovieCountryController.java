@@ -20,16 +20,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import java.lang.Long;
+import java.lang.String;
 
 
 /**
-* 前端控制器
+* 国家地区前端控制器
 *
 * @author cyetstar
-* @date 2023-04-06 13:32:12
+* @date 2023-04-18 23:04:56
 */
 
-@Api(tags = "")
+@Api(tags = "国家地区")
 @RestController
 @RequestMapping("/movieCountry")
 public class MovieCountryController extends AbstractCrudController<MovieCountryDTO>{
@@ -43,31 +44,31 @@ public class MovieCountryController extends AbstractCrudController<MovieCountryD
     }
 
     @GetMapping("page")
-    @ApiOperation(value = "查询")
+    @ApiOperation(value = "查询国家地区")
     public CommonResult<PageResult<MovieCountryPageResp>> page(MovieCountryPageReq req, PageParam pageParam) {
         return super.page(req, pageParam, MovieCountryConvert.INSTANCE::convertToDTO, MovieCountryConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
-    @ApiOperation(value = "查看详情")
+    @ApiOperation(value = "查看国家地区详情")
     public CommonResult<MovieCountryViewResp> view(Long id) {
         return super.view(id, MovieCountryConvert.INSTANCE::convertToViewResp);
     }
 
     @PostMapping("create")
-    @ApiOperation(value = "新增")
+    @ApiOperation(value = "新增国家地区")
     public CommonResult<MovieCountryCreateResp> create(@RequestBody MovieCountryCreateReq req) {
         return super.create(req, MovieCountryConvert.INSTANCE::convertToDTO, MovieCountryConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
-    @ApiOperation(value = "编辑")
+    @ApiOperation(value = "编辑国家地区")
     public CommonResult<Boolean> update(@RequestBody MovieCountryUpdateReq req) {
         return super.update(req, MovieCountryConvert.INSTANCE::convertToDTO);
     }
 
     @DeleteMapping(value = "delete")
-    @ApiOperation(value = "删除")
+    @ApiOperation(value = "删除国家地区")
     public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
         return super.delete(ids);
     }
@@ -80,9 +81,9 @@ public class MovieCountryController extends AbstractCrudController<MovieCountryD
     }
 
     @GetMapping("export")
-    @ApiOperation(value = "导出")
+    @ApiOperation(value = "导出国家地区")
     public void export(MovieCountryPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "" + DateTimeUtils.now() + ".xlsx";
+        String filename = "国家地区" + DateTimeUtils.now() + ".xlsx";
         super.export(req, columns, pageParam, filename, MovieCountryExp.class,
                     MovieCountryConvert.INSTANCE::convertToDTO, MovieCountryConvert.INSTANCE::convertToExp, response);
     }

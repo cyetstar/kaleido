@@ -9,364 +9,124 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.zjjcnt.common.core.entity.IdEntity;
 import java.lang.Long;
 import java.lang.String;
-import java.util.Date;
-import java.lang.Double;
 import java.lang.Integer;
-import java.lang.Boolean;
+import com.zjjcnt.common.core.annotation.StringDateFormat;
+import com.zjjcnt.common.core.annotation.Dict;
+import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 /**
- * DO
+ * 电影DO
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  * @see cc.onelooker.kaleido.dto.business.MovieDTO
  */
 @Data
 @TableName("movie")
 public class MovieDO implements IdEntity<Long> {
-    private static final long serialVersionUID = 924821197024857122L;
+    private static final long serialVersionUID = -3379712579528858558L;
 
     /**
-     * 
+     * 主键
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 
+     * 电影名称
      */
-    @TableField(value = "actor")
-    private String actor;
+    @TableField(value = "dymc")
+    private String dymc;
 
     /**
-     * 
+     * 原片名
      */
-    @TableField(value = "aired")
-    private String aired;
+    @TableField(value = "ypm")
+    private String ypm;
 
     /**
-     * 
+     * 用户评分
      */
-    @TableField(value = "category")
-    private String category;
+    @TableField(value = "yhpf")
+    private Integer yhpf;
 
     /**
-     * 
+     * 电影简介
      */
-    @TableField(value = "certification")
-    private String certification;
+    @TableField(value = "dyjj")
+    private String dyjj;
 
     /**
-     * 
+     * 电影标语
      */
-    @TableField(value = "code")
-    private String code;
+    @TableField(value = "dyby")
+    private String dyby;
 
     /**
-     * 
+     * 影片时长
      */
-    @TableField(value = "country")
-    private String country;
+    @TableField(value = "ypsc")
+    private Integer ypsc;
 
     /**
-     * 
+     * 电影等级
      */
-    @TableField(value = "created_at")
-    private Date createdAt;
+    @TableField(value = "dydj")
+    private String dydj;
 
     /**
-     * 
+     * 上映日期
      */
-    @TableField(value = "dateadded")
-    private String dateadded;
+    @TableField(value = "syrq")
+    private String syrq;
 
     /**
-     * 
+     * 官网地址
      */
-    @TableField(value = "douban_id")
-    private String doubanId;
+    @TableField(value = "gwdz")
+    private String gwdz;
 
     /**
-     * 
+     * 是否观看
      */
-    @TableField(value = "douban_rating")
-    private Double doubanRating;
+    @TableField(value = "gkbz")
+    private String gkbz;
 
     /**
-     * 
+     * 观看时间
      */
-    @TableField(value = "douban_result")
-    private String doubanResult;
+    @TableField(value = "gksj")
+    private String gksj;
 
     /**
-     * 
+     * 是否收藏
      */
-    @TableField(value = "douban_top250")
-    private Integer doubanTop250;
+    @TableField(value = "scbz")
+    private String scbz;
 
     /**
-     * 
+     * 收藏时间
      */
-    @TableField(value = "douban_updated_at")
-    private Date doubanUpdatedAt;
+    @TableField(value = "scsj")
+    private String scsj;
 
     /**
-     * 
+     * plex编号
      */
-    @TableField(value = "douban_votes")
-    private Integer doubanVotes;
+    @TableField(value = "plex_id")
+    private String plexId;
 
     /**
-     * 
+     * 创建时间
      */
-    @TableField(value = "edition")
-    private String edition;
+    @TableField(value = "cjsj")
+    private String cjsj;
 
     /**
-     * 
+     * 修改时间
      */
-    @TableField(value = "epbookmark")
-    private String epbookmark;
-
-    /**
-     * 
-     */
-    @TableField(value = "file_path")
-    private String filePath;
-
-    /**
-     * 
-     */
-    @TableField(value = "has_fanart")
-    private Boolean hasFanart;
-
-    /**
-     * 
-     */
-    @TableField(value = "has_file")
-    private Boolean hasFile;
-
-    /**
-     * 
-     */
-    @TableField(value = "has_nfo")
-    private Boolean hasNfo;
-
-    /**
-     * 
-     */
-    @TableField(value = "has_poster")
-    private Boolean hasPoster;
-
-    /**
-     * 
-     */
-    @TableField(value = "has_subtitle")
-    private Boolean hasSubtitle;
-
-    /**
-     * 
-     */
-    @TableField(value = "imdb")
-    private String imdb;
-
-    /**
-     * 
-     */
-    @TableField(value = "imdb_rating")
-    private Double imdbRating;
-
-    /**
-     * 
-     */
-    @TableField(value = "imdb_votes")
-    private Integer imdbVotes;
-
-    /**
-     * 
-     */
-    @TableField(value = "kodiid")
-    private String kodiid;
-
-    /**
-     * 
-     */
-    @TableField(value = "lastplayed")
-    private String lastplayed;
-
-    /**
-     * 
-     */
-    @TableField(value = "mpaa")
-    private String mpaa;
-
-    /**
-     * 
-     */
-    @TableField(value = "nfo_path")
-    private String nfoPath;
-
-    /**
-     * 
-     */
-    @TableField(value = "number")
-    private String number;
-
-    /**
-     * 
-     */
-    @TableField(value = "number_rating")
-    private Double numberRating;
-
-    /**
-     * 
-     */
-    @TableField(value = "number_votes")
-    private Integer numberVotes;
-
-    /**
-     * 
-     */
-    @TableField(value = "original_filename")
-    private String originalFilename;
-
-    /**
-     * 
-     */
-    @TableField(value = "originaltitle")
-    private String originaltitle;
-
-    /**
-     * 
-     */
-    @TableField(value = "outline")
-    private String outline;
-
-    /**
-     * 
-     */
-    @TableField(value = "playcount")
-    private Integer playcount;
-
-    /**
-     * 
-     */
-    @TableField(value = "plot")
-    private String plot;
-
-    /**
-     * 
-     */
-    @TableField(value = "premiered")
-    private String premiered;
-
-    /**
-     * 
-     */
-    @TableField(value = "runtime")
-    private Integer runtime;
-
-    /**
-     * 
-     */
-    @TableField(value = "showlink")
-    private String showlink;
-
-    /**
-     * 
-     */
-    @TableField(value = "sorttitle")
-    private String sorttitle;
-
-    /**
-     * 
-     */
-    @TableField(value = "source")
-    private String source;
-
-    /**
-     * 
-     */
-    @TableField(value = "status")
-    private String status;
-
-    /**
-     * 
-     */
-    @TableField(value = "tagline")
-    private String tagline;
-
-    /**
-     * 
-     */
-    @TableField(value = "title")
-    private String title;
-
-    /**
-     * 
-     */
-    @TableField(value = "tmdb_collection_id")
-    private String tmdbCollectionId;
-
-    /**
-     * 
-     */
-    @TableField(value = "tmdbid")
-    private String tmdbid;
-
-    /**
-     * 
-     */
-    @TableField(value = "top250")
-    private Integer top250;
-
-    /**
-     * 
-     */
-    @TableField(value = "trailer")
-    private String trailer;
-
-    /**
-     * 
-     */
-    @TableField(value = "updated_at")
-    private Date updatedAt;
-
-    /**
-     * 
-     */
-    @TableField(value = "user_note")
-    private String userNote;
-
-    /**
-     * 
-     */
-    @TableField(value = "userrating")
-    private Double userrating;
-
-    /**
-     * 
-     */
-    @TableField(value = "validated_path")
-    private Boolean validatedPath;
-
-    /**
-     * 
-     */
-    @TableField(value = "watched")
-    private Boolean watched;
-
-    /**
-     * 
-     */
-    @TableField(value = "website")
-    private String website;
-
-    /**
-     * 
-     */
-    @TableField(value = "year")
-    private String year;
+    @TableField(value = "xgsj")
+    private String xgsj;
 
 
     @Override

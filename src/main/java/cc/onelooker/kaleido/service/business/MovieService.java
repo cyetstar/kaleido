@@ -4,17 +4,17 @@ import com.zjjcnt.common.core.service.IBaseService;
 
 import java.lang.Long;
 import java.lang.String;
-import java.util.Date;
-import java.lang.Double;
 import java.lang.Integer;
-import java.lang.Boolean;
+import com.zjjcnt.common.core.annotation.StringDateFormat;
+import com.zjjcnt.common.core.annotation.Dict;
+import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 import cc.onelooker.kaleido.dto.business.MovieDTO;
 
 /**
- * Service
+ * 电影Service
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  */
 public interface MovieService extends IBaseService<MovieDTO> {
 

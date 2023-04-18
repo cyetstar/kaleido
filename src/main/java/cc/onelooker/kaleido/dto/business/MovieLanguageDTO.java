@@ -1,33 +1,31 @@
 package cc.onelooker.kaleido.dto.business;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
 
 import java.lang.Long;
+import java.lang.String;
 
 /**
- * DTO
+ * 语言DTO
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  * @see cc.onelooker.kaleido.entity.business.MovieLanguageDO
  */
 @Data
 public class MovieLanguageDTO implements BaseDTO<Long> {
-    private static final long serialVersionUID = -7633442532158299781L;
+    private static final long serialVersionUID = -2785680621538256985L;
 
+    /**
+     * 主键
+     */
     private Long id;
-    /**
-     * 
-     */
-    private Long movieId;
 
     /**
-     * 
+     * 名称
      */
-    private Long languageId;
+    private String mc;
 
 
     @Override

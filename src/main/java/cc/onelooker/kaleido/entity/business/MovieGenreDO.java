@@ -8,32 +8,31 @@ import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.zjjcnt.common.core.entity.IdEntity;
 import java.lang.Long;
+import java.lang.String;
 
 /**
- * DO
+ * 影片类型DO
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  * @see cc.onelooker.kaleido.dto.business.MovieGenreDTO
  */
 @Data
 @TableName("movie_genre")
 public class MovieGenreDO implements IdEntity<Long> {
-    private static final long serialVersionUID = 8308266468342362326L;
+    private static final long serialVersionUID = -2877804221441394691L;
 
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    /**
+     * 主键
+     */
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-    /**
-     * 
-     */
-    @TableField(value = "movie_id")
-    private Long movieId;
 
     /**
-     * 
+     * 名称
      */
-    @TableField(value = "genre_id")
-    private Long genreId;
+    @TableField(value = "mc")
+    private String mc;
 
 
     @Override

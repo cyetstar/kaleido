@@ -1,23 +1,33 @@
 package cc.onelooker.kaleido.dto.business.exp;
 
-import lombok.Data;
 import com.alibaba.excel.annotation.ExcelProperty;
-
-import java.lang.Long;
+import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
+import lombok.Data;
 
 /**
- * 导出对象
+ * 集合导出对象
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  *
  */
 @Data
 public class MovieSetsExp{
 
-    @ExcelProperty("")
-    private Long movieId;
+    @ExcelProperty("主键")
+    private Long id;
+
+    @ExcelProperty("名称")
+    private String mc;
 
     @ExcelProperty("")
-    private Long setsId;
+    private String jhsm;
+
+    @StringDateTimeFormat
+    @ExcelProperty("创建时间")
+    private String cjsj;
+
+    @StringDateTimeFormat
+    @ExcelProperty("修改时间")
+    private String xgsj;
 }

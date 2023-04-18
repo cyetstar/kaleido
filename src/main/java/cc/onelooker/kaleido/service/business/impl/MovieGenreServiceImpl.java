@@ -15,12 +15,13 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.*;
 
 import java.lang.Long;
+import java.lang.String;
 
 /**
- * ServiceImpl
+ * 影片类型ServiceImpl
  *
  * @author cyetstar
- * @date 2023-04-06 13:32:12
+ * @date 2023-04-18 23:04:56
  */
 @Service
 public class MovieGenreServiceImpl extends AbstractBaseServiceImpl<MovieGenreMapper, MovieGenreDO, MovieGenreDTO> implements MovieGenreService {
@@ -30,6 +31,7 @@ public class MovieGenreServiceImpl extends AbstractBaseServiceImpl<MovieGenreMap
     @Override
     protected Wrapper<MovieGenreDO> genQueryWrapper(MovieGenreDTO dto) {
         LambdaQueryWrapper<MovieGenreDO> query = new LambdaQueryWrapper<>();
+        query.eq(StringUtils.isNotEmpty(dto.getMc()), MovieGenreDO::getMc, dto.getMc());
         return query;
     }
 

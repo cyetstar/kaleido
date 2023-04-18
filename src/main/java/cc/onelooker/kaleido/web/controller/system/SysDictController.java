@@ -1,9 +1,8 @@
 package cc.onelooker.kaleido.web.controller.system;
 
-import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
-import com.zjjcnt.common.core.domain.PageParam;
-import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.annotation.CacheControl;
+import com.zjjcnt.common.core.dict.Dictionary;
+import com.zjjcnt.common.core.domain.*;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import com.zjjcnt.common.util.DateTimeUtils;
@@ -23,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 字典表前端控制器
@@ -74,10 +75,14 @@ public class SysDictController extends AbstractCrudController<SysDictDTO> {
         return CommonResult.success(sysDictService.updateById(req));
     }
 
-    @ApiOperation(value = "查询某一类型字典")
-    @GetMapping(value = "/dictType/{dictType}")
-    public CommonResult<List<SysDictDTO>> listByDictType(@PathVariable String dictType) {
-        return CommonResult.success(sysDictService.listBySysDictType(dictType));
+    @CacheControl(maxAge = 3600 * 24)
+    @ApiOperation(value = "根据类型获取字典列表")
+    @GetMapping(value = "/listByDictType")
+    public CommonResult<List<TextValue>> listByDictType(@RequestParam String dictType) {
+        Map<String, String> codeMap = Dictionary.get(dictType);
+        List<TextValue> list = codeMap.keySet().stream()
+                .map(s -> new TextValue(codeMap.get(s), s)).collect(Collectors.toList());
+        return CommonResult.success(list);
     }
 
     @DeleteMapping(value = "delete")
