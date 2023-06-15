@@ -20,5 +20,7 @@ public class SysMenuInitReq {
 
     private String permission;
 
+    private String app;
+
     private List<SysMenuInitReq> children;
 }

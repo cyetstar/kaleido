@@ -1,11 +1,15 @@
 package cc.onelooker.kaleido.dto.business;
 
+import cc.onelooker.kaleido.dto.ISystem;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
 
 import java.lang.Long;
 import java.lang.String;
 import java.lang.Integer;
+import java.util.List;
+
 import com.zjjcnt.common.core.annotation.StringDateFormat;
 import com.zjjcnt.common.core.annotation.Dict;
 import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
@@ -18,7 +22,7 @@ import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
  * @see cc.onelooker.kaleido.entity.business.MovieDO
  */
 @Data
-public class MovieDTO implements BaseDTO<Long> {
+public class MovieDTO implements ISystem<Long> {
     private static final long serialVersionUID = -4454324070494604321L;
 
     /**
@@ -67,6 +71,11 @@ public class MovieDTO implements BaseDTO<Long> {
     private String syrq;
 
     /**
+     * 上映年份
+     */
+    private String synf;
+
+    /**
      * 官网地址
      */
     private String gwdz;
@@ -106,6 +115,29 @@ public class MovieDTO implements BaseDTO<Long> {
      */
     private String xgsj;
 
+    private List<MovieCountryDTO> movieCountryDTOList;
+
+    private List<MovieLanguageDTO> movieLanguageDTOList;
+
+    private List<MovieGenreDTO> movieGenreDTOList;
+
+    private List<MovieSetDTO> movieSetDTOList;
+
+    private List<MovieRatingDTO> movieRatingDTOList;
+
+    private List<MovieUniqueidDTO> movieUniqueidDTOList;
+
+    private List<MovieAkaDTO> movieAkaDTOList;
+
+    private List<MovieTagDTO> movieTagDTOList;
+
+    private List<MovieActorDTO> actorList;
+
+    private List<MovieActorDTO> writerList;
+
+    private List<MovieActorDTO> directorList;
+
+    private MovieFileDTO movieFileDTO;
 
     @Override
     public Long getId() {

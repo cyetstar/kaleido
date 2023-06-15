@@ -7,9 +7,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.zjjcnt.common.core.entity.IdEntity;
+
 import java.lang.Long;
+
 import com.zjjcnt.common.core.annotation.Crypto;
+
 import java.lang.String;
+
 import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 /**
@@ -28,7 +32,7 @@ public class MovieActorDO implements IdEntity<Long> {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -61,7 +65,6 @@ public class MovieActorDO implements IdEntity<Long> {
      */
     @TableField(value = "xgsj")
     private String xgsj;
-
 
     @Override
     public Long getId() {

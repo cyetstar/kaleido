@@ -1,5 +1,9 @@
 package cc.onelooker.kaleido.service.business.impl;
 
+import cc.onelooker.kaleido.dto.business.MovieCountryDTO;
+import cc.onelooker.kaleido.entity.business.MovieCountryDO;
+import cc.onelooker.kaleido.service.DictionaryBaseServiceImpl;
+import cc.onelooker.kaleido.service.IDictionaryService;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -12,6 +16,7 @@ import cc.onelooker.kaleido.convert.business.MovieGenreConvert;
 import cc.onelooker.kaleido.mapper.business.MovieGenreMapper;
 
 import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 
 import java.lang.Long;
@@ -24,7 +29,7 @@ import java.lang.String;
  * @date 2023-04-18 23:04:56
  */
 @Service
-public class MovieGenreServiceImpl extends AbstractBaseServiceImpl<MovieGenreMapper, MovieGenreDO, MovieGenreDTO> implements MovieGenreService {
+public class MovieGenreServiceImpl extends DictionaryBaseServiceImpl<MovieGenreMapper, MovieGenreDO, MovieGenreDTO> implements MovieGenreService, IDictionaryService {
 
     MovieGenreConvert convert = MovieGenreConvert.INSTANCE;
 
@@ -43,5 +48,18 @@ public class MovieGenreServiceImpl extends AbstractBaseServiceImpl<MovieGenreMap
     @Override
     public MovieGenreDO convertToDO(MovieGenreDTO movieGenreDTO) {
         return convert.convertToDO(movieGenreDTO);
+    }
+
+    @Override
+    public MovieGenreDTO findByMc(String mc) {
+        MovieGenreDTO param = new MovieGenreDTO();
+        param.setMc(mc);
+        return find(param);
+    }
+
+    @Override
+    public List<MovieGenreDTO> listByMovieId(Long movieId) {
+        List<MovieGenreDO> movieGenreDOList = baseMapper.listByMovieId(movieId);
+        return convertToDTO(movieGenreDOList);
     }
 }

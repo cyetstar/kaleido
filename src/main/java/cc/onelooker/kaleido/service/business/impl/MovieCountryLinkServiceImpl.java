@@ -12,6 +12,8 @@ import cc.onelooker.kaleido.convert.business.MovieCountryLinkConvert;
 import cc.onelooker.kaleido.mapper.business.MovieCountryLinkMapper;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.*;
 
 import java.lang.Long;
@@ -43,5 +45,22 @@ public class MovieCountryLinkServiceImpl extends AbstractBaseServiceImpl<MovieCo
     @Override
     public MovieCountryLinkDO convertToDO(MovieCountryLinkDTO movieCountryLinkDTO) {
         return convert.convertToDO(movieCountryLinkDTO);
+    }
+
+    @Override
+    @Transactional
+    public MovieCountryLinkDTO insert(Long movieId, Long movieCountryId) {
+        MovieCountryLinkDTO dto = new MovieCountryLinkDTO();
+        dto.setMovieId(movieId);
+        dto.setMovieCountryId(movieCountryId);
+        return insert(dto);
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteByMovieId(Long movieId) {
+        MovieCountryLinkDTO param = new MovieCountryLinkDTO();
+        param.setMovieId(movieId);
+        return delete(param);
     }
 }

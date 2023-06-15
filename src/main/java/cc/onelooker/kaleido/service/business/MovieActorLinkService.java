@@ -1,9 +1,11 @@
 package cc.onelooker.kaleido.service.business;
 
+import cc.onelooker.kaleido.enums.ActorRole;
 import com.zjjcnt.common.core.service.IBaseService;
 
 import java.lang.Long;
 import java.lang.String;
+
 import cc.onelooker.kaleido.dto.business.MovieActorLinkDTO;
 
 /**
@@ -14,4 +16,7 @@ import cc.onelooker.kaleido.dto.business.MovieActorLinkDTO;
  */
 public interface MovieActorLinkService extends IBaseService<MovieActorLinkDTO> {
 
+    MovieActorLinkDTO insert(Long movieId, Long movieActorId, ActorRole actorRole);
+
+    boolean deleteByMovieId(Long movieId);
 }

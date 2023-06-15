@@ -90,8 +90,8 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
 
     @DeleteMapping(value = "delete")
     @ApiOperation(value = "删除菜单表")
-    public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
-        return super.delete(ids);
+    public CommonResult<Boolean> delete(@RequestBody Long[] id) {
+        return super.delete(id);
     }
 
     @GetMapping(value = "/column")
@@ -185,7 +185,6 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
         List<SysMenuDTO> dtoList = Lists.newArrayList();
         for (SysMenuInitReq req : reqList) {
             SysMenuDTO dto = SysMenuConvert.INSTANCE.convertToDTO(req);
-            dto.setApp(StringUtils.isBlank(app) ? req.getName() : app);
             if (req.getChildren() != null) {
                 dto.setChildren(convertToDTO(req.getChildren(), dto.getApp()));
             }

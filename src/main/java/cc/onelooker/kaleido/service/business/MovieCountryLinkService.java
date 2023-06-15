@@ -13,4 +13,7 @@ import cc.onelooker.kaleido.dto.business.MovieCountryLinkDTO;
  */
 public interface MovieCountryLinkService extends IBaseService<MovieCountryLinkDTO> {
 
+    MovieCountryLinkDTO insert(Long movieId, Long movieCountryId);
+
+    boolean deleteByMovieId(Long movieId);
 }

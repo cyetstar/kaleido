@@ -13,4 +13,7 @@ import cc.onelooker.kaleido.dto.business.MovieSetLinkDTO;
  */
 public interface MovieSetLinkService extends IBaseService<MovieSetLinkDTO> {
 
+    MovieSetLinkDTO insert(Long movieId, Long movieSetId);
+
+    boolean deleteByMovieId(Long movieId);
 }

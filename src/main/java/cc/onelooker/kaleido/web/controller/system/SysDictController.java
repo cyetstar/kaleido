@@ -1,5 +1,8 @@
 package cc.onelooker.kaleido.web.controller.system;
 
+import cc.onelooker.kaleido.convert.ObjectConvert;
+import cc.onelooker.kaleido.dto.system.req.SysDictCreateBatchReq;
+import cn.hutool.core.util.BooleanUtil;
 import com.zjjcnt.common.core.annotation.CacheControl;
 import com.zjjcnt.common.core.dict.Dictionary;
 import com.zjjcnt.common.core.domain.*;
@@ -17,6 +20,8 @@ import cc.onelooker.kaleido.dto.system.resp.SysDictViewResp;
 import cc.onelooker.kaleido.service.system.SysDictService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,16 +62,30 @@ public class SysDictController extends AbstractCrudController<SysDictDTO> {
         return super.view(id, SysDictConvert.INSTANCE::convertToViewResp);
     }
 
-//    @PostMapping("create")
-//    @ApiOperation(value = "新增字典表")
-//    public CommonResult<Boolean> create(@RequestBody SysDictCreateReq req) {
-//        return CommonResult.success(sysDictService.create(req));
-//    }
-
     @PostMapping("create")
     @ApiOperation(value = "新增字典表")
-    public CommonResult<Boolean> create(@RequestBody List<SysDictCreateReq> reqs) {
-        return CommonResult.success(sysDictService.createBatch(reqs));
+    public CommonResult<Boolean> create(@RequestBody SysDictCreateReq req) {
+        return super.create(req, SysDictConvert.INSTANCE::convertToDTO, ObjectConvert.INSTANCE::convertToBoolean);
+    }
+
+    @PostMapping("createBatch")
+    @ApiOperation(value = "批量新增字典表")
+    public CommonResult<Boolean> createBatch(@RequestBody SysDictCreateBatchReq req) {
+        String content = req.getContent();
+        String[] lineArr = StringUtils.split(content, '\n');
+        for (int i = 0; i < lineArr.length; i++) {
+            String line = lineArr[i];
+            String[] itemArr = StringUtils.split(line);
+            if (ArrayUtils.getLength(itemArr) == 2) {
+                SysDictDTO sysDictDTO = new SysDictDTO();
+                sysDictDTO.setDictType(req.getDictType());
+                sysDictDTO.setValue(itemArr[0]);
+                sysDictDTO.setLabel(itemArr[1]);
+                sysDictDTO.setSort(i + 1);
+                sysDictService.insert(sysDictDTO);
+            }
+        }
+        return CommonResult.success(true);
     }
 
     @PostMapping("update")
@@ -80,15 +99,14 @@ public class SysDictController extends AbstractCrudController<SysDictDTO> {
     @GetMapping(value = "/listByDictType")
     public CommonResult<List<TextValue>> listByDictType(@RequestParam String dictType) {
         Map<String, String> codeMap = Dictionary.get(dictType);
-        List<TextValue> list = codeMap.keySet().stream()
-                .map(s -> new TextValue(codeMap.get(s), s)).collect(Collectors.toList());
+        List<TextValue> list = codeMap.keySet().stream().map(s -> new TextValue(codeMap.get(s), s)).collect(Collectors.toList());
         return CommonResult.success(list);
     }
 
     @DeleteMapping(value = "delete")
     @ApiOperation(value = "删除字典表")
-    public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
-        return super.delete(ids);
+    public CommonResult<Boolean> delete(@RequestBody Long[] id) {
+        return super.delete(id);
     }
 
     @GetMapping(value = "/column")
@@ -102,8 +120,7 @@ public class SysDictController extends AbstractCrudController<SysDictDTO> {
     @ApiOperation(value = "导出数据")
     public void export(SysDictPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
         String filename = "字典表" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, SysDictExp.class,
-                SysDictConvert.INSTANCE::convertToDTO, SysDictConvert.INSTANCE::convertToExp, response);
+        super.export(req, columns, pageParam, filename, SysDictExp.class, SysDictConvert.INSTANCE::convertToDTO, SysDictConvert.INSTANCE::convertToExp, response);
     }
 
     @ApiOperation(value = "查询所有")

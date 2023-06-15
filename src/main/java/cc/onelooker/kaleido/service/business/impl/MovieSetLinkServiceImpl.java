@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.service.business.impl;
 
+import cc.onelooker.kaleido.dto.business.MovieTagDTO;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -12,6 +13,8 @@ import cc.onelooker.kaleido.convert.business.MovieSetLinkConvert;
 import cc.onelooker.kaleido.mapper.business.MovieSetLinkMapper;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.*;
 
 import java.lang.Long;
@@ -31,7 +34,7 @@ public class MovieSetLinkServiceImpl extends AbstractBaseServiceImpl<MovieSetLin
     protected Wrapper<MovieSetLinkDO> genQueryWrapper(MovieSetLinkDTO dto) {
         LambdaQueryWrapper<MovieSetLinkDO> query = new LambdaQueryWrapper<>();
         query.eq(Objects.nonNull(dto.getMovieId()), MovieSetLinkDO::getMovieId, dto.getMovieId());
-        query.eq(Objects.nonNull(dto.getSetsId()), MovieSetLinkDO::getSetsId, dto.getSetsId());
+        query.eq(Objects.nonNull(dto.getSetId()), MovieSetLinkDO::getSetId, dto.getSetId());
         return query;
     }
 
@@ -43,5 +46,22 @@ public class MovieSetLinkServiceImpl extends AbstractBaseServiceImpl<MovieSetLin
     @Override
     public MovieSetLinkDO convertToDO(MovieSetLinkDTO movieSetLinkDTO) {
         return convert.convertToDO(movieSetLinkDTO);
+    }
+
+    @Override
+    @Transactional
+    public MovieSetLinkDTO insert(Long movieId, Long movieSetId) {
+        MovieSetLinkDTO dto = new MovieSetLinkDTO();
+        dto.setMovieId(movieId);
+        dto.setSetId(movieSetId);
+        return insert(dto);
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteByMovieId(Long movieId) {
+        MovieSetLinkDTO param = new MovieSetLinkDTO();
+        param.setMovieId(movieId);
+        return delete(param);
     }
 }

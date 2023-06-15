@@ -24,7 +24,7 @@ public class MovieSetLinkDO implements IdEntity<Long> {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -36,8 +36,8 @@ public class MovieSetLinkDO implements IdEntity<Long> {
     /**
      * 集合id
      */
-    @TableField(value = "sets_id")
-    private Long setsId;
+    @TableField(value = "set_id")
+    private Long setId;
 
 
     @Override

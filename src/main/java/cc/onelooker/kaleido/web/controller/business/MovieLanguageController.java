@@ -69,8 +69,8 @@ public class MovieLanguageController extends AbstractCrudController<MovieLanguag
 
     @DeleteMapping(value = "delete")
     @ApiOperation(value = "删除语言")
-    public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
-        return super.delete(ids);
+    public CommonResult<Boolean> delete(@RequestBody Long[] id) {
+        return super.delete(id);
     }
 
     @GetMapping(value = "/column")

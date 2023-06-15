@@ -1,5 +1,7 @@
 package cc.onelooker.kaleido.service.business.impl;
 
+import cc.onelooker.kaleido.dto.business.MovieAkaDTO;
+import cc.onelooker.kaleido.service.ExBaseServiceImpl;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -12,10 +14,12 @@ import cc.onelooker.kaleido.convert.business.MovieSetConvert;
 import cc.onelooker.kaleido.mapper.business.MovieSetMapper;
 
 import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 
 import java.lang.Long;
 import java.lang.String;
+
 import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 /**
@@ -25,7 +29,7 @@ import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
  * @date 2023-04-18 23:04:56
  */
 @Service
-public class MovieSetServiceImpl extends AbstractBaseServiceImpl<MovieSetMapper, MovieSetDO, MovieSetDTO> implements MovieSetService {
+public class MovieSetServiceImpl extends ExBaseServiceImpl<MovieSetMapper, MovieSetDO, MovieSetDTO> implements MovieSetService {
 
     MovieSetConvert convert = MovieSetConvert.INSTANCE;
 
@@ -47,5 +51,18 @@ public class MovieSetServiceImpl extends AbstractBaseServiceImpl<MovieSetMapper,
     @Override
     public MovieSetDO convertToDO(MovieSetDTO movieSetDTO) {
         return convert.convertToDO(movieSetDTO);
+    }
+
+    @Override
+    public MovieSetDTO findByMc(String mc) {
+        MovieSetDTO param = new MovieSetDTO();
+        param.setMc(mc);
+        return find(param);
+    }
+
+    @Override
+    public List<MovieSetDTO> listByMovieId(Long movieId) {
+        List<MovieSetDO> movieSetDOList = baseMapper.listByMovieId(movieId);
+        return convertToDTO(movieSetDOList);
     }
 }

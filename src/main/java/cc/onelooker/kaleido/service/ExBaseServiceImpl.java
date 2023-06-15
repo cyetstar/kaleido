@@ -106,19 +106,13 @@ public abstract class ExBaseServiceImpl<M extends BaseMapper<T>, T extends IdEnt
     }
 
     protected void beforeInsert(D dto) {
-/*        if (!checkUnique(dto)) {
+        if (!checkUnique(dto)) {
             throw new ServiceException(20001, "存在重复(" + getBizTable() + ")");
-        }*/
+        }
         if (dto instanceof ISystem) {
             ISystem systemDTO = (ISystem) dto;
-            if (ObjectUtils.isNotEmpty(CurrentUserUtils.getUser())) {
-                systemDTO.setCjrzh(CurrentUserUtils.getUsername());
-                systemDTO.setCjr(CurrentUserUtils.getName());
-                systemDTO.setCjsj(DateTimeUtils.now());
-                systemDTO.setXgrzh(CurrentUserUtils.getUsername());
-                systemDTO.setXgr(CurrentUserUtils.getName());
-                systemDTO.setXgsj(DateTimeUtils.now());
-            }
+            systemDTO.setCjsj(DateTimeUtils.now());
+            systemDTO.setXgsj(DateTimeUtils.now());
         }
 
     }
@@ -129,11 +123,7 @@ public abstract class ExBaseServiceImpl<M extends BaseMapper<T>, T extends IdEnt
         }
         if (dto instanceof ISystem) {
             ISystem systemDTO = (ISystem) dto;
-            if (ObjectUtils.isNotEmpty(CurrentUserUtils.getUser())) {
-                systemDTO.setXgrzh(CurrentUserUtils.getUsername());
-                systemDTO.setXgr(CurrentUserUtils.getName());
-                systemDTO.setXgsj(DateTimeUtils.now());
-            }
+            systemDTO.setXgsj(DateTimeUtils.now());
         }
     }
 
@@ -189,6 +179,5 @@ public abstract class ExBaseServiceImpl<M extends BaseMapper<T>, T extends IdEnt
             fileInfoService.delete(fileInfoDTO);
         }
     }
-
 
 }

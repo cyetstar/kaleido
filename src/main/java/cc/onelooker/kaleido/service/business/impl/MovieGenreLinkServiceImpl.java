@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.service.business.impl;
 
+import cc.onelooker.kaleido.dto.business.MovieCountryLinkDTO;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -12,6 +13,8 @@ import cc.onelooker.kaleido.convert.business.MovieGenreLinkConvert;
 import cc.onelooker.kaleido.mapper.business.MovieGenreLinkMapper;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.*;
 
 import java.lang.Long;
@@ -43,5 +46,22 @@ public class MovieGenreLinkServiceImpl extends AbstractBaseServiceImpl<MovieGenr
     @Override
     public MovieGenreLinkDO convertToDO(MovieGenreLinkDTO movieGenreLinkDTO) {
         return convert.convertToDO(movieGenreLinkDTO);
+    }
+
+    @Override
+    @Transactional
+    public MovieGenreLinkDTO insert(Long movieId, Long movieGenreId) {
+        MovieGenreLinkDTO dto = new MovieGenreLinkDTO();
+        dto.setMovieId(movieId);
+        dto.setMovieGenreId(movieGenreId);
+       return insert(dto);
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteByMovieId(Long movieId) {
+        MovieGenreLinkDTO param = new MovieGenreLinkDTO();
+        param.setMovieId(movieId);
+        return delete(param);
     }
 }

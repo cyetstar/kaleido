@@ -69,8 +69,8 @@ public class MovieCountryController extends AbstractCrudController<MovieCountryD
 
     @DeleteMapping(value = "delete")
     @ApiOperation(value = "删除国家地区")
-    public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
-        return super.delete(ids);
+    public CommonResult<Boolean> delete(@RequestBody Long[] id) {
+        return super.delete(id);
     }
 
     @GetMapping(value = "/column")

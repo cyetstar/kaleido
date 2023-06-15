@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.service.system.impl;
 
+import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
@@ -10,7 +11,9 @@ import cc.onelooker.kaleido.mapper.system.SysConfigMapper;
 import cc.onelooker.kaleido.service.system.SysConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -30,12 +33,6 @@ public class SysConfigServiceImpl extends AbstractBaseServiceImpl<SysConfigMappe
         query.eq(Objects.nonNull(sysConfigDTO.getId()), SysConfigDO::getId, sysConfigDTO.getId());
         query.eq(StringUtils.isNotEmpty(sysConfigDTO.getConfigName()), SysConfigDO::getConfigName, sysConfigDTO.getConfigName());
         query.eq(StringUtils.isNotEmpty(sysConfigDTO.getConfigKey()), SysConfigDO::getConfigKey, sysConfigDTO.getConfigKey());
-        query.eq(StringUtils.isNotEmpty(sysConfigDTO.getConfigValue()), SysConfigDO::getConfigValue, sysConfigDTO.getConfigValue());
-        query.eq(Objects.nonNull(sysConfigDTO.getIsDeleted()), SysConfigDO::getIsDeleted, sysConfigDTO.getIsDeleted());
-        query.eq(Objects.nonNull(sysConfigDTO.getCreateTime()), SysConfigDO::getCreateTime, sysConfigDTO.getCreateTime());
-        query.eq(Objects.nonNull(sysConfigDTO.getUpdateTime()), SysConfigDO::getUpdateTime, sysConfigDTO.getUpdateTime());
-        query.eq(StringUtils.isNotEmpty(sysConfigDTO.getCreatedBy()), SysConfigDO::getCreatedBy, sysConfigDTO.getCreatedBy());
-        query.eq(StringUtils.isNotEmpty(sysConfigDTO.getUpdatedBy()), SysConfigDO::getUpdatedBy, sysConfigDTO.getUpdatedBy());
         return query;
     }
 
@@ -47,5 +44,28 @@ public class SysConfigServiceImpl extends AbstractBaseServiceImpl<SysConfigMappe
     @Override
     public SysConfigDO convertToDO(SysConfigDTO sysConfigDTO) {
         return convert.convertToDO(sysConfigDTO);
+    }
+
+    @Override
+    @Transactional
+    public void save(List<SysConfigDTO> sysConfigDTOList) {
+        for (SysConfigDTO sysConfigDTO : sysConfigDTOList) {
+            SysConfigDTO exist = findByConfigKey(sysConfigDTO.getConfigKey());
+            if (exist == null) {
+                sysConfigDTO.setIsDeleted(false);
+                insert(sysConfigDTO);
+            } else {
+                exist.setConfigValue(sysConfigDTO.getConfigValue());
+                update(exist);
+            }
+            ConfigUtils.setSysConfig(sysConfigDTO.getConfigKey(), sysConfigDTO.getConfigValue());
+        }
+    }
+
+    @Override
+    public SysConfigDTO findByConfigKey(String configKey) {
+        SysConfigDTO param = new SysConfigDTO();
+        param.setConfigKey(configKey);
+        return find(param);
     }
 }

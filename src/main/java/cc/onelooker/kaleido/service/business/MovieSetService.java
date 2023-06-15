@@ -4,6 +4,8 @@ import com.zjjcnt.common.core.service.IBaseService;
 
 import java.lang.Long;
 import java.lang.String;
+import java.util.List;
+
 import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 import cc.onelooker.kaleido.dto.business.MovieSetDTO;
 
@@ -15,4 +17,7 @@ import cc.onelooker.kaleido.dto.business.MovieSetDTO;
  */
 public interface MovieSetService extends IBaseService<MovieSetDTO> {
 
+    MovieSetDTO findByMc(String mc);
+
+    List<MovieSetDTO> listByMovieId(Long movieId);
 }

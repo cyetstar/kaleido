@@ -106,7 +106,7 @@ public class SysUserController extends AbstractCrudController<SysUserDTO> {
     }
 
     @DeleteMapping(value = "delete")
-    @ApiOperation(value = "删除用户表", hidden = true)
+    @ApiOperation(value = "删除用户表")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
     }

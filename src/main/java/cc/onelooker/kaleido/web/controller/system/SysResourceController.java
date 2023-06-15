@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.web.controller.system;
 
+import com.google.common.collect.Maps;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
@@ -29,9 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -82,14 +81,9 @@ public class SysResourceController extends AbstractCrudController<SysResourceDTO
     }
 
     @DeleteMapping(value = "delete")
-    @ApiOperation(value = "删除资源表", hidden = true)
-    public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
-        SysRoleResourceDTO query = new SysRoleResourceDTO();
-        query.setResourceIds(Arrays.asList(ids));
-        if (sysRoleResourceService.count(query) > 0) {
-            return CommonResult.error(500,"删除的资源已被绑定，禁止删除!");
-        }
-        return super.delete(ids);
+    @ApiOperation(value = "删除资源表")
+    public CommonResult<Boolean> delete(@RequestBody Long[] id) {
+        return super.delete(id);
     }
 
     @GetMapping(value = "/column")
@@ -103,8 +97,7 @@ public class SysResourceController extends AbstractCrudController<SysResourceDTO
     @ApiOperation(value = "导出数据")
     public void export(SysResourcePageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
         String filename = "资源表" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, SysResourceExp.class,
-                SysResourceConvert.INSTANCE::convertToDTO, SysResourceConvert.INSTANCE::convertToExp, response);
+        super.export(req, columns, pageParam, filename, SysResourceExp.class, SysResourceConvert.INSTANCE::convertToDTO, SysResourceConvert.INSTANCE::convertToExp, response);
     }
 
     @PostMapping("init")
@@ -129,19 +122,17 @@ public class SysResourceController extends AbstractCrudController<SysResourceDTO
     @ApiOperation(value = "按类型分组查询资源")
     public CommonResult<Map<String, List<SysResourceListTypeResp>>> listType() {
         List<SysResourceDTO> sysResourceDTOList = sysResourceService.list(null);
-        Map<String, List<SysResourceListTypeResp>> result = sysResourceDTOList.stream()
-                .map(s -> SysResourceConvert.INSTANCE.convertToListTypeResp(s))
-                .collect(Collectors.groupingBy(SysResourceListTypeResp::getType));
-        return CommonResult.success(result);
+        Map<String, List<SysResourceListTypeResp>> result = sysResourceDTOList.stream().map(s -> SysResourceConvert.INSTANCE.convertToListTypeResp(s)).sorted(Comparator.comparing(SysResourceListTypeResp::getType)).collect(Collectors.groupingBy(SysResourceListTypeResp::getType));
+        TreeMap<String, List<SysResourceListTypeResp>> treeResult = Maps.newTreeMap();
+        treeResult.putAll(result);
+        return CommonResult.success(treeResult);
     }
 
     @GetMapping("listTypeByRoleId")
     @ApiOperation(value = "按类型分组查询资源")
     public CommonResult<Map<String, List<SysResourceListTypeResp>>> listTypeByRoleId(Long roleId) {
         List<SysResourceDTO> sysResourceDTOList = sysResourceService.listByRoleId(roleId);
-        Map<String, List<SysResourceListTypeResp>> result = sysResourceDTOList.stream()
-                .map(s -> SysResourceConvert.INSTANCE.convertToListTypeResp(s))
-                .collect(Collectors.groupingBy(SysResourceListTypeResp::getType));
+        Map<String, List<SysResourceListTypeResp>> result = sysResourceDTOList.stream().map(s -> SysResourceConvert.INSTANCE.convertToListTypeResp(s)).collect(Collectors.groupingBy(SysResourceListTypeResp::getType));
         return CommonResult.success(result);
     }
 }

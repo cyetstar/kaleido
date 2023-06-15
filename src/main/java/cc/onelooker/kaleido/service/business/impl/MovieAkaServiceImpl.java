@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.service.business.impl;
 
+import cc.onelooker.kaleido.dto.business.MovieLanguageLinkDTO;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -12,6 +13,8 @@ import cc.onelooker.kaleido.convert.business.MovieAkaConvert;
 import cc.onelooker.kaleido.mapper.business.MovieAkaMapper;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.*;
 
 import java.lang.Long;
@@ -44,5 +47,20 @@ public class MovieAkaServiceImpl extends AbstractBaseServiceImpl<MovieAkaMapper,
     @Override
     public MovieAkaDO convertToDO(MovieAkaDTO movieAkaDTO) {
         return convert.convertToDO(movieAkaDTO);
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteByMovieId(Long movieId) {
+        MovieAkaDTO param = new MovieAkaDTO();
+        param.setMovieId(movieId);
+        return delete(param);
+    }
+
+    @Override
+    public List<MovieAkaDTO> listByMovieId(Long movieId) {
+        MovieAkaDTO param = new MovieAkaDTO();
+        param.setMovieId(movieId);
+        return list(param);
     }
 }

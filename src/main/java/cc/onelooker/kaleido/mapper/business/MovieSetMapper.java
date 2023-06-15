@@ -7,8 +7,10 @@ import cc.onelooker.kaleido.entity.business.MovieSetDO;
 
 import java.lang.Long;
 import java.lang.String;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
+import java.util.List;
 
+import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 电影集合Mapper接口
@@ -19,4 +21,5 @@ import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 @Mapper
 public interface MovieSetMapper extends BaseMapper<MovieSetDO> {
 
+    List<MovieSetDO> listByMovieId(@Param("movieId") Long movieId);
 }

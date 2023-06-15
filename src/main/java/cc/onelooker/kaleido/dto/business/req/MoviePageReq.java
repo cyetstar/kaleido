@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.dto.business.req;
 
+import com.zjjcnt.common.util.DateTimeUtils;
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,6 +11,7 @@ import java.lang.Integer;
 import com.zjjcnt.common.core.annotation.StringDateFormat;
 import com.zjjcnt.common.core.annotation.Dict;
 import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 电影请求对象
@@ -67,11 +69,4 @@ public class MoviePageReq{
     @ApiModelProperty("plex编号")
     private String plexId;
 
-    @StringDateTimeFormat
-    @ApiModelProperty("创建时间")
-    private String cjsj;
-
-    @StringDateTimeFormat
-    @ApiModelProperty("修改时间")
-    private String xgsj;
 }

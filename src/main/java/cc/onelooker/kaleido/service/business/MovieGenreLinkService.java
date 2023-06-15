@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.service.business;
 import com.zjjcnt.common.core.service.IBaseService;
 
 import java.lang.Long;
+
 import cc.onelooker.kaleido.dto.business.MovieGenreLinkDTO;
 
 /**
@@ -13,4 +14,7 @@ import cc.onelooker.kaleido.dto.business.MovieGenreLinkDTO;
  */
 public interface MovieGenreLinkService extends IBaseService<MovieGenreLinkDTO> {
 
+    MovieGenreLinkDTO insert(Long movieId, Long movieGenreId);
+
+    boolean deleteByMovieId(Long movieId);
 }

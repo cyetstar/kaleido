@@ -1,5 +1,9 @@
 package cc.onelooker.kaleido.web.controller.system;
 
+import cc.onelooker.kaleido.dto.system.req.SysConfigSaveReq;
+import cc.onelooker.kaleido.dto.system.resp.SysConfigGetByKeysResp;
+import cc.onelooker.kaleido.utils.ConfigUtils;
+import cn.hutool.core.util.ReflectUtil;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
@@ -14,22 +18,28 @@ import cc.onelooker.kaleido.dto.system.resp.SysConfigCreateResp;
 import cc.onelooker.kaleido.dto.system.resp.SysConfigPageResp;
 import cc.onelooker.kaleido.dto.system.resp.SysConfigViewResp;
 import cc.onelooker.kaleido.service.system.SysConfigService;
+import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
+import java.util.List;
+
 /**
-* 系统配置表前端控制器
-*
-* @author xiadawei
-* @date 2022-11-13 00:43:42
-*/
+ * 系统配置表前端控制器
+ *
+ * @author xiadawei
+ * @date 2022-11-13 00:43:42
+ */
 
 @Api(tags = "系统配置表")
 @RestController
 @RequestMapping("/sysConfig")
-public class SysConfigController extends AbstractCrudController<SysConfigDTO>{
+public class SysConfigController extends AbstractCrudController<SysConfigDTO> {
 
     @Autowired
     private SysConfigService sysConfigService;
@@ -39,32 +49,61 @@ public class SysConfigController extends AbstractCrudController<SysConfigDTO>{
         return sysConfigService;
     }
 
+    @PostMapping("save")
+    @ApiOperation(value = "保存系统配置表")
+    public CommonResult<Boolean> save(@RequestBody SysConfigSaveReq req) {
+        Field[] fields = ReflectUtil.getFields(req.getClass());
+        List<SysConfigDTO> sysConfigDTOList = Lists.newArrayList();
+        for (Field field : fields) {
+            SysConfigDTO sysConfigDTO = new SysConfigDTO();
+            sysConfigDTO.setConfigKey(field.getName());
+            sysConfigDTO.setConfigValue((String) ReflectUtil.getFieldValue(req, field));
+            sysConfigDTOList.add(sysConfigDTO);
+        }
+        sysConfigService.save(sysConfigDTOList);
+        return CommonResult.success(true);
+    }
+
+    @GetMapping("getByKeys")
+    @ApiOperation(value = "获取系统配置")
+    public CommonResult<List<SysConfigGetByKeysResp>> getByKeys(String keys) {
+        String[] configKeys = StringUtils.split(keys, Constants.COMMA);
+        List<SysConfigGetByKeysResp> respList = Lists.newArrayList();
+        for (String configKey : configKeys) {
+            SysConfigGetByKeysResp resp = new SysConfigGetByKeysResp();
+            resp.setConfigKey(configKey);
+            resp.setConfigValue(ConfigUtils.getSysConfig(configKey, StringUtils.EMPTY));
+            respList.add(resp);
+        }
+        return CommonResult.success(respList);
+    }
+
     @GetMapping("page")
-    @ApiOperation(value = "系统配置表分页查询", hidden = true)
+    @ApiOperation(value = "系统配置表分页查询")
     public CommonResult<PageResult<SysConfigPageResp>> page(SysConfigPageReq req, PageParam pageParam) {
         return super.page(req, pageParam, SysConfigConvert.INSTANCE::convertToDTO, SysConfigConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
-    @ApiOperation(value = "系统配置表详细信息", hidden = true)
+    @ApiOperation(value = "系统配置表详细信息")
     public CommonResult<SysConfigViewResp> view(Long id) {
         return super.view(id, SysConfigConvert.INSTANCE::convertToViewResp);
     }
 
     @PostMapping("create")
-    @ApiOperation(value = "新增系统配置表", hidden = true)
+    @ApiOperation(value = "新增系统配置表")
     public CommonResult<SysConfigCreateResp> create(@RequestBody SysConfigCreateReq req) {
         return super.create(req, SysConfigConvert.INSTANCE::convertToDTO, SysConfigConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
-    @ApiOperation(value = "编辑系统配置表", hidden = true)
+    @ApiOperation(value = "编辑系统配置表")
     public CommonResult<Boolean> update(@RequestBody SysConfigUpdateReq req) {
         return super.update(req, SysConfigConvert.INSTANCE::convertToDTO);
     }
 
     @DeleteMapping(value = "delete")
-    @ApiOperation(value = "删除系统配置表", hidden = true)
+    @ApiOperation(value = "删除系统配置表")
     public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
         return super.delete(ids);
     }

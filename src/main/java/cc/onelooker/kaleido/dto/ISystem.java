@@ -14,25 +14,9 @@ import java.util.Map;
  */
 public interface ISystem<ID extends Serializable> extends BaseDTO<ID> {
 
-    String getCjrzh();
-
-    void setCjrzh(String cjrzh);
-
-    String getCjr();
-
-    void setCjr(String cjr);
-
     String getCjsj();
 
     void setCjsj(String cjsj);
-
-    String getXgrzh();
-
-    void setXgrzh(String xgrzh);
-
-    String getXgr();
-
-    void setXgr(String xgr);
 
     String getXgsj();
 

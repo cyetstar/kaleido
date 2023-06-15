@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.service.business.impl;
 
+import cc.onelooker.kaleido.enums.ActorRole;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -12,11 +13,15 @@ import cc.onelooker.kaleido.convert.business.MovieActorConvert;
 import cc.onelooker.kaleido.mapper.business.MovieActorMapper;
 
 import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 
 import java.lang.Long;
+
 import com.zjjcnt.common.core.annotation.Crypto;
+
 import java.lang.String;
+
 import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 /**
@@ -49,5 +54,18 @@ public class MovieActorServiceImpl extends AbstractBaseServiceImpl<MovieActorMap
     @Override
     public MovieActorDO convertToDO(MovieActorDTO movieActorDTO) {
         return convert.convertToDO(movieActorDTO);
+    }
+
+    @Override
+    public MovieActorDTO findByXm(String xm) {
+        MovieActorDTO param = new MovieActorDTO();
+        param.setXm(xm);
+        return find(param);
+    }
+
+    @Override
+    public List<MovieActorDTO> listByMovieIdAndJs(Long movieId, String js) {
+        List<MovieActorDO> movieActorDOList = baseMapper.listByMovieIdAndJs(movieId, js);
+        return convertToDTO(movieActorDOList);
     }
 }

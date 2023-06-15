@@ -4,6 +4,8 @@ import com.zjjcnt.common.core.service.IBaseService;
 
 import java.lang.Long;
 import java.lang.String;
+import java.util.List;
+
 import cc.onelooker.kaleido.dto.business.MovieCountryDTO;
 
 /**
@@ -14,4 +16,7 @@ import cc.onelooker.kaleido.dto.business.MovieCountryDTO;
  */
 public interface MovieCountryService extends IBaseService<MovieCountryDTO> {
 
+    MovieCountryDTO findByMc(String mc);
+
+    List<MovieCountryDTO> listByMovieId(Long movieId);
 }

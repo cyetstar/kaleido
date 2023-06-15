@@ -71,8 +71,8 @@ public class MovieActorController extends AbstractCrudController<MovieActorDTO>{
 
     @DeleteMapping(value = "delete")
     @ApiOperation(value = "删除演职员")
-    public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
-        return super.delete(ids);
+    public CommonResult<Boolean> delete(@RequestBody Long[] id) {
+        return super.delete(id);
     }
 
     @GetMapping(value = "/column")

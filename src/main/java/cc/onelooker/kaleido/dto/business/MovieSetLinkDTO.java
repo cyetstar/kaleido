@@ -29,7 +29,7 @@ public class MovieSetLinkDTO implements BaseDTO<Long> {
     /**
      * 集合id
      */
-    private Long setsId;
+    private Long setId;
 
 
     @Override

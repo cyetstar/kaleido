@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.service.business.impl;
 
+import cc.onelooker.kaleido.dto.business.MovieUniqueidDTO;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -18,6 +19,8 @@ import java.lang.Long;
 import java.math.BigDecimal;
 import java.lang.Integer;
 import com.zjjcnt.common.core.annotation.Dict;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.lang.String;
 
 /**
@@ -51,5 +54,20 @@ public class MovieRatingServiceImpl extends AbstractBaseServiceImpl<MovieRatingM
     @Override
     public MovieRatingDO convertToDO(MovieRatingDTO movieRatingDTO) {
         return convert.convertToDO(movieRatingDTO);
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteByMovieId(Long movieId) {
+        MovieRatingDTO param = new MovieRatingDTO();
+        param.setMovieId(movieId);
+        return delete(param);
+    }
+
+    @Override
+    public List<MovieRatingDTO> listByMovieId(Long movieId) {
+        MovieRatingDTO param = new MovieRatingDTO();
+        param.setMovieId(movieId);
+        return list(param);
     }
 }

@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.lang.Integer;
 import com.zjjcnt.common.core.annotation.Dict;
 import java.lang.String;
+import java.util.List;
+
 import cc.onelooker.kaleido.dto.business.MovieRatingDTO;
 
 /**
@@ -17,4 +19,7 @@ import cc.onelooker.kaleido.dto.business.MovieRatingDTO;
  */
 public interface MovieRatingService extends IBaseService<MovieRatingDTO> {
 
+    boolean deleteByMovieId(Long movieId);
+
+    List<MovieRatingDTO> listByMovieId(Long movieId);
 }

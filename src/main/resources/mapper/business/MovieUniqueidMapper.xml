@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.onelooker.kaleido.mapper.business.MovieUniqueidMapper">
+    <select id="findByUidAndBslx" resultType="cc.onelooker.kaleido.entity.business.MovieDO">
+        select t.*
+          from movie t
+     left join movie_uniqueid t1 on t.id = t1.movie_id
+         where t1.uid = #{uid}
+           and t1.bslx = #{bslx}
+    </select>
 </mapper>

@@ -13,4 +13,7 @@ import cc.onelooker.kaleido.dto.business.MovieLanguageLinkDTO;
  */
 public interface MovieLanguageLinkService extends IBaseService<MovieLanguageLinkDTO> {
 
+    MovieLanguageLinkDTO insert(Long movieId, Long movieLanguageId);
+
+    boolean deleteByMovieId(Long movieId);
 }

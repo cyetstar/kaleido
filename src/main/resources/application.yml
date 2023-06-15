@@ -143,10 +143,8 @@ zjjcnt:
   security:
     url-filter:
       urls:
-        - /api/auth/login
-        - /api/auth/logout
-        - /register
-        - /captchaImage
+        - /movie/poster/**
+        - /movie/fanart/**
         - /fileInfo/small/**
         - /fileInfo/medium/**
         - /fileInfo/original/**
@@ -156,17 +154,9 @@ zjjcnt:
         - /**/*.html
         - /**/*.css
         - /**/*.js
-        - /system/info/code
-        - /demo/**
-        #swagger
+        # swagger
         - /doc.html
         - /webjars/**
         - /favicon.ico
         - /swagger-resources
         - /v2/api-docs
-        - /ssxq/listByParent
-        - /fileInfo/upload
-        - /fileInfo/delete
-        - /pztCzfAqjc/list
-        #远程调用
-        - /pztDzCzf/czfwcx

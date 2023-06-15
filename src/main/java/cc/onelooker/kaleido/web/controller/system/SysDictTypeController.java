@@ -1,5 +1,8 @@
 package cc.onelooker.kaleido.web.controller.system;
 
+import cc.onelooker.kaleido.dto.system.SysUserDTO;
+import com.zjjcnt.common.core.dict.Dictionary;
+import com.zjjcnt.common.core.dict.DictionaryInitializer;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
@@ -20,19 +23,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
-* 字典表类型表前端控制器
-*
-* @author xiadawei
-* @date 2022-11-13 00:43:42
-*/
+ * 字典表类型表前端控制器
+ *
+ * @author xiadawei
+ * @date 2022-11-13 00:43:42
+ */
 
 @Api(tags = "字典表类型表")
 @RestController
 @RequestMapping("/sysDictType")
-public class SysDictTypeController extends AbstractCrudController<SysDictTypeDTO>{
+public class SysDictTypeController extends AbstractCrudController<SysDictTypeDTO> {
 
     @Autowired
     private SysDictTypeService sysDictTypeService;
+
+    @Autowired
+    private Dictionary dictionary;
 
     @Override
     protected IBaseService getService() {
@@ -64,15 +70,23 @@ public class SysDictTypeController extends AbstractCrudController<SysDictTypeDTO
     }
 
     @DeleteMapping(value = "delete")
-    @ApiOperation(value = "删除字典表类型表")
-    public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
-        return CommonResult.success(sysDictTypeService.deleteByIds(ids));
+    @ApiOperation(value = "删除字典类型表")
+    public CommonResult<Boolean> delete(@RequestBody Long[] id) {
+        return super.delete(id);
     }
 
     @ApiOperation(value = "重载字典")
     @GetMapping(value = "/reload")
     public CommonResult<Boolean> reload() {
-        return CommonResult.success(sysDictTypeService.reload());
+        dictionary.loadAll();
+        return CommonResult.success(true);
+    }
+
+    @GetMapping("checkUnique")
+    @ApiOperation(value = "校验用户名唯一性")
+    public CommonResult<Boolean> checkUnique(@RequestParam String type) {
+        SysDictTypeDTO sysDictTypeDTO = sysDictTypeService.findByType(type);
+        return CommonResult.success(sysDictTypeDTO == null);
     }
 
 }

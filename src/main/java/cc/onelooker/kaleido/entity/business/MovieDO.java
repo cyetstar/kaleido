@@ -29,7 +29,7 @@ public class MovieDO implements IdEntity<Long> {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.INPUT)
     private Long id;
 
     /**
@@ -79,6 +79,12 @@ public class MovieDO implements IdEntity<Long> {
      */
     @TableField(value = "syrq")
     private String syrq;
+
+    /**
+     * 上映年份
+     */
+    @TableField(value = "synf")
+    private String synf;
 
     /**
      * 官网地址

@@ -4,6 +4,8 @@ import com.zjjcnt.common.core.service.IBaseService;
 
 import java.lang.Long;
 import java.lang.String;
+import java.util.List;
+
 import cc.onelooker.kaleido.dto.business.MovieAkaDTO;
 
 /**
@@ -14,4 +16,7 @@ import cc.onelooker.kaleido.dto.business.MovieAkaDTO;
  */
 public interface MovieAkaService extends IBaseService<MovieAkaDTO> {
 
+    boolean deleteByMovieId(Long movieId);
+
+    List<MovieAkaDTO> listByMovieId(Long movieId);
 }

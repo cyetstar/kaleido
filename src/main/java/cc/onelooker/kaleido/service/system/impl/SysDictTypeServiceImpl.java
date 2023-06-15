@@ -116,11 +116,16 @@ public class SysDictTypeServiceImpl extends ExBaseServiceImpl<SysDictTypeMapper,
         return true;
     }
 
+    @Override
+    public SysDictTypeDTO findByType(String type) {
+        SysDictTypeDTO param = new SysDictTypeDTO();
+        param.setType(type);
+        return find(param);
+    }
+
     private List<SysDictTypeDO> getDictTypeList(List<Long> idList) {
         LambdaQueryWrapper<SysDictTypeDO> queryWrapper = Wrappers.lambdaQuery();
-
         queryWrapper.in(SysDictTypeDO::getId, idList);
-
         return list(queryWrapper);
     }
 }
