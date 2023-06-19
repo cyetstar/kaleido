@@ -45,6 +45,16 @@ public class MovieActorController extends AbstractCrudController<MovieActorDTO>{
         return movieActorService;
     }
 
+    @GetMapping("search")
+    @ApiOperation(value = "查询演职员")
+    public CommonResult<PageResult<MovieActorSearchResp>> search(String keyword, PageParam pageParam) {
+        MovieActorDTO dto = new MovieActorDTO();
+        dto.setKeyword(keyword);
+        PageResult<MovieActorDTO> page = movieActorService.page(dto, pageParam.toPage());
+        PageResult<MovieActorSearchResp> resp = PageResult.convert(page, MovieActorConvert.INSTANCE::convertToSearchResp);
+        return CommonResult.success(resp);
+    }
+
     @GetMapping("page")
     @ApiOperation(value = "查询演职员")
     public CommonResult<PageResult<MovieActorPageResp>> page(MovieActorPageReq req, PageParam pageParam) {

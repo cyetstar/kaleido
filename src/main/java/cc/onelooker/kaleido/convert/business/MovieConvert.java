@@ -12,6 +12,8 @@ import cc.onelooker.kaleido.nfo.MovieNFO;
 import cc.onelooker.kaleido.entity.business.MovieDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -50,17 +52,26 @@ public interface MovieConvert {
 
     List<MovieViewResp.MovieViewActorResp> convertToViewActorResp(List<MovieActorDTO> movieActorDTOList);
 
-    List<MovieViewResp.MovieViewGenreResp> convertToViewGenreResp(List<MovieGenreDTO> genreDTOList);
+    List<MovieViewResp.MovieViewGenreResp> convertToViewGenreResp(List<MovieGenreDTO> movieGenreDTOList);
 
-    List<MovieViewResp.MovieViewLanguageResp> convertToViewLanguageResp(List<MovieLanguageDTO> languageDTOList);
+    List<MovieViewResp.MovieViewLanguageResp> convertToViewLanguageResp(List<MovieLanguageDTO> movieLanguageDTOList);
 
-    List<MovieViewResp.MovieViewCountryResp> convertToViewCountryResp(List<MovieCountryDTO> countryDTOList);
+    List<MovieViewResp.MovieViewCountryResp> convertToViewCountryResp(List<MovieCountryDTO> movieCountryDTOList);
 
-    List<MovieViewResp.MovieViewTagResp> convertToViewTagResp(List<MovieTagDTO> tagDTOList);
+    List<MovieViewResp.MovieViewTagResp> convertToViewTagResp(List<MovieTagDTO> movieTagDTOList);
 
-    List<MovieViewResp.MovieViewSetResp> convertToViewSetResp(List<MovieSetDTO> setDTOList);
+    List<MovieViewResp.MovieViewSetResp> convertToViewSetResp(List<MovieSetDTO> movieSetDTOList);
 
-    List<MovieViewResp.MovieViewAkaResp> convertToViewAkaResp(List<MovieAkaDTO> akaDTOList);
+    List<MovieViewResp.MovieViewAkaResp> convertToViewAkaResp(List<MovieAkaDTO> movieAkaDTOList);
 
-    List<MovieViewResp.MovieViewRatingResp> convertToViewRatingResp(List<MovieRatingDTO> ratingDTOList);
+    MovieViewResp.MovieViewRatingResp convertToViewRatingResp(MovieRatingDTO movieRatingDTO);
+
+    @Mappings({
+            @Mapping(source = "movieFileVideoDTO", target = "video"),
+            @Mapping(source = "movieFileAudioDTOList", target = "audioList"),
+            @Mapping(source = "movieFileSubtitleDTOList", target = "subtitleList")
+    })
+    MovieViewResp.MovieViewFileResp convertToViewFileResp(MovieFileDTO movieFileDTO);
+
+    MovieRatingDTO convertToDTO(MovieUpdateReq.MovieUpdateRatingReq req);
 }

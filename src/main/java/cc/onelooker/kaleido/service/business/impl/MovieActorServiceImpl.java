@@ -41,8 +41,9 @@ public class MovieActorServiceImpl extends AbstractBaseServiceImpl<MovieActorMap
         query.eq(StringUtils.isNotEmpty(dto.getXm()), MovieActorDO::getXm, dto.getXm());
         query.eq(StringUtils.isNotEmpty(dto.getBm()), MovieActorDO::getBm, dto.getBm());
         query.eq(StringUtils.isNotEmpty(dto.getDoubanId()), MovieActorDO::getDoubanId, dto.getDoubanId());
-        query.eq(StringUtils.isNotEmpty(dto.getCjsj()), MovieActorDO::getCjsj, dto.getCjsj());
-        query.eq(StringUtils.isNotEmpty(dto.getXgsj()), MovieActorDO::getXgsj, dto.getXgsj());
+        if (StringUtils.isNotEmpty(dto.getKeyword())) {
+            query.like(MovieActorDO::getXm, dto.getKeyword()).or().like(MovieActorDO::getBm, dto.getKeyword());
+        }
         return query;
     }
 

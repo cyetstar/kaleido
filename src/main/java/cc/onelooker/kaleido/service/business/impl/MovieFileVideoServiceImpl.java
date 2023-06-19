@@ -61,4 +61,11 @@ public class MovieFileVideoServiceImpl extends AbstractBaseServiceImpl<MovieFile
         param.setMovieFileId(movieFileId);
         return delete(param);
     }
+
+    @Override
+    public MovieFileVideoDTO findByMovieFileId(Long movieFileId) {
+        MovieFileVideoDTO param = new MovieFileVideoDTO();
+        param.setMovieFileId(movieFileId);
+        return find(param);
+    }
 }

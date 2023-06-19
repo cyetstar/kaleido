@@ -34,7 +34,7 @@ public class MovieFileSubtitleServiceImpl extends AbstractBaseServiceImpl<MovieF
     protected Wrapper<MovieFileSubtitleDO> genQueryWrapper(MovieFileSubtitleDTO dto) {
         LambdaQueryWrapper<MovieFileSubtitleDO> query = new LambdaQueryWrapper<>();
         query.eq(Objects.nonNull(dto.getMovieFileId()), MovieFileSubtitleDO::getMovieFileId, dto.getMovieFileId());
-        query.eq(StringUtils.isNotEmpty(dto.getLanuage()), MovieFileSubtitleDO::getLanuage, dto.getLanuage());
+        query.eq(StringUtils.isNotEmpty(dto.getLanguage()), MovieFileSubtitleDO::getLanguage, dto.getLanguage());
         return query;
     }
 
@@ -54,5 +54,12 @@ public class MovieFileSubtitleServiceImpl extends AbstractBaseServiceImpl<MovieF
         MovieFileSubtitleDTO param = new MovieFileSubtitleDTO();
         param.setMovieFileId(movieFileId);
         return delete(param);
+    }
+
+    @Override
+    public List<MovieFileSubtitleDTO> listByMovieFileId(Long movieFileId) {
+        MovieFileSubtitleDTO param = new MovieFileSubtitleDTO();
+        param.setMovieFileId(movieFileId);
+        return list(param);
     }
 }

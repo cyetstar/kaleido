@@ -5,6 +5,7 @@ import cc.onelooker.kaleido.dto.business.*;
 import cc.onelooker.kaleido.enums.ActorRole;
 import cc.onelooker.kaleido.service.business.*;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import com.google.common.collect.ImmutableList;
 import com.zjjcnt.common.core.annotation.CacheControl;
 import com.zjjcnt.common.file.FileInfo;
 import com.zjjcnt.common.file.enums.FileStorageType;
@@ -12,6 +13,8 @@ import com.zjjcnt.common.file.enums.ThumbnailSize;
 import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import jdk.nashorn.internal.ir.annotations.Immutable;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +92,15 @@ public class MovieController extends AbstractCrudController<MovieDTO> {
     @Autowired
     private MovieFileService movieFileService;
 
+    @Autowired
+    private MovieFileVideoService movieFileVideoService;
+
+    @Autowired
+    private MovieFileAudioService movieFileAudioService;
+
+    @Autowired
+    private MovieFileSubtitleService movieFileSubtitleService;
+
     private boolean importing = false;
 
     @Override
@@ -107,22 +119,33 @@ public class MovieController extends AbstractCrudController<MovieDTO> {
     public CommonResult<MovieViewResp> view(Long id) {
         MovieDTO movieDTO = movieService.findById(id);
 
-        List<MovieRatingDTO> ratingDTOList = movieRatingService.listByMovieId(id);
         List<MovieUniqueidDTO> uniqueidDTOList = movieUniqueidService.listByMovieId(id);
-        String doubanId = uniqueidDTOList.stream().filter(s -> StringUtils.equals(s.getBslx(), "douban")).map(s -> s.getUid()).findFirst().orElseGet(null);
-        String imdbId = uniqueidDTOList.stream().filter(s -> StringUtils.equals(s.getBslx(), "imdb")).map(s -> s.getUid()).findFirst().orElseGet(null);
-
+        List<MovieRatingDTO> ratingDTOList = movieRatingService.listByMovieId(id);
+        String doubanId = uniqueidDTOList.stream().filter(s -> StringUtils.equals(s.getBslx(), "douban")).map(s -> s.getUid()).findFirst().orElse(null);
+        String imdbId = uniqueidDTOList.stream().filter(s -> StringUtils.equals(s.getBslx(), "imdb")).map(s -> s.getUid()).findFirst().orElse(null);
+        MovieRatingDTO doubanRatingDTO = ratingDTOList.stream().filter(s -> StringUtils.equals(s.getPflx(), "douban")).findFirst().orElse(new MovieRatingDTO());
+        MovieRatingDTO imdbRatingDTO = ratingDTOList.stream().filter(s -> StringUtils.equals(s.getPflx(), "imdb")).findFirst().orElse(new MovieRatingDTO());
         List<MovieGenreDTO> genreDTOList = movieGenreService.listByMovieId(id);
         List<MovieLanguageDTO> languageDTOList = movieLanguageService.listByMovieId(id);
         List<MovieCountryDTO> countryDTOList = movieCountryService.listByMovieId(id);
         List<MovieTagDTO> tagDTOList = movieTagService.listByMovieId(id);
         List<MovieSetDTO> setDTOList = movieSetService.listByMovieId(id);
         List<MovieAkaDTO> akaDTOList = movieAkaService.listByMovieId(id);
+        MovieFileDTO movieFileDTO = movieFileService.findByMovieId(id);
+        if (movieFileDTO != null) {
+            MovieFileVideoDTO movieFileVideoDTO = movieFileVideoService.findByMovieFileId(movieFileDTO.getId());
+            List<MovieFileAudioDTO> movieFileAudioDTOList = movieFileAudioService.listByMovieFileId(movieFileDTO.getId());
+            List<MovieFileSubtitleDTO> movieFileSubtitleDTOList = movieFileSubtitleService.listByMovieFileId(movieFileDTO.getId());
+            movieFileDTO.setMovieFileVideoDTO(movieFileVideoDTO);
+            movieFileDTO.setMovieFileAudioDTOList(movieFileAudioDTOList);
+            movieFileDTO.setMovieFileSubtitleDTOList(movieFileSubtitleDTOList);
+        }
 
         List<MovieActorDTO> directorDTOList = movieActorService.listByMovieIdAndJs(id, ActorRole.Director.name());
         List<MovieActorDTO> writerDTOList = movieActorService.listByMovieIdAndJs(id, ActorRole.Writer.name());
         List<MovieActorDTO> actorDTOList = movieActorService.listByMovieIdAndJs(id, ActorRole.Actor.name());
-        List<MovieViewResp.MovieViewRatingResp> ratingList = MovieConvert.INSTANCE.convertToViewRatingResp(ratingDTOList);
+        MovieViewResp.MovieViewRatingResp doubanRating = MovieConvert.INSTANCE.convertToViewRatingResp(doubanRatingDTO);
+        MovieViewResp.MovieViewRatingResp imdbRating = MovieConvert.INSTANCE.convertToViewRatingResp(imdbRatingDTO);
         List<MovieViewResp.MovieViewGenreResp> genreList = MovieConvert.INSTANCE.convertToViewGenreResp(genreDTOList);
         List<MovieViewResp.MovieViewLanguageResp> languageList = MovieConvert.INSTANCE.convertToViewLanguageResp(languageDTOList);
         List<MovieViewResp.MovieViewCountryResp> countryList = MovieConvert.INSTANCE.convertToViewCountryResp(countryDTOList);
@@ -132,10 +155,13 @@ public class MovieController extends AbstractCrudController<MovieDTO> {
         List<MovieViewResp.MovieViewActorResp> directorList = MovieConvert.INSTANCE.convertToViewActorResp(directorDTOList);
         List<MovieViewResp.MovieViewActorResp> writerList = MovieConvert.INSTANCE.convertToViewActorResp(writerDTOList);
         List<MovieViewResp.MovieViewActorResp> actorList = MovieConvert.INSTANCE.convertToViewActorResp(actorDTOList);
+        MovieViewResp.MovieViewFileResp file = MovieConvert.INSTANCE.convertToViewFileResp(movieFileDTO);
         MovieViewResp resp = MovieConvert.INSTANCE.convertToViewResp(movieDTO);
+
         resp.setDoubanId(doubanId);
         resp.setImdbId(imdbId);
-        resp.setRatingList(ratingList);
+        resp.setDoubanRating(doubanRating);
+        resp.setImdbRating(imdbRating);
         resp.setGenreList(genreList);
         resp.setLanguageList(languageList);
         resp.setCountryList(countryList);
@@ -145,6 +171,7 @@ public class MovieController extends AbstractCrudController<MovieDTO> {
         resp.setDirectorList(directorList);
         resp.setWriterList(writerList);
         resp.setActorList(actorList);
+        resp.setFile(file);
         return CommonResult.success(resp);
     }
 
@@ -157,7 +184,23 @@ public class MovieController extends AbstractCrudController<MovieDTO> {
     @PostMapping("update")
     @ApiOperation(value = "编辑电影")
     public CommonResult<Boolean> update(@RequestBody MovieUpdateReq req) {
-        return super.update(req, MovieConvert.INSTANCE::convertToDTO);
+        MovieDTO movieDTO = MovieConvert.INSTANCE.convertToDTO(req);
+        MovieUniqueidDTO doubanUniqueidDTO = new MovieUniqueidDTO();
+        doubanUniqueidDTO.setUid(req.getDoubanId());
+        doubanUniqueidDTO.setBslx("douban");
+        MovieUniqueidDTO imdbUniqueidDTO = new MovieUniqueidDTO();
+        imdbUniqueidDTO.setUid(req.getImdbId());
+        imdbUniqueidDTO.setBslx("imdb");
+        MovieRatingDTO doubanRatingDTO = MovieConvert.INSTANCE.convertToDTO(req.getDoubanRating());
+        doubanRatingDTO.setPflx("douban");
+        MovieRatingDTO imdbRatingDTO = MovieConvert.INSTANCE.convertToDTO(req.getImdbRating());
+        imdbRatingDTO.setPflx("imdb");
+        List<MovieUniqueidDTO> movieUniqueidDTOList = ImmutableList.of(doubanUniqueidDTO, imdbUniqueidDTO);
+        List<MovieRatingDTO> movieRatingDTOList = ImmutableList.of(doubanRatingDTO, imdbRatingDTO);
+        movieDTO.setMovieUniqueidDTOList(movieUniqueidDTOList);
+        movieDTO.setMovieRatingDTOList(movieRatingDTOList);
+        boolean result = movieService.update(movieDTO);
+        return CommonResult.success(result);
     }
 
     @DeleteMapping(value = "delete")

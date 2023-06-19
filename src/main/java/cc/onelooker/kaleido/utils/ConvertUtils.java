@@ -267,7 +267,7 @@ public class ConvertUtils {
         if (subtitleNFOList != null) {
             List<MovieFileSubtitleDTO> movieFileSubtitleDTOList = subtitleNFOList.stream().filter(s -> StringUtils.isNotBlank(s.getLanguage())).map(s -> {
                 MovieFileSubtitleDTO movieFileSubtitleDTO = new MovieFileSubtitleDTO();
-                movieFileSubtitleDTO.setLanuage(s.getLanguage());
+                movieFileSubtitleDTO.setLanguage(s.getLanguage());
                 return movieFileSubtitleDTO;
             }).collect(Collectors.toList());
             movieFileDTO.setMovieFileSubtitleDTOList(movieFileSubtitleDTOList);

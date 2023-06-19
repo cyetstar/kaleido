@@ -30,7 +30,7 @@ public class MovieFileSubtitleDTO implements BaseDTO<Long> {
     /**
      * 语言
      */
-    private String lanuage;
+    private String language;
 
 
     @Override

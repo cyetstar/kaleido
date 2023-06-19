@@ -37,8 +37,8 @@ public class MovieFileSubtitleDO implements IdEntity<Long> {
     /**
      * 语言
      */
-    @TableField(value = "lanuage")
-    private String lanuage;
+    @TableField(value = "language")
+    private String language;
 
 
     @Override

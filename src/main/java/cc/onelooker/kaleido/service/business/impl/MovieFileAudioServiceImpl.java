@@ -57,4 +57,11 @@ public class MovieFileAudioServiceImpl extends AbstractBaseServiceImpl<MovieFile
         param.setMovieFileId(movieFileId);
         return delete(param);
     }
+
+    @Override
+    public List<MovieFileAudioDTO> listByMovieFileId(Long movieFileId) {
+        MovieFileAudioDTO param = new MovieFileAudioDTO();
+        param.setMovieFileId(movieFileId);
+        return list(param);
+    }
 }

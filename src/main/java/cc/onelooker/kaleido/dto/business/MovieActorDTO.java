@@ -49,6 +49,10 @@ public class MovieActorDTO implements BaseDTO<Long> {
      */
     private String xgsj;
 
+    //
+
+    private String keyword;
+
 
     @Override
     public Long getId() {

@@ -4,6 +4,8 @@ import com.zjjcnt.common.core.service.IBaseService;
 
 import java.lang.Long;
 import java.lang.String;
+import java.util.List;
+
 import cc.onelooker.kaleido.dto.business.MovieFileSubtitleDTO;
 
 /**
@@ -15,4 +17,6 @@ import cc.onelooker.kaleido.dto.business.MovieFileSubtitleDTO;
 public interface MovieFileSubtitleService extends IBaseService<MovieFileSubtitleDTO> {
 
     boolean deleteByMovieFileId(Long movieFileId);
+
+    List<MovieFileSubtitleDTO> listByMovieFileId(Long movieFileId);
 }

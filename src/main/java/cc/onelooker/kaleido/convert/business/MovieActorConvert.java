@@ -7,6 +7,7 @@ import cc.onelooker.kaleido.dto.business.req.MovieActorPageReq;
 import cc.onelooker.kaleido.dto.business.req.MovieActorUpdateReq;
 import cc.onelooker.kaleido.dto.business.resp.MovieActorCreateResp;
 import cc.onelooker.kaleido.dto.business.resp.MovieActorPageResp;
+import cc.onelooker.kaleido.dto.business.resp.MovieActorSearchResp;
 import cc.onelooker.kaleido.dto.business.resp.MovieActorViewResp;
 import cc.onelooker.kaleido.entity.business.MovieActorDO;
 import org.mapstruct.InheritInverseConfiguration;
@@ -34,6 +35,7 @@ public interface MovieActorConvert {
 
     MovieActorDTO convertToDTO(MovieActorUpdateReq req);
 
+    MovieActorSearchResp convertToSearchResp(MovieActorDTO dto);
     MovieActorPageResp convertToPageResp(MovieActorDTO dto);
 
     MovieActorViewResp convertToViewResp(MovieActorDTO dto);

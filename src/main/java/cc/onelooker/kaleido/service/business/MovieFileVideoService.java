@@ -16,4 +16,6 @@ import cc.onelooker.kaleido.dto.business.MovieFileVideoDTO;
 public interface MovieFileVideoService extends IBaseService<MovieFileVideoDTO> {
 
     boolean deleteByMovieFileId(Long movieFileId);
+
+    MovieFileVideoDTO findByMovieFileId(Long movieFileId);
 }

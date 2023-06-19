@@ -7,6 +7,9 @@ import io.swagger.annotations.ApiModelProperty;
 import java.lang.Long;
 import java.lang.String;
 import java.lang.Integer;
+import java.math.BigDecimal;
+import java.util.List;
+
 import com.zjjcnt.common.core.annotation.StringDateFormat;
 import com.zjjcnt.common.core.annotation.Dict;
 import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
@@ -16,23 +19,23 @@ import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
  *
  * @author cyetstar
  * @date 2023-04-18 23:04:56
- *
  */
 @Data
 @ApiModel("电影请求对象")
-public class MovieUpdateReq{
+public class MovieUpdateReq {
 
     @ApiModelProperty("主键")
     private Long id;
+
+    private String doubanId;
+
+    private String imdbId;
 
     @ApiModelProperty("电影名称")
     private String dymc;
 
     @ApiModelProperty("原片名")
     private String ypm;
-
-    @ApiModelProperty("用户评分")
-    private Integer yhpf;
 
     @ApiModelProperty("电影简介")
     private String dyjj;
@@ -53,20 +56,73 @@ public class MovieUpdateReq{
     @ApiModelProperty("官网地址")
     private String gwdz;
 
-    @ApiModelProperty("是否观看")
-    private String gkbz;
+    private MovieUpdateRatingReq doubanRating;
 
-    @StringDateTimeFormat
-    @ApiModelProperty("观看时间")
-    private String gksj;
+    private MovieUpdateRatingReq imdbRating;
 
-    @ApiModelProperty("是否收藏")
-    private String scbz;
+    private List<MovieUpdateGenreReq> genreList;
 
-    @StringDateTimeFormat
-    @ApiModelProperty("收藏时间")
-    private String scsj;
+    private List<MovieUpdateLanguageReq> languageList;
 
-    @ApiModelProperty("plex编号")
-    private String plexId;
+    private List<MovieUpdateCountryReq> countryList;
+
+    private List<MovieUpdateTagReq> tagList;
+
+    private List<MovieUpdateAkaReq> akaList;
+
+    private List<MovieUpdateActorReq> directorList;
+
+    private List<MovieUpdateActorReq> writerList;
+
+    private List<MovieUpdateActorReq> actorList;
+
+    @Data
+    public static class MovieUpdateRatingReq {
+        private BigDecimal pjf;
+
+        private Integer tps;
+
+    }
+
+    @Data
+    public static class MovieUpdateActorReq {
+
+        private Long id;
+
+        private String xm;
+    }
+
+    @Data
+    public static class MovieUpdateGenreReq {
+
+        private Long id;
+
+    }
+
+    @Data
+    public static class MovieUpdateLanguageReq {
+
+        private Long id;
+
+    }
+
+    @Data
+    public static class MovieUpdateCountryReq {
+
+        private Long id;
+    }
+
+    @Data
+    public static class MovieUpdateAkaReq {
+
+        private String dymc;
+
+    }
+
+    @Data
+    public static class MovieUpdateTagReq {
+
+        private String mc;
+    }
+
 }

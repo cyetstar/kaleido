@@ -190,6 +190,33 @@ public class MovieServiceImpl extends ExBaseServiceImpl<MovieMapper, MovieDO, Mo
 
     @Override
     @Transactional
+    public boolean update(MovieDTO dto) {
+        MovieDTO exist = findByUniqueidList(dto.getMovieUniqueidDTOList());
+        if (exist != null && !exist.getId().equals(dto.getId())) {
+            throw new ServiceException(3002, "已存在该记录");
+        }
+        movieUniqueidService.deleteByMovieId(dto.getId());
+        movieRatingService.deleteByMovieId(dto.getId());
+        movieGenreLinkService.deleteByMovieId(dto.getId());
+        movieCountryLinkService.deleteByMovieId(dto.getId());
+        movieLanguageLinkService.deleteByMovieId(dto.getId());
+        movieActorLinkService.deleteByMovieId(dto.getId());
+        movieTagService.deleteByMovieId(dto.getId());
+        movieAkaService.deleteByMovieId(dto.getId());
+
+        insertMovieRating(dto);
+        insertMovieUniqueid(dto);
+        insertMovieGenre(dto);
+        insertMovieLanguage(dto);
+        insertMovieCountry(dto);
+        insertMovieActor(dto);
+        insertMovieTag(dto);
+        insertMovieAka(dto);
+        return super.update(dto);
+    }
+
+    @Override
+    @Transactional
     public boolean deleteById(Serializable id) {
         Long movieId = (Long) id;
         movieUniqueidService.deleteByMovieId(movieId);
@@ -275,6 +302,10 @@ public class MovieServiceImpl extends ExBaseServiceImpl<MovieMapper, MovieDO, Mo
             return;
         }
         for (MovieGenreDTO dto : movieGenreDTOList) {
+            if (dto.getId() != null) {
+                movieGenreLinkService.insert(movieDTO.getId(), dto.getId());
+                continue;
+            }
             MovieGenreDTO movieGenreDTO = movieGenreService.findByMc(dto.getMc());
             if (movieGenreDTO == null) {
                 movieGenreDTO = movieGenreService.insert(dto);
@@ -289,6 +320,10 @@ public class MovieServiceImpl extends ExBaseServiceImpl<MovieMapper, MovieDO, Mo
             return;
         }
         for (MovieLanguageDTO dto : movieLanguageDTOList) {
+            if (dto.getId() != null) {
+                movieLanguageLinkService.insert(movieDTO.getId(), dto.getId());
+                continue;
+            }
             MovieLanguageDTO movieLanguageDTO = movieLanguageService.findByMc(dto.getMc());
             if (movieLanguageDTO == null) {
                 movieLanguageDTO = movieLanguageService.insert(dto);
@@ -303,6 +338,10 @@ public class MovieServiceImpl extends ExBaseServiceImpl<MovieMapper, MovieDO, Mo
             return;
         }
         for (MovieCountryDTO dto : movieCountryDTOList) {
+            if (dto.getId() != null) {
+                movieCountryLinkService.insert(movieDTO.getId(), dto.getId());
+                continue;
+            }
             MovieCountryDTO movieCountryDTO = movieCountryService.findByMc(dto.getMc());
             if (movieCountryDTO == null) {
                 movieCountryDTO = movieCountryService.insert(dto);
@@ -317,6 +356,10 @@ public class MovieServiceImpl extends ExBaseServiceImpl<MovieMapper, MovieDO, Mo
         List<MovieActorDTO> actorList = movieDTO.getActorList();
         if (CollectionUtils.isNotEmpty(directorList)) {
             for (MovieActorDTO dto : directorList) {
+                if (dto.getId() != null) {
+                    movieActorLinkService.insert(movieDTO.getId(), dto.getId(), ActorRole.Director);
+                    continue;
+                }
                 MovieActorDTO movieActorDTO = movieActorService.findByXm(dto.getXm());
                 if (movieActorDTO == null) {
                     movieActorDTO = movieActorService.insert(dto);
@@ -326,6 +369,10 @@ public class MovieServiceImpl extends ExBaseServiceImpl<MovieMapper, MovieDO, Mo
         }
         if (CollectionUtils.isNotEmpty(writerList)) {
             for (MovieActorDTO dto : writerList) {
+                if (dto.getId() != null) {
+                    movieActorLinkService.insert(movieDTO.getId(), dto.getId(), ActorRole.Writer);
+                    continue;
+                }
                 MovieActorDTO movieActorDTO = movieActorService.findByXm(dto.getXm());
                 if (movieActorDTO == null) {
                     movieActorDTO = movieActorService.insert(dto);
@@ -335,6 +382,10 @@ public class MovieServiceImpl extends ExBaseServiceImpl<MovieMapper, MovieDO, Mo
         }
         if (CollectionUtils.isNotEmpty(actorList)) {
             for (MovieActorDTO dto : actorList) {
+                if (dto.getId() != null) {
+                    movieActorLinkService.insert(movieDTO.getId(), dto.getId(), ActorRole.Actor);
+                    continue;
+                }
                 MovieActorDTO movieActorDTO = movieActorService.findByXm(dto.getXm());
                 if (movieActorDTO == null) {
                     movieActorDTO = movieActorService.insert(dto);

@@ -83,7 +83,9 @@ public class MovieViewResp {
 
     private String imdbId;
 
-    private List<MovieViewRatingResp> ratingList;
+    private MovieViewRatingResp doubanRating;
+
+    private MovieViewRatingResp imdbRating;
 
     private List<MovieViewGenreResp> genreList;
 
@@ -103,9 +105,13 @@ public class MovieViewResp {
 
     private List<MovieViewActorResp> actorList;
 
+    private MovieViewFileResp file;
+
     @Data
     public static class MovieViewRatingResp {
         private BigDecimal pjf;
+
+        private Integer tps;
 
         private String pflx;
     }
@@ -163,6 +169,70 @@ public class MovieViewResp {
 
         private Long id;
 
-        private String value;
+        private String mc;
+    }
+
+    @Data
+    public static class MovieViewFileResp {
+
+        private Long id;
+        /**
+         * 文件名
+         */
+        private String wjm;
+
+        /**
+         * 文件路径
+         */
+        private String wjlj;
+
+        /**
+         * 文件大小
+         */
+        private Integer wjdx;
+
+        public MovieViewVideoResp video;
+
+        public List<MovieViewAudioResp> audioList;
+
+        public List<MovieViewSubtitleResp> subtitleList;
+    }
+
+    @Data
+    public static class MovieViewVideoResp {
+
+        private Long id;
+
+        private String codec;
+
+        private String aspect;
+
+        private Integer width;
+
+        private Integer height;
+
+        private Integer durationinseconds;
+
+        private String stereomode;
+    }
+
+    @Data
+    public static class MovieViewAudioResp {
+
+        private Long id;
+
+        private String codec;
+
+        private String language;
+
+        private String channels;
+    }
+
+    @Data
+    public static class MovieViewSubtitleResp {
+
+        private Long id;
+
+        private String language;
     }
 }
