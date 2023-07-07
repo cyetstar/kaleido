@@ -94,7 +94,7 @@ public class SysDictController extends AbstractCrudController<SysDictDTO> {
         return CommonResult.success(sysDictService.updateById(req));
     }
 
-    @CacheControl(maxAge = 3600 * 24)
+    @CacheControl(maxAge = 60 * 1)
     @ApiOperation(value = "根据类型获取字典列表")
     @GetMapping(value = "/listByDictType")
     public CommonResult<List<TextValue>> listByDictType(@RequestParam String dictType) {

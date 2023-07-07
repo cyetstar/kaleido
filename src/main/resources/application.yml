@@ -150,10 +150,9 @@ zjjcnt:
         - /fileInfo/original/**
         - /captcha/code
         # 静态资源
+        - /
         - /*.html
-        - /**/*.html
-        - /**/*.css
-        - /**/*.js
+        - /static/**
         # swagger
         - /doc.html
         - /webjars/**
