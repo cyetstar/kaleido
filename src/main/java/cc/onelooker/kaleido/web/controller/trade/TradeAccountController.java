@@ -1,9 +1,10 @@
 package cc.onelooker.kaleido.web.controller.trade;
 
-import cc.onelooker.kaleido.convert.trade.TradeRuleConvert;
-import cc.onelooker.kaleido.dto.trade.TradeRuleDTO;
+import cc.onelooker.kaleido.mexc.resp.AccountResp;
+import cc.onelooker.kaleido.mexc.MexcApiService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +24,6 @@ import java.util.List;
 
 import java.lang.Long;
 import java.lang.String;
-import java.math.BigDecimal;
-
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 /**
  * 交易账户前端控制器
@@ -41,6 +39,9 @@ public class TradeAccountController extends AbstractCrudController<TradeAccountD
 
     @Autowired
     private TradeAccountService tradeAccountService;
+
+    @Autowired
+    private MexcApiService mexcApiService;
 
     @Override
     protected IBaseService getService() {
@@ -105,8 +106,17 @@ public class TradeAccountController extends AbstractCrudController<TradeAccountD
     @ApiOperation(value = "导出交易账户")
     public void export(TradeAccountPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
         String filename = "交易账户" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, TradeAccountExp.class,
-                TradeAccountConvert.INSTANCE::convertToDTO, TradeAccountConvert.INSTANCE::convertToExp, response);
+        super.export(req, columns, pageParam, filename, TradeAccountExp.class, TradeAccountConvert.INSTANCE::convertToDTO, TradeAccountConvert.INSTANCE::convertToExp, response);
+    }
+
+    @GetMapping(value = "/getBalance")
+    public CommonResult<TradeAccountGetBalanceResp> getBalance(@RequestParam(defaultValue = "USDT") String jjb) {
+        AccountResp account = mexcApiService.account();
+        String balance = account.getBalances().stream().filter(s -> StringUtils.equals(s.getAsset(), jjb)).map(s -> s.getFree()).findFirst().orElse("0");
+        TradeAccountGetBalanceResp resp = new TradeAccountGetBalanceResp();
+        resp.setJjb(jjb);
+        resp.setYe("1000");
+        return CommonResult.success(resp);
     }
 
 }

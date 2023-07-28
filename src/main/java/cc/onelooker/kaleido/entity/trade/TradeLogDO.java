@@ -32,10 +32,10 @@ public class TradeLogDO implements IdEntity<Long> {
     private Long id;
 
     /**
-     * 商品代码
+     * 交易商品id
      */
-    @TableField(value = "spdm")
-    private String spdm;
+    @TableField(value = "symbol_id")
+    private Long symbolId;
 
     /**
      * 交易账户id
@@ -65,25 +65,25 @@ public class TradeLogDO implements IdEntity<Long> {
      * 入场价格
      */
     @TableField(value = "rcjg")
-    private BigDecimal rcjg;
+    private String rcjg;
 
     /**
      * 出场价格
      */
     @TableField(value = "ccjg")
-    private BigDecimal ccjg;
+    private String ccjg;
 
     /**
      * 头寸规模
      */
     @TableField(value = "tcgm")
-    private BigDecimal tcgm;
+    private String tcgm;
 
     /**
      * 盈亏金额
      */
     @TableField(value = "ykje")
-    private BigDecimal ykje;
+    private String ykje;
 
     /**
      * 交易时间

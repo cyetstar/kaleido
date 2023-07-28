@@ -27,9 +27,9 @@ public class TradeLogDTO implements ISystem<Long> {
     private Long id;
 
     /**
-     * 商品代码
+     * 交易商品id
      */
-    private String spdm;
+    private Long symbolId;
 
     /**
      * 交易账户id
@@ -54,22 +54,22 @@ public class TradeLogDTO implements ISystem<Long> {
     /**
      * 入场价格
      */
-    private BigDecimal rcjg;
+    private String rcjg;
 
     /**
      * 出场价格
      */
-    private BigDecimal ccjg;
+    private String ccjg;
 
     /**
      * 头寸规模
      */
-    private BigDecimal tcgm;
+    private String tcgm;
 
     /**
      * 盈亏金额
      */
-    private BigDecimal ykje;
+    private String ykje;
 
     /**
      * 交易时间

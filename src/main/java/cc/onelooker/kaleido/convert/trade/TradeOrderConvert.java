@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.convert.trade;
 
+import cc.onelooker.kaleido.dto.trade.resp.TradeOrderPageByGridIdResp;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.mapstruct.InheritInverseConfiguration;
@@ -14,12 +15,6 @@ import cc.onelooker.kaleido.dto.trade.resp.TradeOrderViewResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeOrderCreateResp;
 import cc.onelooker.kaleido.exp.trade.TradeOrderExp;
 
-import java.lang.Long;
-import java.lang.String;
-import java.math.BigDecimal;
-import com.zjjcnt.common.core.annotation.Dict;
-import java.lang.Integer;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 /**
 * 交易订单Convert
 *
@@ -50,4 +45,5 @@ public interface TradeOrderConvert {
 
     TradeOrderExp convertToExp(TradeOrderDTO dto);
 
+    TradeOrderPageByGridIdResp convertToPageByGridIdResp(TradeOrderDTO dto);
 }

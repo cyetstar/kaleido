@@ -25,7 +25,7 @@ public class TradeLogUpdateReq{
     private Long id;
 
     @ApiModelProperty("商品代码")
-    private String spdm;
+    private Long symbolId;
 
     @ApiModelProperty("交易账户id")
     private Long accountId;
@@ -40,16 +40,16 @@ public class TradeLogUpdateReq{
     private String sjzq;
 
     @ApiModelProperty("入场价格")
-    private BigDecimal rcjg;
+    private String rcjg;
 
     @ApiModelProperty("出场价格")
-    private BigDecimal ccjg;
+    private String ccjg;
 
     @ApiModelProperty("头寸规模")
-    private BigDecimal tcgm;
+    private String tcgm;
 
     @ApiModelProperty("盈亏金额")
-    private BigDecimal ykje;
+    private String ykje;
 
     @StringDateTimeFormat
     @ApiModelProperty("交易时间")

@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.dto.trade;
 
 import cc.onelooker.kaleido.dto.IDictionary;
+import com.zjjcnt.common.util.constant.Constants;
 import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
 
@@ -9,6 +10,7 @@ import java.lang.Long;
 import java.lang.Integer;
 
 import com.zjjcnt.common.core.annotation.Dict;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 
@@ -101,27 +103,27 @@ public class TradeSymbolDTO implements IDictionary<Long> {
     /**
      * 最大委托数量
      */
-    private BigDecimal zdwtsl;
+    private String zdwtsl;
 
     /**
      * marker手续费
      */
-    private BigDecimal markersxf;
+    private String markersxf;
 
     /**
      * taker手续费
      */
-    private BigDecimal takersxf;
+    private String takersxf;
 
     /**
      * 最小下单金额
      */
-    private BigDecimal zxxdje;
+    private String zxxdje;
 
     /**
      * 最小下单数量
      */
-    private BigDecimal zxxdsl;
+    private String zxxdsl;
 
     /**
      * 是否收藏
@@ -142,4 +144,9 @@ public class TradeSymbolDTO implements IDictionary<Long> {
     public String getTitle() {
         return getSpmc();
     }
+
+    public int getZxxdsljd() {
+        return StringUtils.length(StringUtils.substringAfter(zxxdsl, Constants.DOT));
+    }
+
 }

@@ -34,9 +34,9 @@ public class TradeRuleServiceImpl extends ExBaseServiceImpl<TradeRuleMapper, Tra
     protected Wrapper<TradeRuleDO> genQueryWrapper(TradeRuleDTO dto) {
         LambdaQueryWrapper<TradeRuleDO> query = new LambdaQueryWrapper<>();
         query.eq(Objects.nonNull(dto.getAccountId()), TradeRuleDO::getAccountId, dto.getAccountId());
-        query.eq(Objects.nonNull(dto.getYkb()), TradeRuleDO::getYkb, dto.getYkb());
+        query.eq(StringUtils.isNotEmpty(dto.getYkb()), TradeRuleDO::getYkb, dto.getYkb());
         query.eq(StringUtils.isNotEmpty(dto.getFxb()), TradeRuleDO::getFxb, dto.getFxb());
-        query.eq(Objects.nonNull(dto.getFxje()), TradeRuleDO::getFxje, dto.getFxje());
+        query.eq(StringUtils.isNotEmpty(dto.getFxje()), TradeRuleDO::getFxje, dto.getFxje());
         return query;
     }
 

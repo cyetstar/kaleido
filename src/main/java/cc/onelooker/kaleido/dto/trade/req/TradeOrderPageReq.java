@@ -23,7 +23,7 @@ import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 public class TradeOrderPageReq{
 
     @ApiModelProperty("商品代码")
-    private String spdm;
+    private Long symbolId;
 
     @ApiModelProperty("网格id")
     private Long gridId;
@@ -32,16 +32,16 @@ public class TradeOrderPageReq{
     private String jysddh;
 
     @ApiModelProperty("价格")
-    private BigDecimal jg;
+    private String jg;
 
     @ApiModelProperty("原始数量")
-    private BigDecimal yssl;
+    private String yssl;
 
     @ApiModelProperty("交易数量")
-    private BigDecimal yjsl;
+    private String jysl;
 
     @ApiModelProperty("累计订单金额")
-    private BigDecimal ljddje;
+    private String ljddje;
 
     @ApiModelProperty("订单状态")
     private String ddzt;
@@ -56,7 +56,7 @@ public class TradeOrderPageReq{
     private String ddfx;
 
     @ApiModelProperty("止损价格")
-    private BigDecimal zsjg;
+    private String zsjg;
 
     @ApiModelProperty("冰山数量")
     private Integer bssl;
@@ -70,5 +70,5 @@ public class TradeOrderPageReq{
     private String gxsj;
 
     @ApiModelProperty("原始交易金额")
-    private BigDecimal ysjyje;
+    private String ysjyje;
 }

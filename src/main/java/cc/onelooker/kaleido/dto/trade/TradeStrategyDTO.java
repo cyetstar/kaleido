@@ -1,24 +1,27 @@
 package cc.onelooker.kaleido.dto.trade;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
 
 import java.lang.Long;
 import java.lang.String;
+
 import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 import com.zjjcnt.common.core.annotation.Dict;
+
 import java.math.BigDecimal;
 import java.lang.Integer;
 
 /**
- * 网格策略DTO
+ * 策略DTO
  *
  * @author cyetstar
  * @date 2023-07-05 23:02:49
- * @see cc.onelooker.kaleido.entity.trade.TradeGridStrategyDO
+ * @see cc.onelooker.kaleido.entity.trade.TradeStrategyDO
  */
 @Data
-public class TradeGridStrategyDTO implements BaseDTO<Long> {
+public class TradeStrategyDTO implements BaseDTO<Long> {
     private static final long serialVersionUID = -3372255069223825511L;
 
     /**
@@ -27,19 +30,9 @@ public class TradeGridStrategyDTO implements BaseDTO<Long> {
     private Long id;
 
     /**
-     * 商品代码
+     * 交易商品id
      */
-    private String spdm;
-
-    /**
-     * 创建时间
-     */
-    private String cjsj;
-
-    /**
-     * 修改时间
-     */
-    private String xgsj;
+    private Long symbolId;
 
     /**
      * 交易方向
@@ -49,12 +42,12 @@ public class TradeGridStrategyDTO implements BaseDTO<Long> {
     /**
      * 区间最高值
      */
-    private BigDecimal qjzgz;
+    private String qjzgz;
 
     /**
      * 区间最低值
      */
-    private BigDecimal qjzdz;
+    private String qjzdz;
 
     /**
      * 网格模式
@@ -69,17 +62,22 @@ public class TradeGridStrategyDTO implements BaseDTO<Long> {
     /**
      * 投入金额
      */
-    private BigDecimal trje;
+    private String trje;
+
+    /**
+     * 网格金额
+     */
+    private String wgje;
 
     /**
      * 区间上移上限
      */
-    private BigDecimal qjsysx;
+    private String qjsysx;
 
     /**
      * 区间下移下限
      */
-    private BigDecimal qjxyxx;
+    private String qjxyxx;
 
     /**
      * 是否区间上移
@@ -109,12 +107,12 @@ public class TradeGridStrategyDTO implements BaseDTO<Long> {
     /**
      * 止盈价格
      */
-    private BigDecimal zyjg;
+    private String zyjg;
 
     /**
      * 止损价格
      */
-    private BigDecimal zsjg;
+    private String zsjg;
 
     /**
      * 开始时间
@@ -126,6 +124,20 @@ public class TradeGridStrategyDTO implements BaseDTO<Long> {
      */
     private String sfzjwg;
 
+    /**
+     * 是否运行
+     */
+    private String sfyx;
+
+    /**
+     * 创建时间
+     */
+    private String cjsj;
+
+    /**
+     * 修改时间
+     */
+    private String xgsj;
 
     @Override
     public Long getId() {

@@ -11,14 +11,14 @@ import java.math.BigDecimal;
 import java.lang.Integer;
 
 /**
- * 网格策略导出对象
+ * 策略导出对象
  *
  * @author cyetstar
  * @date 2023-07-05 23:02:49
  *
  */
 @Data
-public class TradeGridStrategyExp{
+public class TradeStrategyExp{
 
     @ExcelProperty("主键")
     private Long id;

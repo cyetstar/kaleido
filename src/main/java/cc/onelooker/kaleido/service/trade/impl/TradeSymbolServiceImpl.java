@@ -41,7 +41,7 @@ public class TradeSymbolServiceImpl extends DictionaryBaseServiceImpl<TradeSymbo
     @Override
     protected Wrapper<TradeSymbolDO> genQueryWrapper(TradeSymbolDTO dto) {
         LambdaQueryWrapper<TradeSymbolDO> query = new LambdaQueryWrapper<>();
-        query.likeRight(StringUtils.isNotEmpty(dto.getSpmc()), TradeSymbolDO::getSpmc, StringUtils.upperCase(dto.getSpmc()));
+        query.like(StringUtils.isNotEmpty(dto.getSpmc()), TradeSymbolDO::getSpmc, StringUtils.upperCase(dto.getSpmc()));
         query.eq(StringUtils.isNotEmpty(dto.getJys()), TradeSymbolDO::getJys, dto.getJys());
         query.eq(StringUtils.isNotEmpty(dto.getJyb()), TradeSymbolDO::getJyb, dto.getJyb());
         query.eq(Objects.nonNull(dto.getJybjd()), TradeSymbolDO::getJybjd, dto.getJybjd());
@@ -55,11 +55,11 @@ public class TradeSymbolServiceImpl extends DictionaryBaseServiceImpl<TradeSymbo
         query.eq(StringUtils.isNotEmpty(dto.getSfyxapiggjy()), TradeSymbolDO::getSfyxapiggjy, dto.getSfyxapiggjy());
         query.eq(StringUtils.isNotEmpty(dto.getZcddlx()), TradeSymbolDO::getZcddlx, dto.getZcddlx());
         query.eq(StringUtils.isNotEmpty(dto.getQx()), TradeSymbolDO::getQx, dto.getQx());
-        query.eq(Objects.nonNull(dto.getZdwtsl()), TradeSymbolDO::getZdwtsl, dto.getZdwtsl());
-        query.eq(Objects.nonNull(dto.getMarkersxf()), TradeSymbolDO::getMarkersxf, dto.getMarkersxf());
-        query.eq(Objects.nonNull(dto.getTakersxf()), TradeSymbolDO::getTakersxf, dto.getTakersxf());
-        query.eq(Objects.nonNull(dto.getZxxdje()), TradeSymbolDO::getZxxdje, dto.getZxxdje());
-        query.eq(Objects.nonNull(dto.getZxxdsl()), TradeSymbolDO::getZxxdsl, dto.getZxxdsl());
+        query.eq(StringUtils.isNotEmpty(dto.getZdwtsl()), TradeSymbolDO::getZdwtsl, dto.getZdwtsl());
+        query.eq(StringUtils.isNotEmpty(dto.getMarkersxf()), TradeSymbolDO::getMarkersxf, dto.getMarkersxf());
+        query.eq(StringUtils.isNotEmpty(dto.getTakersxf()), TradeSymbolDO::getTakersxf, dto.getTakersxf());
+        query.eq(StringUtils.isNotEmpty(dto.getZxxdje()), TradeSymbolDO::getZxxdje, dto.getZxxdje());
+        query.eq(StringUtils.isNotEmpty(dto.getZxxdsl()), TradeSymbolDO::getZxxdsl, dto.getZxxdsl());
         query.eq(StringUtils.isNotEmpty(dto.getSfsc()), TradeSymbolDO::getSfsc, dto.getSfsc());
         return query;
     }

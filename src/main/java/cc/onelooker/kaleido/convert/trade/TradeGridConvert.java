@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.convert.trade;
 
+import cc.onelooker.kaleido.dto.trade.resp.TradeGridListByStrategyIdResp;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.mapstruct.InheritInverseConfiguration;
@@ -18,6 +19,8 @@ import java.lang.Long;
 import java.lang.String;
 import java.math.BigDecimal;
 import java.lang.Integer;
+import java.util.List;
+
 import com.zjjcnt.common.core.annotation.Dict;
 /**
 * 交易网格Convert
@@ -49,4 +52,5 @@ public interface TradeGridConvert {
 
     TradeGridExp convertToExp(TradeGridDTO dto);
 
+    List<TradeGridListByStrategyIdResp> convertToListByStrategyIdResp(List<TradeGridDTO> dtoList);
 }

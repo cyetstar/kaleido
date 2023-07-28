@@ -48,15 +48,15 @@ public class TradeLogServiceImpl extends ExBaseServiceImpl<TradeLogMapper, Trade
     @Override
     protected Wrapper<TradeLogDO> genQueryWrapper(TradeLogDTO dto) {
         LambdaQueryWrapper<TradeLogDO> query = new LambdaQueryWrapper<>();
-        query.eq(StringUtils.isNotEmpty(dto.getSpdm()), TradeLogDO::getSpdm, dto.getSpdm());
+        query.eq(Objects.nonNull(dto.getSymbolId()), TradeLogDO::getSymbolId, dto.getSymbolId());
         query.eq(Objects.nonNull(dto.getAccountId()), TradeLogDO::getAccountId, dto.getAccountId());
         query.eq(StringUtils.isNotEmpty(dto.getJyfx()), TradeLogDO::getJyfx, dto.getJyfx());
         query.eq(StringUtils.isNotEmpty(dto.getSfjg()), TradeLogDO::getSfjg, dto.getSfjg());
         query.eq(StringUtils.isNotEmpty(dto.getSjzq()), TradeLogDO::getSjzq, dto.getSjzq());
-        query.eq(Objects.nonNull(dto.getRcjg()), TradeLogDO::getRcjg, dto.getRcjg());
-        query.eq(Objects.nonNull(dto.getCcjg()), TradeLogDO::getCcjg, dto.getCcjg());
-        query.eq(Objects.nonNull(dto.getTcgm()), TradeLogDO::getTcgm, dto.getTcgm());
-        query.eq(Objects.nonNull(dto.getYkje()), TradeLogDO::getYkje, dto.getYkje());
+        query.eq(StringUtils.isNotEmpty(dto.getRcjg()), TradeLogDO::getRcjg, dto.getRcjg());
+        query.eq(StringUtils.isNotEmpty(dto.getCcjg()), TradeLogDO::getCcjg, dto.getCcjg());
+        query.eq(StringUtils.isNotEmpty(dto.getTcgm()), TradeLogDO::getTcgm, dto.getTcgm());
+        query.eq(StringUtils.isNotEmpty(dto.getYkje()), TradeLogDO::getYkje, dto.getYkje());
         return query;
     }
 
@@ -73,15 +73,15 @@ public class TradeLogServiceImpl extends ExBaseServiceImpl<TradeLogMapper, Trade
     @Override
     @Transactional
     public TradeLogDTO insert(TradeLogDTO dto) {
-        if (dto.getYkje().compareTo(BigDecimal.ZERO) > 0) {
+        if (new BigDecimal(dto.getYkje()).compareTo(BigDecimal.ZERO) > 0) {
             dto.setSfjg(KaleidoConstants.SFJG_WIN);
         } else {
             dto.setSfjg(KaleidoConstants.SFJG_LOSS);
         }
         TradeAccountDTO tradeAccountDTO = tradeAccountService.findById(dto.getAccountId());
-        BigDecimal dqye = tradeAccountDTO.getDqye();
-        dqye = dqye.add(dto.getYkje());
-        tradeAccountDTO.setDqye(dqye);
+        BigDecimal dqye = new BigDecimal(tradeAccountDTO.getDqye());
+        dqye = dqye.add(new BigDecimal(dto.getYkje()));
+        tradeAccountDTO.setDqye(dqye.toPlainString());
         tradeAccountService.update(tradeAccountDTO);
         return super.insert(dto);
     }
@@ -89,17 +89,17 @@ public class TradeLogServiceImpl extends ExBaseServiceImpl<TradeLogMapper, Trade
     @Override
     @Transactional
     public boolean update(TradeLogDTO dto) {
-        if (dto.getYkje().compareTo(BigDecimal.ZERO) > 0) {
+        if (new BigDecimal(dto.getYkje()).compareTo(BigDecimal.ZERO) > 0) {
             dto.setSfjg(KaleidoConstants.SFJG_WIN);
         } else {
             dto.setSfjg(KaleidoConstants.SFJG_LOSS);
         }
         TradeLogDTO sourceDTO = findById(dto.getId());
         TradeAccountDTO tradeAccountDTO = tradeAccountService.findById(dto.getAccountId());
-        BigDecimal dqye = tradeAccountDTO.getDqye();
-        dqye = dqye.subtract(sourceDTO.getYkje());
-        dqye = dqye.add(dto.getYkje());
-        tradeAccountDTO.setDqye(dqye);
+        BigDecimal dqye = new BigDecimal(tradeAccountDTO.getDqye());
+        dqye = dqye.subtract(new BigDecimal(sourceDTO.getYkje()));
+        dqye = dqye.add(new BigDecimal(dto.getYkje()));
+        tradeAccountDTO.setDqye(dqye.toPlainString());
         tradeAccountService.update(tradeAccountDTO);
         return super.update(dto);
     }
@@ -109,9 +109,9 @@ public class TradeLogServiceImpl extends ExBaseServiceImpl<TradeLogMapper, Trade
     public boolean deleteById(Serializable id) {
         TradeLogDTO sourceDTO = findById(id);
         TradeAccountDTO tradeAccountDTO = tradeAccountService.findById(sourceDTO.getAccountId());
-        BigDecimal dqye = tradeAccountDTO.getDqye();
-        dqye = dqye.subtract(sourceDTO.getYkje());
-        tradeAccountDTO.setDqye(dqye);
+        BigDecimal dqye = new BigDecimal(tradeAccountDTO.getDqye());
+        dqye = dqye.subtract(new BigDecimal(sourceDTO.getYkje()));
+        tradeAccountDTO.setDqye(dqye.toPlainString());
         tradeAccountService.update(tradeAccountDTO);
         return super.deleteById(id);
     }

@@ -23,11 +23,11 @@ public class TradeRuleCreateReq{
     private Long accountId;
 
     @ApiModelProperty("盈亏比")
-    private BigDecimal ykb;
+    private String ykb;
 
     @ApiModelProperty("风险比")
     private String fxb;
 
     @ApiModelProperty("风险金额")
-    private BigDecimal fxje;
+    private String fxje;
 }

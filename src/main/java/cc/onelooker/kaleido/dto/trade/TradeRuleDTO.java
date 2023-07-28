@@ -31,7 +31,7 @@ public class TradeRuleDTO implements BaseDTO<Long> {
     /**
      * 盈亏比
      */
-    private BigDecimal ykb;
+    private String ykb;
 
     /**
      * 风险比
@@ -41,7 +41,7 @@ public class TradeRuleDTO implements BaseDTO<Long> {
     /**
      * 风险金额
      */
-    private BigDecimal fxje;
+    private String fxje;
 
 
     @Override

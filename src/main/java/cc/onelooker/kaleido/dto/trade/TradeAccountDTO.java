@@ -33,12 +33,12 @@ public class TradeAccountDTO implements ISystem<Long> {
     /**
      * 初始余额
      */
-    private BigDecimal csye;
+    private String csye;
 
     /**
      * 当前余额
      */
-    private BigDecimal dqye;
+    private String dqye;
 
     /**
      * 创建时间

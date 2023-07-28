@@ -72,8 +72,8 @@ public class TradeGridController extends AbstractCrudController<TradeGridDTO>{
 
     @DeleteMapping(value = "delete")
     @ApiOperation(value = "删除交易网格")
-    public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
-        return super.delete(ids);
+    public CommonResult<Boolean> delete(@RequestBody Long[] id) {
+        return super.delete(id);
     }
 
     @GetMapping(value = "/column")
@@ -89,6 +89,14 @@ public class TradeGridController extends AbstractCrudController<TradeGridDTO>{
         String filename = "交易网格" + DateTimeUtils.now() + ".xlsx";
         super.export(req, columns, pageParam, filename, TradeGridExp.class,
                     TradeGridConvert.INSTANCE::convertToDTO, TradeGridConvert.INSTANCE::convertToExp, response);
+    }
+
+    @GetMapping(value = "/listByStrategyId")
+    @ApiOperation(value = "获取策略网格列表")
+    public CommonResult<List<TradeGridListByStrategyIdResp>> listByStrategyId(Long strategyId) {
+        List<TradeGridDTO> tradeGridDTOList = tradeGridService.listByStrategyId(strategyId);
+        List<TradeGridListByStrategyIdResp> respList = TradeGridConvert.INSTANCE.convertToListByStrategyIdResp(tradeGridDTOList);
+        return CommonResult.success(respList);
     }
 
 }

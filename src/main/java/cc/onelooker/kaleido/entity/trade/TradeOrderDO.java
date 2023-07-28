@@ -29,20 +29,26 @@ public class TradeOrderDO implements IdEntity<Long> {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
-     * 商品代码
+     * 交易商品id
      */
-    @TableField(value = "spdm")
-    private String spdm;
+    @TableField(value = "symbol_id")
+    private String symbolId;
 
     /**
      * 网格id
      */
     @TableField(value = "grid_id")
     private Long gridId;
+
+    /**
+     * 策略id
+     */
+    @TableField(value = "strategy_id")
+    private Long strategyId;
 
     /**
      * 交易所订单号
@@ -54,25 +60,25 @@ public class TradeOrderDO implements IdEntity<Long> {
      * 价格
      */
     @TableField(value = "jg")
-    private BigDecimal jg;
+    private String jg;
 
     /**
      * 原始数量
      */
     @TableField(value = "yssl")
-    private BigDecimal yssl;
+    private String yssl;
 
     /**
      * 交易数量
      */
-    @TableField(value = "yjsl")
-    private BigDecimal yjsl;
+    @TableField(value = "jysl")
+    private String jysl;
 
     /**
      * 累计订单金额
      */
     @TableField(value = "ljddje")
-    private BigDecimal ljddje;
+    private String ljddje;
 
     /**
      * 订单状态
@@ -102,7 +108,7 @@ public class TradeOrderDO implements IdEntity<Long> {
      * 止损价格
      */
     @TableField(value = "zsjg")
-    private BigDecimal zsjg;
+    private String zsjg;
 
     /**
      * 冰山数量
@@ -126,7 +132,19 @@ public class TradeOrderDO implements IdEntity<Long> {
      * 原始交易金额
      */
     @TableField(value = "ysjyje")
-    private BigDecimal ysjyje;
+    private String ysjyje;
+
+    /**
+     * 发送标志
+     */
+    @TableField(value = "fsbz")
+    private String fsbz;
+
+    /**
+     * 发送时间
+     */
+    @TableField(value = "fssj")
+    private String fssj;
 
 
     @Override

@@ -1,17 +1,19 @@
-package cc.onelooker.kaleido.mexc;
+package cc.onelooker.kaleido.mexc.resp;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @Author xiadawei
- * @Date 2023-07-06 01:04:00
+ * @Date 2023-07-17 14:04:00
  * @Description TODO
  */
 @Data
-public class ResponeResult<T> {
+public class DefaultSymbolsResp {
 
     private Integer code;
     private String msg;
     private Long timestamp;
-    private T data;
+    private List<String> data;
 }

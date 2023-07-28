@@ -39,7 +39,7 @@ public class TradeRuleDO implements IdEntity<Long> {
      * 盈亏比
      */
     @TableField(value = "ykb")
-    private BigDecimal ykb;
+    private String ykb;
 
     /**
      * 风险比
@@ -51,7 +51,7 @@ public class TradeRuleDO implements IdEntity<Long> {
      * 风险金额
      */
     @TableField(value = "fxje")
-    private BigDecimal fxje;
+    private String fxje;
 
 
     @Override

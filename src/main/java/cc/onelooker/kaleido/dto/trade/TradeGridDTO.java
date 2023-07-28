@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.dto.trade;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
 
@@ -26,24 +27,29 @@ public class TradeGridDTO implements BaseDTO<Long> {
     private Long id;
 
     /**
-     * 商品代码
+     * 交易商品id
      */
-    private String spdm;
+    private Long symbolId;
 
     /**
-     * 网格策略id
+     * 策略id
      */
-    private Long strategId;
+    private Long strategyId;
+
+    /**
+     * 网格金额
+     */
+    private String wgje;
 
     /**
      * 入场价格
      */
-    private BigDecimal rcjg;
+    private String rcjg;
 
     /**
      * 出场价格
      */
-    private BigDecimal ccjg;
+    private String ccjg;
 
     /**
      * 套利次数
@@ -53,12 +59,12 @@ public class TradeGridDTO implements BaseDTO<Long> {
     /**
      * 套利金额
      */
-    private BigDecimal tlje;
+    private String tlje;
 
     /**
-     * 是否在场
+     * 网格方向
      */
-    private String sfzc;
+    private String wgfx;
 
     /**
      * 是否运行

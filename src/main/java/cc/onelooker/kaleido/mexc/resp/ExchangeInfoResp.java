@@ -1,4 +1,4 @@
-package cc.onelooker.kaleido.mexc;
+package cc.onelooker.kaleido.mexc.resp;
 
 import lombok.Data;
 
@@ -10,7 +10,7 @@ import java.util.List;
  * @Description TODO
  */
 @Data
-public class ExchangeInfo {
+public class ExchangeInfoResp {
 
     private String timezone;
 

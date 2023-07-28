@@ -27,8 +27,8 @@ public class TradeAccountCreateResp{
     private String zhmc;
 
     @ApiModelProperty("初始余额")
-    private BigDecimal csye;
+    private String csye;
 
     @ApiModelProperty("当前余额")
-    private BigDecimal dqye;
+    private String dqye;
 }

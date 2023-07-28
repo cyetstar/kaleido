@@ -122,31 +122,31 @@ public class TradeSymbolDO implements IdEntity<Long> {
      * 最大委托数量
      */
     @TableField(value = "zdwtsl")
-    private BigDecimal zdwtsl;
+    private String zdwtsl;
 
     /**
      * marker手续费
      */
     @TableField(value = "markersxf")
-    private BigDecimal markersxf;
+    private String markersxf;
 
     /**
      * taker手续费
      */
     @TableField(value = "takersxf")
-    private BigDecimal takersxf;
+    private String takersxf;
 
     /**
      * 最小下单金额
      */
     @TableField(value = "zxxdje")
-    private BigDecimal zxxdje;
+    private String zxxdje;
 
     /**
      * 最小下单数量
      */
     @TableField(value = "zxxdsl")
-    private BigDecimal zxxdsl;
+    private String zxxdsl;
 
     /**
      * 是否收藏

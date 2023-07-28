@@ -22,22 +22,22 @@ import com.zjjcnt.common.core.annotation.Dict;
 public class TradeGridCreateReq{
 
     @ApiModelProperty("商品代码")
-    private String spdm;
+    private Long symbolId;
 
-    @ApiModelProperty("网格策略id")
-    private Long strategId;
+    @ApiModelProperty("策略id")
+    private Long strategyId;
 
     @ApiModelProperty("入场价格")
-    private BigDecimal rcjg;
+    private String rcjg;
 
     @ApiModelProperty("出场价格")
-    private BigDecimal ccjg;
+    private String ccjg;
 
     @ApiModelProperty("套利次数")
     private Integer tlcs;
 
     @ApiModelProperty("套利金额")
-    private BigDecimal tlje;
+    private String tlje;
 
     @ApiModelProperty("是否在场")
     private String sfzc;

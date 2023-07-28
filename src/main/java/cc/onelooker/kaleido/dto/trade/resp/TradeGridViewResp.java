@@ -24,23 +24,27 @@ public class TradeGridViewResp{
     @ApiModelProperty("主键")
     private Long id;
 
+    @Dict("tradeSymbol")
     @ApiModelProperty("商品代码")
-    private String spdm;
+    private Long symbolId;
 
-    @ApiModelProperty("网格策略id")
-    private Long strategId;
+    @ApiModelProperty("策略id")
+    private Long strategyId;
+
+    @ApiModelProperty("网格金额")
+    private String wgje;
 
     @ApiModelProperty("入场价格")
-    private BigDecimal rcjg;
+    private String rcjg;
 
     @ApiModelProperty("出场价格")
-    private BigDecimal ccjg;
+    private String ccjg;
 
     @ApiModelProperty("套利次数")
     private Integer tlcs;
 
     @ApiModelProperty("套利金额")
-    private BigDecimal tlje;
+    private String tlje;
 
     @Dict("sfzc")
     @ApiModelProperty("是否在场")

@@ -7,10 +7,12 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.zjjcnt.common.core.entity.IdEntity;
+
 import java.lang.Long;
 import java.lang.String;
 import java.math.BigDecimal;
 import java.lang.Integer;
+
 import com.zjjcnt.common.core.annotation.Dict;
 
 /**
@@ -28,32 +30,38 @@ public class TradeGridDO implements IdEntity<Long> {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
-     * 商品代码
+     * 交易商品id
      */
-    @TableField(value = "spdm")
-    private String spdm;
+    @TableField(value = "symbol_id")
+    private Long symbolId;
 
     /**
-     * 网格策略id
+     * 策略id
      */
-    @TableField(value = "strateg_id")
-    private Long strategId;
+    @TableField(value = "strategy_id")
+    private Long strategyId;
+
+    /**
+     * 网格金额
+     */
+    @TableField(value = "wgje")
+    private String wgje;
 
     /**
      * 入场价格
      */
     @TableField(value = "rcjg")
-    private BigDecimal rcjg;
+    private String rcjg;
 
     /**
      * 出场价格
      */
     @TableField(value = "ccjg")
-    private BigDecimal ccjg;
+    private String ccjg;
 
     /**
      * 套利次数
@@ -65,20 +73,19 @@ public class TradeGridDO implements IdEntity<Long> {
      * 套利金额
      */
     @TableField(value = "tlje")
-    private BigDecimal tlje;
+    private String tlje;
 
     /**
-     * 是否在场
+     * 网格方向
      */
-    @TableField(value = "sfzc")
-    private String sfzc;
+    @TableField(value = "wgfx")
+    private String wgfx;
 
     /**
      * 是否运行
      */
     @TableField(value = "sfyx")
     private String sfyx;
-
 
     @Override
     public Long getId() {

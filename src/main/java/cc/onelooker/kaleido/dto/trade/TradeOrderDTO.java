@@ -27,14 +27,19 @@ public class TradeOrderDTO implements BaseDTO<Long> {
     private Long id;
 
     /**
-     * 商品代码
+     * 交易商品id
      */
-    private String spdm;
+    private Long symbolId;
 
     /**
      * 网格id
      */
     private Long gridId;
+
+    /**
+     * 策略id
+     */
+    private Long strategyId;
 
     /**
      * 交易所订单号
@@ -44,22 +49,22 @@ public class TradeOrderDTO implements BaseDTO<Long> {
     /**
      * 价格
      */
-    private BigDecimal jg;
+    private String jg;
 
     /**
      * 原始数量
      */
-    private BigDecimal yssl;
+    private String yssl;
 
     /**
      * 交易数量
      */
-    private BigDecimal yjsl;
+    private String jysl;
 
     /**
      * 累计订单金额
      */
-    private BigDecimal ljddje;
+    private String ljddje;
 
     /**
      * 订单状态
@@ -84,7 +89,7 @@ public class TradeOrderDTO implements BaseDTO<Long> {
     /**
      * 止损价格
      */
-    private BigDecimal zsjg;
+    private String zsjg;
 
     /**
      * 冰山数量
@@ -104,7 +109,17 @@ public class TradeOrderDTO implements BaseDTO<Long> {
     /**
      * 原始交易金额
      */
-    private BigDecimal ysjyje;
+    private String ysjyje;
+
+    /**
+     * 发送标志
+     */
+    private String fsbz;
+
+    /**
+     * 发送时间
+     */
+    private String fssj;
 
 
     @Override

@@ -1,5 +1,10 @@
 package cc.onelooker.kaleido.web.controller.trade;
 
+import cc.onelooker.kaleido.dto.trade.TradeSymbolDTO;
+import cc.onelooker.kaleido.mexc.MexcApiService;
+import cc.onelooker.kaleido.mexc.req.OrderReq;
+import cc.onelooker.kaleido.mexc.resp.OrderResp;
+import cc.onelooker.kaleido.service.trade.TradeSymbolService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,26 +26,27 @@ import java.util.List;
 
 import java.lang.Long;
 import java.lang.String;
-import java.math.BigDecimal;
-import com.zjjcnt.common.core.annotation.Dict;
-import java.lang.Integer;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
-
 
 /**
-* 交易订单前端控制器
-*
-* @author cyetstar
-* @date 2023-07-05 23:02:49
-*/
+ * 交易订单前端控制器
+ *
+ * @author cyetstar
+ * @date 2023-07-05 23:02:49
+ */
 
 @Api(tags = "交易订单")
 @RestController
 @RequestMapping("/tradeOrder")
-public class TradeOrderController extends AbstractCrudController<TradeOrderDTO>{
+public class TradeOrderController extends AbstractCrudController<TradeOrderDTO> {
 
     @Autowired
     private TradeOrderService tradeOrderService;
+
+    @Autowired
+    private TradeSymbolService tradeSymbolService;
+
+    @Autowired
+    private MexcApiService mexcApiService;
 
     @Override
     protected IBaseService getService() {
@@ -73,8 +79,8 @@ public class TradeOrderController extends AbstractCrudController<TradeOrderDTO>{
 
     @DeleteMapping(value = "delete")
     @ApiOperation(value = "删除交易订单")
-    public CommonResult<Boolean> delete(@RequestParam(name = "id") Long... ids) {
-        return super.delete(ids);
+    public CommonResult<Boolean> delete(@RequestBody Long[] id) {
+        return super.delete(id);
     }
 
     @GetMapping(value = "/column")
@@ -88,8 +94,32 @@ public class TradeOrderController extends AbstractCrudController<TradeOrderDTO>{
     @ApiOperation(value = "导出交易订单")
     public void export(TradeOrderPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
         String filename = "交易订单" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, TradeOrderExp.class,
-                    TradeOrderConvert.INSTANCE::convertToDTO, TradeOrderConvert.INSTANCE::convertToExp, response);
+        super.export(req, columns, pageParam, filename, TradeOrderExp.class, TradeOrderConvert.INSTANCE::convertToDTO, TradeOrderConvert.INSTANCE::convertToExp, response);
+    }
+
+    @GetMapping(value = "/pageByGridId")
+    @ApiOperation(value = "获取交易订单列表")
+    public CommonResult<PageResult<TradeOrderPageByGridIdResp>> pageByGridId(Long gridId, PageParam pageParam) {
+        PageResult<TradeOrderDTO> pageResult = tradeOrderService.pageByGridId(gridId, pageParam.toPage());
+        PageResult<TradeOrderPageByGridIdResp> respPageResult = PageResult.convert(pageResult, TradeOrderConvert.INSTANCE::convertToPageByGridIdResp);
+        return CommonResult.success(respPageResult);
+    }
+
+    @PostMapping("order")
+    @ApiOperation(value = "发送交易订单")
+    public CommonResult<OrderResp> order(@RequestBody TradeOrderOrderReq req) {
+        TradeOrderDTO tradeOrderDTO = tradeOrderService.findById(req.getId());
+        TradeSymbolDTO tradeSymbolDTO = tradeSymbolService.findById(tradeOrderDTO.getSymbolId());
+        OrderReq orderReq = new OrderReq();
+        orderReq.setNewClientOrderId(String.valueOf(tradeOrderDTO.getId()));
+        orderReq.setType(tradeOrderDTO.getDdlx());
+        orderReq.setSide(tradeOrderDTO.getDdfx());
+        orderReq.setQuantity(tradeOrderDTO.getYssl());
+        orderReq.setPrice(tradeOrderDTO.getJg());
+        orderReq.setQuoteOrderQty(tradeOrderDTO.getYsjyje());
+        orderReq.setSymbol(tradeSymbolDTO.getSpmc());
+        OrderResp orderResp = mexcApiService.order(orderReq);
+        return CommonResult.success(orderResp);
     }
 
 }

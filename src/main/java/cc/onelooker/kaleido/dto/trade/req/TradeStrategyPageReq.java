@@ -12,30 +12,27 @@ import java.math.BigDecimal;
 import java.lang.Integer;
 
 /**
- * 网格策略请求对象
+ * 策略请求对象
  *
  * @author cyetstar
  * @date 2023-07-05 23:02:49
  *
  */
 @Data
-@ApiModel("网格策略请求对象")
-public class TradeGridStrategyUpdateReq{
+@ApiModel("策略请求对象")
+public class TradeStrategyPageReq{
 
-    @ApiModelProperty("主键")
-    private Long id;
-
-    @ApiModelProperty("商品代码")
-    private String spdm;
+    @ApiModelProperty("交易商品id")
+    private Long symbolId;
 
     @ApiModelProperty("交易方向")
     private String jyfx;
 
     @ApiModelProperty("区间最高值")
-    private BigDecimal qjzgz;
+    private String qjzgz;
 
     @ApiModelProperty("区间最低值")
-    private BigDecimal qjzdz;
+    private String qjzdz;
 
     @ApiModelProperty("网格模式")
     private String wgms;
@@ -44,13 +41,13 @@ public class TradeGridStrategyUpdateReq{
     private Integer wgsl;
 
     @ApiModelProperty("投入金额")
-    private BigDecimal trje;
+    private String trje;
 
     @ApiModelProperty("区间上移上限")
-    private BigDecimal qjsysx;
+    private String qjsysx;
 
     @ApiModelProperty("区间下移下限")
-    private BigDecimal qjxyxx;
+    private String qjxyxx;
 
     @ApiModelProperty("是否区间上移")
     private String sfqjsy;
@@ -68,10 +65,10 @@ public class TradeGridStrategyUpdateReq{
     private String sftzsmc;
 
     @ApiModelProperty("止盈价格")
-    private BigDecimal zyjg;
+    private String zyjg;
 
     @ApiModelProperty("止损价格")
-    private BigDecimal zsjg;
+    private String zsjg;
 
     @StringDateTimeFormat
     @ApiModelProperty("开始时间")
@@ -79,4 +76,12 @@ public class TradeGridStrategyUpdateReq{
 
     @ApiModelProperty("是否增加网格")
     private String sfzjwg;
+
+    @StringDateTimeFormat
+    @ApiModelProperty("创建时间")
+    private String cjsj;
+
+    @StringDateTimeFormat
+    @ApiModelProperty("修改时间")
+    private String xgsj;
 }

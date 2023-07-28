@@ -25,7 +25,7 @@ public class TradeGridExp{
     @ExcelProperty("商品代码")
     private String spdm;
 
-    @ExcelProperty("网格策略id")
+    @ExcelProperty("策略id")
     private Long strategId;
 
     @ExcelProperty("入场价格")

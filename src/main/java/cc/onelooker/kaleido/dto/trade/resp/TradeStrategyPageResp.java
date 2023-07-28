@@ -1,4 +1,4 @@
-package cc.onelooker.kaleido.dto.trade.req;
+package cc.onelooker.kaleido.dto.trade.resp;
 
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
@@ -12,36 +12,34 @@ import java.math.BigDecimal;
 import java.lang.Integer;
 
 /**
- * 网格策略请求对象
+ * 策略响应对象
  *
  * @author cyetstar
  * @date 2023-07-05 23:02:49
  *
  */
 @Data
-@ApiModel("网格策略请求对象")
-public class TradeGridStrategyPageReq{
+@ApiModel("策略响应对象")
+public class TradeStrategyPageResp{
 
+    @ApiModelProperty("主键")
+    private Long id;
+
+    @Dict("tradeSymbol")
     @ApiModelProperty("商品代码")
-    private String spdm;
+    private Long symbolId;
 
-    @StringDateTimeFormat
-    @ApiModelProperty("创建时间")
-    private String cjsj;
-
-    @StringDateTimeFormat
-    @ApiModelProperty("修改时间")
-    private String xgsj;
-
+    @Dict("jyfx")
     @ApiModelProperty("交易方向")
     private String jyfx;
 
     @ApiModelProperty("区间最高值")
-    private BigDecimal qjzgz;
+    private String qjzgz;
 
     @ApiModelProperty("区间最低值")
-    private BigDecimal qjzdz;
+    private String qjzdz;
 
+    @Dict("wgms")
     @ApiModelProperty("网格模式")
     private String wgms;
 
@@ -49,39 +47,49 @@ public class TradeGridStrategyPageReq{
     private Integer wgsl;
 
     @ApiModelProperty("投入金额")
-    private BigDecimal trje;
+    private String trje;
 
     @ApiModelProperty("区间上移上限")
-    private BigDecimal qjsysx;
+    private String qjsysx;
 
     @ApiModelProperty("区间下移下限")
-    private BigDecimal qjxyxx;
+    private String qjxyxx;
 
+    @Dict("sfqjsy")
     @ApiModelProperty("是否区间上移")
     private String sfqjsy;
 
+    @Dict("sfqjxy")
     @ApiModelProperty("是否区间下移")
     private String sfqjxy;
 
+    @Dict("kstj")
     @ApiModelProperty("开始条件")
     private String kstj;
 
+    @Dict("tztj")
     @ApiModelProperty("停止条件")
     private String tztj;
 
+    @Dict("sftzsmc")
     @ApiModelProperty("是否停止时卖出")
     private String sftzsmc;
 
     @ApiModelProperty("止盈价格")
-    private BigDecimal zyjg;
+    private String zyjg;
 
     @ApiModelProperty("止损价格")
-    private BigDecimal zsjg;
+    private String zsjg;
 
     @StringDateTimeFormat
     @ApiModelProperty("开始时间")
     private String kssj;
 
+    @Dict("sfbz")
     @ApiModelProperty("是否增加网格")
     private String sfzjwg;
+
+    @Dict("sfbz")
+    @ApiModelProperty("是否运行")
+    private String sfyx;
 }

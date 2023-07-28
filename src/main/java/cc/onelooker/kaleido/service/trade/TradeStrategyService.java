@@ -8,14 +8,17 @@ import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 import com.zjjcnt.common.core.annotation.Dict;
 import java.math.BigDecimal;
 import java.lang.Integer;
-import cc.onelooker.kaleido.dto.trade.TradeGridStrategyDTO;
+import cc.onelooker.kaleido.dto.trade.TradeStrategyDTO;
 
 /**
- * 网格策略Service
+ * 策略Service
  *
  * @author cyetstar
  * @date 2023-07-05 23:02:49
  */
-public interface TradeGridStrategyService extends IBaseService<TradeGridStrategyDTO> {
+public interface TradeStrategyService extends IBaseService<TradeStrategyDTO> {
 
+    void start(Long id);
+
+    void stop(Long id);
 }

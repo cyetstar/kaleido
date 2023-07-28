@@ -70,19 +70,19 @@ public class TradeSymbolPageResp{
     private String qx;
 
     @ApiModelProperty("最大委托数量")
-    private BigDecimal zdwtsl;
+    private String zdwtsl;
 
     @ApiModelProperty("marker手续费")
-    private BigDecimal markersxf;
+    private String markersxf;
 
     @ApiModelProperty("taker手续费")
-    private BigDecimal takersxf;
+    private String takersxf;
 
     @ApiModelProperty("最小下单金额")
-    private BigDecimal zxxdje;
+    private String zxxdje;
 
     @ApiModelProperty("最小下单数量")
-    private BigDecimal zxxdsl;
+    private String zxxdsl;
 
     @Dict("sfbz")
     @ApiModelProperty("是否收藏")

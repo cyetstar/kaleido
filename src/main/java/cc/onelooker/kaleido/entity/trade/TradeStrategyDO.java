@@ -7,48 +7,39 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.zjjcnt.common.core.entity.IdEntity;
+
 import java.lang.Long;
 import java.lang.String;
+
 import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 import com.zjjcnt.common.core.annotation.Dict;
+
 import java.math.BigDecimal;
 import java.lang.Integer;
 
 /**
- * 网格策略DO
+ * 策略DO
  *
  * @author cyetstar
  * @date 2023-07-05 23:02:49
- * @see cc.onelooker.kaleido.dto.trade.TradeGridStrategyDTO
+ * @see cc.onelooker.kaleido.dto.trade.TradeStrategyDTO
  */
 @Data
-@TableName("trade_grid_strategy")
-public class TradeGridStrategyDO implements IdEntity<Long> {
+@TableName("trade_strategy")
+public class TradeStrategyDO implements IdEntity<Long> {
     private static final long serialVersionUID = -5568137640039799353L;
 
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
-     * 商品代码
+     * 交易商品id
      */
-    @TableField(value = "spdm")
-    private String spdm;
-
-    /**
-     * 创建时间
-     */
-    @TableField(value = "cjsj")
-    private String cjsj;
-
-    /**
-     * 修改时间
-     */
-    @TableField(value = "xgsj")
-    private String xgsj;
+    @TableField(value = "symbol_id")
+    private Long symbolId;
 
     /**
      * 交易方向
@@ -60,13 +51,13 @@ public class TradeGridStrategyDO implements IdEntity<Long> {
      * 区间最高值
      */
     @TableField(value = "qjzgz")
-    private BigDecimal qjzgz;
+    private String qjzgz;
 
     /**
      * 区间最低值
      */
     @TableField(value = "qjzdz")
-    private BigDecimal qjzdz;
+    private String qjzdz;
 
     /**
      * 网格模式
@@ -84,19 +75,25 @@ public class TradeGridStrategyDO implements IdEntity<Long> {
      * 投入金额
      */
     @TableField(value = "trje")
-    private BigDecimal trje;
+    private String trje;
+
+    /**
+     * 网格金额
+     */
+    @TableField(value = "wgje")
+    private String wgje;
 
     /**
      * 区间上移上限
      */
     @TableField(value = "qjsysx")
-    private BigDecimal qjsysx;
+    private String qjsysx;
 
     /**
      * 区间下移下限
      */
     @TableField(value = "qjxyxx")
-    private BigDecimal qjxyxx;
+    private String qjxyxx;
 
     /**
      * 是否区间上移
@@ -132,13 +129,13 @@ public class TradeGridStrategyDO implements IdEntity<Long> {
      * 止盈价格
      */
     @TableField(value = "zyjg")
-    private BigDecimal zyjg;
+    private String zyjg;
 
     /**
      * 止损价格
      */
     @TableField(value = "zsjg")
-    private BigDecimal zsjg;
+    private String zsjg;
 
     /**
      * 开始时间
@@ -152,6 +149,23 @@ public class TradeGridStrategyDO implements IdEntity<Long> {
     @TableField(value = "sfzjwg")
     private String sfzjwg;
 
+    /**
+     * 是否运行
+     */
+    @TableField(value = "sfyx")
+    private String sfyx;
+
+    /**
+     * 创建时间
+     */
+    @TableField(value = "cjsj")
+    private String cjsj;
+
+    /**
+     * 修改时间
+     */
+    @TableField(value = "xgsj")
+    private String xgsj;
 
     @Override
     public Long getId() {
