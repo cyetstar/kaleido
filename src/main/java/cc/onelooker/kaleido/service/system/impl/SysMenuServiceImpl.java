@@ -1,13 +1,12 @@
 package cc.onelooker.kaleido.service.system.impl;
 
-import cc.onelooker.kaleido.service.ExBaseServiceImpl;
+import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import cc.onelooker.kaleido.convert.system.SysMenuConvert;
 import cc.onelooker.kaleido.dto.system.SysMenuDTO;
 import cc.onelooker.kaleido.entity.system.SysMenuDO;
 import cc.onelooker.kaleido.mapper.system.SysMenuMapper;
-import cc.onelooker.kaleido.service.DictionaryBaseServiceImpl;
 import cc.onelooker.kaleido.service.system.SysMenuService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -24,7 +23,7 @@ import java.util.Objects;
  * @date 2022-11-13 01:12:24
  */
 @Service
-public class SysMenuServiceImpl extends ExBaseServiceImpl<SysMenuMapper, SysMenuDO, SysMenuDTO> implements SysMenuService {
+public class SysMenuServiceImpl extends KaleidoBaseServiceImpl<SysMenuMapper, SysMenuDO, SysMenuDTO> implements SysMenuService {
 
     SysMenuConvert convert = SysMenuConvert.INSTANCE;
 
@@ -70,25 +69,29 @@ public class SysMenuServiceImpl extends ExBaseServiceImpl<SysMenuMapper, SysMenu
     @Override
     @Transactional
     public void init(List<SysMenuDTO> sysMenuDTOList) {
-        saveInit(sysMenuDTOList, 0L);
+        saveInit(sysMenuDTOList, 0L, 0);
     }
 
-    private void saveInit(List<SysMenuDTO> sysMenuDTOList, Long parentId) {
+    private void saveInit(List<SysMenuDTO> sysMenuDTOList, Long parentId, Integer orderNum) {
         if (sysMenuDTOList == null) {
             return;
         }
-        for (SysMenuDTO sysMenuDTO : sysMenuDTOList) {
+        for (int i = 0; i < sysMenuDTOList.size(); i++) {
+
+            SysMenuDTO sysMenuDTO = sysMenuDTOList.get(i);
             SysMenuDTO exist = findByName(sysMenuDTO.getName());
             if (exist == null) {
                 sysMenuDTO.setParentId(parentId);
-                sysMenuDTO = insert(sysMenuDTO);
+                sysMenuDTO.setOrderNum(orderNum * 10 + i + 1);
+                exist = insert(sysMenuDTO);
             } else {
+                exist.setOrderNum(orderNum * 10 + i + 1);
                 exist.setParentId(parentId);
                 exist.setPath(sysMenuDTO.getPath());
                 exist.setPermission(sysMenuDTO.getPermission());
                 update(exist);
             }
-            saveInit(sysMenuDTO.getChildren(), exist != null ? exist.getId() : null);
+            saveInit(sysMenuDTO.getChildren(), exist != null ? exist.getId() : null, orderNum * 10 + i + 1);
         }
     }
 
@@ -110,5 +113,14 @@ public class SysMenuServiceImpl extends ExBaseServiceImpl<SysMenuMapper, SysMenu
         SysMenuDTO param = new SysMenuDTO();
         param.setApp(app);
         return list(param);
+    }
+
+    @Override
+    public boolean updateIsHidden(String isHidden, Long id) {
+        SysMenuDO sysMenuDO = new SysMenuDO();
+        sysMenuDO.setId(id);
+        sysMenuDO.setIsHidden(isHidden);
+        baseMapper.updateById(sysMenuDO);
+        return true;
     }
 }

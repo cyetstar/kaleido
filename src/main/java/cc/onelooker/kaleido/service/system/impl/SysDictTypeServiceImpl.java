@@ -10,7 +10,7 @@ import cc.onelooker.kaleido.dto.system.SysDictTypeDTO;
 import cc.onelooker.kaleido.dto.system.req.SysDictTypeUpdateReq;
 import cc.onelooker.kaleido.entity.system.SysDictTypeDO;
 import cc.onelooker.kaleido.mapper.system.SysDictTypeMapper;
-import cc.onelooker.kaleido.service.ExBaseServiceImpl;
+import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
 import cc.onelooker.kaleido.service.system.SysDictService;
 import cc.onelooker.kaleido.service.system.SysDictTypeService;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * @date 2022-04-26 00:41:00
  */
 @Service
-public class SysDictTypeServiceImpl extends ExBaseServiceImpl<SysDictTypeMapper, SysDictTypeDO, SysDictTypeDTO> implements SysDictTypeService {
+public class SysDictTypeServiceImpl extends KaleidoBaseServiceImpl<SysDictTypeMapper, SysDictTypeDO, SysDictTypeDTO> implements SysDictTypeService {
 
     SysDictTypeConvert convert = SysDictTypeConvert.INSTANCE;
 

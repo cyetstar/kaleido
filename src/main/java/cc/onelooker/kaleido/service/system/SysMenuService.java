@@ -20,4 +20,6 @@ public interface SysMenuService extends IBaseService<SysMenuDTO> {
     List<SysMenuDTO> listByUserId(Long userId);
 
     List<SysMenuDTO> listByApp(String app);
+
+    boolean updateIsHidden(String isHidden, Long id);
 }

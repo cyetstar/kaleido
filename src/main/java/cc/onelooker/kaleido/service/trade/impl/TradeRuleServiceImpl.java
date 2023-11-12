@@ -1,11 +1,10 @@
 package cc.onelooker.kaleido.service.trade.impl;
 
-import cc.onelooker.kaleido.service.ExBaseServiceImpl;
+import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
-import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import cc.onelooker.kaleido.service.trade.TradeRuleService;
 import cc.onelooker.kaleido.entity.trade.TradeRuleDO;
 import cc.onelooker.kaleido.dto.trade.TradeRuleDTO;
@@ -15,10 +14,6 @@ import cc.onelooker.kaleido.mapper.trade.TradeRuleMapper;
 import org.apache.commons.lang3.StringUtils;
 import java.util.*;
 
-import java.lang.Long;
-import java.math.BigDecimal;
-import java.lang.String;
-
 /**
  * 交易规则ServiceImpl
  *
@@ -26,7 +21,7 @@ import java.lang.String;
  * @date 2023-06-23 13:38:46
  */
 @Service
-public class TradeRuleServiceImpl extends ExBaseServiceImpl<TradeRuleMapper, TradeRuleDO, TradeRuleDTO> implements TradeRuleService {
+public class TradeRuleServiceImpl extends KaleidoBaseServiceImpl<TradeRuleMapper, TradeRuleDO, TradeRuleDTO> implements TradeRuleService {
 
     TradeRuleConvert convert = TradeRuleConvert.INSTANCE;
 

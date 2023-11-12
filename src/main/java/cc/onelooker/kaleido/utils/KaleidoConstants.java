@@ -60,7 +60,7 @@ public class KaleidoConstants {
     public static final String DDZT_SUGAR = "SUGAR";// 空投
     public static final String DDZT_ETF_INDEX = "ETF_INDEX";// ETF下单
 
-    /**
-     * 变动类型
-     */
+    public static final String BSLX_IMDB = "imdb";
+    public static final String BSLX_DOUBAN = "douban";
+    public static final String BSLX_TMDB = "tmdb";
 }

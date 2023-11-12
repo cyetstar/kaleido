@@ -1,7 +1,7 @@
 package cc.onelooker.kaleido.service.trade.impl;
 
 import cc.onelooker.kaleido.dto.trade.TradeAccountDTO;
-import cc.onelooker.kaleido.service.ExBaseServiceImpl;
+import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
 import cc.onelooker.kaleido.service.trade.TradeAccountService;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
-import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import cc.onelooker.kaleido.service.trade.TradeLogService;
 import cc.onelooker.kaleido.entity.trade.TradeLogDO;
 import cc.onelooker.kaleido.dto.trade.TradeLogDTO;
@@ -21,14 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.Serializable;
 import java.util.*;
 
-import java.lang.Long;
-
-import com.zjjcnt.common.core.annotation.Dict;
-
-import java.lang.String;
 import java.math.BigDecimal;
 
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -38,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2023-06-23 13:38:46
  */
 @Service
-public class TradeLogServiceImpl extends ExBaseServiceImpl<TradeLogMapper, TradeLogDO, TradeLogDTO> implements TradeLogService {
+public class TradeLogServiceImpl extends KaleidoBaseServiceImpl<TradeLogMapper, TradeLogDO, TradeLogDTO> implements TradeLogService {
 
     TradeLogConvert convert = TradeLogConvert.INSTANCE;
 

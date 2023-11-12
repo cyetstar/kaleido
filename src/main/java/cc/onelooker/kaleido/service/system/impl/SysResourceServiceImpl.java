@@ -6,7 +6,7 @@ import cc.onelooker.kaleido.convert.system.SysResourceConvert;
 import cc.onelooker.kaleido.dto.system.SysResourceDTO;
 import cc.onelooker.kaleido.entity.system.SysResourceDO;
 import cc.onelooker.kaleido.mapper.system.SysResourceMapper;
-import cc.onelooker.kaleido.service.ExBaseServiceImpl;
+import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
 import cc.onelooker.kaleido.service.system.SysResourceService;
 import cc.onelooker.kaleido.service.system.SysRoleResourceService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,7 +27,7 @@ import java.util.Objects;
  * @date 2022-08-15 17:38:57
  */
 @Service
-public class SysResourceServiceImpl extends ExBaseServiceImpl<SysResourceMapper, SysResourceDO, SysResourceDTO> implements SysResourceService {
+public class SysResourceServiceImpl extends KaleidoBaseServiceImpl<SysResourceMapper, SysResourceDO, SysResourceDTO> implements SysResourceService {
 
     SysResourceConvert convert = SysResourceConvert.INSTANCE;
 

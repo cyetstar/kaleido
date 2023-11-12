@@ -2,6 +2,7 @@ package cc.onelooker.kaleido.web.controller.system;
 
 import cc.onelooker.kaleido.dto.system.req.SysConfigSaveReq;
 import cc.onelooker.kaleido.dto.system.resp.SysConfigGetByKeysResp;
+import cc.onelooker.kaleido.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cn.hutool.core.util.ReflectUtil;
 import com.zjjcnt.common.core.domain.CommonResult;
@@ -44,6 +45,9 @@ public class SysConfigController extends AbstractCrudController<SysConfigDTO> {
     @Autowired
     private SysConfigService sysConfigService;
 
+    @Autowired
+    private PlexApiService plexApiService;
+
     @Override
     protected IBaseService getService() {
         return sysConfigService;
@@ -61,6 +65,7 @@ public class SysConfigController extends AbstractCrudController<SysConfigDTO> {
             sysConfigDTOList.add(sysConfigDTO);
         }
         sysConfigService.save(sysConfigDTOList);
+        plexApiService.init();
         return CommonResult.success(true);
     }
 

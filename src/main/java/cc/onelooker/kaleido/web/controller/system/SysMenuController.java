@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.web.controller.system;
 
+import cc.onelooker.kaleido.dto.system.req.*;
 import cc.onelooker.kaleido.utils.CurrentUserUtils;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -15,10 +16,6 @@ import cc.onelooker.kaleido.convert.system.SysMenuConvert;
 import cc.onelooker.kaleido.dto.system.SysMenuDTO;
 import cc.onelooker.kaleido.dto.system.SysResourceDTO;
 import cc.onelooker.kaleido.dto.system.exp.SysMenuExp;
-import cc.onelooker.kaleido.dto.system.req.SysMenuCreateReq;
-import cc.onelooker.kaleido.dto.system.req.SysMenuInitReq;
-import cc.onelooker.kaleido.dto.system.req.SysMenuPageReq;
-import cc.onelooker.kaleido.dto.system.req.SysMenuUpdateReq;
 import cc.onelooker.kaleido.dto.system.resp.SysMenuCreateResp;
 import cc.onelooker.kaleido.dto.system.resp.SysMenuPageResp;
 import cc.onelooker.kaleido.dto.system.resp.SysMenuTreeResp;
@@ -105,8 +102,7 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
     @ApiOperation(value = "导出数据")
     public void export(SysMenuPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
         String filename = "菜单表" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, SysMenuExp.class,
-                SysMenuConvert.INSTANCE::convertToDTO, SysMenuConvert.INSTANCE::convertToExp, response);
+        super.export(req, columns, pageParam, filename, SysMenuExp.class, SysMenuConvert.INSTANCE::convertToDTO, SysMenuConvert.INSTANCE::convertToExp, response);
     }
 
     @PostMapping("init")
@@ -137,13 +133,25 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
         }
     }
 
+    @ApiOperation(value = "获取前端所需菜单")
+    @GetMapping(value = "/tree2")
+    public CommonResult<List<SysMenuTreeResp>> tree2() {
+        List<SysMenuDTO> sysMenuDTOList = sysMenuService.list(null);
+        List<SysMenuTreeResp> respList = genSysMenuTreeRespList(sysMenuDTOList);
+        return CommonResult.success(respList);
+    }
+
+    @ApiOperation(value = "更新菜单是否隐藏")
+    @PostMapping("updateHidden")
+    public CommonResult<Boolean> updateHidden(@RequestBody SysMenuUpdateHiddenReq req) {
+        sysMenuService.updateIsHidden(req.getHidden(), req.getId());
+        return CommonResult.success(true);
+    }
+
     private List<SysMenuTreeResp> genSysMenuTreeRespList(List<SysMenuDTO> sysMenuDTOList) {
         List<SysResourceDTO> sysResourceDTOList = sysResourceService.listByUserId(CurrentUserUtils.getUserId());
         List<String> permissionList = sysResourceDTOList.stream().map(s -> s.getCode()).collect(Collectors.toList());
-        sysMenuDTOList = sysMenuDTOList.stream()
-                .filter(s -> StringUtils.equals(s.getIsHidden(), Constants.NO)
-                        && (StringUtils.isEmpty(s.getPermission()) || permissionList.contains(s.getPermission())))
-                .collect(Collectors.toList());
+        sysMenuDTOList = sysMenuDTOList.stream().filter(s -> StringUtils.equals(s.getIsHidden(), Constants.NO) && (StringUtils.isEmpty(s.getPermission()) || permissionList.contains(s.getPermission()))).collect(Collectors.toList());
         List<SysMenuTreeResp> respList = Lists.newArrayList();
         for (SysMenuDTO dto : sysMenuDTOList) {
             SysMenuTreeResp resp = SysMenuConvert.INSTANCE.convertToTreeResp(dto);

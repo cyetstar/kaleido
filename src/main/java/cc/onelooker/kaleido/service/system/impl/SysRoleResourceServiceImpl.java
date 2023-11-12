@@ -7,7 +7,7 @@ import cc.onelooker.kaleido.dto.system.SysRoleResourceDTO;
 import cc.onelooker.kaleido.dto.system.req.SysRoleResourceBindReq;
 import cc.onelooker.kaleido.entity.system.SysRoleResourceDO;
 import cc.onelooker.kaleido.mapper.system.SysRoleResourceMapper;
-import cc.onelooker.kaleido.service.ExBaseServiceImpl;
+import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
 import cc.onelooker.kaleido.service.system.SysRoleResourceService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * @date 2022-08-15 17:38:57
  */
 @Service
-public class SysRoleResourceServiceImpl extends ExBaseServiceImpl<SysRoleResourceMapper, SysRoleResourceDO, SysRoleResourceDTO> implements SysRoleResourceService {
+public class SysRoleResourceServiceImpl extends KaleidoBaseServiceImpl<SysRoleResourceMapper, SysRoleResourceDO, SysRoleResourceDTO> implements SysRoleResourceService {
 
     SysRoleResourceConvert convert = SysRoleResourceConvert.INSTANCE;
 

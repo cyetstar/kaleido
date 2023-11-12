@@ -18,4 +18,17 @@ public class SysConfigSaveReq {
 
     private String movieLibraryPath;
 
+    private String movieExcludePath;
+
+    private String plexUrl;
+
+    private String plexToken;
+
+    private String plexMovieLibraryId;
+
+    private String plexMovieLibraryPath;
+
+    private String plexMusicLibraryId;
+
+    private String plexMusicLibraryPath;
 }

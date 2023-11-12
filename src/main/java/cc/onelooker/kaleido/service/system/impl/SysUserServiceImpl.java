@@ -7,7 +7,7 @@ import cc.onelooker.kaleido.convert.system.SysUserConvert;
 import cc.onelooker.kaleido.dto.system.SysUserDTO;
 import cc.onelooker.kaleido.entity.system.SysUserDO;
 import cc.onelooker.kaleido.mapper.system.SysUserMapper;
-import cc.onelooker.kaleido.service.ExBaseServiceImpl;
+import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
 import cc.onelooker.kaleido.service.system.SysUserRoleService;
 import cc.onelooker.kaleido.service.system.SysUserService;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +27,7 @@ import java.util.Objects;
  * @date 2022-04-26 00:41:00
  */
 @Service
-public class SysUserServiceImpl extends ExBaseServiceImpl<SysUserMapper, SysUserDO, SysUserDTO> implements SysUserService {
+public class SysUserServiceImpl extends KaleidoBaseServiceImpl<SysUserMapper, SysUserDO, SysUserDTO> implements SysUserService {
 
     SysUserConvert convert = SysUserConvert.INSTANCE;
 

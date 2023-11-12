@@ -1,6 +1,6 @@
 package cc.onelooker.kaleido.utils;
 
-import cc.onelooker.kaleido.dto.business.*;
+import cc.onelooker.kaleido.dto.movie.*;
 import cc.onelooker.kaleido.nfo.*;
 import com.zjjcnt.common.util.DateTimeUtils;
 import com.zjjcnt.common.util.constant.Constants;
@@ -18,18 +18,15 @@ public class ConvertUtils {
         }
         MovieDTO movieDTO = new MovieDTO();
         movieDTO.setDymc(movieNFO.getTitle());
-        movieDTO.setYpm(movieNFO.getOriginaltitle());
+        movieDTO.setYdymc(movieNFO.getOriginaltitle());
         movieDTO.setYhpf(movieNFO.getUserrating() != null ? movieNFO.getUserrating().intValue() : null);
         movieDTO.setDyjj(movieNFO.getPlot());
         movieDTO.setDyby(movieNFO.getTagline());
-        movieDTO.setYpsc(movieNFO.getRuntime());
+        movieDTO.setDysc(movieNFO.getRuntime());
         movieDTO.setGwdz(movieNFO.getWebsite());
         movieDTO.setDydj(movieNFO.getMpaa());
         movieDTO.setSynf(StringUtils.defaultString(StringUtils.substring(movieNFO.getPremiered(), 0, 4), movieNFO.getYear()));
         movieDTO.setSyrq(DateTimeUtils.formatDateTime(movieNFO.getPremiered(), "yyyy-MM-dd", DateTimeUtils.DATE_PATTERN));
-        List<MovieCountryDTO> movieCountryDTOList = toMovieCountryDTOList(movieNFO.getCountries());
-        List<MovieLanguageDTO> movieLanguageDTOList = toMovieLanguageDTOList(movieNFO.getLanguages());
-        List<MovieGenreDTO> movieGenreDTOList = toMovieGenreDTOList(movieNFO.getGenres());
         List<MovieSetDTO> movieSetDTOList = toMovieSetDTOList(movieNFO.getSets());
         List<MovieRatingDTO> movieRatingDTOList = toMoveRatingDTOList(movieNFO.getRatings());
         List<MovieUniqueidDTO> movieUniqueidDTOList = toMovieUniqueidDTOList(movieNFO.getUniqueids());
@@ -40,9 +37,9 @@ public class ConvertUtils {
         List<MovieActorDTO> actorList = toMovieActorDTOList(movieNFO.getActors());
         MovieFileDTO movieFileDTO = toMovieFileDTO(movieNFO.getFileinfo());
 
-        movieDTO.setMovieCountryDTOList(movieCountryDTOList);
-        movieDTO.setMovieLanguageDTOList(movieLanguageDTOList);
-        movieDTO.setMovieGenreDTOList(movieGenreDTOList);
+        movieDTO.setGjdq(StringUtils.join(movieNFO.getCountries(), Constants.COMMA));
+        movieDTO.setDyyy(StringUtils.join(movieNFO.getLanguages(), Constants.COMMA));
+        movieDTO.setDylx(StringUtils.join(movieNFO.getGenres(), Constants.COMMA));
         movieDTO.setMovieSetDTOList(movieSetDTOList);
         movieDTO.setMovieRatingDTOList(movieRatingDTOList);
         movieDTO.setMovieUniqueidDTOList(movieUniqueidDTOList);
@@ -69,39 +66,6 @@ public class ConvertUtils {
                 movieCountryDTO.setXm(actorNFO.getName());
             }
             return movieCountryDTO;
-        }).collect(Collectors.toList());
-    }
-
-    private static List<MovieCountryDTO> toMovieCountryDTOList(List<String> countries) {
-        if (countries == null) {
-            return null;
-        }
-        return countries.stream().map(s -> {
-            MovieCountryDTO movieCountryDTO = new MovieCountryDTO();
-            movieCountryDTO.setMc(s);
-            return movieCountryDTO;
-        }).collect(Collectors.toList());
-    }
-
-    private static List<MovieLanguageDTO> toMovieLanguageDTOList(List<String> languages) {
-        if (languages == null) {
-            return null;
-        }
-        return languages.stream().map(s -> {
-            MovieLanguageDTO movieLanguageDTO = new MovieLanguageDTO();
-            movieLanguageDTO.setMc(s);
-            return movieLanguageDTO;
-        }).collect(Collectors.toList());
-    }
-
-    private static List<MovieGenreDTO> toMovieGenreDTOList(List<String> genres) {
-        if (genres == null) {
-            return null;
-        }
-        return genres.stream().map(s -> {
-            MovieGenreDTO movieGenreDTO = new MovieGenreDTO();
-            movieGenreDTO.setMc(s);
-            return movieGenreDTO;
         }).collect(Collectors.toList());
     }
 
@@ -196,9 +160,9 @@ public class ConvertUtils {
         }
         return ratingNFOList.stream().filter(s -> s != null).map(s -> {
             MovieRatingDTO movieRatingDTO = new MovieRatingDTO();
-            movieRatingDTO.setPjf(new BigDecimal(s.getValue()));
+            movieRatingDTO.setPjf(s.getValue());
             movieRatingDTO.setTps(s.getVotes());
-            movieRatingDTO.setPflx(s.getName());
+            movieRatingDTO.setBslx(s.getName());
             movieRatingDTO.setZdz(s.getMax());
             movieRatingDTO.setSfmr(s.getDef() ? Constants.YES : Constants.NO);
             return movieRatingDTO;

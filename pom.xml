@@ -55,6 +55,16 @@
             <groupId>com.zjjcnt.common</groupId>
             <artifactId>common-security</artifactId>
             <version>${common-security.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>common-util</artifactId>
+                    <groupId>com.zjjcnt.common</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>common-core</artifactId>
+                    <groupId>com.zjjcnt.common</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.zjjcnt.common</groupId>
@@ -65,6 +75,16 @@
             <groupId>com.zjjcnt.common</groupId>
             <artifactId>common-file</artifactId>
             <version>${common-file.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>common-util</artifactId>
+                    <groupId>com.zjjcnt.common</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>common-core</artifactId>
+                    <groupId>com.zjjcnt.common</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -143,15 +163,13 @@
             <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
             <version>${dynamic-datasource-spring-boot-starter.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.jthink</groupId>
+            <artifactId>jaudiotagger</artifactId>
+            <version>3.0.1</version>
+        </dependency>
 
     </dependencies>
-    <repositories>
-        <repository>
-            <id>hongtian</id>
-            <name>Hongtian Nexus Repository</name>
-            <url>https://maven.zjjcnt.com/repository/maven-public/</url>
-        </repository>
-    </repositories>
     <build>
         <plugins>
             <plugin>

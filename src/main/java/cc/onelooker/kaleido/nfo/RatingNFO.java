@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.*;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RatingNFO {
 
-    private Float value;
+    private String value;
     private Integer votes;
     @XmlAttribute
     private String name;
