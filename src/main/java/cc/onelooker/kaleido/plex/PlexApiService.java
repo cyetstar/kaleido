@@ -5,6 +5,7 @@ import cc.onelooker.kaleido.plex.resp.GetMusicAlbums;
 import cc.onelooker.kaleido.plex.resp.GetMusicArtists;
 import cc.onelooker.kaleido.plex.resp.GetMusicTracks;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -38,6 +39,8 @@ public class PlexApiService {
     }
 
     public void init(String plexUrl, String plexToken) {
+        Validate.notEmpty(plexUrl);
+        Validate.notEmpty(plexToken);
         this.plexUrl = plexUrl;
         this.plexToken = plexToken;
     }

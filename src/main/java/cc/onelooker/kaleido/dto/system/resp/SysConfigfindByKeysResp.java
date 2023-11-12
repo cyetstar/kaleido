@@ -1,10 +1,7 @@
-package cc.onelooker.kaleido.dto.system.req;
+package cc.onelooker.kaleido.dto.system.resp;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.Date;
 
 /**
  * 系统配置表请求对象
@@ -14,7 +11,7 @@ import java.util.Date;
  */
 @Data
 @ApiModel("系统配置表请求对象")
-public class SysConfigSaveReq {
+public class SysConfigfindByKeysResp {
 
     private String movieLibraryPath;
 

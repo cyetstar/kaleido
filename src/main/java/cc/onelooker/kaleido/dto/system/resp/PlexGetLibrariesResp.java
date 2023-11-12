@@ -1,4 +1,4 @@
-package cc.onelooker.kaleido.dto.common.resp;
+package cc.onelooker.kaleido.dto.system.resp;
 
 import lombok.Data;
 

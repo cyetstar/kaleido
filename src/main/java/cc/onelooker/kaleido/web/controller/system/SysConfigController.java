@@ -1,8 +1,17 @@
 package cc.onelooker.kaleido.web.controller.system;
 
+import cc.onelooker.kaleido.convert.system.SysConfigConvert;
+import cc.onelooker.kaleido.dto.system.SysConfigDTO;
+import cc.onelooker.kaleido.dto.system.req.SysConfigCreateReq;
+import cc.onelooker.kaleido.dto.system.req.SysConfigPageReq;
 import cc.onelooker.kaleido.dto.system.req.SysConfigSaveReq;
-import cc.onelooker.kaleido.dto.system.resp.SysConfigGetByKeysResp;
+import cc.onelooker.kaleido.dto.system.req.SysConfigUpdateReq;
+import cc.onelooker.kaleido.dto.system.resp.SysConfigCreateResp;
+import cc.onelooker.kaleido.dto.system.resp.SysConfigfindByKeysResp;
+import cc.onelooker.kaleido.dto.system.resp.SysConfigPageResp;
+import cc.onelooker.kaleido.dto.system.resp.SysConfigViewResp;
 import cc.onelooker.kaleido.plex.PlexApiService;
+import cc.onelooker.kaleido.service.system.SysConfigService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cn.hutool.core.util.ReflectUtil;
 import com.zjjcnt.common.core.domain.CommonResult;
@@ -10,16 +19,7 @@ import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import cc.onelooker.kaleido.convert.system.SysConfigConvert;
-import cc.onelooker.kaleido.dto.system.SysConfigDTO;
-import cc.onelooker.kaleido.dto.system.req.SysConfigCreateReq;
-import cc.onelooker.kaleido.dto.system.req.SysConfigPageReq;
-import cc.onelooker.kaleido.dto.system.req.SysConfigUpdateReq;
-import cc.onelooker.kaleido.dto.system.resp.SysConfigCreateResp;
-import cc.onelooker.kaleido.dto.system.resp.SysConfigPageResp;
-import cc.onelooker.kaleido.dto.system.resp.SysConfigViewResp;
-import cc.onelooker.kaleido.service.system.SysConfigService;
-import com.zjjcnt.common.util.constant.Constants;
+import com.zjjcnt.common.util.reflect.ReflectionUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.compress.utils.Lists;
@@ -69,18 +69,14 @@ public class SysConfigController extends AbstractCrudController<SysConfigDTO> {
         return CommonResult.success(true);
     }
 
-    @GetMapping("getByKeys")
+    @PostMapping("findByKeys")
     @ApiOperation(value = "获取系统配置")
-    public CommonResult<List<SysConfigGetByKeysResp>> getByKeys(String keys) {
-        String[] configKeys = StringUtils.split(keys, Constants.COMMA);
-        List<SysConfigGetByKeysResp> respList = Lists.newArrayList();
-        for (String configKey : configKeys) {
-            SysConfigGetByKeysResp resp = new SysConfigGetByKeysResp();
-            resp.setConfigKey(configKey);
-            resp.setConfigValue(ConfigUtils.getSysConfig(configKey, StringUtils.EMPTY));
-            respList.add(resp);
+    public CommonResult<SysConfigfindByKeysResp> findByKeys(@RequestBody String[] keys) {
+        SysConfigfindByKeysResp resp = new SysConfigfindByKeysResp();
+        for (String key : keys) {
+            ReflectionUtils.setProperty(resp, key, ConfigUtils.getSysConfig(key, StringUtils.EMPTY));
         }
-        return CommonResult.success(respList);
+        return CommonResult.success(resp);
     }
 
     @GetMapping("page")
