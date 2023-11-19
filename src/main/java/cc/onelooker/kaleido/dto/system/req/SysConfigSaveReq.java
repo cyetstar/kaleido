@@ -35,4 +35,6 @@ public class SysConfigSaveReq {
     private String plexMusicLibraryId;
 
     private String plexMusicLibraryPath;
+
+    private String neteaseUrl;
 }

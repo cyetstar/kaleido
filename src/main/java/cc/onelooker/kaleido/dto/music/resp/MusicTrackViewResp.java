@@ -33,6 +33,9 @@ public class MusicTrackViewResp{
     @ApiModelProperty("Plex编号")
     private String plexId;
 
+    @ApiModelProperty("网易云音乐Id")
+    private String neteaseId;
+
     @ApiModelProperty("标题")
     private String bt;
 

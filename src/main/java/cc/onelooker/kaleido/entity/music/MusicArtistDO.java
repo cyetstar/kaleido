@@ -43,6 +43,12 @@ public class MusicArtistDO implements IdEntity<Long> {
     private String plexId;
 
     /**
+     * 网易音乐Id
+     */
+    @TableField(value = "netease_id")
+    private String neteaseId;
+
+    /**
      * 名称
      */
     @TableField(value = "mc")
@@ -65,6 +71,12 @@ public class MusicArtistDO implements IdEntity<Long> {
      */
     @TableField(value = "jj")
     private String jj;
+
+    /**
+     * 缩略图
+     */
+    @TableField(value = "plex_thumb")
+    private String plexThumb;
 
     /**
      * 创建时间

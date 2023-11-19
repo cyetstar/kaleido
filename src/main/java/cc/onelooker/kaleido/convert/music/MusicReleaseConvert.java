@@ -1,31 +1,28 @@
 package cc.onelooker.kaleido.convert.music;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.music.MusicReleaseDTO;
-import cc.onelooker.kaleido.entity.music.MusicReleaseDO;
-import cc.onelooker.kaleido.dto.music.req.MusicReleasePageReq;
 import cc.onelooker.kaleido.dto.music.req.MusicReleaseCreateReq;
+import cc.onelooker.kaleido.dto.music.req.MusicReleasePageReq;
 import cc.onelooker.kaleido.dto.music.req.MusicReleaseUpdateReq;
-import cc.onelooker.kaleido.dto.music.resp.MusicReleasePageResp;
-import cc.onelooker.kaleido.dto.music.resp.MusicReleaseViewResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicReleaseCreateResp;
+import cc.onelooker.kaleido.dto.music.resp.MusicReleasePageResp;
+import cc.onelooker.kaleido.dto.music.resp.MusicReleaseSearchNeteaseResp;
+import cc.onelooker.kaleido.dto.music.resp.MusicReleaseViewResp;
+import cc.onelooker.kaleido.entity.music.MusicReleaseDO;
 import cc.onelooker.kaleido.exp.music.MusicReleaseExp;
+import cc.onelooker.kaleido.netease.domain.Album;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.factory.Mappers;
 
-import java.lang.Long;
-import java.lang.String;
-import com.zjjcnt.common.core.annotation.StringDateFormat;
-import java.lang.Integer;
-import com.zjjcnt.common.core.annotation.Dict;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 /**
-* 发行品Convert
-*
-* @author cyetstar
-* @date 2023-09-29 22:32:53
-*/
+ * 发行品Convert
+ *
+ * @author cyetstar
+ * @date 2023-09-29 22:32:53
+ */
 @Mapper
 public interface MusicReleaseConvert {
 
@@ -33,7 +30,7 @@ public interface MusicReleaseConvert {
 
     MusicReleaseDTO convert(MusicReleaseDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     MusicReleaseDO convertToDO(MusicReleaseDTO dto);
 
     MusicReleaseDTO convertToDTO(MusicReleasePageReq req);
@@ -50,4 +47,9 @@ public interface MusicReleaseConvert {
 
     MusicReleaseExp convertToExp(MusicReleaseDTO dto);
 
+    @Mappings({
+            @Mapping(source = "id", target = "neteaseId"),
+            @Mapping(source = "name", target = "bt"),
+    })
+    MusicReleaseSearchNeteaseResp convertToSearchAlbumResp(Album album);
 }

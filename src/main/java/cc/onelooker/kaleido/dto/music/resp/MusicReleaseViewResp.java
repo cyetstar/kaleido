@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.dto.music.resp;
 
+import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,6 +9,8 @@ import java.lang.Long;
 import java.lang.String;
 import com.zjjcnt.common.core.annotation.StringDateFormat;
 import java.lang.Integer;
+import java.util.List;
+
 import com.zjjcnt.common.core.annotation.Dict;
 import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
@@ -31,6 +34,9 @@ public class MusicReleaseViewResp{
     @ApiModelProperty("Plex编号")
     private String plexId;
 
+    @ApiModelProperty("网易云音乐Id")
+    private String neteaseId;
+
     @ApiModelProperty("标题")
     private String bt;
 
@@ -46,14 +52,12 @@ public class MusicReleaseViewResp{
     @ApiModelProperty("发行国家")
     private String fxgj;
 
-    @StringDateFormat
     @ApiModelProperty("日期")
     private String rq;
 
     @ApiModelProperty("唱片公司")
     private String cpgs;
 
-    @StringDateFormat
     @ApiModelProperty("首发日期")
     private String sfrq;
 
@@ -63,9 +67,14 @@ public class MusicReleaseViewResp{
     @ApiModelProperty("音轨数")
     private Integer ygs;
 
-    @Dict("mt")
     @ApiModelProperty("媒体")
     private String mt;
+
+    @ApiModelProperty("简介")
+    private String jj;
+
+    @ApiModelProperty("Plex缩略图")
+    private String plexThumb;
 
     @Dict("sfqs")
     @ApiModelProperty("是否缺损")
@@ -73,4 +82,6 @@ public class MusicReleaseViewResp{
 
     @ApiModelProperty("文件路径")
     private String wjlj;
+
+    private List<MusicArtistDTO> musicArtistDTOList;
 }

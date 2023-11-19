@@ -1,18 +1,9 @@
 package cc.onelooker.kaleido.dto.music;
 
-import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
+import lombok.Data;
 
-import java.lang.Long;
-import java.lang.String;
-
-import com.zjjcnt.common.core.annotation.StringDateFormat;
-
-import java.lang.Integer;
 import java.util.List;
-
-import com.zjjcnt.common.core.annotation.Dict;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 /**
  * 发行品DTO
@@ -36,9 +27,14 @@ public class MusicReleaseDTO implements BaseDTO<Long> {
     private String musicbrainzId;
 
     /**
-     * Plex编号
+     * PlexId
      */
     private String plexId;
+
+    /**
+     * 网易音乐Id
+     */
+    private String neteaseId;
 
     /**
      * 标题
@@ -54,6 +50,11 @@ public class MusicReleaseDTO implements BaseDTO<Long> {
      * 简介
      */
     private String jj;
+
+    /**
+     * 缩略图
+     */
+    private String plexThumb;
 
     /**
      * 专辑类型
@@ -120,6 +121,7 @@ public class MusicReleaseDTO implements BaseDTO<Long> {
      */
     private String xgsj;
 
+    //
     private List<Long> artistIdList;
 
     @Override

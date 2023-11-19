@@ -1,30 +1,24 @@
 package cc.onelooker.kaleido.service.music.impl;
 
+import cc.onelooker.kaleido.convert.music.MusicArtistConvert;
+import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
+import cc.onelooker.kaleido.dto.music.MusicArtistReleaseDTO;
+import cc.onelooker.kaleido.entity.music.MusicArtistDO;
+import cc.onelooker.kaleido.mapper.music.MusicArtistMapper;
 import cc.onelooker.kaleido.plex.resp.GetMusicArtists;
 import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
-import com.zjjcnt.common.util.DateTimeUtils;
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.springframework.stereotype.Service;
+import cc.onelooker.kaleido.service.music.MusicArtistReleaseService;
+import cc.onelooker.kaleido.service.music.MusicArtistService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
-import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.music.MusicArtistService;
-import cc.onelooker.kaleido.entity.music.MusicArtistDO;
-import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
-import cc.onelooker.kaleido.convert.music.MusicArtistConvert;
-import cc.onelooker.kaleido.mapper.music.MusicArtistMapper;
-
+import com.zjjcnt.common.util.DateTimeUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
-
-import java.lang.Long;
-import java.lang.String;
-
-import com.zjjcnt.common.core.annotation.Dict;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
+import java.util.List;
 
 /**
  * 艺术家ServiceImpl
@@ -36,6 +30,9 @@ import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 public class MusicArtistServiceImpl extends KaleidoBaseServiceImpl<MusicArtistMapper, MusicArtistDO, MusicArtistDTO> implements MusicArtistService {
 
     MusicArtistConvert convert = MusicArtistConvert.INSTANCE;
+
+    @Autowired
+    private MusicArtistReleaseService musicArtistReleaseService;
 
     @Override
     protected Wrapper<MusicArtistDO> genQueryWrapper(MusicArtistDTO dto) {
@@ -73,12 +70,25 @@ public class MusicArtistServiceImpl extends KaleidoBaseServiceImpl<MusicArtistMa
         if (musicArtistDTO == null) {
             musicArtistDTO = new MusicArtistDTO();
             musicArtistDTO.setPlexId(metadata.getRatingKey());
+            musicArtistDTO.setPlexThumb(metadata.getThumb());
             musicArtistDTO.setMc(metadata.getTitle());
             musicArtistDTO.setJj(metadata.getSummary());
-            musicArtistDTO.setCjsj(DateFormatUtils.format(metadata.getAddedAt() * 1000L, DateTimeUtils.DATETIME_PATTERN));
-            musicArtistDTO.setXgsj(DateFormatUtils.format(metadata.getUpdatedAt() * 1000L, DateTimeUtils.DATETIME_PATTERN));
+            musicArtistDTO.setCjsj(DateTimeUtils.parseTimestamp(metadata.getAddedAt() * 1000L));
             insert(musicArtistDTO);
         }
         return musicArtistDTO;
+    }
+
+    @Override
+    public List<MusicArtistDTO> listByReleaseId(Long releaseId) {
+        List<MusicArtistReleaseDTO> musicArtistReleaseDTOList = musicArtistReleaseService.listByReleaseId(releaseId);
+        List<MusicArtistDTO> musicArtistDTOList = Lists.newArrayList();
+        for (MusicArtistReleaseDTO musicArtistReleaseDTO : musicArtistReleaseDTOList) {
+            MusicArtistDTO musicArtistDTO = findById(musicArtistReleaseDTO.getArtistId());
+            if (musicArtistDTO != null) {
+                musicArtistDTOList.add(musicArtistDTO);
+            }
+        }
+        return musicArtistDTOList;
     }
 }

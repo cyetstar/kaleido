@@ -3,7 +3,7 @@ package cc.onelooker.kaleido.web.controller.system;
 import cc.onelooker.kaleido.dto.system.req.PlexGetLibrariesReq;
 import cc.onelooker.kaleido.dto.system.resp.PlexGetLibrariesResp;
 import cc.onelooker.kaleido.plex.PlexApiService;
-import cc.onelooker.kaleido.plex.resp.GetLibrariesResp;
+import cc.onelooker.kaleido.plex.resp.GetLibraries;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +31,7 @@ public class PlexController {
                 || StringUtils.isEmpty(ConfigUtils.getSysConfig("plexToken"))) {
             plexApiService.init(req.getPlexUrl(), req.getPlexToken());
         }
-        List<GetLibrariesResp.Directory> libraries = plexApiService.getLibraries();
+        List<GetLibraries.Directory> libraries = plexApiService.getLibraries();
         List<PlexGetLibrariesResp> result = libraries.stream().map(s -> {
             PlexGetLibrariesResp plexGetLibrariesResp = new PlexGetLibrariesResp();
             plexGetLibrariesResp.setKey(s.getKey());

@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.dto.music.resp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,13 +21,25 @@ public class MusicTrackListByReleaseIdResp {
     @ApiModelProperty("标题")
     private String bt;
 
-    @ApiModelProperty("长度")
-    private String cd;
+    @ApiModelProperty("曲长")
+    private Integer qc;
 
     @ApiModelProperty("曲号")
     private Integer qh;
 
     @ApiModelProperty("碟号")
     private Integer dh;
+
+    @ApiModelProperty("是否有歌词")
+    private String sfygc;
+
+    @JsonProperty
+    public String qcLabel() {
+        //将秒转分秒格式
+        if (qc != null) {
+            return String.format("%d:%02d", qc / 60, qc % 60);
+        }
+        return null;
+    }
 
 }

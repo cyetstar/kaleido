@@ -1,17 +1,11 @@
 package cc.onelooker.kaleido.entity.music;
 
-import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.IdType;
-
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.zjjcnt.common.core.entity.IdEntity;
-import java.lang.Long;
-import java.lang.String;
-import java.lang.Integer;
-import com.zjjcnt.common.core.annotation.Dict;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
+import lombok.Data;
 
 /**
  * 曲目DO
@@ -44,10 +38,16 @@ public class MusicTrackDO implements IdEntity<Long> {
     private String musicbrainzId;
 
     /**
-     * Plex编号
+     * PlexId
      */
     @TableField(value = "plex_id")
     private String plexId;
+
+    /**
+     * 网易音乐Id
+     */
+    @TableField(value = "netease_id")
+    private String neteaseId;
 
     /**
      * 标题
@@ -64,8 +64,8 @@ public class MusicTrackDO implements IdEntity<Long> {
     /**
      * 长度
      */
-    @TableField(value = "cd")
-    private String cd;
+    @TableField(value = "qc")
+    private Integer qc;
 
     /**
      * 曲号
@@ -114,7 +114,6 @@ public class MusicTrackDO implements IdEntity<Long> {
      */
     @TableField(value = "xgsj")
     private String xgsj;
-
 
     @Override
     public Long getId() {

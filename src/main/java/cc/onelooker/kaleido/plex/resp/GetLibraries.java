@@ -12,7 +12,7 @@ import java.util.List;
  * @Description TODO
  */
 @Data
-public class GetLibrariesResp {
+public class GetLibraries {
 
     @JsonProperty("MediaContainer")
     private MediaContainer mediaContainer;

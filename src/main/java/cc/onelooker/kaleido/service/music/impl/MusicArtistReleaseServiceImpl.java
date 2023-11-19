@@ -1,21 +1,18 @@
 package cc.onelooker.kaleido.service.music.impl;
 
+import cc.onelooker.kaleido.convert.music.MusicArtistReleaseConvert;
+import cc.onelooker.kaleido.dto.music.MusicArtistReleaseDTO;
+import cc.onelooker.kaleido.entity.music.MusicArtistReleaseDO;
+import cc.onelooker.kaleido.mapper.music.MusicArtistReleaseMapper;
 import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
-import org.springframework.stereotype.Service;
+import cc.onelooker.kaleido.service.music.MusicArtistReleaseService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import org.apache.commons.lang3.Validate;
+import org.springframework.stereotype.Service;
 
-import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.music.MusicArtistReleaseService;
-import cc.onelooker.kaleido.entity.music.MusicArtistReleaseDO;
-import cc.onelooker.kaleido.dto.music.MusicArtistReleaseDTO;
-import cc.onelooker.kaleido.convert.music.MusicArtistReleaseConvert;
-import cc.onelooker.kaleido.mapper.music.MusicArtistReleaseMapper;
-
-import org.apache.commons.lang3.StringUtils;
-import java.util.*;
-
-import java.lang.Long;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 艺术家发行品关联表ServiceImpl
@@ -44,5 +41,13 @@ public class MusicArtistReleaseServiceImpl extends KaleidoBaseServiceImpl<MusicA
     @Override
     public MusicArtistReleaseDO convertToDO(MusicArtistReleaseDTO musicArtistReleaseDTO) {
         return convert.convertToDO(musicArtistReleaseDTO);
+    }
+
+    @Override
+    public List<MusicArtistReleaseDTO> listByReleaseId(Long releaseId) {
+        Validate.notNull(releaseId);
+        MusicArtistReleaseDTO param = new MusicArtistReleaseDTO();
+        param.setReleaseId(releaseId);
+        return list(param);
     }
 }

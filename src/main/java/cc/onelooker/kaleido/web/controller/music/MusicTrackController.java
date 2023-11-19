@@ -11,6 +11,7 @@ import cc.onelooker.kaleido.dto.music.resp.MusicTrackPageResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicTrackViewResp;
 import cc.onelooker.kaleido.exp.music.MusicTrackExp;
 import cc.onelooker.kaleido.service.music.MusicTrackService;
+import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
@@ -18,12 +19,21 @@ import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import com.zjjcnt.common.util.DateTimeUtils;
+import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -87,15 +97,31 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
     @ApiOperation(value = "导出曲目")
     public void export(MusicTrackPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
         String filename = "曲目" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, MusicTrackExp.class,
-                MusicTrackConvert.INSTANCE::convertToDTO, MusicTrackConvert.INSTANCE::convertToExp, response);
+        super.export(req, columns, pageParam, filename, MusicTrackExp.class, MusicTrackConvert.INSTANCE::convertToDTO, MusicTrackConvert.INSTANCE::convertToExp, response);
     }
 
     @GetMapping("listByReleaseId")
     public CommonResult<List<MusicTrackListByReleaseIdResp>> listByReleaseId(Long releaseId) {
         List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByReleaseId(releaseId);
-        List<MusicTrackListByReleaseIdResp> respList = MusicTrackConvert.INSTANCE.convertToListByReleaseIdResp(musicTrackDTOList);
+        String musicLibraryPath = ConfigUtils.getSysConfig("musicLibraryPath");
+        List<MusicTrackListByReleaseIdResp> respList = Lists.newArrayList();
+        for (MusicTrackDTO musicTrackDTO : musicTrackDTOList) {
+            File file = Paths.get(musicLibraryPath, FilenameUtils.removeExtension(musicTrackDTO.getWjlj()) + ".lrc").toFile();
+            MusicTrackListByReleaseIdResp resp = MusicTrackConvert.INSTANCE.convertToListByReleaseIdResp(musicTrackDTO);
+            resp.setSfygc(file.exists() && file.length() > 0 ? Constants.YES : Constants.NO);
+            respList.add(resp);
+        }
         return CommonResult.success(respList);
+    }
+
+    @GetMapping("viewLyrics")
+    public CommonResult<List<String>> viewLyrics(Long id) throws IOException {
+        MusicTrackDTO musicTrackDTO = musicTrackService.findById(id);
+        String musicLibraryPath = ConfigUtils.getSysConfig("musicLibraryPath");
+        File file = Paths.get(musicLibraryPath, FilenameUtils.removeExtension(musicTrackDTO.getWjlj()) + ".lrc").toFile();
+        String content = FileUtils.readFileToString(file);
+        List<String> result = Arrays.asList(StringUtils.split(content, "\n"));
+        return CommonResult.success(result);
     }
 
 }

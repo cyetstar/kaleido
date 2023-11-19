@@ -20,7 +20,7 @@ public interface MusicTrackService extends IBaseService<MusicTrackDTO> {
 
     MusicTrackDTO findByPlexId(String plexId);
 
-    MusicTrackDTO createIfNotExist(String plexMusicLibraryPath, GetMusicTracks.Metadata metadata, MusicReleaseDTO musicReleaseDTO, MusicArtistDTO musicArtistDTO);
+    MusicTrackDTO createIfNotExist(String libraryPath, GetMusicTracks.Metadata metadata, MusicReleaseDTO musicReleaseDTO, MusicArtistDTO musicArtistDTO);
 
     List<MusicTrackDTO> listByReleaseId(Long releaseId);
 }

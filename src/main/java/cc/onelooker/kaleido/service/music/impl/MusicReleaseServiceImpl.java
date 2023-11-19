@@ -1,32 +1,27 @@
 package cc.onelooker.kaleido.service.music.impl;
 
+import cc.onelooker.kaleido.convert.music.MusicReleaseConvert;
 import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
 import cc.onelooker.kaleido.dto.music.MusicArtistReleaseDTO;
+import cc.onelooker.kaleido.dto.music.MusicReleaseDTO;
+import cc.onelooker.kaleido.entity.music.MusicReleaseDO;
+import cc.onelooker.kaleido.entity.music.MusicTrackDO;
+import cc.onelooker.kaleido.mapper.music.MusicReleaseMapper;
 import cc.onelooker.kaleido.plex.resp.GetMusicAlbums;
 import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
 import cc.onelooker.kaleido.service.music.MusicArtistReleaseService;
-import com.zjjcnt.common.util.DateTimeUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import cc.onelooker.kaleido.service.music.MusicReleaseService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
-import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.music.MusicReleaseService;
-import cc.onelooker.kaleido.entity.music.MusicReleaseDO;
-import cc.onelooker.kaleido.dto.music.MusicReleaseDTO;
-import cc.onelooker.kaleido.convert.music.MusicReleaseConvert;
-import cc.onelooker.kaleido.mapper.music.MusicReleaseMapper;
-
+import com.zjjcnt.common.util.DateTimeUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.*;
-
-import java.lang.Long;
-import java.lang.String;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 发行品ServiceImpl
@@ -47,6 +42,7 @@ public class MusicReleaseServiceImpl extends KaleidoBaseServiceImpl<MusicRelease
         LambdaQueryWrapper<MusicReleaseDO> query = new LambdaQueryWrapper<>();
         query.eq(StringUtils.isNotEmpty(dto.getMusicbrainzId()), MusicReleaseDO::getMusicbrainzId, dto.getMusicbrainzId());
         query.eq(StringUtils.isNotEmpty(dto.getPlexId()), MusicReleaseDO::getPlexId, dto.getPlexId());
+        query.eq(StringUtils.isNotEmpty(dto.getNeteaseId()), MusicReleaseDO::getNeteaseId, dto.getNeteaseId());
         query.eq(StringUtils.isNotEmpty(dto.getBt()), MusicReleaseDO::getBt, dto.getBt());
         query.eq(StringUtils.isNotEmpty(dto.getYsj()), MusicReleaseDO::getYsj, dto.getYsj());
         query.eq(StringUtils.isNotEmpty(dto.getZjlx()), MusicReleaseDO::getZjlx, dto.getZjlx());
@@ -102,13 +98,14 @@ public class MusicReleaseServiceImpl extends KaleidoBaseServiceImpl<MusicRelease
         if (musicReleaseDTO == null) {
             musicReleaseDTO = new MusicReleaseDTO();
             musicReleaseDTO.setPlexId(metadata.getRatingKey());
+            musicReleaseDTO.setPlexThumb(metadata.getThumb());
             musicReleaseDTO.setBt(metadata.getTitle());
             musicReleaseDTO.setJj(metadata.getSummary());
             musicReleaseDTO.setArtistIdList(Arrays.asList(musicArtistDTO.getId()));
-            musicReleaseDTO.setCjsj(DateFormatUtils.format(metadata.getAddedAt() * 1000L, DateTimeUtils.DATETIME_PATTERN));
-            musicReleaseDTO.setXgsj(DateFormatUtils.format(metadata.getUpdatedAt() * 1000L, DateTimeUtils.DATETIME_PATTERN));
+            musicReleaseDTO.setCjsj(DateTimeUtils.parseTimestamp(metadata.getAddedAt() * 1000L));
             musicReleaseDTO = insert(musicReleaseDTO);
         }
         return musicReleaseDTO;
     }
+
 }

@@ -16,7 +16,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.util.DateTimeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
@@ -49,6 +48,7 @@ public class MusicTrackServiceImpl extends KaleidoBaseServiceImpl<MusicTrackMapp
         LambdaQueryWrapper<MusicTrackDO> query = new LambdaQueryWrapper<>();
         query.eq(StringUtils.isNotEmpty(dto.getMusicbrainzId()), MusicTrackDO::getMusicbrainzId, dto.getMusicbrainzId());
         query.eq(StringUtils.isNotEmpty(dto.getPlexId()), MusicTrackDO::getPlexId, dto.getPlexId());
+        query.eq(StringUtils.isNotEmpty(dto.getNeteaseId()), MusicTrackDO::getNeteaseId, dto.getNeteaseId());
         query.eq(Objects.nonNull(dto.getReleaseId()), MusicTrackDO::getReleaseId, dto.getReleaseId());
         query.eq(StringUtils.isNotEmpty(dto.getBt()), MusicTrackDO::getBt, dto.getBt());
         query.eq(StringUtils.isNotEmpty(dto.getWjgs()), MusicTrackDO::getWjgs, dto.getWjgs());
@@ -92,19 +92,19 @@ public class MusicTrackServiceImpl extends KaleidoBaseServiceImpl<MusicTrackMapp
     }
 
     @Override
-    public MusicTrackDTO createIfNotExist(String plexMusicLibraryPath, GetMusicTracks.Metadata metadata, MusicReleaseDTO musicReleaseDTO, MusicArtistDTO musicArtistDTO) {
+    public MusicTrackDTO createIfNotExist(String libraryPath, GetMusicTracks.Metadata metadata, MusicReleaseDTO musicReleaseDTO, MusicArtistDTO musicArtistDTO) {
         MusicTrackDTO musicTrackDTO = findByPlexId(metadata.getRatingKey());
         if (musicTrackDTO == null) {
             musicTrackDTO = new MusicTrackDTO();
             musicTrackDTO.setPlexId(metadata.getRatingKey());
             musicTrackDTO.setBt(metadata.getTitle());
             musicTrackDTO.setReleaseId(musicReleaseDTO.getId());
-            musicTrackDTO.setCjsj(DateFormatUtils.format(metadata.getAddedAt() * 1000L, DateTimeUtils.DATETIME_PATTERN));
-            musicTrackDTO.setXgsj(DateFormatUtils.format(metadata.getUpdatedAt() * 1000L, DateTimeUtils.DATETIME_PATTERN));
+            musicTrackDTO.setCjsj(DateTimeUtils.parseTimestamp(metadata.getAddedAt() * 1000L));
+            musicTrackDTO.setXgsj(DateTimeUtils.parseTimestamp(metadata.getUpdatedAt() * 1000L));
             musicTrackDTO.setArtistIdList(Arrays.asList(musicArtistDTO.getId()));
             GetMusicTracks.Media media = metadata.getMedia();
             musicTrackDTO.setWjgs(media.getContainer());
-            musicTrackDTO.setWjlj(StringUtils.removeStart(media.getPart().getFile(), plexMusicLibraryPath));
+            musicTrackDTO.setWjlj(StringUtils.removeStart(media.getPart().getFile(), libraryPath));
             musicTrackDTO = insert(musicTrackDTO);
         }
         return musicTrackDTO;

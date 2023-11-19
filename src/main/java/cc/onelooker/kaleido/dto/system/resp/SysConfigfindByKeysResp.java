@@ -32,4 +32,6 @@ public class SysConfigfindByKeysResp {
     private String plexMusicLibraryId;
 
     private String plexMusicLibraryPath;
+
+    private String neteaseUrl;
 }

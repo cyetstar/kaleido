@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.dto.music;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
 
@@ -38,9 +39,14 @@ public class MusicTrackDTO implements BaseDTO<Long> {
     private String musicbrainzId;
 
     /**
-     * Plex编号
+     * PlexId
      */
     private String plexId;
+
+    /**
+     * 网易音乐Id
+     */
+    private String neteaseId;
 
     /**
      * 标题
@@ -53,9 +59,9 @@ public class MusicTrackDTO implements BaseDTO<Long> {
     private String ysj;
 
     /**
-     * 长度
+     * 曲长
      */
-    private String cd;
+    private Integer qc;
 
     /**
      * 曲号

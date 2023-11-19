@@ -148,6 +148,7 @@ zjjcnt:
         - /fileInfo/small/**
         - /fileInfo/medium/**
         - /fileInfo/original/**
+        - /musicRelease/cover/**
         - /captcha/code
         # 静态资源
         - /

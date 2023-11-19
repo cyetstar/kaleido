@@ -1,17 +1,20 @@
 package cc.onelooker.kaleido.web.controller.music;
 
 import cc.onelooker.kaleido.convert.music.MusicReleaseConvert;
+import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
 import cc.onelooker.kaleido.dto.music.MusicReleaseDTO;
-import cc.onelooker.kaleido.dto.music.req.MusicReleaseCreateReq;
-import cc.onelooker.kaleido.dto.music.req.MusicReleasePageReq;
-import cc.onelooker.kaleido.dto.music.req.MusicReleaseUpdateAudioTagReq;
-import cc.onelooker.kaleido.dto.music.req.MusicReleaseUpdateReq;
+import cc.onelooker.kaleido.dto.music.req.*;
 import cc.onelooker.kaleido.dto.music.resp.MusicReleaseCreateResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicReleasePageResp;
+import cc.onelooker.kaleido.dto.music.resp.MusicReleaseSearchNeteaseResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicReleaseViewResp;
 import cc.onelooker.kaleido.exp.music.MusicReleaseExp;
+import cc.onelooker.kaleido.netease.NeteaseApiService;
+import cc.onelooker.kaleido.netease.domain.Album;
+import cc.onelooker.kaleido.service.music.MusicArtistService;
 import cc.onelooker.kaleido.service.music.MusicManager;
 import cc.onelooker.kaleido.service.music.MusicReleaseService;
+import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
@@ -21,10 +24,19 @@ import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -43,7 +55,13 @@ public class MusicReleaseController extends AbstractCrudController<MusicReleaseD
     private MusicReleaseService musicReleaseService;
 
     @Autowired
+    private MusicArtistService musicArtistService;
+
+    @Autowired
     private MusicManager musicManager;
+
+    @Autowired
+    private NeteaseApiService neteaseMusicApiService;
 
     @Override
     protected IBaseService getService() {
@@ -59,7 +77,10 @@ public class MusicReleaseController extends AbstractCrudController<MusicReleaseD
     @GetMapping("view")
     @ApiOperation(value = "查看发行品详情")
     public CommonResult<MusicReleaseViewResp> view(Long id) {
-        return super.view(id, MusicReleaseConvert.INSTANCE::convertToViewResp);
+        List<MusicArtistDTO> musicArtistDTOList = musicArtistService.listByReleaseId(id);
+        MusicReleaseViewResp musicReleaseViewResp = doView(id, MusicReleaseConvert.INSTANCE::convertToViewResp);
+        musicReleaseViewResp.setMusicArtistDTOList(musicArtistDTOList);
+        return CommonResult.success(musicReleaseViewResp);
     }
 
     @PostMapping("create")
@@ -101,10 +122,50 @@ public class MusicReleaseController extends AbstractCrudController<MusicReleaseD
         return CommonResult.success(true);
     }
 
+    //读取封面文件，输出字节流
+    @GetMapping("/cover/{id}")
+    public HttpEntity<byte[]> cover(@PathVariable Long id) {
+        MusicReleaseDTO musicReleaseDTO = musicReleaseService.findById(id);
+        String musicLibraryPath = ConfigUtils.getSysConfig("musicLibraryPath");
+        Path path = Paths.get(musicLibraryPath, musicReleaseDTO.getWjlj());
+        try {
+            Path coverPath = Files.list(path).filter(s -> s.toString().endsWith(".jpg") || s.toString().endsWith(".png")).findFirst().orElseGet(null);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            IOUtils.copyLarge(Files.newInputStream(coverPath), bos);
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bos.toByteArray());
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping("updateAudioTag")
     public CommonResult<Boolean> updateAudioTag(@RequestBody MusicReleaseUpdateAudioTagReq req) {
-        musicManager.updateReleaseAudioTag(req.getId());
+        int error = musicManager.updateAudioTag(req.getId());
+        return CommonResult.success(error == 0);
+    }
+
+    @GetMapping("searchNetease")
+    public CommonResult<List<MusicReleaseSearchNeteaseResp>> searchNetease(MusicReleaseSearchNeteaseReq req) {
+        List<Album> albumList = neteaseMusicApiService.searchAlbum(req.getKeywords(), req.getLimit());
+        List<MusicReleaseSearchNeteaseResp> respList = Lists.newArrayList();
+        for (Album album : albumList) {
+            MusicReleaseSearchNeteaseResp resp = MusicReleaseConvert.INSTANCE.convertToSearchAlbumResp(album);
+            resp.setFxrq(DateTimeUtils.parseTimestamp(album.getPublishTime()));
+            respList.add(resp);
+        }
+        return CommonResult.success(respList);
+    }
+
+    @PostMapping("matchNetease")
+    public CommonResult<Boolean> matchNetease(@RequestBody MusicReleaseMatchNeteaseReq req) {
+        musicManager.matchNetease(req.getId(), req.getNeteaseId());
         return CommonResult.success(true);
+    }
+
+    @PostMapping("downloadLyric")
+    public CommonResult<Boolean> downloadLyric(@RequestBody MusicReleaseUpdateLyricReq req) {
+        int error = musicManager.downloadLyric(req.getId());
+        return CommonResult.success(error == 0);
     }
 
 }

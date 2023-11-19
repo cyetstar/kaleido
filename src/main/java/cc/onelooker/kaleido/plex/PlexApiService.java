@@ -1,10 +1,11 @@
 package cc.onelooker.kaleido.plex;
 
-import cc.onelooker.kaleido.plex.resp.GetLibrariesResp;
+import cc.onelooker.kaleido.plex.resp.GetLibraries;
 import cc.onelooker.kaleido.plex.resp.GetMusicAlbums;
 import cc.onelooker.kaleido.plex.resp.GetMusicArtists;
 import cc.onelooker.kaleido.plex.resp.GetMusicTracks;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,10 +35,13 @@ public class PlexApiService {
 
     @PostConstruct
     public void init() {
-        this.plexUrl = ConfigUtils.getSysConfig("plexUrl");
-        this.plexToken = ConfigUtils.getSysConfig("plexToken");
+        if (StringUtils.isEmpty(this.plexUrl) || StringUtils.isEmpty(this.plexToken)) {
+            this.plexUrl = ConfigUtils.getSysConfig("plexUrl");
+            this.plexToken = ConfigUtils.getSysConfig("plexToken");
+        }
     }
 
+    @Deprecated
     public void init(String plexUrl, String plexToken) {
         Validate.notEmpty(plexUrl);
         Validate.notEmpty(plexToken);
@@ -45,13 +49,15 @@ public class PlexApiService {
         this.plexToken = plexToken;
     }
 
-    public List<GetLibrariesResp.Directory> getLibraries() {
-        GetLibrariesResp resp = restTemplate.getForObject(plexUrl + API_ALL_LIBRARY, GetLibrariesResp.class, plexToken);
-        GetLibrariesResp.MediaContainer mediaContainer = resp.getMediaContainer();
+    public List<GetLibraries.Directory> getLibraries() {
+        init();
+        GetLibraries resp = restTemplate.getForObject(plexUrl + API_ALL_LIBRARY, GetLibraries.class, plexToken);
+        GetLibraries.MediaContainer mediaContainer = resp.getMediaContainer();
         return mediaContainer.getDirectory();
     }
 
     public List<GetMusicArtists.Metadata> getMusicArtists(String libraryId) {
+        init();
         GetMusicArtists musicArtists = restTemplate.getForObject(plexUrl + API_ALL_MUSIC_ARTISTS, GetMusicArtists.class, libraryId, plexToken);
         GetMusicArtists.MediaContainer mediaContainer = musicArtists.getMediaContainer();
         return mediaContainer.getMetadata();
@@ -64,6 +70,7 @@ public class PlexApiService {
     }
 
     public List<GetMusicTracks.Metadata> getMusicTracks(String albumId) {
+        init();
         GetMusicTracks musicTracks = restTemplate.getForObject(plexUrl + API_ALL_MUSIC_TRACKS, GetMusicTracks.class, albumId, plexToken);
         GetMusicTracks.MediaContainer mediaContainer = musicTracks.getMediaContainer();
         return mediaContainer.getMetadataList();

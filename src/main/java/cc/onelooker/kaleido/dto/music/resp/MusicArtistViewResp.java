@@ -29,6 +29,9 @@ public class MusicArtistViewResp{
     @ApiModelProperty("Plex编号")
     private String plexId;
 
+    @ApiModelProperty("网易云音乐Id")
+    private String neteaseId;
+
     @ApiModelProperty("名称")
     private String mc;
 
@@ -41,4 +44,7 @@ public class MusicArtistViewResp{
 
     @ApiModelProperty("简介")
     private String jj;
+
+    @ApiModelProperty("Plex缩略图")
+    private String plexThumb;
 }

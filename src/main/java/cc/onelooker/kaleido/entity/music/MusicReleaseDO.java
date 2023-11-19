@@ -43,10 +43,16 @@ public class MusicReleaseDO implements IdEntity<Long> {
     private String musicbrainzId;
 
     /**
-     * Plex编号
+     * PlexId
      */
     @TableField(value = "plex_id")
     private String plexId;
+
+    /**
+     * 网易音乐Id
+     */
+    @TableField(value = "netease_id")
+    private String neteaseId;
 
     /**
      * 标题
@@ -65,6 +71,12 @@ public class MusicReleaseDO implements IdEntity<Long> {
      */
     @TableField(value = "jj")
     private String jj;
+
+    /**
+     * 缩略图
+     */
+    @TableField(value = "plex_thumb")
+    private String plexThumb;
 
     /**
      * 专辑类型

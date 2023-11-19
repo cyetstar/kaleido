@@ -3,6 +3,8 @@ package cc.onelooker.kaleido.service.music;
 import com.zjjcnt.common.core.service.IBaseService;
 
 import java.lang.Long;
+import java.util.List;
+
 import cc.onelooker.kaleido.dto.music.MusicArtistReleaseDTO;
 
 /**
@@ -13,4 +15,5 @@ import cc.onelooker.kaleido.dto.music.MusicArtistReleaseDTO;
  */
 public interface MusicArtistReleaseService extends IBaseService<MusicArtistReleaseDTO> {
 
+    List<MusicArtistReleaseDTO> listByReleaseId(Long releaseId);
 }

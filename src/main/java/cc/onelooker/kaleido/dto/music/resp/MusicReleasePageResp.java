@@ -31,6 +31,9 @@ public class MusicReleasePageResp{
     @ApiModelProperty("Plex编号")
     private String plexId;
 
+    @ApiModelProperty("网易云音乐Id")
+    private String neteaseId;
+
     @ApiModelProperty("标题")
     private String bt;
 
@@ -73,4 +76,7 @@ public class MusicReleasePageResp{
 
     @ApiModelProperty("文件路径")
     private String wjlj;
+
+    @ApiModelProperty("Plex缩略图")
+    private String plexThumb;
 }
