@@ -14,12 +14,11 @@ import cc.onelooker.kaleido.dto.music.resp.MusicArtistTrackViewResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicArtistTrackCreateResp;
 import cc.onelooker.kaleido.exp.music.MusicArtistTrackExp;
 
-import java.lang.Long;
 /**
 * 艺术家曲目关联表Convert
 *
 * @author cyetstar
-* @date 2023-09-29 22:32:53
+* @date 2023-11-20 22:35:26
 */
 @Mapper
 public interface MusicArtistTrackConvert {

@@ -1,26 +1,24 @@
 package cc.onelooker.kaleido.service.music;
 
+import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
-import cc.onelooker.kaleido.dto.music.MusicReleaseDTO;
+import cc.onelooker.kaleido.dto.music.MusicTrackDTO;
 import cc.onelooker.kaleido.plex.resp.GetMusicTracks;
 import com.zjjcnt.common.core.service.IBaseService;
 
-import java.lang.String;
 import java.util.List;
-
-import cc.onelooker.kaleido.dto.music.MusicTrackDTO;
 
 /**
  * 曲目Service
  *
  * @author cyetstar
- * @date 2023-09-29 22:32:53
+ * @date 2023-11-20 22:35:26
  */
 public interface MusicTrackService extends IBaseService<MusicTrackDTO> {
 
     MusicTrackDTO findByPlexId(String plexId);
 
-    MusicTrackDTO createIfNotExist(String libraryPath, GetMusicTracks.Metadata metadata, MusicReleaseDTO musicReleaseDTO, MusicArtistDTO musicArtistDTO);
+    MusicTrackDTO createIfNotExist(String libraryPath, GetMusicTracks.Metadata metadata, MusicAlbumDTO musicAlbumDTO, MusicArtistDTO musicArtistDTO);
 
-    List<MusicTrackDTO> listByReleaseId(Long releaseId);
+    List<MusicTrackDTO> listByAlbumId(Long AlbumId);
 }

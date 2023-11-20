@@ -6,14 +6,12 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.lang.Long;
 import java.lang.String;
-import com.zjjcnt.common.core.annotation.Dict;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 /**
  * 艺术家请求对象
  *
  * @author cyetstar
- * @date 2023-09-29 22:32:53
+ * @date 2023-11-20 22:35:26
  *
  */
 @Data
@@ -23,21 +21,25 @@ public class MusicArtistUpdateReq{
     @ApiModelProperty("主键")
     private Long id;
 
-    @ApiModelProperty("MusicBrainzId")
+    @ApiModelProperty("MusicBrainz编号")
     private String musicbrainzId;
 
     @ApiModelProperty("Plex编号")
     private String plexId;
 
-    @ApiModelProperty("名称")
-    private String mc;
+    @ApiModelProperty("Plex缩略图")
+    private String plexThumb;
 
-    @ApiModelProperty("艺术家类型")
-    private String ysjlx;
+    @ApiModelProperty("网易云音乐编号")
+    private String neteaseId;
+
+    @ApiModelProperty("名称")
+    private String name;
 
     @ApiModelProperty("国家地区")
-    private String gjdq;
+    private String area;
 
     @ApiModelProperty("简介")
-    private String jj;
+    private String summary;
+
 }

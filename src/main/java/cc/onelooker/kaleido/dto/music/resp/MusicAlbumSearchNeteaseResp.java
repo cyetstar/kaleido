@@ -1,0 +1,24 @@
+package cc.onelooker.kaleido.dto.music.resp;
+
+import com.zjjcnt.common.core.annotation.StringDateFormat;
+import lombok.Data;
+
+/**
+ * @Author xiadawei
+ * @Date 2023-11-16 00:57:00
+ * @Description TODO
+ */
+@Data
+public class MusicAlbumSearchNeteaseResp {
+
+    private String title;
+
+    private String neteaseId;
+
+    private String artist;
+
+    @StringDateFormat
+    private String publishTime;
+
+    private String picUrl;
+}

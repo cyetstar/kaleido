@@ -19,17 +19,11 @@ import cc.onelooker.kaleido.exp.music.MusicArtistExp;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-import java.lang.Long;
-import java.lang.String;
-import com.zjjcnt.common.core.annotation.Dict;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
-
-
 /**
 * 艺术家前端控制器
 *
 * @author cyetstar
-* @date 2023-09-29 22:32:53
+* @date 2023-11-20 22:35:26
 */
 
 @Api(tags = "艺术家")

@@ -14,15 +14,11 @@ import cc.onelooker.kaleido.dto.music.resp.MusicArtistViewResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicArtistCreateResp;
 import cc.onelooker.kaleido.exp.music.MusicArtistExp;
 
-import java.lang.Long;
-import java.lang.String;
-import com.zjjcnt.common.core.annotation.Dict;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 /**
 * 艺术家Convert
 *
 * @author cyetstar
-* @date 2023-09-29 22:32:53
+* @date 2023-11-20 22:35:26
 */
 @Mapper
 public interface MusicArtistConvert {

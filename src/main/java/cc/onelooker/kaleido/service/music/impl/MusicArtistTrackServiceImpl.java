@@ -1,30 +1,25 @@
 package cc.onelooker.kaleido.service.music.impl;
 
-import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
-import org.springframework.stereotype.Service;
+import cc.onelooker.kaleido.convert.music.MusicArtistTrackConvert;
+import cc.onelooker.kaleido.dto.music.MusicArtistTrackDTO;
+import cc.onelooker.kaleido.entity.music.MusicArtistTrackDO;
+import cc.onelooker.kaleido.mapper.music.MusicArtistTrackMapper;
+import cc.onelooker.kaleido.service.music.MusicArtistTrackService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.music.MusicArtistTrackService;
-import cc.onelooker.kaleido.entity.music.MusicArtistTrackDO;
-import cc.onelooker.kaleido.dto.music.MusicArtistTrackDTO;
-import cc.onelooker.kaleido.convert.music.MusicArtistTrackConvert;
-import cc.onelooker.kaleido.mapper.music.MusicArtistTrackMapper;
+import org.springframework.stereotype.Service;
 
-import org.apache.commons.lang3.StringUtils;
-import java.util.*;
-
-import java.lang.Long;
+import java.util.Objects;
 
 /**
  * 艺术家曲目关联表ServiceImpl
  *
  * @author cyetstar
- * @date 2023-09-29 22:32:53
+ * @date 2023-11-20 22:35:26
  */
 @Service
-public class MusicArtistTrackServiceImpl extends KaleidoBaseServiceImpl<MusicArtistTrackMapper, MusicArtistTrackDO, MusicArtistTrackDTO> implements MusicArtistTrackService {
+public class MusicArtistTrackServiceImpl extends AbstractBaseServiceImpl<MusicArtistTrackMapper, MusicArtistTrackDO, MusicArtistTrackDTO> implements MusicArtistTrackService {
 
     MusicArtistTrackConvert convert = MusicArtistTrackConvert.INSTANCE;
 

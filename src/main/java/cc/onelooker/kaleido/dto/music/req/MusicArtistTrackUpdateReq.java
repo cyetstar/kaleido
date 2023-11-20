@@ -10,7 +10,7 @@ import java.lang.Long;
  * 艺术家曲目关联表请求对象
  *
  * @author cyetstar
- * @date 2023-09-29 22:32:53
+ * @date 2023-11-20 22:35:26
  *
  */
 @Data
@@ -25,4 +25,5 @@ public class MusicArtistTrackUpdateReq{
 
     @ApiModelProperty("曲目id")
     private Long trackId;
+
 }

@@ -7,14 +7,12 @@ import io.swagger.annotations.ApiModelProperty;
 import java.lang.Long;
 import java.lang.String;
 import java.lang.Integer;
-import com.zjjcnt.common.core.annotation.Dict;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 /**
  * 曲目请求对象
  *
  * @author cyetstar
- * @date 2023-09-29 22:32:53
+ * @date 2023-11-20 22:35:26
  *
  */
 @Data
@@ -24,39 +22,37 @@ public class MusicTrackUpdateReq{
     @ApiModelProperty("主键")
     private Long id;
 
-    @ApiModelProperty("发行品id")
-    private Long releaseId;
+    @ApiModelProperty("专辑Id")
+    private Long albumId;
 
-    @ApiModelProperty("MusicBrainzId")
+    @ApiModelProperty("MusicBrainz编号")
     private String musicbrainzId;
 
     @ApiModelProperty("Plex编号")
     private String plexId;
 
+    @ApiModelProperty("网易云音乐编号")
+    private String neteaseId;
+
     @ApiModelProperty("标题")
-    private String bt;
+    private String title;
 
     @ApiModelProperty("艺术家")
-    private String ysj;
+    private String artists;
 
-    @ApiModelProperty("长度")
-    private String cd;
+    @ApiModelProperty("曲长")
+    private Integer length;
 
     @ApiModelProperty("曲号")
-    private Integer qh;
+    private Integer trackNumber;
 
     @ApiModelProperty("碟号")
-    private Integer dh;
+    private Integer discNumber;
 
     @ApiModelProperty("文件格式")
-    private String wjgs;
+    private String format;
 
     @ApiModelProperty("文件路径")
-    private String wjlj;
+    private String path;
 
-    @ApiModelProperty("是否有歌词")
-    private String sfygc;
-
-    @ApiModelProperty("是否缺损")
-    private String sfqs;
 }

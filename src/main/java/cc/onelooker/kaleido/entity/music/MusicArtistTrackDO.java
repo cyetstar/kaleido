@@ -7,19 +7,21 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.zjjcnt.common.core.entity.IdEntity;
+import com.zjjcnt.common.core.annotation.Crypto;
+
 import java.lang.Long;
 
 /**
  * 艺术家曲目关联表DO
  *
  * @author cyetstar
- * @date 2023-09-29 22:32:53
+ * @date 2023-11-20 22:35:26
  * @see cc.onelooker.kaleido.dto.music.MusicArtistTrackDTO
  */
 @Data
 @TableName("music_artist_track")
 public class MusicArtistTrackDO implements IdEntity<Long> {
-    private static final long serialVersionUID = -4229066596810361728L;
+    private static final long serialVersionUID = -4607158984094638852L;
 
     /**
      * 主键

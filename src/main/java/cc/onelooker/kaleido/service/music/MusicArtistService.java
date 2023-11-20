@@ -10,7 +10,7 @@ import java.util.List;
  * 艺术家Service
  *
  * @author cyetstar
- * @date 2023-09-29 22:32:53
+ * @date 2023-11-20 22:35:26
  */
 public interface MusicArtistService extends IBaseService<MusicArtistDTO> {
 
@@ -18,5 +18,5 @@ public interface MusicArtistService extends IBaseService<MusicArtistDTO> {
 
     MusicArtistDTO createIfNotExist(GetMusicArtists.Metadata metadata);
 
-    List<MusicArtistDTO> listByReleaseId(Long releaseId);
+    List<MusicArtistDTO> listByAlbumId(Long albumId);
 }

@@ -20,6 +20,6 @@ public class MusicArtistReleaseCreateReq{
     @ApiModelProperty("艺术家id")
     private Long artistId;
 
-    @ApiModelProperty("发行品id")
-    private Long releaseId;
+    @ApiModelProperty("专辑Id")
+    private Long albumId;
 }

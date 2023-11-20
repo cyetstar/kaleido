@@ -1,27 +1,20 @@
 package cc.onelooker.kaleido.dto.music;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
+import lombok.Data;
 
-import java.lang.Long;
-import java.lang.String;
-import java.lang.Integer;
 import java.util.List;
-
-import com.zjjcnt.common.core.annotation.Dict;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 /**
  * 曲目DTO
  *
  * @author cyetstar
- * @date 2023-09-29 22:32:53
+ * @date 2023-11-20 22:35:26
  * @see cc.onelooker.kaleido.entity.music.MusicTrackDO
  */
 @Data
 public class MusicTrackDTO implements BaseDTO<Long> {
-    private static final long serialVersionUID = -647851996709236430L;
+    private static final long serialVersionUID = -1187624214357814438L;
 
     /**
      * 主键
@@ -29,69 +22,19 @@ public class MusicTrackDTO implements BaseDTO<Long> {
     private Long id;
 
     /**
-     * 发行品id
+     * 专辑Id
      */
-    private Long releaseId;
+    private Long albumId;
 
     /**
-     * MusicBrainzId
+     * MusicBrainz编号
      */
     private String musicbrainzId;
 
     /**
-     * PlexId
+     * Plex编号
      */
     private String plexId;
-
-    /**
-     * 网易音乐Id
-     */
-    private String neteaseId;
-
-    /**
-     * 标题
-     */
-    private String bt;
-
-    /**
-     * 艺术家
-     */
-    private String ysj;
-
-    /**
-     * 曲长
-     */
-    private Integer qc;
-
-    /**
-     * 曲号
-     */
-    private Integer qh;
-
-    /**
-     * 碟号
-     */
-    private Integer dh;
-
-    /**
-     * 文件格式
-     */
-    private String wjgs;
-
-    /**
-     * 文件路径
-     */
-    private String wjlj;
-
-    /**
-     * 是否有歌词
-     */
-    private String sfygc;
-
-    /**
-     * 是否缺损
-     */
-    private String sfqs;
 
     /**
      * 创建时间
@@ -103,7 +46,70 @@ public class MusicTrackDTO implements BaseDTO<Long> {
      */
     private String xgsj;
 
-    //
+    /**
+     * 网易云音乐编号
+     */
+    private String neteaseId;
+
+    /**
+     * 标题
+     */
+    private String title;
+
+    /**
+     * 艺术家
+     */
+    private String artists;
+
+    /**
+     * 曲长
+     */
+    private Integer length;
+
+    /**
+     * 曲号
+     */
+    private Integer trackNumber;
+
+    /**
+     * 碟号
+     */
+    private Integer discNumber;
+
+    /**
+     * 文件格式
+     */
+    private String format;
+
+    /**
+     * 文件路径
+     */
+    private String path;
+
+    // ------ 非数据库表字段 -------
+    /**
+     * 大于等于创建时间
+     */
+    private String cjsjStart;
+
+    /**
+     * 小于等于创建时间
+     */
+    private String cjsjEnd;
+
+    /**
+     * 大于等于修改时间
+     */
+    private String xgsjStart;
+
+    /**
+     * 小于等于修改时间
+     */
+    private String xgsjEnd;
+
+    /**
+     * 艺术家id列表
+     */
     private List<Long> artistIdList;
 
     @Override
