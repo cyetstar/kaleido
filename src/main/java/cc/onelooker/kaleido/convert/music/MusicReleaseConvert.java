@@ -4,10 +4,7 @@ import cc.onelooker.kaleido.dto.music.MusicReleaseDTO;
 import cc.onelooker.kaleido.dto.music.req.MusicReleaseCreateReq;
 import cc.onelooker.kaleido.dto.music.req.MusicReleasePageReq;
 import cc.onelooker.kaleido.dto.music.req.MusicReleaseUpdateReq;
-import cc.onelooker.kaleido.dto.music.resp.MusicReleaseCreateResp;
-import cc.onelooker.kaleido.dto.music.resp.MusicReleasePageResp;
-import cc.onelooker.kaleido.dto.music.resp.MusicReleaseSearchNeteaseResp;
-import cc.onelooker.kaleido.dto.music.resp.MusicReleaseViewResp;
+import cc.onelooker.kaleido.dto.music.resp.*;
 import cc.onelooker.kaleido.entity.music.MusicReleaseDO;
 import cc.onelooker.kaleido.exp.music.MusicReleaseExp;
 import cc.onelooker.kaleido.netease.domain.Album;
@@ -52,4 +49,6 @@ public interface MusicReleaseConvert {
             @Mapping(source = "name", target = "bt"),
     })
     MusicReleaseSearchNeteaseResp convertToSearchAlbumResp(Album album);
+
+    MusicReleaseListByArtistIdResp convertToListByArtistIdResp(MusicReleaseDTO musicReleaseDTO);
 }

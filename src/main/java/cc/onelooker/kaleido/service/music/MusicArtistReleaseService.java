@@ -16,4 +16,6 @@ import cc.onelooker.kaleido.dto.music.MusicArtistReleaseDTO;
 public interface MusicArtistReleaseService extends IBaseService<MusicArtistReleaseDTO> {
 
     List<MusicArtistReleaseDTO> listByReleaseId(Long releaseId);
+
+    List<MusicArtistReleaseDTO> listByArtistId(Long artistId);
 }

@@ -5,6 +5,8 @@ import cc.onelooker.kaleido.dto.music.MusicReleaseDTO;
 import cc.onelooker.kaleido.plex.resp.GetMusicAlbums;
 import com.zjjcnt.common.core.service.IBaseService;
 
+import java.util.List;
+
 /**
  * 发行品Service
  *
@@ -17,4 +19,5 @@ public interface MusicReleaseService extends IBaseService<MusicReleaseDTO> {
 
     MusicReleaseDTO createIfNotExist(GetMusicAlbums.Metadata metadata, MusicArtistDTO musicArtistDTO);
 
+    List<MusicReleaseDTO> listByArtistId(Long artistId);
 }

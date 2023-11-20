@@ -4,17 +4,13 @@ import cc.onelooker.kaleido.convert.music.MusicReleaseConvert;
 import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
 import cc.onelooker.kaleido.dto.music.MusicReleaseDTO;
 import cc.onelooker.kaleido.dto.music.req.*;
-import cc.onelooker.kaleido.dto.music.resp.MusicReleaseCreateResp;
-import cc.onelooker.kaleido.dto.music.resp.MusicReleasePageResp;
-import cc.onelooker.kaleido.dto.music.resp.MusicReleaseSearchNeteaseResp;
-import cc.onelooker.kaleido.dto.music.resp.MusicReleaseViewResp;
+import cc.onelooker.kaleido.dto.music.resp.*;
 import cc.onelooker.kaleido.exp.music.MusicReleaseExp;
 import cc.onelooker.kaleido.netease.NeteaseApiService;
 import cc.onelooker.kaleido.netease.domain.Album;
 import cc.onelooker.kaleido.service.music.MusicArtistService;
 import cc.onelooker.kaleido.service.music.MusicManager;
 import cc.onelooker.kaleido.service.music.MusicReleaseService;
-import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
@@ -25,18 +21,10 @@ import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -123,21 +111,6 @@ public class MusicReleaseController extends AbstractCrudController<MusicReleaseD
     }
 
     //读取封面文件，输出字节流
-    @GetMapping("/cover/{id}")
-    public HttpEntity<byte[]> cover(@PathVariable Long id) {
-        MusicReleaseDTO musicReleaseDTO = musicReleaseService.findById(id);
-        String musicLibraryPath = ConfigUtils.getSysConfig("musicLibraryPath");
-        Path path = Paths.get(musicLibraryPath, musicReleaseDTO.getWjlj());
-        try {
-            Path coverPath = Files.list(path).filter(s -> s.toString().endsWith(".jpg") || s.toString().endsWith(".png")).findFirst().orElseGet(null);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            IOUtils.copyLarge(Files.newInputStream(coverPath), bos);
-            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bos.toByteArray());
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
     @PostMapping("updateAudioTag")
     public CommonResult<Boolean> updateAudioTag(@RequestBody MusicReleaseUpdateAudioTagReq req) {
         int error = musicManager.updateAudioTag(req.getId());
@@ -166,6 +139,18 @@ public class MusicReleaseController extends AbstractCrudController<MusicReleaseD
     public CommonResult<Boolean> downloadLyric(@RequestBody MusicReleaseUpdateLyricReq req) {
         int error = musicManager.downloadLyric(req.getId());
         return CommonResult.success(error == 0);
+    }
+
+    @GetMapping("listByArtistId")
+    @ApiOperation(value = "查询发行品")
+    public CommonResult<List<MusicReleaseListByArtistIdResp>> listByArtistId(Long artistId) {
+        List<MusicReleaseDTO> musicReleaseDTOList = musicReleaseService.listByArtistId(artistId);
+        List<MusicReleaseListByArtistIdResp> respList = Lists.newArrayList();
+        for (MusicReleaseDTO musicReleaseDTO : musicReleaseDTOList) {
+            MusicReleaseListByArtistIdResp resp = MusicReleaseConvert.INSTANCE.convertToListByArtistIdResp(musicReleaseDTO);
+            respList.add(resp);
+        }
+        return CommonResult.success(respList);
     }
 
 }

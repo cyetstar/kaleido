@@ -50,4 +50,12 @@ public class MusicArtistReleaseServiceImpl extends KaleidoBaseServiceImpl<MusicA
         param.setReleaseId(releaseId);
         return list(param);
     }
+
+    @Override
+    public List<MusicArtistReleaseDTO> listByArtistId(Long artistId) {
+        Validate.notNull(artistId);
+        MusicArtistReleaseDTO param = new MusicArtistReleaseDTO();
+        param.setArtistId(artistId);
+        return list(param);
+    }
 }

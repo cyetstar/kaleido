@@ -14,7 +14,9 @@ import cc.onelooker.kaleido.service.music.MusicReleaseService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.util.DateTimeUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -108,4 +110,17 @@ public class MusicReleaseServiceImpl extends KaleidoBaseServiceImpl<MusicRelease
         return musicReleaseDTO;
     }
 
+    @Override
+    public List<MusicReleaseDTO> listByArtistId(Long artistId) {
+        Validate.notNull(artistId);
+        List<MusicArtistReleaseDTO> musicArtistReleaseDTOList = musicArtistReleaseService.listByArtistId(artistId);
+        List<MusicReleaseDTO> musicReleaseDTOList = Lists.newArrayList();
+        for (MusicArtistReleaseDTO musicArtistReleaseDTO : musicArtistReleaseDTOList) {
+            MusicReleaseDTO musicReleaseDTO = findById(musicArtistReleaseDTO.getReleaseId());
+            if (musicReleaseDTO != null) {
+                musicReleaseDTOList.add(musicReleaseDTO);
+            }
+        }
+        return musicReleaseDTOList;
+    }
 }
