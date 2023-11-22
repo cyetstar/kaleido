@@ -31,7 +31,7 @@ public class PlexController {
                 || StringUtils.isEmpty(ConfigUtils.getSysConfig("plexToken"))) {
             plexApiService.init(req.getPlexUrl(), req.getPlexToken());
         }
-        List<GetLibraries.Directory> libraries = plexApiService.getLibraries();
+        List<GetLibraries.Directory> libraries = plexApiService.listLibrary();
         List<PlexGetLibrariesResp> result = libraries.stream().map(s -> {
             PlexGetLibrariesResp plexGetLibrariesResp = new PlexGetLibrariesResp();
             plexGetLibrariesResp.setKey(s.getKey());

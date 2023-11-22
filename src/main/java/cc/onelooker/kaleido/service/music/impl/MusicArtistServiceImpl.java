@@ -75,7 +75,7 @@ public class MusicArtistServiceImpl extends AbstractBaseServiceImpl<MusicArtistM
             musicArtistDTO.setPlexThumb(metadata.getThumb());
             musicArtistDTO.setName(metadata.getTitle());
             musicArtistDTO.setSummary(metadata.getSummary());
-            musicArtistDTO.setCjsj(DateTimeUtils.parseTimestamp(metadata.getAddedAt() * 1000L));
+            musicArtistDTO.setCjsj(metadata.getStringAddedAt());
             insert(musicArtistDTO);
         }
         return musicArtistDTO;

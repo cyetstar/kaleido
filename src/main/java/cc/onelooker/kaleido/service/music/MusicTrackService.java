@@ -20,5 +20,7 @@ public interface MusicTrackService extends IBaseService<MusicTrackDTO> {
 
     MusicTrackDTO createIfNotExist(String libraryPath, GetMusicTracks.Metadata metadata, MusicAlbumDTO musicAlbumDTO, MusicArtistDTO musicArtistDTO);
 
+    MusicTrackDTO createIfNotExist(String libraryPath, GetMusicTracks.Metadata metadata, MusicAlbumDTO musicAlbumDTO);
+
     List<MusicTrackDTO> listByAlbumId(Long AlbumId);
 }

@@ -1,7 +1,9 @@
 package cc.onelooker.kaleido.plex.resp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.zjjcnt.common.util.DateTimeUtils;
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
@@ -24,7 +26,11 @@ public class GetMusicArtists {
         private String librarySectionID;
         private String librarySectionTitle;
         @JsonProperty("Metadata")
-        private List<Metadata> metadata;
+        private List<Metadata> metadataList;
+
+        public GetMusicArtists.Metadata getMetadata() {
+            return CollectionUtils.get(metadataList, 0);
+        }
     }
 
     @Data
@@ -51,5 +57,13 @@ public class GetMusicArtists {
         private Long originallyAvailableAt;
         private Long addedAt;
         private Long updatedAt;
+
+        public String getStringAddedAt() {
+            return getAddedAt() == null ? null : DateTimeUtils.parseTimestamp(getAddedAt() * 1000);
+        }
+
+        public String getStringUpdatedAt() {
+            return getUpdatedAt() == null ? null : DateTimeUtils.parseTimestamp(getUpdatedAt() * 1000);
+        }
     }
 }

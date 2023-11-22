@@ -58,4 +58,14 @@ public class MusicArtistAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAr
         param.setArtistId(artistId);
         return list(param);
     }
+
+    @Override
+    public MusicArtistAlbumDTO findByArtistIdAndAlbumId(Long artistId, Long albumId) {
+        Validate.notNull(artistId);
+        Validate.notNull(albumId);
+        MusicArtistAlbumDTO param = new MusicArtistAlbumDTO();
+        param.setArtistId(artistId);
+        param.setAlbumId(albumId);
+        return find(param);
+    }
 }

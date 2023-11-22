@@ -22,7 +22,7 @@ public class GetLibraries {
         private Integer size;
         private String allowSync;
         @JsonProperty("Directory")
-        private List<Directory> directory;
+        private List<Directory> directoryList;
     }
 
     @Data

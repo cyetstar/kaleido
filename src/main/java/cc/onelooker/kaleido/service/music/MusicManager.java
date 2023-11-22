@@ -15,13 +15,9 @@ import cc.onelooker.kaleido.plex.resp.GetMusicArtists;
 import cc.onelooker.kaleido.plex.resp.GetMusicTracks;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.LocalDateTimeUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Maps;
-import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.exception.ServiceException;
-import com.zjjcnt.common.util.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -69,93 +65,96 @@ public class MusicManager {
     @Autowired
     private NeteaseApiService neteaseApiService;
 
-    public void syncPlex() {
+    public void syncPlexAlbum() {
         String libraryId = ConfigUtils.getSysConfig("plexMusicLibraryId");
         if (StringUtils.isBlank(libraryId)) {
             throw new ServiceException(2005, "请设置需要同步音乐库信息");
         }
-        GetLibraries.Directory directory = plexApiService.getLibraries().stream().filter(s -> StringUtils.equals(s.getKey(), libraryId)).findFirst().get();
+        GetLibraries.Directory directory = plexApiService.listLibrary().stream().filter(s -> StringUtils.equals(s.getKey(), libraryId)).findFirst().get();
         String libraryPath = directory.getLocation().getPath();
-        List<GetMusicArtists.Metadata> metadataList = plexApiService.getMusicArtists(libraryId);
-        for (GetMusicArtists.Metadata metadata : metadataList) {
-            MusicArtistDTO musicArtistDTO = musicArtistService.createIfNotExist(metadata);
-            if (LocalDateTimeUtils.isAfter(metadata.getUpdatedAt(), musicArtistDTO.getXgsj())) {
-                syncPlexAlbum(libraryId, libraryPath, musicArtistDTO);
-                //同步完才更新修改时间
-                if (metadata.getUpdatedAt() != null) {
-                    musicArtistDTO.setXgsj(DateTimeUtils.parseTimestamp(metadata.getUpdatedAt() * 1000L));
-                    musicArtistService.update(musicArtistDTO);
-                }
-            }
-        }
-    }
-
-    public void syncMetadata() {
-        String musicLibraryPath = ConfigUtils.getSysConfig("musicLibraryPath");
-        int pageNumber = 1;
-        int pageSize = 500;
-        while (true) {
-            PageResult<MusicAlbumDTO> pageResult = musicAlbumService.page(null, Page.of(pageNumber, pageSize));
-            List<MusicAlbumDTO> records = pageResult.getRecords();
-            if (CollectionUtils.isEmpty(records)) {
-                break;
-            }
-            for (MusicAlbumDTO musicAlbumDTO : records) {
-                try {
-//                    List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(musicAlbumDTO.getId());
-//                    for (MusicTrackDTO musicTrackDTO : musicTrackDTOList) {
-//                        AudioFile audioFile = AudioFileIO.read(Paths.get(musicLibraryPath, musicAlbumDTO.getWjlj()).toFile());
-//                        Tag tag = audioFile.getTag();
-//                        musicTrackDTO.setYsj(tag.getFirst(FieldKey.ARTIST));
-//                        musicTrackDTO.setDh(Integer.valueOf(tag.getFirst(FieldKey.DISC_NO)));
-//                        musicTrackDTO.setQh(Integer.valueOf(tag.getFirst(FieldKey.TRACK)));
-//                        musicTrackDTO.setMusicbrainzId(tag.getFirst(FieldKey.MUSICBRAINZ_TRACK_ID));
-//                        musicTrackService.update(musicTrackDTO);
-//
-//                        musicAlbumDTO.setMusicbrainzId(tag.getFirst(FieldKey.MUSICBRAINZ_AlbumID));
-//                        musicAlbumDTO.setRq(tag.getFirst(FieldKey.ALBUM_YEAR));
-//                        musicAlbumDTO.setYsj(tag.getFirst(FieldKey.ALBUM_ARTIST));
-//                        musicAlbumDTO.setMt(tag.getFirst(FieldKey.MEDIA));
-//                        musicAlbumDTO.setSfrq(tag.getFirst(FieldKey.ORIGINALAlbumDATE));
-//                        musicAlbumDTO.setCpgs(tag.getFirst(FieldKey.RECORD_LABEL));
-//                        musicAlbumDTO.setZds(Integer.valueOf(tag.getFirst(FieldKey.DISC_TOTAL)));
-//                        musicAlbumDTO.setYgs(Integer.valueOf(tag.getFirst(FieldKey.TRACK_TOTAL)));
-//                        musicAlbumService.update(musicAlbumDTO);
-//                    }
-
-                } catch (Exception e) {
-
-                }
-            }
-        }
-    }
-
-    private void syncPlexAlbum(String libraryId, String libraryPath, MusicArtistDTO musicArtistDTO) {
-        List<GetMusicAlbums.Metadata> metadataList = plexApiService.getMusicAlbums(libraryId, musicArtistDTO.getPlexId());
+        List<GetMusicAlbums.Metadata> metadataList = plexApiService.listAlbum(libraryId);
         for (GetMusicAlbums.Metadata metadata : metadataList) {
-            MusicAlbumDTO musicAlbumDTO = musicAlbumService.createIfNotExist(metadata, musicArtistDTO);
+            MusicAlbumDTO musicAlbumDTO = createAlbumIfNotExist(metadata);
             if (LocalDateTimeUtils.isAfter(metadata.getUpdatedAt(), musicAlbumDTO.getXgsj())) {
-                syncPlexTrack(libraryPath, musicAlbumDTO, musicArtistDTO);
-                //同步完才更新修改时间
-                if (metadata.getUpdatedAt() != null) {
-                    musicAlbumDTO.setXgsj(DateTimeUtils.parseTimestamp(metadata.getUpdatedAt() * 1000L));
-                    musicAlbumService.update(musicAlbumDTO);
-                }
+                syncPlexTrack(libraryPath, musicAlbumDTO);
+                musicAlbumDTO.setPlexThumb(metadata.getThumb());
+                musicAlbumDTO.setLabel(metadata.getStudio());
+                musicAlbumDTO.setSummary(metadata.getSummary());
+                musicAlbumDTO.setXgsj(metadata.getStringUpdatedAt());
+                musicAlbumService.update(musicAlbumDTO);
             }
-
+            MusicArtistDTO musicArtistDTO = createArtistIfNotExist(metadata.getParentRatingKey());
+            createArtistAlbumIfNotExist(musicArtistDTO, musicAlbumDTO);
         }
     }
 
-    private void syncPlexTrack(String libraryPath, MusicAlbumDTO musicAlbumDTO, MusicArtistDTO musicArtistDTO) {
-        List<GetMusicTracks.Metadata> metadataList = plexApiService.getMusicTracks(musicAlbumDTO.getPlexId());
+    private void syncPlexTrack(String libraryPath, MusicAlbumDTO musicAlbumDTO) {
+        List<GetMusicTracks.Metadata> metadataList = plexApiService.listTrackByAlbum(musicAlbumDTO.getPlexId());
         for (GetMusicTracks.Metadata metadata : metadataList) {
-            MusicTrackDTO musicTrackDTO = musicTrackService.createIfNotExist(libraryPath, metadata, musicAlbumDTO, musicArtistDTO);
+            MusicTrackDTO musicTrackDTO = createTrackIfNotExist(libraryPath, metadata, musicAlbumDTO);
             if (StringUtils.isBlank(musicAlbumDTO.getPath())) {
                 //更新专辑文件路径
                 musicAlbumDTO.setPath(StringUtils.substringBeforeLast(musicTrackDTO.getPath(), File.separator));
                 musicAlbumService.update(musicAlbumDTO);
             }
         }
+    }
+
+    private MusicAlbumDTO createAlbumIfNotExist(GetMusicAlbums.Metadata metadata) {
+        MusicAlbumDTO musicAlbumDTO = musicAlbumService.findByPlexId(metadata.getRatingKey());
+        if (musicAlbumDTO == null) {
+            musicAlbumDTO = new MusicAlbumDTO();
+            musicAlbumDTO.setPlexId(metadata.getRatingKey());
+            musicAlbumDTO.setPlexThumb(metadata.getThumb());
+            musicAlbumDTO.setTitle(metadata.getTitle());
+            musicAlbumDTO.setSummary(metadata.getSummary());
+            musicAlbumDTO.setDate(metadata.getOriginallyAvailableAt());
+            musicAlbumDTO.setLabel(metadata.getStudio());
+            musicAlbumDTO.setCjsj(metadata.getStringAddedAt());
+            musicAlbumDTO = musicAlbumService.insert(musicAlbumDTO);
+        }
+        return musicAlbumDTO;
+    }
+
+    private MusicArtistDTO createArtistIfNotExist(String plexArtistId) {
+        MusicArtistDTO musicArtistDTO = musicArtistService.findByPlexId(plexArtistId);
+        if (musicArtistDTO == null) {
+            GetMusicArtists.Metadata artist = plexApiService.findArtist(plexArtistId);
+            musicArtistDTO = new MusicArtistDTO();
+            musicArtistDTO.setPlexId(artist.getRatingKey());
+            musicArtistDTO.setPlexThumb(artist.getThumb());
+            musicArtistDTO.setName(artist.getTitle());
+            musicArtistDTO.setSummary(artist.getSummary());
+            musicArtistDTO = musicArtistService.insert(musicArtistDTO);
+        }
+        return musicArtistDTO;
+    }
+
+    private void createArtistAlbumIfNotExist(MusicArtistDTO musicArtistDTO, MusicAlbumDTO musicAlbumDTO) {
+        MusicArtistAlbumDTO musicArtistAlbumDTO = musicArtistAlbumService.findByArtistIdAndAlbumId(musicArtistDTO.getId(), musicAlbumDTO.getId());
+        if (musicArtistAlbumDTO == null) {
+            musicArtistAlbumDTO = new MusicArtistAlbumDTO();
+            musicArtistAlbumDTO.setArtistId(musicArtistDTO.getId());
+            musicArtistAlbumDTO.setAlbumId(musicAlbumDTO.getId());
+            musicArtistAlbumService.insert(musicArtistAlbumDTO);
+        }
+    }
+
+    private MusicTrackDTO createTrackIfNotExist(String libraryPath, GetMusicTracks.Metadata metadata, MusicAlbumDTO musicAlbumDTO) {
+        MusicTrackDTO musicTrackDTO = musicTrackService.findByPlexId(metadata.getRatingKey());
+        if (musicTrackDTO == null) {
+            musicTrackDTO = new MusicTrackDTO();
+            musicTrackDTO.setPlexId(metadata.getRatingKey());
+            musicTrackDTO.setTitle(metadata.getTitle());
+            musicTrackDTO.setAlbumId(musicAlbumDTO.getId());
+            musicTrackDTO.setCjsj(metadata.getStringAddedAt());
+            musicTrackDTO.setXgsj(metadata.getStringUpdatedAt());
+            GetMusicTracks.Media media = metadata.getMedia();
+            musicTrackDTO.setFormat(media.getContainer());
+            musicTrackDTO.setPath(StringUtils.removeStart(media.getPart().getFile(), libraryPath));
+            musicTrackDTO = musicTrackService.insert(musicTrackDTO);
+        }
+        return musicTrackDTO;
     }
 
     public int updateAudioTag(Long AlbumId) {

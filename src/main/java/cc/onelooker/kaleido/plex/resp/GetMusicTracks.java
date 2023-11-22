@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.plex.resp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.zjjcnt.common.util.DateTimeUtils;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -63,6 +64,18 @@ public class GetMusicTracks {
 
         public Media getMedia() {
             return CollectionUtils.get(mediaList, 0);
+        }
+
+        public String getStringAddedAt() {
+            return getAddedAt() == null ? null : DateTimeUtils.parseTimestamp(getAddedAt() * 1000);
+        }
+
+        public String getStringUpdatedAt() {
+            return getUpdatedAt() == null ? null : DateTimeUtils.parseTimestamp(getUpdatedAt() * 1000);
+        }
+
+        public String getStringLastViewedAt() {
+            return getLastViewedAt() == null ? null : DateTimeUtils.parseTimestamp(getLastViewedAt() * 1000);
         }
     }
 

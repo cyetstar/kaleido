@@ -106,7 +106,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @PostMapping("syncPlex")
     @ApiOperation(value = "同步音乐库")
     public CommonResult<Boolean> syncPlex() {
-        musicManager.syncPlex();
+        musicManager.syncPlexAlbum();
         return CommonResult.success(true);
     }
 

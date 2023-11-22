@@ -16,4 +16,6 @@ public interface MusicArtistAlbumService extends IBaseService<MusicArtistAlbumDT
     List<MusicArtistAlbumDTO> listByArtistId(Long artistId);
 
     List<MusicArtistAlbumDTO> listByAlbumId(Long albumId);
+
+    MusicArtistAlbumDTO findByArtistIdAndAlbumId(Long artistId, Long albumId);
 }

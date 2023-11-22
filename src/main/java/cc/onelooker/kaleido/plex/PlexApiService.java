@@ -25,10 +25,13 @@ public class PlexApiService {
     private String plexToken;
     private String plexUrl;
 
-    private final static String API_ALL_LIBRARY = "/library/sections/?X-Plex-Token={plexToken}";
-    private final static String API_ALL_MUSIC_ARTISTS = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
-    private final static String API_ALL_MUSIC_ALBUMS = "/library/sections/{libraryId}/all?artist.id={artistId}&type=9&X-Plex-Token={plexToken}";
-    private final static String API_ALL_MUSIC_TRACKS = "/library/metadata/{albumId}/children?X-Plex-Token={plexToken}";
+    private final static String API_LIST_LIBRARY = "/library/sections/?X-Plex-Token={plexToken}";
+    private final static String API_LIST_ARTIST = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
+    private final static String API_FIND_ARTIST = "/library/metadata/{artistId}?X-Plex-Token={plexToken}";
+    private final static String API_LIST_ALBUM = "/library/sections/{libraryId}/all?type=9&X-Plex-Token={plexToken}";
+    private final static String API_FIND_ALBUM = "/library/metadata/{albumId}?X-Plex-Token={plexToken}";
+    private final static String API_LIST_ALBUM_BY_ARTIST = "/library/sections/{libraryId}/all?artist.id={artistId}&type=9&X-Plex-Token={plexToken}";
+    private final static String API_LIST_TRACK_BY_ALBUM = "/library/metadata/{albumId}/children?X-Plex-Token={plexToken}";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -49,29 +52,50 @@ public class PlexApiService {
         this.plexToken = plexToken;
     }
 
-    public List<GetLibraries.Directory> getLibraries() {
+    public List<GetLibraries.Directory> listLibrary() {
         init();
-        GetLibraries resp = restTemplate.getForObject(plexUrl + API_ALL_LIBRARY, GetLibraries.class, plexToken);
+        GetLibraries resp = restTemplate.getForObject(plexUrl + API_LIST_LIBRARY, GetLibraries.class, plexToken);
         GetLibraries.MediaContainer mediaContainer = resp.getMediaContainer();
-        return mediaContainer.getDirectory();
+        return mediaContainer.getDirectoryList();
     }
 
-    public List<GetMusicArtists.Metadata> getMusicArtists(String libraryId) {
+    public List<GetMusicArtists.Metadata> listArtist(String libraryId) {
         init();
-        GetMusicArtists musicArtists = restTemplate.getForObject(plexUrl + API_ALL_MUSIC_ARTISTS, GetMusicArtists.class, libraryId, plexToken);
+        GetMusicArtists musicArtists = restTemplate.getForObject(plexUrl + API_LIST_ARTIST, GetMusicArtists.class, libraryId, plexToken);
+        GetMusicArtists.MediaContainer mediaContainer = musicArtists.getMediaContainer();
+        return mediaContainer.getMetadataList();
+    }
+
+    public GetMusicArtists.Metadata findArtist(String artistId) {
+        init();
+        GetMusicArtists musicArtists = restTemplate.getForObject(plexUrl + API_FIND_ARTIST, GetMusicArtists.class, artistId, plexToken);
         GetMusicArtists.MediaContainer mediaContainer = musicArtists.getMediaContainer();
         return mediaContainer.getMetadata();
     }
 
-    public List<GetMusicAlbums.Metadata> getMusicAlbums(String libraryId, String artistId) {
-        GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_ALL_MUSIC_ALBUMS, GetMusicAlbums.class, libraryId, artistId, plexToken);
+    public List<GetMusicAlbums.Metadata> listAlbum(String libraryId) {
+        init();
+        GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_LIST_ALBUM, GetMusicAlbums.class, libraryId, plexToken);
+        GetMusicAlbums.MediaContainer mediaContainer = musicAlbums.getMediaContainer();
+        return mediaContainer.getMetadataList();
+    }
+
+    public GetMusicAlbums.Metadata findAlbum(String albumId) {
+        init();
+        GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_FIND_ALBUM, GetMusicAlbums.class, albumId, plexToken);
         GetMusicAlbums.MediaContainer mediaContainer = musicAlbums.getMediaContainer();
         return mediaContainer.getMetadata();
     }
 
-    public List<GetMusicTracks.Metadata> getMusicTracks(String albumId) {
+    public List<GetMusicAlbums.Metadata> listAlbumByArtist(String libraryId, String artistId) {
+        GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_LIST_ALBUM_BY_ARTIST, GetMusicAlbums.class, libraryId, artistId, plexToken);
+        GetMusicAlbums.MediaContainer mediaContainer = musicAlbums.getMediaContainer();
+        return mediaContainer.getMetadataList();
+    }
+
+    public List<GetMusicTracks.Metadata> listTrackByAlbum(String albumId) {
         init();
-        GetMusicTracks musicTracks = restTemplate.getForObject(plexUrl + API_ALL_MUSIC_TRACKS, GetMusicTracks.class, albumId, plexToken);
+        GetMusicTracks musicTracks = restTemplate.getForObject(plexUrl + API_LIST_TRACK_BY_ALBUM, GetMusicTracks.class, albumId, plexToken);
         GetMusicTracks.MediaContainer mediaContainer = musicTracks.getMediaContainer();
         return mediaContainer.getMetadataList();
     }

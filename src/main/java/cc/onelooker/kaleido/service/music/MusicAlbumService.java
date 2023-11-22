@@ -19,8 +19,6 @@ public interface MusicAlbumService extends IBaseService<MusicAlbumDTO> {
 
     MusicAlbumDTO findByPlexId(String plexId);
 
-    MusicAlbumDTO createIfNotExist(GetMusicAlbums.Metadata metadata, MusicArtistDTO musicArtistDTO);
-
     List<MusicAlbumDTO> listByArtistId(Long artistId);
 
 }

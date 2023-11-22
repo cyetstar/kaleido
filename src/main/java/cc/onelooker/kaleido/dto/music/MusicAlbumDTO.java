@@ -3,8 +3,6 @@ package cc.onelooker.kaleido.dto.music;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * 专辑DTO
  *
@@ -136,11 +134,6 @@ public class MusicAlbumDTO implements BaseDTO<Long> {
      * 小于等于修改时间
      */
     private String xgsjEnd;
-
-    /**
-     * 艺术家id列表
-     */
-    private List<Long> artistIdList;
 
     @Override
     public Long getId() {
