@@ -19,4 +19,6 @@ public interface MusicArtistService extends IBaseService<MusicArtistDTO> {
     MusicArtistDTO createIfNotExist(GetMusicArtists.Metadata metadata);
 
     List<MusicArtistDTO> listByAlbumId(Long albumId);
+
+    Boolean updateNeteaseId(Long id, String neteaseId);
 }

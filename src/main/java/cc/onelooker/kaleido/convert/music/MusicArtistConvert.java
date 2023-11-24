@@ -1,6 +1,10 @@
 package cc.onelooker.kaleido.convert.music;
 
+import cc.onelooker.kaleido.dto.music.resp.MusicArtistSearchNeteaseResp;
+import cc.onelooker.kaleido.netease.domain.Artist;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 import org.mapstruct.InheritInverseConfiguration;
 
@@ -44,4 +48,8 @@ public interface MusicArtistConvert {
 
     MusicArtistExp convertToExp(MusicArtistDTO dto);
 
+    @Mappings({
+            @Mapping(source = "id", target = "neteaseId"),
+    })
+    MusicArtistSearchNeteaseResp convertToSearchNeteaseResp(Artist artist);
 }

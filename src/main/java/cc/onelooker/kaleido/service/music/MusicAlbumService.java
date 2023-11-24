@@ -21,4 +21,6 @@ public interface MusicAlbumService extends IBaseService<MusicAlbumDTO> {
 
     List<MusicAlbumDTO> listByArtistId(Long artistId);
 
+    String findMaxXgsj();
+
 }

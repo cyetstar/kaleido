@@ -29,6 +29,7 @@ public class PlexApiService {
     private final static String API_LIST_ARTIST = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
     private final static String API_FIND_ARTIST = "/library/metadata/{artistId}?X-Plex-Token={plexToken}";
     private final static String API_LIST_ALBUM = "/library/sections/{libraryId}/all?type=9&X-Plex-Token={plexToken}";
+    private final static String API_LIST_ALBUM_BY_UPDATED_AT = "/library/sections/{libraryId}/all?type=9&updatedAt>={updatedAt}&X-Plex-Token={plexToken}";
     private final static String API_FIND_ALBUM = "/library/metadata/{albumId}?X-Plex-Token={plexToken}";
     private final static String API_LIST_ALBUM_BY_ARTIST = "/library/sections/{libraryId}/all?artist.id={artistId}&type=9&X-Plex-Token={plexToken}";
     private final static String API_LIST_TRACK_BY_ALBUM = "/library/metadata/{albumId}/children?X-Plex-Token={plexToken}";
@@ -80,6 +81,13 @@ public class PlexApiService {
         return mediaContainer.getMetadataList();
     }
 
+    public List<GetMusicAlbums.Metadata> listAlbumByUpdatedAt(String libraryId, Long updatedAt) {
+        init();
+        GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_LIST_ALBUM_BY_UPDATED_AT, GetMusicAlbums.class, libraryId, updatedAt, plexToken);
+        GetMusicAlbums.MediaContainer mediaContainer = musicAlbums.getMediaContainer();
+        return mediaContainer.getMetadataList();
+    }
+
     public GetMusicAlbums.Metadata findAlbum(String albumId) {
         init();
         GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_FIND_ALBUM, GetMusicAlbums.class, albumId, plexToken);
@@ -100,4 +108,8 @@ public class PlexApiService {
         return mediaContainer.getMetadataList();
     }
 
+    public String getLibraryPath(String libraryId) {
+        GetLibraries.Directory directory = listLibrary().stream().filter(s -> StringUtils.equals(s.getKey(), libraryId)).findFirst().get();
+        return directory.getLocation().getPath();
+    }
 }

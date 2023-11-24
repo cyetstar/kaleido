@@ -13,10 +13,16 @@ import java.util.List;
 public class Album {
 
     private String id;
-    private String company;
+
     private String name;
+
+    private String company;
+
     private String picUrl;
+
     private Long publishTime;
+
     private Artist artist;
+
     private List<Song> songs;
 }

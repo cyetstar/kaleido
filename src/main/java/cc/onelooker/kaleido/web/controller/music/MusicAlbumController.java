@@ -8,19 +8,24 @@ import cc.onelooker.kaleido.dto.music.resp.*;
 import cc.onelooker.kaleido.exp.music.MusicAlbumExp;
 import cc.onelooker.kaleido.netease.NeteaseApiService;
 import cc.onelooker.kaleido.netease.domain.Album;
+import cc.onelooker.kaleido.plex.PlexApiService;
+import cc.onelooker.kaleido.plex.resp.GetMusicAlbums;
 import cc.onelooker.kaleido.service.music.MusicAlbumService;
 import cc.onelooker.kaleido.service.music.MusicArtistService;
 import cc.onelooker.kaleido.service.music.MusicManager;
+import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.exception.ServiceException;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +54,10 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     private MusicManager musicManager;
 
     @Autowired
-    private NeteaseApiService neteaseMusicApiService;
+    private NeteaseApiService neteaseApiService;
+
+    @Autowired
+    private PlexApiService plexApiService;
 
     @Override
     protected IBaseService getService() {
@@ -106,7 +114,31 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @PostMapping("syncPlex")
     @ApiOperation(value = "同步音乐库")
     public CommonResult<Boolean> syncPlex() {
-        musicManager.syncPlexAlbum();
+        String libraryId = ConfigUtils.getSysConfig("plexMusicLibraryId");
+        if (StringUtils.isBlank(libraryId)) {
+            throw new ServiceException(2005, "请设置需要同步音乐库信息");
+        }
+        //获取最后修改时间
+        String maxXgsj = musicAlbumService.findMaxXgsj();
+        maxXgsj = StringUtils.defaultString(maxXgsj, "19000101000000");
+        Long lastSyncTime = DateTimeUtils.parseDateTime(maxXgsj).getTime() / 1000;
+        String libraryPath = plexApiService.getLibraryPath(libraryId);
+        List<GetMusicAlbums.Metadata> metadataList = plexApiService.listAlbumByUpdatedAt(libraryId, lastSyncTime);
+        for (GetMusicAlbums.Metadata metadata : metadataList) {
+            musicManager.syncPlexAlbum(libraryPath, metadata);
+        }
+        return CommonResult.success(true);
+    }
+
+    @PostMapping("syncPlexById")
+    @ApiOperation(value = "同步音乐库")
+    public CommonResult<Boolean> syncPlexById(@RequestBody MusicAlbumSyncPlexReq req) {
+        String libraryId = ConfigUtils.getSysConfig("plexMusicLibraryId");
+        if (StringUtils.isBlank(libraryId)) {
+            throw new ServiceException(2005, "请设置需要同步音乐库信息");
+        }
+        String libraryPath = plexApiService.getLibraryPath(libraryId);
+        musicManager.syncPlexAlbumById(libraryPath, req.getId());
         return CommonResult.success(true);
     }
 
@@ -119,7 +151,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
 
     @GetMapping("searchNetease")
     public CommonResult<List<MusicAlbumSearchNeteaseResp>> searchNetease(MusicAlbumSearchNeteaseReq req) {
-        List<Album> albumList = neteaseMusicApiService.searchAlbum(req.getKeywords(), req.getLimit());
+        List<Album> albumList = neteaseApiService.searchAlbum(req.getKeywords(), req.getLimit());
         List<MusicAlbumSearchNeteaseResp> respList = Lists.newArrayList();
         for (Album album : albumList) {
             MusicAlbumSearchNeteaseResp resp = MusicAlbumConvert.INSTANCE.convertToSearchAlbumResp(album);

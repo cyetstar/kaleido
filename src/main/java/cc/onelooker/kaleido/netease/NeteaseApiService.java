@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.netease;
 
 import cc.onelooker.kaleido.netease.domain.Album;
+import cc.onelooker.kaleido.netease.domain.Artist;
 import cc.onelooker.kaleido.netease.domain.Song;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.alibaba.fastjson.JSONArray;
@@ -48,7 +49,18 @@ public class NeteaseApiService {
             return albumJSONArray.toJavaList(Album.class);
         }
         return Lists.newArrayList();
+    }
 
+    public List<Artist> searchArtist(String keywords, Integer limit) {
+        init();
+        JSONObject jsonObject = restTemplate.getForObject(url + API_CLOUDSEARCH, JSONObject.class, keywords, "100", limit);
+        JSONObject resultJsonObject = jsonObject.getJSONObject("result");
+        Integer artistCount = resultJsonObject.getInteger("artistCount");
+        if (artistCount > 0) {
+            JSONArray artistJSONArray = resultJsonObject.getJSONArray("artists");
+            return artistJSONArray.toJavaList(Artist.class);
+        }
+        return Lists.newArrayList();
     }
 
     public Album getAlbum(String id) {
@@ -68,4 +80,5 @@ public class NeteaseApiService {
         JSONObject lyricJsonObject = jsonObject.getJSONObject("lrc");
         return lyricJsonObject.getString("lyric");
     }
+
 }

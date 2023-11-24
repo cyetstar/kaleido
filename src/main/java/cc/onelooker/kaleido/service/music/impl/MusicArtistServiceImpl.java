@@ -10,9 +10,9 @@ import cc.onelooker.kaleido.service.music.MusicArtistAlbumService;
 import cc.onelooker.kaleido.service.music.MusicArtistService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import com.zjjcnt.common.util.DateTimeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,5 +92,13 @@ public class MusicArtistServiceImpl extends AbstractBaseServiceImpl<MusicArtistM
             }
         }
         return musicArtistDTOList;
+    }
+
+    @Override
+    public Boolean updateNeteaseId(Long id, String neteaseId) {
+        MusicArtistDO musicArtistDO = new MusicArtistDO();
+        musicArtistDO.setId(id);
+        musicArtistDO.setNeteaseId(neteaseId);
+        return SqlHelper.retBool(baseMapper.updateById(musicArtistDO));
     }
 }

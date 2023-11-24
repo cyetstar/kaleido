@@ -86,4 +86,9 @@ public class MusicAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAlbumMap
         }
         return musicAlbumDTOList;
     }
+
+    @Override
+    public String findMaxXgsj() {
+        return baseMapper.findMaxXgsj();
+    }
 }

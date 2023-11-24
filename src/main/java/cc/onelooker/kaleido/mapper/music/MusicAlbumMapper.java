@@ -14,4 +14,6 @@ import cc.onelooker.kaleido.entity.music.MusicAlbumDO;
 @Mapper
 public interface MusicAlbumMapper extends BaseMapper<MusicAlbumDO> {
 
+    String findMaxXgsj();
+
 }

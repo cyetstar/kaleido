@@ -1,16 +1,16 @@
-package cc.onelooker.kaleido.netease.domain;
+package cc.onelooker.kaleido.dto.music.resp;
 
 import lombok.Data;
 
 /**
  * @Author xiadawei
- * @Date 2023-11-16 01:11:00
+ * @Date 2023-11-16 00:57:00
  * @Description TODO
  */
 @Data
-public class Artist {
+public class MusicArtistSearchNeteaseResp {
 
-    private String id;
+    private String neteaseId;
 
     private String name;
 
