@@ -11,7 +11,7 @@ import java.lang.Integer;
  * 专辑导出对象
  *
  * @author cyetstar
- * @date 2023-11-20 22:35:26
+ * @date 2023-11-25 22:16:58
  *
  */
 @Data
@@ -22,12 +22,6 @@ public class MusicAlbumExp{
 
     @ExcelProperty("MusicBrainz编号")
     private String musicbrainzId;
-
-    @ExcelProperty("Plex编号")
-    private String plexId;
-
-    @ExcelProperty("Plex缩略图")
-    private String plexThumb;
 
     @ExcelProperty("网易云音乐编号")
     private String neteaseId;
@@ -50,14 +44,8 @@ public class MusicAlbumExp{
     @ExcelProperty("发行国家")
     private String releaseCountry;
 
-    @ExcelProperty("日期")
-    private String date;
-
     @ExcelProperty("唱片公司")
     private String label;
-
-    @ExcelProperty("发行日期")
-    private String releaseDate;
 
     @ExcelProperty("碟数")
     private Integer totalDiscs;
@@ -68,12 +56,18 @@ public class MusicAlbumExp{
     @ExcelProperty("媒体")
     private String media;
 
-    @ExcelProperty("文件路径")
-    private String path;
+    @ExcelProperty("首发年份")
+    private String year;
 
-    @ExcelProperty("创建时间")
-    private String cjsj;
+    @ExcelProperty("首发日期")
+    private String originallyAvailableAt;
 
-    @ExcelProperty("修改时间")
-    private String xgsj;
+    @ExcelProperty("封面图")
+    private String thumb;
+
+    @ExcelProperty("加入时间")
+    private Long addedAt;
+
+    @ExcelProperty("更新时间")
+    private Long updatedAt;
 }

@@ -19,7 +19,7 @@ import cc.onelooker.kaleido.exp.music.MusicTrackExp;
 * 曲目Convert
 *
 * @author cyetstar
-* @date 2023-11-20 22:35:26
+* @date 2023-11-25 22:16:58
 */
 @Mapper
 public interface MusicTrackConvert {

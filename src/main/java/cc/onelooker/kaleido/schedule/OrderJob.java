@@ -58,7 +58,6 @@ public class OrderJob {
 
     private Map<Long, String> symbolMap;
 
-    @PostConstruct
     public void init() {
         List<TradeSymbolDTO> tradeSymbolDTOList = tradeSymbolService.list(null);
         symbolMap = tradeSymbolDTOList.stream().collect(Collectors.toMap(TradeSymbolDTO::getId, TradeSymbolDTO::getSpmc));

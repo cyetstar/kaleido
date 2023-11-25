@@ -18,7 +18,7 @@ import cc.onelooker.kaleido.exp.music.MusicArtistAlbumExp;
 * 艺术家专辑关联表Convert
 *
 * @author cyetstar
-* @date 2023-11-20 22:35:26
+* @date 2023-11-25 22:16:58
 */
 @Mapper
 public interface MusicArtistAlbumConvert {

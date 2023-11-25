@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.plex.resp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.zjjcnt.common.util.DateTimeUtils;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -35,7 +34,7 @@ public class GetMusicTracks {
 
     @Data
     public static class Metadata {
-        private String ratingKey;
+        private Long ratingKey;
         private String key;
         private String parentRatingKey;
         private String grandparentRatingKey;
@@ -54,7 +53,7 @@ public class GetMusicTracks {
         private String thumb;
         private String art;
         private String index;
-        private String duration;
+        private Integer duration;
         private String musicAnalysisVersion;
         private Long addedAt;
         private Long updatedAt;
@@ -66,23 +65,12 @@ public class GetMusicTracks {
             return CollectionUtils.get(mediaList, 0);
         }
 
-        public String getStringAddedAt() {
-            return getAddedAt() == null ? null : DateTimeUtils.parseTimestamp(getAddedAt() * 1000);
-        }
-
-        public String getStringUpdatedAt() {
-            return getUpdatedAt() == null ? null : DateTimeUtils.parseTimestamp(getUpdatedAt() * 1000);
-        }
-
-        public String getStringLastViewedAt() {
-            return getLastViewedAt() == null ? null : DateTimeUtils.parseTimestamp(getLastViewedAt() * 1000);
-        }
     }
 
     @Data
     public static class Media {
         private String id;
-        private String duration;
+        private Integer duration;
         private String bitrate;
         private String audioChannels;
         private String audioCodec;
@@ -99,7 +87,7 @@ public class GetMusicTracks {
     public static class Part {
         private String id;
         private String key;
-        private String duration;
+        private Integer duration;
         private String file;
         private String size;
         private String container;

@@ -1,18 +1,22 @@
 package cc.onelooker.kaleido.dto.music;
 
-import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
+import com.zjjcnt.common.core.dto.BaseDTO;
+
+import java.lang.Long;
+import java.lang.String;
+import java.lang.Integer;
 
 /**
  * 专辑DTO
  *
  * @author cyetstar
- * @date 2023-11-20 22:35:26
+ * @date 2023-11-25 22:16:58
  * @see cc.onelooker.kaleido.entity.music.MusicAlbumDO
  */
 @Data
 public class MusicAlbumDTO implements BaseDTO<Long> {
-    private static final long serialVersionUID = 7143079113628462143L;
+    private static final long serialVersionUID = -6145424566170578790L;
 
     /**
      * 主键
@@ -23,16 +27,6 @@ public class MusicAlbumDTO implements BaseDTO<Long> {
      * MusicBrainz编号
      */
     private String musicbrainzId;
-
-    /**
-     * Plex编号
-     */
-    private String plexId;
-
-    /**
-     * Plex缩略图
-     */
-    private String plexThumb;
 
     /**
      * 网易云音乐编号
@@ -70,19 +64,9 @@ public class MusicAlbumDTO implements BaseDTO<Long> {
     private String releaseCountry;
 
     /**
-     * 日期
-     */
-    private String date;
-
-    /**
      * 唱片公司
      */
     private String label;
-
-    /**
-     * 发行日期
-     */
-    private String releaseDate;
 
     /**
      * 碟数
@@ -100,40 +84,32 @@ public class MusicAlbumDTO implements BaseDTO<Long> {
     private String media;
 
     /**
-     * 文件路径
+     * 首发年份
      */
-    private String path;
+    private String year;
 
     /**
-     * 创建时间
+     * 首发日期
      */
-    private String cjsj;
+    private String originallyAvailableAt;
 
     /**
-     * 修改时间
+     * 封面图
      */
-    private String xgsj;
+    private String thumb;
+
+    /**
+     * 加入时间
+     */
+    private Long addedAt;
+
+    /**
+     * 更新时间
+     */
+    private Long updatedAt;
 
     // ------ 非数据库表字段 -------
-    /**
-     * 大于等于创建时间
-     */
-    private String cjsjStart;
 
-    /**
-     * 小于等于创建时间
-     */
-    private String cjsjEnd;
-
-    /**
-     * 大于等于修改时间
-     */
-    private String xgsjStart;
-
-    /**
-     * 小于等于修改时间
-     */
-    private String xgsjEnd;
 
     @Override
     public Long getId() {

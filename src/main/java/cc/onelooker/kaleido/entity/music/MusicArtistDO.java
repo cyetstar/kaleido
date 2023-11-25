@@ -16,18 +16,18 @@ import java.lang.String;
  * 艺术家DO
  *
  * @author cyetstar
- * @date 2023-11-20 22:35:26
+ * @date 2023-11-25 22:16:58
  * @see cc.onelooker.kaleido.dto.music.MusicArtistDTO
  */
 @Data
 @TableName("music_artist")
 public class MusicArtistDO implements IdEntity<Long> {
-    private static final long serialVersionUID = -5745162324435556581L;
+    private static final long serialVersionUID = 4989797156146020017L;
 
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
@@ -37,40 +37,10 @@ public class MusicArtistDO implements IdEntity<Long> {
     private String musicbrainzId;
 
     /**
-     * Plex编号
-     */
-    @TableField(value = "plex_id")
-    private String plexId;
-
-    /**
-     * 创建时间
-     */
-    @TableField(value = "cjsj")
-    private String cjsj;
-
-    /**
-     * 修改时间
-     */
-    @TableField(value = "xgsj")
-    private String xgsj;
-
-    /**
-     * Plex缩略图
-     */
-    @TableField(value = "plex_thumb")
-    private String plexThumb;
-
-    /**
      * 网易云音乐编号
      */
     @TableField(value = "netease_id")
     private String neteaseId;
-
-    /**
-     * 名称
-     */
-    @TableField(value = "name")
-    private String name;
 
     /**
      * 国家地区
@@ -83,6 +53,36 @@ public class MusicArtistDO implements IdEntity<Long> {
      */
     @TableField(value = "summary")
     private String summary;
+
+    /**
+     * 名称
+     */
+    @TableField(value = "title")
+    private String title;
+
+    /**
+     * 排序名称
+     */
+    @TableField(value = "title_sort")
+    private String titleSort;
+
+    /**
+     * 封面图
+     */
+    @TableField(value = "thumb")
+    private String thumb;
+
+    /**
+     * 加入时间
+     */
+    @TableField(value = "added_at")
+    private Long addedAt;
+
+    /**
+     * 更新时间
+     */
+    @TableField(value = "updated_at")
+    private Long updatedAt;
 
 
     @Override

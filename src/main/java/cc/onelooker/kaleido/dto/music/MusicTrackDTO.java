@@ -1,20 +1,22 @@
 package cc.onelooker.kaleido.dto.music;
 
-import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
+import com.zjjcnt.common.core.dto.BaseDTO;
 
-import java.util.List;
+import java.lang.Long;
+import java.lang.String;
+import java.lang.Integer;
 
 /**
  * 曲目DTO
  *
  * @author cyetstar
- * @date 2023-11-20 22:35:26
+ * @date 2023-11-25 22:16:58
  * @see cc.onelooker.kaleido.entity.music.MusicTrackDO
  */
 @Data
 public class MusicTrackDTO implements BaseDTO<Long> {
-    private static final long serialVersionUID = -1187624214357814438L;
+    private static final long serialVersionUID = 1574076813692141671L;
 
     /**
      * 主键
@@ -22,29 +24,9 @@ public class MusicTrackDTO implements BaseDTO<Long> {
     private Long id;
 
     /**
-     * 专辑Id
-     */
-    private Long albumId;
-
-    /**
      * MusicBrainz编号
      */
     private String musicbrainzId;
-
-    /**
-     * Plex编号
-     */
-    private String plexId;
-
-    /**
-     * 创建时间
-     */
-    private String cjsj;
-
-    /**
-     * 修改时间
-     */
-    private String xgsj;
 
     /**
      * 网易云音乐编号
@@ -62,21 +44,6 @@ public class MusicTrackDTO implements BaseDTO<Long> {
     private String artists;
 
     /**
-     * 曲长
-     */
-    private Integer length;
-
-    /**
-     * 曲号
-     */
-    private Integer trackNumber;
-
-    /**
-     * 碟号
-     */
-    private Integer discNumber;
-
-    /**
      * 文件格式
      */
     private String format;
@@ -86,31 +53,38 @@ public class MusicTrackDTO implements BaseDTO<Long> {
      */
     private String path;
 
+    /**
+     * 专辑id
+     */
+    private Long albumId;
+
+    /**
+     * 曲长(毫秒)
+     */
+    private Integer duration;
+
+    /**
+     * 曲号
+     */
+    private Integer trackIndex;
+
+    /**
+     * 碟号
+     */
+    private Integer discIndex;
+
+    /**
+     * 加入时间
+     */
+    private Long addedAt;
+
+    /**
+     * 更新时间
+     */
+    private Long updatedAt;
+
     // ------ 非数据库表字段 -------
-    /**
-     * 大于等于创建时间
-     */
-    private String cjsjStart;
 
-    /**
-     * 小于等于创建时间
-     */
-    private String cjsjEnd;
-
-    /**
-     * 大于等于修改时间
-     */
-    private String xgsjStart;
-
-    /**
-     * 小于等于修改时间
-     */
-    private String xgsjEnd;
-
-    /**
-     * 艺术家id列表
-     */
-    private List<Long> artistIdList;
 
     @Override
     public Long getId() {

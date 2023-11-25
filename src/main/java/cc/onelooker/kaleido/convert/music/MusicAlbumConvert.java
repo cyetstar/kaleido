@@ -15,11 +15,11 @@ import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 /**
- * 专辑Convert
- *
- * @author cyetstar
- * @date 2023-11-20 22:35:26
- */
+* 专辑Convert
+*
+* @author cyetstar
+* @date 2023-11-25 22:16:58
+*/
 @Mapper
 public interface MusicAlbumConvert {
 
@@ -27,7 +27,7 @@ public interface MusicAlbumConvert {
 
     MusicAlbumDTO convert(MusicAlbumDO entity);
 
-    @InheritInverseConfiguration(name = "convert")
+    @InheritInverseConfiguration(name="convert")
     MusicAlbumDO convertToDO(MusicAlbumDTO dto);
 
     MusicAlbumDTO convertToDTO(MusicAlbumPageReq req);

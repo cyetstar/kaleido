@@ -35,7 +35,7 @@ public class GetMusicArtists {
 
     @Data
     public static class Metadata {
-        private String ratingKey;
+        private Long ratingKey;
         private String key;
         private String parentRatingKey;
         private String guid;
@@ -43,6 +43,7 @@ public class GetMusicArtists {
         private String studio;
         private String type;
         private String title;
+        private String titleSort;
         private String parentKey;
         private String parentTitle;
         private String summary;
@@ -58,12 +59,5 @@ public class GetMusicArtists {
         private Long addedAt;
         private Long updatedAt;
 
-        public String getStringAddedAt() {
-            return getAddedAt() == null ? null : DateTimeUtils.parseTimestamp(getAddedAt() * 1000);
-        }
-
-        public String getStringUpdatedAt() {
-            return getUpdatedAt() == null ? null : DateTimeUtils.parseTimestamp(getUpdatedAt() * 1000);
-        }
     }
 }

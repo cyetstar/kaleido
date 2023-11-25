@@ -9,7 +9,7 @@ import cc.onelooker.kaleido.entity.music.MusicTrackDO;
  * 曲目Mapper接口
  *
  * @author cyetstar
- * @date 2023-11-20 22:35:26
+ * @date 2023-11-25 22:16:58
  */
 @Mapper
 public interface MusicTrackMapper extends BaseMapper<MusicTrackDO> {

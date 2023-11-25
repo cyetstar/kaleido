@@ -67,7 +67,7 @@ public class PlexApiService {
         return mediaContainer.getMetadataList();
     }
 
-    public GetMusicArtists.Metadata findArtist(String artistId) {
+    public GetMusicArtists.Metadata findArtistById(Long artistId) {
         init();
         GetMusicArtists musicArtists = restTemplate.getForObject(plexUrl + API_FIND_ARTIST, GetMusicArtists.class, artistId, plexToken);
         GetMusicArtists.MediaContainer mediaContainer = musicArtists.getMediaContainer();
@@ -88,20 +88,20 @@ public class PlexApiService {
         return mediaContainer.getMetadataList();
     }
 
-    public GetMusicAlbums.Metadata findAlbum(String albumId) {
+    public GetMusicAlbums.Metadata findAlbumById(Long albumId) {
         init();
         GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_FIND_ALBUM, GetMusicAlbums.class, albumId, plexToken);
         GetMusicAlbums.MediaContainer mediaContainer = musicAlbums.getMediaContainer();
         return mediaContainer.getMetadata();
     }
 
-    public List<GetMusicAlbums.Metadata> listAlbumByArtist(String libraryId, String artistId) {
+    public List<GetMusicAlbums.Metadata> listAlbumByArtist(String libraryId, Long artistId) {
         GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_LIST_ALBUM_BY_ARTIST, GetMusicAlbums.class, libraryId, artistId, plexToken);
         GetMusicAlbums.MediaContainer mediaContainer = musicAlbums.getMediaContainer();
         return mediaContainer.getMetadataList();
     }
 
-    public List<GetMusicTracks.Metadata> listTrackByAlbum(String albumId) {
+    public List<GetMusicTracks.Metadata> listTrackByAlbumId(Long albumId) {
         init();
         GetMusicTracks musicTracks = restTemplate.getForObject(plexUrl + API_LIST_TRACK_BY_ALBUM, GetMusicTracks.class, albumId, plexToken);
         GetMusicTracks.MediaContainer mediaContainer = musicTracks.getMediaContainer();

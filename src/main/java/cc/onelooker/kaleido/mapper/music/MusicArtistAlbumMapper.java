@@ -9,7 +9,7 @@ import cc.onelooker.kaleido.entity.music.MusicArtistAlbumDO;
  * 艺术家专辑关联表Mapper接口
  *
  * @author cyetstar
- * @date 2023-11-20 22:35:26
+ * @date 2023-11-25 22:16:58
  */
 @Mapper
 public interface MusicArtistAlbumMapper extends BaseMapper<MusicArtistAlbumDO> {

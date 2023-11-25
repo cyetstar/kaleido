@@ -24,21 +24,24 @@ import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * 专辑前端控制器
  *
  * @author cyetstar
- * @date 2023-11-20 22:35:26
+ * @date 2023-11-25 22:16:58
  */
 
+@Slf4j
 @Api(tags = "专辑")
 @RestController
 @RequestMapping("/musicAlbum")
@@ -67,6 +70,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @GetMapping("page")
     @ApiOperation(value = "查询专辑")
     public CommonResult<PageResult<MusicAlbumPageResp>> page(MusicAlbumPageReq req, PageParam pageParam) {
+        pageParam.setOrderBy("DESC:added_at");
         return super.page(req, pageParam, MusicAlbumConvert.INSTANCE::convertToDTO, MusicAlbumConvert.INSTANCE::convertToPageResp);
     }
 
@@ -119,13 +123,16 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
             throw new ServiceException(2005, "请设置需要同步音乐库信息");
         }
         //获取最后修改时间
-        String maxXgsj = musicAlbumService.findMaxXgsj();
-        maxXgsj = StringUtils.defaultString(maxXgsj, "19000101000000");
-        Long lastSyncTime = DateTimeUtils.parseDateTime(maxXgsj).getTime() / 1000;
+        Long maxUpdatedAt = musicAlbumService.findMaxUpdatedAt();
         String libraryPath = plexApiService.getLibraryPath(libraryId);
-        List<GetMusicAlbums.Metadata> metadataList = plexApiService.listAlbumByUpdatedAt(libraryId, lastSyncTime);
+        List<GetMusicAlbums.Metadata> metadataList = maxUpdatedAt == null ? plexApiService.listAlbum(libraryId) : plexApiService.listAlbumByUpdatedAt(libraryId, maxUpdatedAt);
+        metadataList.sort(Comparator.comparing(GetMusicAlbums.Metadata::getUpdatedAt, Comparator.nullsLast(Comparator.naturalOrder())));
         for (GetMusicAlbums.Metadata metadata : metadataList) {
-            musicManager.syncPlexAlbum(libraryPath, metadata);
+            try {
+                musicManager.syncPlexAlbum(libraryPath, metadata);
+            } catch (Exception e) {
+                log.error("同步音乐库失败，错误信息：", e);
+            }
         }
         return CommonResult.success(true);
     }

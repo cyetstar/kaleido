@@ -18,14 +18,8 @@ public class MusicTrackListByAlbumIdResp {
     @ApiModelProperty("主键")
     private Long id;
 
-    @ApiModelProperty("专辑Id")
-    private Long albumId;
-
     @ApiModelProperty("MusicBrainz编号")
     private String musicbrainzId;
-
-    @ApiModelProperty("Plex编号")
-    private String plexId;
 
     @ApiModelProperty("网易云音乐编号")
     private String neteaseId;
@@ -36,29 +30,38 @@ public class MusicTrackListByAlbumIdResp {
     @ApiModelProperty("艺术家")
     private String artists;
 
-    @ApiModelProperty("曲长")
-    private Integer length;
-
-    @ApiModelProperty("曲号")
-    private Integer trackNumber;
-
-    @ApiModelProperty("碟号")
-    private Integer discNumber;
-
     @ApiModelProperty("文件格式")
     private String format;
 
     @ApiModelProperty("文件路径")
     private String path;
 
+    @ApiModelProperty("专辑id")
+    private Long albumId;
+
+    @ApiModelProperty("曲长(毫秒)")
+    private Integer duration;
+
+    @ApiModelProperty("曲号")
+    private Integer trackIndex;
+
+    @ApiModelProperty("碟号")
+    private Integer discIndex;
+
+    @ApiModelProperty("加入时间")
+    private Long addedAt;
+
+    @ApiModelProperty("更新时间")
+    private Long updatedAt;
+
     @ApiModelProperty("是否有歌词")
-    private String sfygc;
+    private String hasLyric;
 
     @JsonProperty
-    public String lengthLabel() {
+    public String durationLabel() {
         //将秒转分秒格式
-        if (length != null) {
-            return String.format("%d:%02d", length / 60, length % 60);
+        if (duration != null) {
+            return String.format("%d:%02d", duration / 1000 / 60, duration % 60);
         }
         return null;
     }

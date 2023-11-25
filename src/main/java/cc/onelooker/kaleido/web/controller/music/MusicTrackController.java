@@ -1,7 +1,25 @@
 package cc.onelooker.kaleido.web.controller.music;
 
+import cc.onelooker.kaleido.convert.music.MusicTrackConvert;
+import cc.onelooker.kaleido.dto.music.MusicTrackDTO;
+import cc.onelooker.kaleido.dto.music.req.MusicTrackCreateReq;
+import cc.onelooker.kaleido.dto.music.req.MusicTrackPageReq;
+import cc.onelooker.kaleido.dto.music.req.MusicTrackUpdateReq;
+import cc.onelooker.kaleido.dto.music.resp.MusicTrackCreateResp;
+import cc.onelooker.kaleido.dto.music.resp.MusicTrackListByAlbumIdResp;
+import cc.onelooker.kaleido.dto.music.resp.MusicTrackPageResp;
+import cc.onelooker.kaleido.dto.music.resp.MusicTrackViewResp;
+import cc.onelooker.kaleido.exp.music.MusicTrackExp;
+import cc.onelooker.kaleido.service.music.MusicTrackService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.google.common.collect.Lists;
+import com.zjjcnt.common.core.domain.CommonResult;
+import com.zjjcnt.common.core.domain.ExportColumn;
+import com.zjjcnt.common.core.domain.PageParam;
+import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.service.IBaseService;
+import com.zjjcnt.common.core.web.controller.AbstractCrudController;
+import com.zjjcnt.common.util.DateTimeUtils;
 import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,17 +29,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.zjjcnt.common.core.domain.*;
-import com.zjjcnt.common.core.service.IBaseService;
-import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
-import cc.onelooker.kaleido.service.music.MusicTrackService;
-import cc.onelooker.kaleido.dto.music.MusicTrackDTO;
-import cc.onelooker.kaleido.convert.music.MusicTrackConvert;
-import cc.onelooker.kaleido.dto.music.req.*;
-import cc.onelooker.kaleido.dto.music.resp.*;
-import cc.onelooker.kaleido.exp.music.MusicTrackExp;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -30,16 +37,16 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
-* 曲目前端控制器
-*
-* @author cyetstar
-* @date 2023-11-20 22:35:26
-*/
+ * 曲目前端控制器
+ *
+ * @author cyetstar
+ * @date 2023-11-25 22:16:58
+ */
 
 @Api(tags = "曲目")
 @RestController
 @RequestMapping("/musicTrack")
-public class MusicTrackController extends AbstractCrudController<MusicTrackDTO>{
+public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> {
 
     @Autowired
     private MusicTrackService musicTrackService;
@@ -91,7 +98,7 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO>{
     public void export(MusicTrackPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
         String filename = "曲目" + DateTimeUtils.now() + ".xlsx";
         super.export(req, columns, pageParam, filename, MusicTrackExp.class,
-                    MusicTrackConvert.INSTANCE::convertToDTO, MusicTrackConvert.INSTANCE::convertToExp, response);
+                MusicTrackConvert.INSTANCE::convertToDTO, MusicTrackConvert.INSTANCE::convertToExp, response);
     }
 
     @GetMapping("listByAlbumId")
@@ -102,7 +109,7 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO>{
         for (MusicTrackDTO musicTrackDTO : musicTrackDTOList) {
             File file = Paths.get(musicLibraryPath, FilenameUtils.removeExtension(musicTrackDTO.getPath()) + ".lrc").toFile();
             MusicTrackListByAlbumIdResp resp = MusicTrackConvert.INSTANCE.convertToListByAlbumIdResp(musicTrackDTO);
-            resp.setSfygc(file.exists() && file.length() > 0 ? Constants.YES : Constants.NO);
+            resp.setHasLyric(file.exists() && file.length() > 0 ? Constants.YES : Constants.NO);
             respList.add(resp);
         }
         return CommonResult.success(respList);

@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.service.trade.impl;
 
 import cc.onelooker.kaleido.service.DictionaryBaseServiceImpl;
+import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -27,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2023-07-06 11:56:08
  */
 @Service
-public class TradeSymbolServiceImpl extends DictionaryBaseServiceImpl<TradeSymbolMapper, TradeSymbolDO, TradeSymbolDTO> implements TradeSymbolService {
+public class TradeSymbolServiceImpl extends KaleidoBaseServiceImpl<TradeSymbolMapper, TradeSymbolDO, TradeSymbolDTO> implements TradeSymbolService {
 
     TradeSymbolConvert convert = TradeSymbolConvert.INSTANCE;
 

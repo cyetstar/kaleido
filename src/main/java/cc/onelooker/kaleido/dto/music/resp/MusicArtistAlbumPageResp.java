@@ -10,7 +10,7 @@ import java.lang.Long;
  * 艺术家专辑关联表响应对象
  *
  * @author cyetstar
- * @date 2023-11-20 22:35:26
+ * @date 2023-11-25 22:16:58
  *
  */
 @Data
@@ -23,6 +23,6 @@ public class MusicArtistAlbumPageResp{
     @ApiModelProperty("艺术家id")
     private Long artistId;
 
-    @ApiModelProperty("专辑Id")
+    @ApiModelProperty("专辑id")
     private Long albumId;
 }

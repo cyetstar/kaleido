@@ -17,18 +17,18 @@ import java.lang.Integer;
  * 专辑DO
  *
  * @author cyetstar
- * @date 2023-11-20 22:35:26
+ * @date 2023-11-25 22:16:58
  * @see cc.onelooker.kaleido.dto.music.MusicAlbumDTO
  */
 @Data
 @TableName("music_album")
 public class MusicAlbumDO implements IdEntity<Long> {
-    private static final long serialVersionUID = -1926537435118896456L;
+    private static final long serialVersionUID = 8154656637441125538L;
 
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
@@ -36,18 +36,6 @@ public class MusicAlbumDO implements IdEntity<Long> {
      */
     @TableField(value = "musicbrainz_id")
     private String musicbrainzId;
-
-    /**
-     * Plex编号
-     */
-    @TableField(value = "plex_id")
-    private String plexId;
-
-    /**
-     * Plex缩略图
-     */
-    @TableField(value = "plex_thumb")
-    private String plexThumb;
 
     /**
      * 网易云音乐编号
@@ -92,22 +80,10 @@ public class MusicAlbumDO implements IdEntity<Long> {
     private String releaseCountry;
 
     /**
-     * 日期
-     */
-    @TableField(value = "date")
-    private String date;
-
-    /**
      * 唱片公司
      */
     @TableField(value = "label")
     private String label;
-
-    /**
-     * 发行日期
-     */
-    @TableField(value = "release_date")
-    private String releaseDate;
 
     /**
      * 碟数
@@ -128,22 +104,34 @@ public class MusicAlbumDO implements IdEntity<Long> {
     private String media;
 
     /**
-     * 文件路径
+     * 首发年份
      */
-    @TableField(value = "path")
-    private String path;
+    @TableField(value = "year")
+    private String year;
 
     /**
-     * 创建时间
+     * 首发日期
      */
-    @TableField(value = "cjsj")
-    private String cjsj;
+    @TableField(value = "originally_available_at")
+    private String originallyAvailableAt;
 
     /**
-     * 修改时间
+     * 封面图
      */
-    @TableField(value = "xgsj")
-    private String xgsj;
+    @TableField(value = "thumb")
+    private String thumb;
+
+    /**
+     * 加入时间
+     */
+    @TableField(value = "added_at")
+    private Long addedAt;
+
+    /**
+     * 更新时间
+     */
+    @TableField(value = "updated_at")
+    private Long updatedAt;
 
 
     @Override

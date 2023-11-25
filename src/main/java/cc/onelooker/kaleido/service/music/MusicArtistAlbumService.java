@@ -9,7 +9,7 @@ import java.util.List;
  * 艺术家专辑关联表Service
  *
  * @author cyetstar
- * @date 2023-11-20 22:35:26
+ * @date 2023-11-25 22:16:58
  */
 public interface MusicArtistAlbumService extends IBaseService<MusicArtistAlbumDTO> {
 

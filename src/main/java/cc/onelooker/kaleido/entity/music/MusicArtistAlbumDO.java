@@ -1,27 +1,23 @@
 package cc.onelooker.kaleido.entity.music;
 
-import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.IdType;
-
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.zjjcnt.common.core.entity.IdEntity;
-import com.zjjcnt.common.core.annotation.Crypto;
-
-import java.lang.Long;
+import lombok.Data;
 
 /**
  * 艺术家专辑关联表DO
  *
  * @author cyetstar
- * @date 2023-11-20 22:35:26
+ * @date 2023-11-25 22:16:58
  * @see cc.onelooker.kaleido.dto.music.MusicArtistAlbumDTO
  */
 @Data
 @TableName("music_artist_album")
 public class MusicArtistAlbumDO implements IdEntity<Long> {
-    private static final long serialVersionUID = -5937714819979786513L;
+    private static final long serialVersionUID = 2698762272051883189L;
 
     /**
      * 主键
@@ -36,11 +32,10 @@ public class MusicArtistAlbumDO implements IdEntity<Long> {
     private Long artistId;
 
     /**
-     * 专辑Id
+     * 专辑id
      */
     @TableField(value = "album_id")
     private Long albumId;
-
 
     @Override
     public Long getId() {

@@ -64,27 +64,35 @@ public class MusicManager {
     private NeteaseApiService neteaseApiService;
 
     @Transactional
+    public void syncPlexAlbumById(String libraryPath, Long albumId) {
+        GetMusicAlbums.Metadata metadata = plexApiService.findAlbumById(albumId);
+        syncPlexAlbum(libraryPath, metadata);
+    }
+
+    @Transactional
     public void syncPlexAlbum(String libraryPath, GetMusicAlbums.Metadata metadata) {
         MusicArtistDTO musicArtistDTO = syncPlexArtist(metadata.getParentRatingKey());
-        MusicAlbumDTO musicAlbumDTO = musicAlbumService.findByPlexId(metadata.getRatingKey());
+        MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(metadata.getRatingKey());
         if (musicAlbumDTO == null) {
             musicAlbumDTO = new MusicAlbumDTO();
-            musicAlbumDTO.setPlexId(metadata.getRatingKey());
-            musicAlbumDTO.setPlexThumb(metadata.getThumb());
+            musicAlbumDTO.setId(metadata.getRatingKey());
             musicAlbumDTO.setTitle(metadata.getTitle());
+            musicAlbumDTO.setArtists(metadata.getParentTitle());
             musicAlbumDTO.setSummary(metadata.getSummary());
-            musicAlbumDTO.setDate(metadata.getOriginallyAvailableAt());
-            musicAlbumDTO.setLabel(metadata.getStudio());
-            musicAlbumDTO.setCjsj(metadata.getStringAddedAt());
-            musicAlbumDTO.setXgsj(metadata.getStringUpdatedAt());
+            musicAlbumDTO.setType(metadata.getType());
+            musicAlbumDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
+            musicAlbumDTO.setThumb(metadata.getThumb());
+            musicAlbumDTO.setAddedAt(metadata.getAddedAt());
+            musicAlbumDTO.setUpdatedAt(metadata.getUpdatedAt());
             musicAlbumDTO = musicAlbumService.insert(musicAlbumDTO);
 
             musicArtistAlbumService.insertByArtistIdAndAlbumId(musicArtistDTO.getId(), musicAlbumDTO.getId());
         } else {
-            musicAlbumDTO.setPlexThumb(metadata.getThumb());
-            musicAlbumDTO.setLabel(metadata.getStudio());
+            musicAlbumDTO.setThumb(metadata.getThumb());
+            musicAlbumDTO.setYear(metadata.getYear());
+            musicAlbumDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
             musicAlbumDTO.setSummary(metadata.getSummary());
-            musicAlbumDTO.setXgsj(metadata.getStringUpdatedAt());
+            musicAlbumDTO.setUpdatedAt(metadata.getUpdatedAt());
             musicAlbumService.update(musicAlbumDTO);
 
             MusicArtistAlbumDTO musicArtistAlbumDTO = musicArtistAlbumService.findByArtistIdAndAlbumId(musicArtistDTO.getId(), musicAlbumDTO.getId());
@@ -93,33 +101,39 @@ public class MusicManager {
             }
         }
         // 同步曲目
-        List<MusicTrackDTO> musicTrackDTOList = syncPlexTrack(libraryPath, musicAlbumDTO.getPlexId(), musicAlbumDTO.getId());
-        //更新专辑文件路径
-        if (StringUtils.isBlank(musicAlbumDTO.getPath())) {
-            musicAlbumDTO.setPath(StringUtils.substringBeforeLast(musicTrackDTOList.get(0).getPath(), File.separator));
-            musicAlbumService.update(musicAlbumDTO);
+        syncPlexTrack(libraryPath, musicAlbumDTO.getId());
+    }
+
+    private MusicArtistDTO syncPlexArtist(Long artistId) {
+        MusicArtistDTO musicArtistDTO = musicArtistService.findById(artistId);
+        if (musicArtistDTO == null) {
+            GetMusicArtists.Metadata artist = plexApiService.findArtistById(artistId);
+            musicArtistDTO = new MusicArtistDTO();
+            musicArtistDTO.setId(artist.getRatingKey());
+            musicArtistDTO.setTitle(artist.getTitle());
+            musicArtistDTO.setTitleSort(artist.getTitleSort());
+            musicArtistDTO.setSummary(artist.getSummary());
+            musicArtistDTO.setThumb(artist.getThumb());
+            musicArtistDTO.setAddedAt(artist.getAddedAt());
+            musicArtistDTO.setUpdatedAt(artist.getUpdatedAt());
+            musicArtistDTO = musicArtistService.insert(musicArtistDTO);
         }
+        return musicArtistDTO;
     }
 
-    @Transactional
-    public void syncPlexAlbumById(String libraryPath, Long id) {
-        MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(id);
-        GetMusicAlbums.Metadata metadata = plexApiService.findAlbum(musicAlbumDTO.getPlexId());
-        syncPlexAlbum(libraryPath, metadata);
-    }
-
-    private List<MusicTrackDTO> syncPlexTrack(String libraryPath, String plexAlbumId, Long albumId) {
-        List<GetMusicTracks.Metadata> metadataList = plexApiService.listTrackByAlbum(plexAlbumId);
+    private List<MusicTrackDTO> syncPlexTrack(String libraryPath, Long albumId) {
+        List<GetMusicTracks.Metadata> metadataList = plexApiService.listTrackByAlbumId(albumId);
         List<MusicTrackDTO> musicTrackDTOList = Lists.newArrayList();
         for (GetMusicTracks.Metadata metadata : metadataList) {
-            MusicTrackDTO musicTrackDTO = musicTrackService.findByPlexId(metadata.getRatingKey());
+            MusicTrackDTO musicTrackDTO = musicTrackService.findById(metadata.getRatingKey());
             if (musicTrackDTO == null) {
                 musicTrackDTO = new MusicTrackDTO();
-                musicTrackDTO.setPlexId(metadata.getRatingKey());
+                musicTrackDTO.setId(metadata.getRatingKey());
                 musicTrackDTO.setTitle(metadata.getTitle());
+                musicTrackDTO.setDuration(metadata.getDuration());
                 musicTrackDTO.setAlbumId(albumId);
-                musicTrackDTO.setCjsj(metadata.getStringAddedAt());
-                musicTrackDTO.setXgsj(metadata.getStringUpdatedAt());
+                musicTrackDTO.setAddedAt(metadata.getAddedAt());
+                musicTrackDTO.setUpdatedAt(metadata.getUpdatedAt());
                 musicTrackDTO.setFormat(metadata.getMedia().getContainer());
                 musicTrackDTO.setPath(StringUtils.removeStart(metadata.getMedia().getPart().getFile(), libraryPath));
                 musicTrackDTO = musicTrackService.insert(musicTrackDTO);
@@ -129,23 +143,9 @@ public class MusicManager {
         return musicTrackDTOList;
     }
 
-    private MusicArtistDTO syncPlexArtist(String plexArtistId) {
-        MusicArtistDTO musicArtistDTO = musicArtistService.findByPlexId(plexArtistId);
-        if (musicArtistDTO == null) {
-            GetMusicArtists.Metadata artist = plexApiService.findArtist(plexArtistId);
-            musicArtistDTO = new MusicArtistDTO();
-            musicArtistDTO.setPlexId(artist.getRatingKey());
-            musicArtistDTO.setPlexThumb(artist.getThumb());
-            musicArtistDTO.setName(artist.getTitle());
-            musicArtistDTO.setSummary(artist.getSummary());
-            musicArtistDTO = musicArtistService.insert(musicArtistDTO);
-        }
-        return musicArtistDTO;
-    }
-
-    public int updateAudioTag(Long AlbumId) {
+    public int updateAudioTag(Long albumId) {
         int error = 0;
-        List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(AlbumId);
+        List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(albumId);
         for (int i = 0; i < musicTrackDTOList.size(); i++) {
             MusicTrackDTO musicTrackDTO = musicTrackDTOList.get(i);
             if (StringUtils.isEmpty(musicTrackDTO.getPath())) {
@@ -157,10 +157,9 @@ public class MusicManager {
                 AudioFile audioFile = AudioFileIO.read(file);
                 Map<String, String> infoMap = readTag(audioFile.getTag());
 
-                musicTrackDTO.setLength(audioFile.getAudioHeader().getTrackLength());
                 musicTrackDTO.setArtists(infoMap.get("ARTIST"));
-                musicTrackDTO.setDiscNumber(Integer.valueOf(infoMap.get("DISC_NO")));
-                musicTrackDTO.setTrackNumber(Integer.valueOf(infoMap.get("TRACK")));
+                musicTrackDTO.setDiscIndex(Integer.valueOf(infoMap.get("DISC_NO")));
+                musicTrackDTO.setTrackIndex(Integer.valueOf(infoMap.get("TRACK")));
                 musicTrackDTO.setMusicbrainzId(infoMap.get("MUSICBRAINZ_TRACK_ID"));
                 musicTrackService.update(musicTrackDTO);
                 if (i == 0) {
@@ -171,9 +170,7 @@ public class MusicManager {
                     musicAlbumDTO.setType(infoMap.get("RELEASETYPE"));
                     musicAlbumDTO.setGenre(infoMap.get("GENRE"));
                     musicAlbumDTO.setReleaseCountry(infoMap.get("RELEASECOUNTRY"));
-                    musicAlbumDTO.setDate(infoMap.get("DATE"));
                     musicAlbumDTO.setLabel(infoMap.get("RECORD_LABEL"));
-                    musicAlbumDTO.setReleaseDate(infoMap.get("ORIGINALDATE"));
                     musicAlbumDTO.setMedia(infoMap.get("MEDIA"));
                     musicAlbumService.update(musicAlbumDTO);
                 }
@@ -221,9 +218,9 @@ public class MusicManager {
         return resultMap;
     }
 
-    public int downloadLyric(Long AlbumId) {
+    public int downloadLyric(Long albumId) {
         int error = 0;
-        List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(AlbumId);
+        List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(albumId);
 
         for (int i = 0; i < musicTrackDTOList.size(); i++) {
             MusicTrackDTO musicTrackDTO = musicTrackDTOList.get(i);
@@ -267,7 +264,7 @@ public class MusicManager {
         List<MusicArtistAlbumDTO> musicArtistAlbumDTOList = musicArtistAlbumService.listByAlbumId(musicAlbumDTO.getId());
         for (MusicArtistAlbumDTO musicArtistAlbumDTO : musicArtistAlbumDTOList) {
             MusicArtistDTO musicArtistDTO = musicArtistService.findById(musicArtistAlbumDTO.getArtistId());
-            if (StringUtils.equals(artist.getName(), musicArtistDTO.getName())) {
+            if (StringUtils.equals(artist.getName(), musicArtistDTO.getTitle())) {
                 musicArtistDTO.setNeteaseId(artist.getId());
                 musicArtistService.update(musicArtistDTO);
             }

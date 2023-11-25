@@ -1,6 +1,5 @@
 package cc.onelooker.kaleido.dto.music.req;
 
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +12,7 @@ import java.lang.Integer;
  * 专辑请求对象
  *
  * @author cyetstar
- * @date 2023-11-20 22:35:26
+ * @date 2023-11-25 22:16:58
  *
  */
 @Data
@@ -22,12 +21,6 @@ public class MusicAlbumPageReq{
 
     @ApiModelProperty("MusicBrainz编号")
     private String musicbrainzId;
-
-    @ApiModelProperty("Plex编号")
-    private String plexId;
-
-    @ApiModelProperty("Plex缩略图")
-    private String plexThumb;
 
     @ApiModelProperty("网易云音乐编号")
     private String neteaseId;
@@ -50,14 +43,8 @@ public class MusicAlbumPageReq{
     @ApiModelProperty("发行国家")
     private String releaseCountry;
 
-    @ApiModelProperty("日期")
-    private String date;
-
     @ApiModelProperty("唱片公司")
     private String label;
-
-    @ApiModelProperty("发行日期")
-    private String releaseDate;
 
     @ApiModelProperty("碟数")
     private Integer totalDiscs;
@@ -68,15 +55,19 @@ public class MusicAlbumPageReq{
     @ApiModelProperty("媒体")
     private String media;
 
-    @ApiModelProperty("文件路径")
-    private String path;
+    @ApiModelProperty("首发年份")
+    private String year;
 
-    @StringDateTimeFormat
-    @ApiModelProperty("创建时间")
-    private String cjsj;
+    @ApiModelProperty("首发日期")
+    private String originallyAvailableAt;
 
-    @StringDateTimeFormat
-    @ApiModelProperty("修改时间")
-    private String xgsj;
+    @ApiModelProperty("封面图")
+    private String thumb;
+
+    @ApiModelProperty("加入时间")
+    private Long addedAt;
+
+    @ApiModelProperty("更新时间")
+    private Long updatedAt;
 
 }

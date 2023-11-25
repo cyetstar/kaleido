@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.onelooker.kaleido.mapper.music.MusicAlbumMapper">
 
-    <select id="findMaxXgsj" resultType="java.lang.String">
-        select max(xgsj)
+    <select id="findMaxUpdatedAt" resultType="java.lang.Long">
+        select max(updated_at)
           from music_album
     </select>
 </mapper>

@@ -1,28 +1,26 @@
 package cc.onelooker.kaleido.dto.music.req;
 
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
+import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+
+import java.lang.Long;
+import java.lang.String;
+import java.lang.Integer;
 
 /**
  * 曲目请求对象
  *
  * @author cyetstar
- * @date 2023-11-20 22:35:26
+ * @date 2023-11-25 22:16:58
+ *
  */
 @Data
 @ApiModel("曲目请求对象")
-public class MusicTrackPageReq {
-
-    @ApiModelProperty("专辑Id")
-    private Long albumId;
+public class MusicTrackPageReq{
 
     @ApiModelProperty("MusicBrainz编号")
     private String musicbrainzId;
-
-    @ApiModelProperty("Plex编号")
-    private String plexId;
 
     @ApiModelProperty("网易云音乐编号")
     private String neteaseId;
@@ -33,27 +31,28 @@ public class MusicTrackPageReq {
     @ApiModelProperty("艺术家")
     private String artists;
 
-    @ApiModelProperty("曲长")
-    private Integer length;
-
-    @ApiModelProperty("曲号")
-    private Integer trackNumber;
-
-    @ApiModelProperty("碟号")
-    private Integer discNumber;
-
     @ApiModelProperty("文件格式")
     private String format;
 
     @ApiModelProperty("文件路径")
     private String path;
 
-    @StringDateTimeFormat
-    @ApiModelProperty("创建时间")
-    private String cjsj;
+    @ApiModelProperty("专辑id")
+    private Long albumId;
 
-    @StringDateTimeFormat
-    @ApiModelProperty("修改时间")
-    private String xgsj;
+    @ApiModelProperty("曲长(毫秒)")
+    private Integer duration;
+
+    @ApiModelProperty("曲号")
+    private Integer trackIndex;
+
+    @ApiModelProperty("碟号")
+    private Integer discIndex;
+
+    @ApiModelProperty("加入时间")
+    private Long addedAt;
+
+    @ApiModelProperty("更新时间")
+    private Long updatedAt;
 
 }

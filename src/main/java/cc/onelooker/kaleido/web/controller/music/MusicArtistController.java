@@ -29,19 +29,22 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
- * 艺术家前端控制器
- *
- * @author cyetstar
- * @date 2023-11-20 22:35:26
- */
+* 艺术家前端控制器
+*
+* @author cyetstar
+* @date 2023-11-25 22:16:58
+*/
 
 @Api(tags = "艺术家")
 @RestController
 @RequestMapping("/musicArtist")
-public class MusicArtistController extends AbstractCrudController<MusicArtistDTO> {
+public class MusicArtistController extends AbstractCrudController<MusicArtistDTO>{
 
     @Autowired
     private MusicArtistService musicArtistService;
+
+    @Autowired
+    private MusicManager musicManager;
 
     @Autowired
     private NeteaseApiService neteaseApiService;

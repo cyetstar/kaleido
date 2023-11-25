@@ -11,9 +11,9 @@ import lombok.Data;
 @Data
 public class MusicAlbumSearchNeteaseResp {
 
-    private String title;
-
     private String neteaseId;
+
+    private String title;
 
     private String artist;
 

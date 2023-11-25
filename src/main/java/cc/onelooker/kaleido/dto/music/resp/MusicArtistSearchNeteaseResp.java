@@ -12,7 +12,7 @@ public class MusicArtistSearchNeteaseResp {
 
     private String neteaseId;
 
-    private String name;
+    private String title;
 
     private String trans;
 

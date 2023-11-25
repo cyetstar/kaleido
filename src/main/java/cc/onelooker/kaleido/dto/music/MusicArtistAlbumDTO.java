@@ -9,12 +9,12 @@ import java.lang.Long;
  * 艺术家专辑关联表DTO
  *
  * @author cyetstar
- * @date 2023-11-20 22:35:26
+ * @date 2023-11-25 22:16:58
  * @see cc.onelooker.kaleido.entity.music.MusicArtistAlbumDO
  */
 @Data
 public class MusicArtistAlbumDTO implements BaseDTO<Long> {
-    private static final long serialVersionUID = 8101786525430057278L;
+    private static final long serialVersionUID = 3222113576892121793L;
 
     /**
      * 主键
@@ -27,7 +27,7 @@ public class MusicArtistAlbumDTO implements BaseDTO<Long> {
     private Long artistId;
 
     /**
-     * 专辑Id
+     * 专辑id
      */
     private Long albumId;
 
