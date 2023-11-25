@@ -14,19 +14,16 @@ import cc.onelooker.kaleido.dto.movie.MovieActorDTO;
 import cc.onelooker.kaleido.convert.movie.MovieActorConvert;
 import cc.onelooker.kaleido.dto.movie.req.*;
 import cc.onelooker.kaleido.dto.movie.resp.*;
-import cc.onelooker.kaleido.dto.movie.exp.MovieActorExp;
+import cc.onelooker.kaleido.exp.movie.MovieActorExp;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-
-import java.lang.Long;
-import java.lang.String;
 
 /**
 * 演职员前端控制器
 *
 * @author cyetstar
-* @date 2023-04-18 23:04:56
+* @date 2023-11-26 01:19:02
 */
 
 @Api(tags = "演职员")
@@ -40,16 +37,6 @@ public class MovieActorController extends AbstractCrudController<MovieActorDTO>{
     @Override
     protected IBaseService getService() {
         return movieActorService;
-    }
-
-    @GetMapping("search")
-    @ApiOperation(value = "查询演职员")
-    public CommonResult<PageResult<MovieActorSearchResp>> search(String keyword, PageParam pageParam) {
-        MovieActorDTO dto = new MovieActorDTO();
-        dto.setKeyword(keyword);
-        PageResult<MovieActorDTO> page = movieActorService.page(dto, pageParam.toPage());
-        PageResult<MovieActorSearchResp> resp = PageResult.convert(page, MovieActorConvert.INSTANCE::convertToSearchResp);
-        return CommonResult.success(resp);
     }
 
     @GetMapping("page")

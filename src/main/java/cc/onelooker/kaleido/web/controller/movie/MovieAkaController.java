@@ -14,20 +14,16 @@ import cc.onelooker.kaleido.dto.movie.MovieAkaDTO;
 import cc.onelooker.kaleido.convert.movie.MovieAkaConvert;
 import cc.onelooker.kaleido.dto.movie.req.*;
 import cc.onelooker.kaleido.dto.movie.resp.*;
-import cc.onelooker.kaleido.dto.movie.exp.MovieAkaExp;
+import cc.onelooker.kaleido.exp.movie.MovieAkaExp;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-
-import java.lang.Long;
-import java.lang.String;
-
 
 /**
 * 别名前端控制器
 *
 * @author cyetstar
-* @date 2023-04-18 23:04:56
+* @date 2023-11-26 01:19:02
 */
 
 @Api(tags = "别名")

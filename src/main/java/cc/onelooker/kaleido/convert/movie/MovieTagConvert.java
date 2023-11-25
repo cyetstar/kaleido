@@ -1,22 +1,24 @@
 package cc.onelooker.kaleido.convert.movie;
 
-import cc.onelooker.kaleido.dto.movie.MovieTagDTO;
-import cc.onelooker.kaleido.dto.movie.exp.MovieTagExp;
-import cc.onelooker.kaleido.dto.movie.req.MovieTagCreateReq;
-import cc.onelooker.kaleido.dto.movie.req.MovieTagPageReq;
-import cc.onelooker.kaleido.dto.movie.req.MovieTagUpdateReq;
-import cc.onelooker.kaleido.dto.movie.resp.MovieTagCreateResp;
-import cc.onelooker.kaleido.dto.movie.resp.MovieTagPageResp;
-import cc.onelooker.kaleido.dto.movie.resp.MovieTagViewResp;
-import cc.onelooker.kaleido.entity.movie.MovieTagDO;
-import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+import org.mapstruct.InheritInverseConfiguration;
+
+import cc.onelooker.kaleido.dto.movie.MovieTagDTO;
+import cc.onelooker.kaleido.entity.movie.MovieTagDO;
+import cc.onelooker.kaleido.dto.movie.req.MovieTagPageReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieTagCreateReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieTagUpdateReq;
+import cc.onelooker.kaleido.dto.movie.resp.MovieTagPageResp;
+import cc.onelooker.kaleido.dto.movie.resp.MovieTagViewResp;
+import cc.onelooker.kaleido.dto.movie.resp.MovieTagCreateResp;
+import cc.onelooker.kaleido.exp.movie.MovieTagExp;
+
 /**
 * 电影标签Convert
 *
 * @author cyetstar
-* @date 2023-04-18 23:04:56
+* @date 2023-11-26 01:19:02
 */
 @Mapper
 public interface MovieTagConvert {

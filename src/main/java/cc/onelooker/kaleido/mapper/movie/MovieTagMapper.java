@@ -9,7 +9,7 @@ import cc.onelooker.kaleido.entity.movie.MovieTagDO;
  * 电影标签Mapper接口
  *
  * @author cyetstar
- * @date 2023-04-18 23:04:56
+ * @date 2023-11-26 01:19:02
  */
 @Mapper
 public interface MovieTagMapper extends BaseMapper<MovieTagDO> {

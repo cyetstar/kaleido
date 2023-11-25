@@ -1,9 +1,6 @@
 package cc.onelooker.kaleido.plex;
 
-import cc.onelooker.kaleido.plex.resp.GetLibraries;
-import cc.onelooker.kaleido.plex.resp.GetMusicAlbums;
-import cc.onelooker.kaleido.plex.resp.GetMusicArtists;
-import cc.onelooker.kaleido.plex.resp.GetMusicTracks;
+import cc.onelooker.kaleido.plex.resp.*;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -33,6 +30,9 @@ public class PlexApiService {
     private final static String API_FIND_ALBUM = "/library/metadata/{albumId}?X-Plex-Token={plexToken}";
     private final static String API_LIST_ALBUM_BY_ARTIST = "/library/sections/{libraryId}/all?artist.id={artistId}&type=9&X-Plex-Token={plexToken}";
     private final static String API_LIST_TRACK_BY_ALBUM = "/library/metadata/{albumId}/children?X-Plex-Token={plexToken}";
+    private final static String API_LIST_MOVIE = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
+    private final static String API_LIST_MOVIE_BY_UPDATED_AT = "/library/sections/{libraryId}/all?updatedAt>={updatedAt}&X-Plex-Token={plexToken}";
+    private final static String API_FIND_MOVIE = "/library/metadata/{movieId}?X-Plex-Token={plexToken}";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -111,5 +111,26 @@ public class PlexApiService {
     public String getLibraryPath(String libraryId) {
         GetLibraries.Directory directory = listLibrary().stream().filter(s -> StringUtils.equals(s.getKey(), libraryId)).findFirst().get();
         return directory.getLocation().getPath();
+    }
+
+    public GetMovies.Metadata findMovieById(Long movieId) {
+        init();
+        GetMovies movies = restTemplate.getForObject(plexUrl + API_FIND_MOVIE, GetMovies.class, movieId, plexToken);
+        GetMovies.MediaContainer mediaContainer = movies.getMediaContainer();
+        return mediaContainer.getMetadata();
+    }
+
+    public List<GetMovies.Metadata> listMovie(String libraryId) {
+        init();
+        GetMovies movies = restTemplate.getForObject(plexUrl + API_LIST_MOVIE, GetMovies.class, libraryId, plexToken);
+        GetMovies.MediaContainer mediaContainer = movies.getMediaContainer();
+        return mediaContainer.getMetadataList();
+    }
+
+    public List<GetMovies.Metadata> listMovieByUpdatedAt(String libraryId, Long updatedAt) {
+        init();
+        GetMovies movies = restTemplate.getForObject(plexUrl + API_LIST_MOVIE_BY_UPDATED_AT, GetMovies.class, libraryId, updatedAt, plexToken);
+        GetMovies.MediaContainer mediaContainer = movies.getMediaContainer();
+        return mediaContainer.getMetadataList();
     }
 }

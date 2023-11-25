@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.zjjcnt.common.core.entity.IdEntity;
+import com.zjjcnt.common.core.annotation.Crypto;
 
 import java.lang.Long;
 import java.lang.String;
@@ -15,20 +16,20 @@ import java.lang.String;
  * 电影标签DO
  *
  * @author cyetstar
- * @date 2023-04-18 23:04:56
+ * @date 2023-11-26 01:19:02
  * @see cc.onelooker.kaleido.dto.movie.MovieTagDTO
  */
 @Data
 @TableName("movie_tag")
 public class MovieTagDO implements IdEntity<Long> {
-    private static final long serialVersionUID = -6964102478558182781L;
+    private static final long serialVersionUID = -1114211264537010594L;
+
 
     /**
      * 主键
      */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
-
     /**
      * 电影id
      */
@@ -36,10 +37,11 @@ public class MovieTagDO implements IdEntity<Long> {
     private Long movieId;
 
     /**
-     * 名称
+     * 标识
      */
-    @TableField(value = "mc")
-    private String mc;
+    @TableField(value = "tag")
+    private String tag;
+
 
     @Override
     public Long getId() {

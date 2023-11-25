@@ -1,23 +1,24 @@
 package cc.onelooker.kaleido.convert.movie;
 
-import cc.onelooker.kaleido.dto.movie.MovieActorDTO;
-import cc.onelooker.kaleido.dto.movie.exp.MovieActorExp;
-import cc.onelooker.kaleido.dto.movie.req.MovieActorCreateReq;
-import cc.onelooker.kaleido.dto.movie.req.MovieActorPageReq;
-import cc.onelooker.kaleido.dto.movie.req.MovieActorUpdateReq;
-import cc.onelooker.kaleido.dto.movie.resp.MovieActorCreateResp;
-import cc.onelooker.kaleido.dto.movie.resp.MovieActorPageResp;
-import cc.onelooker.kaleido.dto.movie.resp.MovieActorSearchResp;
-import cc.onelooker.kaleido.dto.movie.resp.MovieActorViewResp;
-import cc.onelooker.kaleido.entity.movie.MovieActorDO;
-import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+import org.mapstruct.InheritInverseConfiguration;
+
+import cc.onelooker.kaleido.dto.movie.MovieActorDTO;
+import cc.onelooker.kaleido.entity.movie.MovieActorDO;
+import cc.onelooker.kaleido.dto.movie.req.MovieActorPageReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieActorCreateReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieActorUpdateReq;
+import cc.onelooker.kaleido.dto.movie.resp.MovieActorPageResp;
+import cc.onelooker.kaleido.dto.movie.resp.MovieActorViewResp;
+import cc.onelooker.kaleido.dto.movie.resp.MovieActorCreateResp;
+import cc.onelooker.kaleido.exp.movie.MovieActorExp;
+
 /**
 * 演职员Convert
 *
 * @author cyetstar
-* @date 2023-04-18 23:04:56
+* @date 2023-11-26 01:19:02
 */
 @Mapper
 public interface MovieActorConvert {
@@ -35,7 +36,6 @@ public interface MovieActorConvert {
 
     MovieActorDTO convertToDTO(MovieActorUpdateReq req);
 
-    MovieActorSearchResp convertToSearchResp(MovieActorDTO dto);
     MovieActorPageResp convertToPageResp(MovieActorDTO dto);
 
     MovieActorViewResp convertToViewResp(MovieActorDTO dto);

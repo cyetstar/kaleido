@@ -116,11 +116,11 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     }
 
     @PostMapping("syncPlex")
-    @ApiOperation(value = "同步音乐库")
+    @ApiOperation(value = "同步资料库")
     public CommonResult<Boolean> syncPlex() {
         String libraryId = ConfigUtils.getSysConfig("plexMusicLibraryId");
         if (StringUtils.isBlank(libraryId)) {
-            throw new ServiceException(2005, "请设置需要同步音乐库信息");
+            throw new ServiceException(2005, "请设置需要同步资料库信息");
         }
         //获取最后修改时间
         Long maxUpdatedAt = musicAlbumService.findMaxUpdatedAt();
@@ -131,18 +131,18 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
             try {
                 musicManager.syncPlexAlbum(libraryPath, metadata);
             } catch (Exception e) {
-                log.error("同步音乐库失败，错误信息：", e);
+                log.error("同步资料库失败，错误信息：", e);
             }
         }
         return CommonResult.success(true);
     }
 
     @PostMapping("syncPlexById")
-    @ApiOperation(value = "同步音乐库")
+    @ApiOperation(value = "同步资料库")
     public CommonResult<Boolean> syncPlexById(@RequestBody MusicAlbumSyncPlexReq req) {
         String libraryId = ConfigUtils.getSysConfig("plexMusicLibraryId");
         if (StringUtils.isBlank(libraryId)) {
-            throw new ServiceException(2005, "请设置需要同步音乐库信息");
+            throw new ServiceException(2005, "请设置需要同步资料库信息");
         }
         String libraryPath = plexApiService.getLibraryPath(libraryId);
         musicManager.syncPlexAlbumById(libraryPath, req.getId());

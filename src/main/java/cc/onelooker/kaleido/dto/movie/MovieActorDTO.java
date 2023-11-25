@@ -1,21 +1,18 @@
 package cc.onelooker.kaleido.dto.movie;
 
-import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
-
-import java.lang.Long;
-import java.lang.String;
+import lombok.Data;
 
 /**
  * 演职员DTO
  *
  * @author cyetstar
- * @date 2023-04-18 23:04:56
+ * @date 2023-11-26 01:19:02
  * @see cc.onelooker.kaleido.entity.movie.MovieActorDO
  */
 @Data
 public class MovieActorDTO implements BaseDTO<Long> {
-    private static final long serialVersionUID = 6147609699273778563L;
+    private static final long serialVersionUID = -1702790923657981726L;
 
     /**
      * 主键
@@ -23,33 +20,21 @@ public class MovieActorDTO implements BaseDTO<Long> {
     private Long id;
 
     /**
-     * 姓名
-     */
-    private String xm;
-
-    /**
-     * 本名
-     */
-    private String bm;
-
-    /**
      * 豆瓣编号
      */
     private String doubanId;
 
     /**
-     * 创建时间
+     * 姓名
      */
-    private String cjsj;
+    private String name;
 
     /**
-     * 修改时间
+     * 原名
      */
-    private String xgsj;
+    private String originalName;
 
-    //
-
-    private String keyword;
+    // ------ 非数据库表字段 -------
 
 
     @Override

@@ -11,18 +11,15 @@ import cc.onelooker.kaleido.dto.movie.MovieAkaDTO;
 import cc.onelooker.kaleido.convert.movie.MovieAkaConvert;
 import cc.onelooker.kaleido.mapper.movie.MovieAkaMapper;
 
+
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.*;
-
-import java.lang.Long;
 
 /**
  * 别名ServiceImpl
  *
  * @author cyetstar
- * @date 2023-04-18 23:04:56
+ * @date 2023-11-26 01:19:02
  */
 @Service
 public class MovieAkaServiceImpl extends AbstractBaseServiceImpl<MovieAkaMapper, MovieAkaDO, MovieAkaDTO> implements MovieAkaService {
@@ -33,7 +30,7 @@ public class MovieAkaServiceImpl extends AbstractBaseServiceImpl<MovieAkaMapper,
     protected Wrapper<MovieAkaDO> genQueryWrapper(MovieAkaDTO dto) {
         LambdaQueryWrapper<MovieAkaDO> query = new LambdaQueryWrapper<>();
         query.eq(Objects.nonNull(dto.getMovieId()), MovieAkaDO::getMovieId, dto.getMovieId());
-        query.eq(StringUtils.isNotEmpty(dto.getDymc()), MovieAkaDO::getDymc, dto.getDymc());
+        query.eq(StringUtils.isNotEmpty(dto.getTitle()), MovieAkaDO::getTitle, dto.getTitle());
         return query;
     }
 
@@ -45,20 +42,5 @@ public class MovieAkaServiceImpl extends AbstractBaseServiceImpl<MovieAkaMapper,
     @Override
     public MovieAkaDO convertToDO(MovieAkaDTO movieAkaDTO) {
         return convert.convertToDO(movieAkaDTO);
-    }
-
-    @Override
-    @Transactional
-    public boolean deleteByMovieId(Long movieId) {
-        MovieAkaDTO param = new MovieAkaDTO();
-        param.setMovieId(movieId);
-        return delete(param);
-    }
-
-    @Override
-    public List<MovieAkaDTO> listByMovieId(Long movieId) {
-        MovieAkaDTO param = new MovieAkaDTO();
-        param.setMovieId(movieId);
-        return list(param);
     }
 }

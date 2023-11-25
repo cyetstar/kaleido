@@ -14,20 +14,16 @@ import cc.onelooker.kaleido.dto.movie.MovieTagDTO;
 import cc.onelooker.kaleido.convert.movie.MovieTagConvert;
 import cc.onelooker.kaleido.dto.movie.req.*;
 import cc.onelooker.kaleido.dto.movie.resp.*;
-import cc.onelooker.kaleido.dto.movie.exp.MovieTagExp;
+import cc.onelooker.kaleido.exp.movie.MovieTagExp;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-
-import java.lang.Long;
-import java.lang.String;
-
 
 /**
 * 电影标签前端控制器
 *
 * @author cyetstar
-* @date 2023-04-18 23:04:56
+* @date 2023-11-26 01:19:02
 */
 
 @Api(tags = "电影标签")

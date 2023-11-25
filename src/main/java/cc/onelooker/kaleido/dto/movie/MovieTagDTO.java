@@ -1,21 +1,18 @@
 package cc.onelooker.kaleido.dto.movie;
 
-import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
-
-import java.lang.Long;
-import java.lang.String;
+import lombok.Data;
 
 /**
  * 电影标签DTO
  *
  * @author cyetstar
- * @date 2023-04-18 23:04:56
+ * @date 2023-11-26 01:19:02
  * @see cc.onelooker.kaleido.entity.movie.MovieTagDO
  */
 @Data
 public class MovieTagDTO implements BaseDTO<Long> {
-    private static final long serialVersionUID = -3575669635250022618L;
+    private static final long serialVersionUID = 5227649764440694560L;
 
     /**
      * 电影id
@@ -28,9 +25,11 @@ public class MovieTagDTO implements BaseDTO<Long> {
     private Long id;
 
     /**
-     * 名称
+     * 标识
      */
-    private String mc;
+    private String tag;
+
+    // ------ 非数据库表字段 -------
 
 
     @Override

@@ -11,19 +11,15 @@ import cc.onelooker.kaleido.dto.movie.MovieActorDTO;
 import cc.onelooker.kaleido.convert.movie.MovieActorConvert;
 import cc.onelooker.kaleido.mapper.movie.MovieActorMapper;
 
+
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.*;
-
-import java.lang.Long;
-
-import java.lang.String;
 
 /**
  * 演职员ServiceImpl
  *
  * @author cyetstar
- * @date 2023-04-18 23:04:56
+ * @date 2023-11-26 01:19:02
  */
 @Service
 public class MovieActorServiceImpl extends AbstractBaseServiceImpl<MovieActorMapper, MovieActorDO, MovieActorDTO> implements MovieActorService {
@@ -33,12 +29,9 @@ public class MovieActorServiceImpl extends AbstractBaseServiceImpl<MovieActorMap
     @Override
     protected Wrapper<MovieActorDO> genQueryWrapper(MovieActorDTO dto) {
         LambdaQueryWrapper<MovieActorDO> query = new LambdaQueryWrapper<>();
-        query.eq(StringUtils.isNotEmpty(dto.getXm()), MovieActorDO::getXm, dto.getXm());
-        query.eq(StringUtils.isNotEmpty(dto.getBm()), MovieActorDO::getBm, dto.getBm());
         query.eq(StringUtils.isNotEmpty(dto.getDoubanId()), MovieActorDO::getDoubanId, dto.getDoubanId());
-        if (StringUtils.isNotEmpty(dto.getKeyword())) {
-            query.like(MovieActorDO::getXm, dto.getKeyword()).or().like(MovieActorDO::getBm, dto.getKeyword());
-        }
+        query.eq(StringUtils.isNotEmpty(dto.getName()), MovieActorDO::getName, dto.getName());
+        query.eq(StringUtils.isNotEmpty(dto.getOriginalName()), MovieActorDO::getOriginalName, dto.getOriginalName());
         return query;
     }
 
@@ -50,18 +43,5 @@ public class MovieActorServiceImpl extends AbstractBaseServiceImpl<MovieActorMap
     @Override
     public MovieActorDO convertToDO(MovieActorDTO movieActorDTO) {
         return convert.convertToDO(movieActorDTO);
-    }
-
-    @Override
-    public MovieActorDTO findByXm(String xm) {
-        MovieActorDTO param = new MovieActorDTO();
-        param.setXm(xm);
-        return find(param);
-    }
-
-    @Override
-    public List<MovieActorDTO> listByMovieIdAndJs(Long movieId, String js) {
-        List<MovieActorDO> movieActorDOList = baseMapper.listByMovieIdAndJs(movieId, js);
-        return convertToDTO(movieActorDOList);
     }
 }
