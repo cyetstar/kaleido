@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 资源表Service
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-08-15 17:38:57
  */
 public interface SysResourceService extends IBaseService<SysResourceDTO> {

@@ -11,6 +11,7 @@ import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -58,5 +59,13 @@ public class MovieBasicCountryServiceImpl extends AbstractBaseServiceImpl<MovieB
         movieBasicCountryDTO.setMovieId(movieId);
         movieBasicCountryDTO.setCountryId(countryId);
         return insert(movieBasicCountryDTO);
+    }
+
+    @Override
+    public List<MovieBasicCountryDTO> listByMovieId(Long movieId) {
+        Validate.notNull(movieId);
+        MovieBasicCountryDTO param = new MovieBasicCountryDTO();
+        param.setMovieId(movieId);
+        return list(param);
     }
 }

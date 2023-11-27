@@ -5,6 +5,8 @@ import com.zjjcnt.common.core.service.IBaseService;
 
 import cc.onelooker.kaleido.dto.movie.MovieBasicGenreDTO;
 
+import java.util.List;
+
 /**
  * 电影类型关联表Service
  *
@@ -16,4 +18,6 @@ public interface MovieBasicGenreService extends IBaseService<MovieBasicGenreDTO>
     MovieBasicGenreDTO findByMovieIdAndGenreId(Long movieId, Long countryId);
 
     MovieBasicGenreDTO insertByMovieIdAndGenreId(Long movieId, Long countryId);
+
+    List<MovieBasicGenreDTO> listByMovieId(Long movieId);
 }

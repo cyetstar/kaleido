@@ -1,7 +1,9 @@
 package cc.onelooker.kaleido.web.controller.movie;
 
 import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
+import cc.onelooker.kaleido.dto.movie.MovieBasicCountryDTO;
 import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
+import cc.onelooker.kaleido.dto.movie.MovieBasicGenreDTO;
 import cc.onelooker.kaleido.dto.movie.req.MovieBasicCreateReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieBasicPageReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieBasicSyncPlexReq;
@@ -12,9 +14,9 @@ import cc.onelooker.kaleido.dto.movie.resp.MovieBasicViewResp;
 import cc.onelooker.kaleido.exp.movie.MovieBasicExp;
 import cc.onelooker.kaleido.plex.PlexApiService;
 import cc.onelooker.kaleido.plex.resp.GetMovies;
+import cc.onelooker.kaleido.service.movie.MovieBasicCountryService;
+import cc.onelooker.kaleido.service.movie.MovieBasicGenreService;
 import cc.onelooker.kaleido.service.movie.MovieBasicService;
-import cc.onelooker.kaleido.service.movie.MovieCountryService;
-import cc.onelooker.kaleido.service.movie.MovieGenreService;
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
@@ -35,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 电影前端控制器
@@ -53,10 +56,10 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     private MovieBasicService movieBasicService;
 
     @Autowired
-    private MovieCountryService movieCountryService;
+    private MovieBasicCountryService movieBasicCountryService;
 
     @Autowired
-    private MovieGenreService movieGenreService;
+    private MovieBasicGenreService movieBasicGenreService;
 
     @Autowired
     private MovieManager movieManager;
@@ -80,6 +83,10 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @ApiOperation(value = "查看电影详情")
     public CommonResult<MovieBasicViewResp> view(Long id) {
         MovieBasicViewResp resp = super.doView(id, MovieBasicConvert.INSTANCE::convertToViewResp);
+        List<MovieBasicCountryDTO> movieBasicCountryDTOList = movieBasicCountryService.listByMovieId(id);
+        List<MovieBasicGenreDTO> movieBasicGenreDTOList = movieBasicGenreService.listByMovieId(id);
+        resp.setCountryList(movieBasicCountryDTOList.stream().map(s -> new MovieBasicViewResp.Country(String.valueOf(s.getCountryId()))).collect(Collectors.toList()));
+        resp.setGenreList(movieBasicGenreDTOList.stream().map(s -> new MovieBasicViewResp.Genre(String.valueOf(s.getGenreId()))).collect(Collectors.toList()));
         return CommonResult.success(resp);
     }
 
@@ -124,12 +131,11 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         }
         //获取最后修改时间
         Long maxUpdatedAt = movieBasicService.findMaxUpdatedAt();
-        String libraryPath = plexApiService.getLibraryPath(libraryId);
         List<GetMovies.Metadata> metadataList = maxUpdatedAt == null ? plexApiService.listMovie(libraryId) : plexApiService.listMovieByUpdatedAt(libraryId, maxUpdatedAt);
         metadataList.sort(Comparator.comparing(GetMovies.Metadata::getUpdatedAt, Comparator.nullsLast(Comparator.naturalOrder())));
         for (GetMovies.Metadata metadata : metadataList) {
             try {
-                movieManager.syncPlexMovie(libraryPath, metadata);
+                movieManager.syncPlexMovieById(metadata.getRatingKey());
             } catch (Exception e) {
                 log.error("同步资料库失败，错误信息：", e);
             }
@@ -140,12 +146,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("syncPlexById")
     @ApiOperation(value = "同步资料库")
     public CommonResult<Boolean> syncPlexById(@RequestBody MovieBasicSyncPlexReq req) {
-        String libraryId = ConfigUtils.getSysConfig("plexMovieLibraryId");
-        if (StringUtils.isBlank(libraryId)) {
-            throw new ServiceException(2005, "请设置需要同步资料库信息");
-        }
-        String libraryPath = plexApiService.getLibraryPath(libraryId);
-        movieManager.syncPlexMovieById(libraryPath, req.getId());
+        movieManager.syncPlexMovieById(req.getId());
         return CommonResult.success(true);
     }
 

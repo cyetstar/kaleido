@@ -3,7 +3,7 @@ package cc.onelooker.kaleido.dto.trade.req;
 import lombok.Data;
 
 /**
- * @Author xiadawei
+ * @Author cyetstar
  * @Date 2023-07-06 13:38:00
  * @Description TODO
  */

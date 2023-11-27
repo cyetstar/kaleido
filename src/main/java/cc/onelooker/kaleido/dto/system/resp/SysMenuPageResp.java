@@ -8,7 +8,7 @@ import lombok.Data;
 /**
  * 菜单表响应对象
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-11-13 01:12:24
  */
 @Data
@@ -20,7 +20,7 @@ public class SysMenuPageResp {
 
     @Dict("sysMenu")
     @ApiModelProperty("父菜单id")
-    private Long parentId;
+    private String parentId;
 
     @ApiModelProperty("菜单名称")
     private String name;

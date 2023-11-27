@@ -1,21 +1,16 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
+import cc.onelooker.kaleido.convert.movie.MovieGenreConvert;
 import cc.onelooker.kaleido.dto.movie.MovieGenreDTO;
-import org.apache.commons.lang3.Validate;
-import org.springframework.stereotype.Service;
+import cc.onelooker.kaleido.entity.movie.MovieGenreDO;
+import cc.onelooker.kaleido.mapper.movie.MovieGenreMapper;
+import cc.onelooker.kaleido.service.DictionaryBaseServiceImpl;
+import cc.onelooker.kaleido.service.movie.MovieGenreService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
-import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.movie.MovieGenreService;
-import cc.onelooker.kaleido.entity.movie.MovieGenreDO;
-import cc.onelooker.kaleido.dto.movie.MovieGenreDTO;
-import cc.onelooker.kaleido.convert.movie.MovieGenreConvert;
-import cc.onelooker.kaleido.mapper.movie.MovieGenreMapper;
-
-
 import org.apache.commons.lang3.StringUtils;
-import java.util.*;
+import org.apache.commons.lang3.Validate;
+import org.springframework.stereotype.Service;
 
 /**
  * 电影类型ServiceImpl
@@ -24,7 +19,7 @@ import java.util.*;
  * @date 2023-11-26 01:19:02
  */
 @Service
-public class MovieGenreServiceImpl extends AbstractBaseServiceImpl<MovieGenreMapper, MovieGenreDO, MovieGenreDTO> implements MovieGenreService {
+public class MovieGenreServiceImpl extends DictionaryBaseServiceImpl<MovieGenreMapper, MovieGenreDO, MovieGenreDTO> implements MovieGenreService {
 
     MovieGenreConvert convert = MovieGenreConvert.INSTANCE;
 
@@ -54,8 +49,9 @@ public class MovieGenreServiceImpl extends AbstractBaseServiceImpl<MovieGenreMap
     }
 
     @Override
-    public MovieGenreDTO insertByTag(String tag) {
+    public MovieGenreDTO insert(Long id, String tag) {
         MovieGenreDTO movieGenreDTO = new MovieGenreDTO();
+        movieGenreDTO.setId(id);
         movieGenreDTO.setTag(tag);
         return insert(movieGenreDTO);
     }

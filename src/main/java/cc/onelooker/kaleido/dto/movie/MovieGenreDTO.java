@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.dto.movie;
 
+import cc.onelooker.kaleido.dto.IDictionary;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ import lombok.Data;
  * @see cc.onelooker.kaleido.entity.movie.MovieGenreDO
  */
 @Data
-public class MovieGenreDTO implements BaseDTO<Long> {
+public class MovieGenreDTO implements IDictionary<Long> {
     private static final long serialVersionUID = 5790661587747408916L;
 
     /**
@@ -35,5 +36,10 @@ public class MovieGenreDTO implements BaseDTO<Long> {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public String getTitle() {
+        return getTag();
     }
 }

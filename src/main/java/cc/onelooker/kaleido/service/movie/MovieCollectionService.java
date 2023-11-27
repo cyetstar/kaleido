@@ -13,5 +13,5 @@ public interface MovieCollectionService extends IBaseService<MovieCollectionDTO>
 
     MovieCollectionDTO findByTitle(String title);
 
-    MovieCollectionDTO insertByTitle(String title);
+    MovieCollectionDTO insert(Long id, String title);
 }

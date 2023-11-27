@@ -45,8 +45,8 @@ public class MovieBasicActorDO implements IdEntity<Long> {
     /**
      * 角色
      */
-    @TableField(value = "js")
-    private String js;
+    @TableField(value = "role")
+    private String role;
 
 
     @Override

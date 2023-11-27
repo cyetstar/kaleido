@@ -3,7 +3,7 @@ package cc.onelooker.kaleido.netease.domain;
 import lombok.Data;
 
 /**
- * @Author xiadawei
+ * @Author cyetstar
  * @Date 2023-11-15 17:37:00
  * @Description TODO
  */

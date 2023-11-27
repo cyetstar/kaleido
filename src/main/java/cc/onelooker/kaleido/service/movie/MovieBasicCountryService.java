@@ -3,6 +3,8 @@ package cc.onelooker.kaleido.service.movie;
 import cc.onelooker.kaleido.dto.movie.MovieBasicCountryDTO;
 import com.zjjcnt.common.core.service.IBaseService;
 
+import java.util.List;
+
 /**
  * 电影国家地区关联表Service
  *
@@ -14,4 +16,6 @@ public interface MovieBasicCountryService extends IBaseService<MovieBasicCountry
     MovieBasicCountryDTO findByMovieIdAndCountryId(Long movieId, Long countryId);
 
     MovieBasicCountryDTO insertByMovieIdAndCountryId(Long movieId, Long countryId);
+
+    List<MovieBasicCountryDTO> listByMovieId(Long movieId);
 }

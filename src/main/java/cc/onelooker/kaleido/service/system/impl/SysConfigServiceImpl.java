@@ -19,7 +19,7 @@ import java.util.Objects;
 /**
  * 系统配置表ServiceImpl
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-11-13 00:43:42
  */
 @Service

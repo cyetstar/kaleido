@@ -1,0 +1,14 @@
+package cc.onelooker.kaleido.dto.tvshow.req;
+
+import lombok.Data;
+
+/**
+ * @Author xiadawei
+ * @Date 2023-11-28 01:35:00
+ * @Description TODO
+ */
+@Data
+public class TvshowEpisodeSyncPlexByIdReq {
+
+    private Long id;
+}

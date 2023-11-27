@@ -13,6 +13,6 @@ public interface MovieCountryService extends IBaseService<MovieCountryDTO> {
 
     MovieCountryDTO findByTag(String tag);
 
-    MovieCountryDTO insertByTag(String tag);
+    MovieCountryDTO insert(Long id, String tag);
 
 }

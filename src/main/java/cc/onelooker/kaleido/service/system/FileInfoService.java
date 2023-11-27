@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 文件信息Service
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-05-31 00:27:23
  */
 public interface FileInfoService extends IBaseService<FileInfoDTO> {

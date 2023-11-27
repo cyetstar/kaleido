@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 资源表DTO
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-08-15 17:38:57
  * @see SysResourceDO
  */

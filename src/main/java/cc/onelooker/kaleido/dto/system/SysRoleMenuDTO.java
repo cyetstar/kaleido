@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * 角色和菜单关系表DTO
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-11-13 01:12:24
  * @see cc.onelooker.kaleido.entity.system.SysRoleMenuDO
  */

@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * 系统配置表DTO
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-04-26 00:41:00
  * @see cc.onelooker.kaleido.entity.system.SysConfigDO
  */

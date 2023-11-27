@@ -3,10 +3,6 @@ package cc.onelooker.kaleido.service.movie;
 import cc.onelooker.kaleido.dto.movie.MovieGenreDTO;
 import com.zjjcnt.common.core.service.IBaseService;
 
-import cc.onelooker.kaleido.dto.movie.MovieGenreDTO;
-
-import java.util.List;
-
 /**
  * 电影类型Service
  *
@@ -17,6 +13,5 @@ public interface MovieGenreService extends IBaseService<MovieGenreDTO> {
 
     MovieGenreDTO findByTag(String tag);
 
-    MovieGenreDTO insertByTag(String tag);
-
+    MovieGenreDTO insert(Long id, String tag);
 }

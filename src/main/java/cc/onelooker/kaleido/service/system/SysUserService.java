@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 用户表Service
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-04-26 00:41:00
  */
 public interface SysUserService extends IBaseService<SysUserDTO> {

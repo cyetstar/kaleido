@@ -1,9 +1,12 @@
 package cc.onelooker.kaleido.dto.movie.resp;
 
+import com.zjjcnt.common.core.annotation.Dict;
 import com.zjjcnt.common.core.annotation.StringDateFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * 电影响应对象
@@ -75,5 +78,29 @@ public class MovieBasicViewResp {
 
     @ApiModelProperty("更新时间")
     private Long updatedAt;
+
+    private List<Country> countryList;
+
+    private List<Genre> genreList;
+
+    @Data
+    public static class Country {
+        @Dict("movieCountry")
+        private String id;
+
+        public Country(String id) {
+            this.id = id;
+        }
+    }
+
+    @Data
+    public static class Genre {
+        @Dict("movieGenre")
+        private String id;
+
+        public Genre(String id) {
+            this.id = id;
+        }
+    }
 
 }

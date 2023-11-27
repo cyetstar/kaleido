@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * 字典表Convert
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-11-19 23:17:28
  */
 @Mapper

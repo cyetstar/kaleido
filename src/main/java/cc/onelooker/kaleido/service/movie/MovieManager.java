@@ -1,8 +1,10 @@
 package cc.onelooker.kaleido.service.movie;
 
 import cc.onelooker.kaleido.dto.movie.*;
+import cc.onelooker.kaleido.enums.ActorRole;
 import cc.onelooker.kaleido.plex.PlexApiService;
 import cc.onelooker.kaleido.plex.resp.GetMovies;
+import cc.onelooker.kaleido.plex.resp.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * @Author xiadawei
+ * @Author cyetstar
  * @Date 2023-10-01 16:09:00
  * @Description TODO
  */
@@ -32,6 +34,9 @@ public class MovieManager {
     private MovieCollectionService movieCollectionService;
 
     @Autowired
+    private MovieActorService movieActorService;
+
+    @Autowired
     private MovieBasicCountryService movieBasicCountryService;
 
     @Autowired
@@ -41,16 +46,19 @@ public class MovieManager {
     private MovieBasicCollectionService movieBasicCollectionService;
 
     @Autowired
+    private MovieBasicActorService movieBasicActorService;
+
+    @Autowired
     private PlexApiService plexApiService;
 
     @Transactional
-    public void syncPlexMovieById(String libraryPath, Long movieId) {
+    public void syncPlexMovieById(Long movieId) {
         GetMovies.Metadata metadata = plexApiService.findMovieById(movieId);
-        syncPlexMovie(libraryPath, metadata);
+        syncPlexMovie(metadata);
     }
 
     @Transactional
-    public void syncPlexMovie(String libraryPath, GetMovies.Metadata metadata) {
+    public void syncPlexMovie(GetMovies.Metadata metadata) {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
         if (movieBasicDTO == null) {
             movieBasicDTO = new MovieBasicDTO();
@@ -91,16 +99,39 @@ public class MovieManager {
         syncCountry(metadata.getCountryList(), movieBasicDTO.getId());
         syncGenre(metadata.getGenreList(), movieBasicDTO.getId());
         syncCollection(metadata.getCollectionList(), movieBasicDTO.getId());
+        syncActor(metadata.getDirectorList(), movieBasicDTO.getId(), ActorRole.Director);
+        syncActor(metadata.getWriterList(), movieBasicDTO.getId(), ActorRole.Director);
+        syncActor(metadata.getRoleList(), movieBasicDTO.getId(), ActorRole.Actor);
     }
 
-    private void syncCountry(List<GetMovies.Tag> countryList, Long movieId) {
+    private void syncActor(List<Tag> directorList, Long movieId, ActorRole actorRole) {
+        if (directorList == null) {
+            return;
+        }
+        for (Tag tag : directorList) {
+            MovieActorDTO movieActorDTO = movieActorService.findById(tag.getId());
+            if (movieActorDTO == null) {
+                movieActorDTO = new MovieActorDTO();
+                movieActorDTO.setId(tag.getId());
+                movieActorDTO.setName(tag.getTag());
+                movieActorDTO.setOriginalName(tag.getTag());
+                movieActorDTO = movieActorService.insert(movieActorDTO);
+            }
+            MovieBasicActorDTO movieBasicActorDTO = movieBasicActorService.findByMovieIdAndActorId(movieId, movieActorDTO.getId());
+            if (movieBasicActorDTO == null) {
+                movieBasicActorService.insertByMovieIdAndActorIdAndRole(movieId, movieActorDTO.getId(), actorRole.name());
+            }
+        }
+    }
+
+    private void syncCountry(List<Tag> countryList, Long movieId) {
         if (countryList == null) {
             return;
         }
-        for (GetMovies.Tag tag : countryList) {
-            MovieCountryDTO movieCountryDTO = movieCountryService.findByTag(tag.getTag());
+        for (Tag tag : countryList) {
+            MovieCountryDTO movieCountryDTO = movieCountryService.findById(tag.getId());
             if (movieCountryDTO == null) {
-                movieCountryDTO = movieCountryService.insertByTag(tag.getTag());
+                movieCountryDTO = movieCountryService.insert(tag.getId(), tag.getTag());
             }
             MovieBasicCountryDTO movieBasicCountryDTO = movieBasicCountryService.findByMovieIdAndCountryId(movieId, movieCountryDTO.getId());
             if (movieBasicCountryDTO == null) {
@@ -109,14 +140,14 @@ public class MovieManager {
         }
     }
 
-    private void syncGenre(List<GetMovies.Tag> genreList, Long movieId) {
+    private void syncGenre(List<Tag> genreList, Long movieId) {
         if (genreList == null) {
             return;
         }
-        for (GetMovies.Tag tag : genreList) {
-            MovieGenreDTO movieGenreDTO = movieGenreService.findByTag(tag.getTag());
+        for (Tag tag : genreList) {
+            MovieGenreDTO movieGenreDTO = movieGenreService.findById(tag.getId());
             if (movieGenreDTO == null) {
-                movieGenreDTO = movieGenreService.insertByTag(tag.getTag());
+                movieGenreDTO = movieGenreService.insert(tag.getId(), tag.getTag());
             }
             MovieBasicGenreDTO movieBasicGenreDTO = movieBasicGenreService.findByMovieIdAndGenreId(movieId, movieGenreDTO.getId());
             if (movieBasicGenreDTO == null) {
@@ -125,14 +156,14 @@ public class MovieManager {
         }
     }
 
-    private void syncCollection(List<GetMovies.Tag> collectionList, Long movieId) {
+    private void syncCollection(List<Tag> collectionList, Long movieId) {
         if (collectionList == null) {
             return;
         }
-        for (GetMovies.Tag tag : collectionList) {
-            MovieCollectionDTO movieCollectionDTO = movieCollectionService.findByTitle(tag.getTag());
+        for (Tag tag : collectionList) {
+            MovieCollectionDTO movieCollectionDTO = movieCollectionService.findById(tag.getId());
             if (movieCollectionDTO == null) {
-                movieCollectionDTO = movieCollectionService.insertByTitle(tag.getTag());
+                movieCollectionDTO = movieCollectionService.insert(tag.getId(), tag.getTag());
             }
             MovieBasicCollectionDTO movieBasicCollectionDTO = movieBasicCollectionService.findByMovieIdAndCollectionId(movieId, movieCollectionDTO.getId());
             if (movieBasicCollectionDTO == null) {

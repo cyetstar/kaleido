@@ -15,7 +15,7 @@ import org.mapstruct.factory.Mappers;
 /**
  * 角色和菜单关系表Convert
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-11-13 01:12:24
  */
 @Mapper

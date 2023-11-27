@@ -7,7 +7,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import java.util.List;
 
 /**
- * @Author xiadawei
+ * @Author cyetstar
  * @Date 2023-09-26 23:00:00
  * @Description TODO
  */
@@ -69,9 +69,4 @@ public class GetMovies {
         private List<Tag> roleList;
     }
 
-    @Data
-    public static class Tag {
-        private Long id;
-        private String tag;
-    }
 }

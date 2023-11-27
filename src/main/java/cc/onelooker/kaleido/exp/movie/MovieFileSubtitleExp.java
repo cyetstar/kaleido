@@ -9,7 +9,7 @@ import java.lang.String;
 /**
  * 电影文件字幕信息导出对象
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2023-06-13 20:35:11
  *
  */

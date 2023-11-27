@@ -25,5 +25,5 @@ public class MovieBasicActorViewResp{
     private Long actorId;
 
     @ApiModelProperty("角色")
-    private String js;
+    private String role;
 }

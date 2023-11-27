@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 系统配置表请求对象
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-11-13 00:43:42
  */
 @Data
@@ -32,6 +32,8 @@ public class SysConfigfindByKeysResp {
     private String plexMusicLibraryId;
 
     private String plexMusicLibraryPath;
+
+    private String plexTvshowLibraryId;
 
     private String neteaseUrl;
 }

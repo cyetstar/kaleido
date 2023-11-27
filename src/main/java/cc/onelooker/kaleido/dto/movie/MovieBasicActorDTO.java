@@ -32,7 +32,7 @@ public class MovieBasicActorDTO implements BaseDTO<Long> {
     /**
      * 角色
      */
-    private String js;
+    private String role;
 
     // ------ 非数据库表字段 -------
 

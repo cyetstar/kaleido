@@ -12,7 +12,7 @@ import java.util.Date;
 /**
  * 用户表DO
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-04-26 00:40:56
  * @see cc.onelooker.kaleido.dto.system.SysUserDTO
  */

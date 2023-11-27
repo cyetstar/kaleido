@@ -1,19 +1,18 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
-import org.springframework.stereotype.Service;
+import cc.onelooker.kaleido.convert.movie.MovieBasicActorConvert;
+import cc.onelooker.kaleido.dto.movie.MovieBasicActorDTO;
+import cc.onelooker.kaleido.entity.movie.MovieBasicActorDO;
+import cc.onelooker.kaleido.mapper.movie.MovieBasicActorMapper;
+import cc.onelooker.kaleido.service.movie.MovieBasicActorService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.movie.MovieBasicActorService;
-import cc.onelooker.kaleido.entity.movie.MovieBasicActorDO;
-import cc.onelooker.kaleido.dto.movie.MovieBasicActorDTO;
-import cc.onelooker.kaleido.convert.movie.MovieBasicActorConvert;
-import cc.onelooker.kaleido.mapper.movie.MovieBasicActorMapper;
-
-
 import org.apache.commons.lang3.StringUtils;
-import java.util.*;
+import org.apache.commons.lang3.Validate;
+import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 /**
  * 电影演职员关联表ServiceImpl
@@ -31,7 +30,7 @@ public class MovieBasicActorServiceImpl extends AbstractBaseServiceImpl<MovieBas
         LambdaQueryWrapper<MovieBasicActorDO> query = new LambdaQueryWrapper<>();
         query.eq(Objects.nonNull(dto.getMovieId()), MovieBasicActorDO::getMovieId, dto.getMovieId());
         query.eq(Objects.nonNull(dto.getActorId()), MovieBasicActorDO::getActorId, dto.getActorId());
-        query.eq(StringUtils.isNotEmpty(dto.getJs()), MovieBasicActorDO::getJs, dto.getJs());
+        query.eq(StringUtils.isNotEmpty(dto.getRole()), MovieBasicActorDO::getRole, dto.getRole());
         return query;
     }
 
@@ -43,5 +42,24 @@ public class MovieBasicActorServiceImpl extends AbstractBaseServiceImpl<MovieBas
     @Override
     public MovieBasicActorDO convertToDO(MovieBasicActorDTO movieBasicActorDTO) {
         return convert.convertToDO(movieBasicActorDTO);
+    }
+
+    @Override
+    public MovieBasicActorDTO findByMovieIdAndActorId(Long movieId, Long actorId) {
+        Validate.notNull(movieId);
+        Validate.notNull(actorId);
+        MovieBasicActorDTO param = new MovieBasicActorDTO();
+        param.setMovieId(movieId);
+        param.setActorId(actorId);
+        return find(param);
+    }
+
+    @Override
+    public MovieBasicActorDTO insertByMovieIdAndActorIdAndRole(Long movieId, Long actorId, String role) {
+        MovieBasicActorDTO movieBasicActorDTO = new MovieBasicActorDTO();
+        movieBasicActorDTO.setMovieId(movieId);
+        movieBasicActorDTO.setActorId(actorId);
+        movieBasicActorDTO.setRole(role);
+        return insert(movieBasicActorDTO);
     }
 }

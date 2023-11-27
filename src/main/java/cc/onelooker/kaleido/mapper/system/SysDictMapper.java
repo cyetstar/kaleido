@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
 /**
  * 字典表Mapper接口
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-04-26 00:41:00
  */
 @Mapper

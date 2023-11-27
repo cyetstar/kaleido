@@ -7,7 +7,7 @@ import lombok.Data;
 /**
  * 字典表请求对象
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-11-13 00:43:42
  */
 @Data

@@ -8,7 +8,7 @@ import lombok.Data;
 /**
  * 用户表响应对象
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-11-10 16:46:50
  */
 @Data

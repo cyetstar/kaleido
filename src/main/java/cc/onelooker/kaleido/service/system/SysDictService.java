@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 字典表Service
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-04-26 00:41:00
  */
 public interface SysDictService extends IBaseService<SysDictDTO> {

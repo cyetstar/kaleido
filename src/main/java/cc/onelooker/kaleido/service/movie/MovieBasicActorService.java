@@ -1,8 +1,7 @@
 package cc.onelooker.kaleido.service.movie;
 
-import com.zjjcnt.common.core.service.IBaseService;
-
 import cc.onelooker.kaleido.dto.movie.MovieBasicActorDTO;
+import com.zjjcnt.common.core.service.IBaseService;
 
 /**
  * 电影演职员关联表Service
@@ -12,4 +11,7 @@ import cc.onelooker.kaleido.dto.movie.MovieBasicActorDTO;
  */
 public interface MovieBasicActorService extends IBaseService<MovieBasicActorDTO> {
 
+    MovieBasicActorDTO findByMovieIdAndActorId(Long movieId, Long actorId);
+
+    MovieBasicActorDTO insertByMovieIdAndActorIdAndRole(Long movieId, Long actorId, String role);
 }

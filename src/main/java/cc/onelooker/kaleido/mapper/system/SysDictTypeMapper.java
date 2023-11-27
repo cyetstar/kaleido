@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 /**
  * 字典表类型表Mapper接口
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-04-26 00:41:00
  */
 @Mapper

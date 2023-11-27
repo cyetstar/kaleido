@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 用户表DTO
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-04-26 00:41:00
  * @see cc.onelooker.kaleido.entity.system.SysUserDO
  */

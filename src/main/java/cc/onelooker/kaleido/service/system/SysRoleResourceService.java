@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 角色和资源关系表Service
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-08-15 17:38:57
  */
 public interface SysRoleResourceService extends IBaseService<SysRoleResourceDTO> {

@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * 资源表导出对象
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-11-19 23:17:28
  */
 @Data

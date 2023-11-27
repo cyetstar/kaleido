@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 资源表Mapper接口
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-08-15 17:38:57
  */
 @Mapper

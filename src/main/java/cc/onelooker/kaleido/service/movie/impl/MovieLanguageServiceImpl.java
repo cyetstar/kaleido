@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
+import cc.onelooker.kaleido.service.DictionaryBaseServiceImpl;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -22,7 +23,7 @@ import java.util.*;
  * @date 2023-11-26 01:19:02
  */
 @Service
-public class MovieLanguageServiceImpl extends AbstractBaseServiceImpl<MovieLanguageMapper, MovieLanguageDO, MovieLanguageDTO> implements MovieLanguageService {
+public class MovieLanguageServiceImpl extends DictionaryBaseServiceImpl<MovieLanguageMapper, MovieLanguageDO, MovieLanguageDTO> implements MovieLanguageService {
 
     MovieLanguageConvert convert = MovieLanguageConvert.INSTANCE;
 

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 用户表Mapper接口
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-04-26 00:41:00
  */
 @Mapper

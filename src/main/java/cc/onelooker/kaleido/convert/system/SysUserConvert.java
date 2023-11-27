@@ -17,7 +17,7 @@ import org.mapstruct.factory.Mappers;
 /**
  * 用户表Convert
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-11-10 16:46:50
  */
 @Mapper

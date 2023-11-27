@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 系统配置表Service
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-11-13 00:43:42
  */
 public interface SysConfigService extends IBaseService<SysConfigDTO> {

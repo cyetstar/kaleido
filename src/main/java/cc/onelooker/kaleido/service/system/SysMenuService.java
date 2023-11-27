@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 菜单表Service
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-11-13 01:12:24
  */
 public interface SysMenuService extends IBaseService<SysMenuDTO> {

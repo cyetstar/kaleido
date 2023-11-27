@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 字典表类型表前端控制器
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-11-13 00:43:42
  */
 

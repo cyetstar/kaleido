@@ -26,5 +26,5 @@ public class MovieBasicActorExp{
     private Long actorId;
 
     @ExcelProperty("角色")
-    private String js;
+    private String role;
 }

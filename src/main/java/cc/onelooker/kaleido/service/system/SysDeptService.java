@@ -6,7 +6,7 @@ import cc.onelooker.kaleido.dto.system.SysDeptDTO;
 /**
  * 部门表Service
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-11-13 01:12:24
  */
 public interface SysDeptService extends IBaseService<SysDeptDTO> {

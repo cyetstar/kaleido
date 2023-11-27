@@ -13,7 +13,7 @@ import java.util.Date;
 /**
  * 角色表DO
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-04-26 00:40:54
  * @see SysRoleDTO
  */

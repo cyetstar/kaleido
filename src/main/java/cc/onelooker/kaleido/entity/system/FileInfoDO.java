@@ -11,7 +11,7 @@ import lombok.Data;
 /**
  * 文件信息DO
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-05-31 00:27:23
  * @see FileInfoDTO
  */

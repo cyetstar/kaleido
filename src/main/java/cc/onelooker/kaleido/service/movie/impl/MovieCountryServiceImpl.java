@@ -4,10 +4,10 @@ import cc.onelooker.kaleido.convert.movie.MovieCountryConvert;
 import cc.onelooker.kaleido.dto.movie.MovieCountryDTO;
 import cc.onelooker.kaleido.entity.movie.MovieCountryDO;
 import cc.onelooker.kaleido.mapper.movie.MovieCountryMapper;
+import cc.onelooker.kaleido.service.DictionaryBaseServiceImpl;
 import cc.onelooker.kaleido.service.movie.MovieCountryService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
  * @date 2023-11-26 01:19:02
  */
 @Service
-public class MovieCountryServiceImpl extends AbstractBaseServiceImpl<MovieCountryMapper, MovieCountryDO, MovieCountryDTO> implements MovieCountryService {
+public class MovieCountryServiceImpl extends DictionaryBaseServiceImpl<MovieCountryMapper, MovieCountryDO, MovieCountryDTO> implements MovieCountryService {
 
     MovieCountryConvert convert = MovieCountryConvert.INSTANCE;
 
@@ -49,8 +49,9 @@ public class MovieCountryServiceImpl extends AbstractBaseServiceImpl<MovieCountr
     }
 
     @Override
-    public MovieCountryDTO insertByTag(String tag) {
+    public MovieCountryDTO insert(Long id, String tag) {
         MovieCountryDTO movieCountryDTO = new MovieCountryDTO();
+        movieCountryDTO.setId(id);
         movieCountryDTO.setTag(tag);
         return insert(movieCountryDTO);
     }

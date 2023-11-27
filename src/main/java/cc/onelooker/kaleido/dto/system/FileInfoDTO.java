@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * 文件信息DTO
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-05-31 00:27:23
  * @see FileInfoDO
  */

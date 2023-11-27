@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * 字典表类型表DTO
  *
- * @author xiadawei
+ * @author cyetstar
  * @date 2022-04-26 00:41:00
  * @see SysDictTypeDO
  */
