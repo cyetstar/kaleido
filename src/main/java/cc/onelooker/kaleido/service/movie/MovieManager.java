@@ -2,15 +2,30 @@ package cc.onelooker.kaleido.service.movie;
 
 import cc.onelooker.kaleido.dto.movie.*;
 import cc.onelooker.kaleido.enums.ActorRole;
+import cc.onelooker.kaleido.enums.SourceType;
+import cc.onelooker.kaleido.nfo.MovieNFO;
+import cc.onelooker.kaleido.nfo.UniqueidNFO;
 import cc.onelooker.kaleido.plex.PlexApiService;
 import cc.onelooker.kaleido.plex.resp.GetMovies;
 import cc.onelooker.kaleido.plex.resp.Tag;
+import cc.onelooker.kaleido.utils.ConvertUtils;
+import cc.onelooker.kaleido.utils.KaleidoConstants;
+import cc.onelooker.kaleido.utils.PlexUtils;
+import cn.hutool.core.util.IdUtil;
+import com.zjjcnt.common.core.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author cyetstar
@@ -31,6 +46,15 @@ public class MovieManager {
     private MovieGenreService movieGenreService;
 
     @Autowired
+    private MovieLanguageService movieLanguageService;
+
+    @Autowired
+    private MovieAkaService movieAkaService;
+
+    @Autowired
+    private MovieTagService movieTagService;
+
+    @Autowired
     private MovieCollectionService movieCollectionService;
 
     @Autowired
@@ -41,6 +65,9 @@ public class MovieManager {
 
     @Autowired
     private MovieBasicGenreService movieBasicGenreService;
+
+    @Autowired
+    private MovieBasicLanguageService movieBasicLanguageService;
 
     @Autowired
     private MovieBasicCollectionService movieBasicCollectionService;
@@ -100,7 +127,7 @@ public class MovieManager {
         syncGenre(metadata.getGenreList(), movieBasicDTO.getId());
         syncCollection(metadata.getCollectionList(), movieBasicDTO.getId());
         syncActor(metadata.getDirectorList(), movieBasicDTO.getId(), ActorRole.Director);
-        syncActor(metadata.getWriterList(), movieBasicDTO.getId(), ActorRole.Director);
+        syncActor(metadata.getWriterList(), movieBasicDTO.getId(), ActorRole.Writer);
         syncActor(metadata.getRoleList(), movieBasicDTO.getId(), ActorRole.Actor);
     }
 
@@ -168,6 +195,81 @@ public class MovieManager {
             MovieBasicCollectionDTO movieBasicCollectionDTO = movieBasicCollectionService.findByMovieIdAndCollectionId(movieId, movieCollectionDTO.getId());
             if (movieBasicCollectionDTO == null) {
                 movieBasicCollectionService.insertByMovieIdAndCollectionId(movieId, movieCollectionDTO.getId());
+            }
+        }
+    }
+
+    @Transactional
+    public void readNFO(Long movieId) throws JAXBException {
+        GetMovies.Metadata metadata = plexApiService.findMovieById(movieId);
+        String movieFolder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
+        File file = Paths.get(movieFolder, "movie.nfo").toFile();
+        MovieNFO movieNFO = parseNFO(file);
+        String doubanId = getUniqueid(movieNFO.getUniqueids(), SourceType.douban.name());
+        String imdb = getUniqueid(movieNFO.getUniqueids(), SourceType.imdb.name());
+        MovieBasicDTO movieBasicDTO = movieBasicService.findById(movieId);
+        movieBasicDTO.setDoubanId(doubanId);
+        movieBasicDTO.setImdb(imdb);
+        movieBasicDTO.setWebsite(movieNFO.getWebsite());
+        movieBasicService.update(movieBasicDTO);
+
+        readLanguages(movieNFO.getLanguages(), movieId);
+        readAkas(movieNFO.getAkas(), movieId);
+        readTags(movieNFO.getTags(), movieId);
+    }
+
+    private MovieNFO parseNFO(File file) throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(MovieNFO.class);
+        Unmarshaller movieUnmarshaller = context.createUnmarshaller();
+        return (MovieNFO) movieUnmarshaller.unmarshal(file);
+    }
+
+    private String getUniqueid(List<UniqueidNFO> uniqueids, String type) {
+        return uniqueids.stream().filter(s -> StringUtils.equals(s.getType(), type)).map(s -> s.getValue()).findFirst().orElse(null);
+    }
+
+    private void readLanguages(List<String> languages, Long movieId) {
+        if (languages == null) {
+            return;
+        }
+        for (String language : languages) {
+            MovieLanguageDTO movieLanguageDTO = movieLanguageService.findByTag(language);
+            if (movieLanguageDTO == null) {
+                movieLanguageDTO = movieLanguageService.insert(language);
+            }
+            MovieBasicLanguageDTO movieBasicLanguageDTO = movieBasicLanguageService.findByMovieIdAndLanguageId(movieId, movieLanguageDTO.getId());
+            if (movieBasicLanguageDTO == null) {
+                movieBasicLanguageService.insertByMovieIdAndLanguageId(movieId, movieLanguageDTO.getId());
+            }
+        }
+    }
+
+    private void readAkas(List<String> akas, Long movieId) {
+        if (akas == null) {
+            return;
+        }
+        for (String aka : akas) {
+            MovieAkaDTO movieAkaDTO = movieAkaService.findByTitleAndMovieId(aka, movieId);
+            if (movieAkaDTO == null) {
+                movieAkaDTO = new MovieAkaDTO();
+                movieAkaDTO.setTitle(aka);
+                movieAkaDTO.setMovieId(movieId);
+                movieAkaService.insert(movieAkaDTO);
+            }
+        }
+    }
+
+    private void readTags(List<String> tags, Long movieId) {
+        if (tags == null) {
+            return;
+        }
+        for (String tag : tags) {
+            MovieTagDTO movieTagDTO = movieTagService.findByTagAndMovieId(tag, movieId);
+            if (movieTagDTO == null) {
+                movieTagDTO = new MovieTagDTO();
+                movieTagDTO.setTag(tag);
+                movieTagDTO.setMovieId(movieId);
+                movieTagService.insert(movieTagDTO);
             }
         }
     }

@@ -38,8 +38,8 @@ public class MovieBasicLanguageDO implements IdEntity<Long> {
     /**
      * 语言id
      */
-    @TableField(value = "movie_language_id")
-    private Long movieLanguageId;
+    @TableField(value = "language_id")
+    private Long languageId;
 
 
     @Override

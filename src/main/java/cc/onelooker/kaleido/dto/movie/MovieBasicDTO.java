@@ -95,6 +95,11 @@ public class MovieBasicDTO implements BaseDTO<Long> {
     private Integer viewCount;
 
     /**
+     * 电影网站
+     */
+    private String website;
+
+    /**
      * IMDb编号
      */
     private String imdb;

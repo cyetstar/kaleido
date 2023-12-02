@@ -4,6 +4,8 @@ import com.zjjcnt.common.core.service.IBaseService;
 
 import cc.onelooker.kaleido.dto.movie.MovieActorDTO;
 
+import java.util.List;
+
 /**
  * 演职员Service
  *
@@ -12,4 +14,5 @@ import cc.onelooker.kaleido.dto.movie.MovieActorDTO;
  */
 public interface MovieActorService extends IBaseService<MovieActorDTO> {
 
+    List<MovieActorDTO> listByMovieId(Long movieId);
 }

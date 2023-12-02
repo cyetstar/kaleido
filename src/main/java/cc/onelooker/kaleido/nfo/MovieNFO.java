@@ -75,8 +75,8 @@ public class MovieNFO {
     private String userNote;
     // avdc meta data
     private String num;
-    private String website;
     // custom meta data
+    private String website;
     @XmlElement(name = "language")
     private List<String> languages;
     @XmlElement(name = "aka")

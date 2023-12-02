@@ -67,29 +67,4 @@ public class GetMusicTracks {
 
     }
 
-    @Data
-    public static class Media {
-        private String id;
-        private Integer duration;
-        private String bitrate;
-        private String audioChannels;
-        private String audioCodec;
-        private String container;
-        @JsonProperty("Part")
-        private List<Part> partList;
-
-        public Part getPart() {
-            return CollectionUtils.get(partList, 0);
-        }
-    }
-
-    @Data
-    public static class Part {
-        private String id;
-        private String key;
-        private Integer duration;
-        private String file;
-        private String size;
-        private String container;
-    }
 }

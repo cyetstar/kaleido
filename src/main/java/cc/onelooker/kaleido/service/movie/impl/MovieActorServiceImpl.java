@@ -1,5 +1,8 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
+import cc.onelooker.kaleido.dto.movie.MovieBasicActorDTO;
+import cc.onelooker.kaleido.service.movie.MovieBasicActorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -11,9 +14,10 @@ import cc.onelooker.kaleido.dto.movie.MovieActorDTO;
 import cc.onelooker.kaleido.convert.movie.MovieActorConvert;
 import cc.onelooker.kaleido.mapper.movie.MovieActorMapper;
 
-
 import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 演职员ServiceImpl
@@ -25,6 +29,9 @@ import java.util.*;
 public class MovieActorServiceImpl extends AbstractBaseServiceImpl<MovieActorMapper, MovieActorDO, MovieActorDTO> implements MovieActorService {
 
     MovieActorConvert convert = MovieActorConvert.INSTANCE;
+
+    @Autowired
+    private MovieBasicActorService movieBasicActorService;
 
     @Override
     protected Wrapper<MovieActorDO> genQueryWrapper(MovieActorDTO dto) {
@@ -43,5 +50,15 @@ public class MovieActorServiceImpl extends AbstractBaseServiceImpl<MovieActorMap
     @Override
     public MovieActorDO convertToDO(MovieActorDTO movieActorDTO) {
         return convert.convertToDO(movieActorDTO);
+    }
+
+    @Override
+    public List<MovieActorDTO> listByMovieId(Long movieId) {
+        List<MovieBasicActorDTO> movieBasicActorDTOList = movieBasicActorService.listByMovieId(movieId);
+        return movieBasicActorDTOList.stream().map(s -> {
+            MovieActorDTO movieActorDTO = findById(s.getActorId());
+            movieActorDTO.setRole(s.getRole());
+            return movieActorDTO;
+        }).collect(Collectors.toList());
     }
 }

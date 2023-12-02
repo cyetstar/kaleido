@@ -27,7 +27,7 @@ public class MovieBasicLanguageDTO implements BaseDTO<Long> {
     /**
      * 语言id
      */
-    private Long movieLanguageId;
+    private Long languageId;
 
     // ------ 非数据库表字段 -------
 

@@ -4,6 +4,8 @@ import com.zjjcnt.common.core.service.IBaseService;
 
 import cc.onelooker.kaleido.dto.movie.MovieTagDTO;
 
+import java.util.List;
+
 /**
  * 电影标签Service
  *
@@ -12,4 +14,7 @@ import cc.onelooker.kaleido.dto.movie.MovieTagDTO;
  */
 public interface MovieTagService extends IBaseService<MovieTagDTO> {
 
+    List<MovieTagDTO> listByMovieId(Long movieId);
+
+    MovieTagDTO findByTagAndMovieId(String tag, Long movieId);
 }

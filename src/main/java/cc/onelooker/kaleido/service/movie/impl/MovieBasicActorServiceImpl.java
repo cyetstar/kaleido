@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -42,6 +43,14 @@ public class MovieBasicActorServiceImpl extends AbstractBaseServiceImpl<MovieBas
     @Override
     public MovieBasicActorDO convertToDO(MovieBasicActorDTO movieBasicActorDTO) {
         return convert.convertToDO(movieBasicActorDTO);
+    }
+
+    @Override
+    public List<MovieBasicActorDTO> listByMovieId(Long movieId) {
+        Validate.notNull(movieId);
+        MovieBasicActorDTO param = new MovieBasicActorDTO();
+        param.setMovieId(movieId);
+        return list(param);
     }
 
     @Override

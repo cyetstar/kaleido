@@ -1,6 +1,16 @@
 package cc.onelooker.kaleido.web.controller.system;
 
+import cc.onelooker.kaleido.convert.system.SysMenuConvert;
+import cc.onelooker.kaleido.dto.system.SysMenuDTO;
+import cc.onelooker.kaleido.dto.system.SysResourceDTO;
+import cc.onelooker.kaleido.dto.system.exp.SysMenuExp;
 import cc.onelooker.kaleido.dto.system.req.*;
+import cc.onelooker.kaleido.dto.system.resp.SysMenuCreateResp;
+import cc.onelooker.kaleido.dto.system.resp.SysMenuPageResp;
+import cc.onelooker.kaleido.dto.system.resp.SysMenuTreeResp;
+import cc.onelooker.kaleido.dto.system.resp.SysMenuViewResp;
+import cc.onelooker.kaleido.service.system.SysMenuService;
+import cc.onelooker.kaleido.service.system.SysResourceService;
 import cc.onelooker.kaleido.utils.CurrentUserUtils;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -12,16 +22,6 @@ import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import com.zjjcnt.common.util.DateTimeUtils;
 import com.zjjcnt.common.util.constant.Constants;
-import cc.onelooker.kaleido.convert.system.SysMenuConvert;
-import cc.onelooker.kaleido.dto.system.SysMenuDTO;
-import cc.onelooker.kaleido.dto.system.SysResourceDTO;
-import cc.onelooker.kaleido.dto.system.exp.SysMenuExp;
-import cc.onelooker.kaleido.dto.system.resp.SysMenuCreateResp;
-import cc.onelooker.kaleido.dto.system.resp.SysMenuPageResp;
-import cc.onelooker.kaleido.dto.system.resp.SysMenuTreeResp;
-import cc.onelooker.kaleido.dto.system.resp.SysMenuViewResp;
-import cc.onelooker.kaleido.service.system.SysMenuService;
-import cc.onelooker.kaleido.service.system.SysResourceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections4.CollectionUtils;
@@ -31,10 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -137,6 +134,7 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
     @GetMapping(value = "/tree2")
     public CommonResult<List<SysMenuTreeResp>> tree2() {
         List<SysMenuDTO> sysMenuDTOList = sysMenuService.list(null);
+        sysMenuDTOList = sysMenuDTOList.stream().sorted(Comparator.comparingInt(SysMenuDTO::getOrderNum)).collect(Collectors.toList());
         List<SysMenuTreeResp> respList = genSysMenuTreeRespList(sysMenuDTOList);
         return CommonResult.success(respList);
     }
@@ -159,7 +157,7 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
         }
         respList = buildTree(respList);
         //过滤无子节点的数据
-//        respList = respList.stream().filter(s -> CollectionUtils.isNotEmpty(s.getChildren())).collect(Collectors.toList());
+        respList = respList.stream().filter(s -> CollectionUtils.isNotEmpty(s.getChildren())).collect(Collectors.toList());
         return respList;
     }
 

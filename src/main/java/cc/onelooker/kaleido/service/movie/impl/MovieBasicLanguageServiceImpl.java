@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -11,8 +12,8 @@ import cc.onelooker.kaleido.dto.movie.MovieBasicLanguageDTO;
 import cc.onelooker.kaleido.convert.movie.MovieBasicLanguageConvert;
 import cc.onelooker.kaleido.mapper.movie.MovieBasicLanguageMapper;
 
-
 import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 
 /**
@@ -30,7 +31,7 @@ public class MovieBasicLanguageServiceImpl extends AbstractBaseServiceImpl<Movie
     protected Wrapper<MovieBasicLanguageDO> genQueryWrapper(MovieBasicLanguageDTO dto) {
         LambdaQueryWrapper<MovieBasicLanguageDO> query = new LambdaQueryWrapper<>();
         query.eq(Objects.nonNull(dto.getMovieId()), MovieBasicLanguageDO::getMovieId, dto.getMovieId());
-        query.eq(Objects.nonNull(dto.getMovieLanguageId()), MovieBasicLanguageDO::getMovieLanguageId, dto.getMovieLanguageId());
+        query.eq(Objects.nonNull(dto.getLanguageId()), MovieBasicLanguageDO::getLanguageId, dto.getLanguageId());
         return query;
     }
 
@@ -42,5 +43,31 @@ public class MovieBasicLanguageServiceImpl extends AbstractBaseServiceImpl<Movie
     @Override
     public MovieBasicLanguageDO convertToDO(MovieBasicLanguageDTO movieBasicLanguageDTO) {
         return convert.convertToDO(movieBasicLanguageDTO);
+    }
+
+    @Override
+    public MovieBasicLanguageDTO findByMovieIdAndLanguageId(Long movieId, Long languageId) {
+        Validate.notNull(movieId);
+        Validate.notNull(languageId);
+        MovieBasicLanguageDTO param = new MovieBasicLanguageDTO();
+        param.setMovieId(movieId);
+        param.setLanguageId(languageId);
+        return find(param);
+    }
+
+    @Override
+    public MovieBasicLanguageDTO insertByMovieIdAndLanguageId(Long movieId, Long languageId) {
+        MovieBasicLanguageDTO dto = new MovieBasicLanguageDTO();
+        dto.setMovieId(movieId);
+        dto.setLanguageId(languageId);
+        return insert(dto);
+    }
+
+    @Override
+    public List<MovieBasicLanguageDTO> listByMovieId(Long movieId) {
+        Validate.notNull(movieId);
+        MovieBasicLanguageDTO param = new MovieBasicLanguageDTO();
+        param.setMovieId(movieId);
+        return list(param);
     }
 }

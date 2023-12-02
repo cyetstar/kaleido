@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.plex.resp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,6 +28,7 @@ public class GetMovies {
         @JsonProperty("Metadata")
         private List<Metadata> metadataList;
 
+        @JsonIgnore
         public GetMovies.Metadata getMetadata() {
             return CollectionUtils.get(metadataList, 0);
         }
@@ -55,6 +57,8 @@ public class GetMovies {
         private String originallyAvailableAt;
         private Long addedAt;
         private Long updatedAt;
+        @JsonProperty("Media")
+        private List<Media> mediaList;
         @JsonProperty("Genre")
         private List<Tag> genreList;
         @JsonProperty("Country")
@@ -67,6 +71,12 @@ public class GetMovies {
         private List<Tag> writerList;
         @JsonProperty("Role")
         private List<Tag> roleList;
+
+        @JsonIgnore
+        public Media getMedia() {
+            return CollectionUtils.get(mediaList, 0);
+        }
+
     }
 
 }

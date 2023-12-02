@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -11,8 +12,8 @@ import cc.onelooker.kaleido.dto.movie.MovieTagDTO;
 import cc.onelooker.kaleido.convert.movie.MovieTagConvert;
 import cc.onelooker.kaleido.mapper.movie.MovieTagMapper;
 
-
 import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 
 /**
@@ -42,5 +43,23 @@ public class MovieTagServiceImpl extends AbstractBaseServiceImpl<MovieTagMapper,
     @Override
     public MovieTagDO convertToDO(MovieTagDTO movieTagDTO) {
         return convert.convertToDO(movieTagDTO);
+    }
+
+    @Override
+    public List<MovieTagDTO> listByMovieId(Long movieId) {
+        Validate.notNull(movieId);
+        MovieTagDTO param = new MovieTagDTO();
+        param.setMovieId(movieId);
+        return list(param);
+    }
+
+    @Override
+    public MovieTagDTO findByTagAndMovieId(String tag, Long movieId) {
+        Validate.notEmpty(tag);
+        Validate.notNull(movieId);
+        MovieTagDTO param = new MovieTagDTO();
+        param.setTag(tag);
+        param.setMovieId(movieId);
+        return find(param);
     }
 }

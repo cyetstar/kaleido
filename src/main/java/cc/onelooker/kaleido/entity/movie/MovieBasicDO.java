@@ -124,6 +124,12 @@ public class MovieBasicDO implements IdEntity<Long> {
     private Integer viewCount;
 
     /**
+     * 电影网站
+     */
+    @TableField(value = "website")
+    private String website;
+
+    /**
      * IMDb编号
      */
     @TableField(value = "imdb")

@@ -36,6 +36,8 @@ public class MovieActorDTO implements BaseDTO<Long> {
 
     // ------ 非数据库表字段 -------
 
+    private String role;
+
 
     @Override
     public Long getId() {

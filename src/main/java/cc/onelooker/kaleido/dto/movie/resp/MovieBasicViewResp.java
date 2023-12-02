@@ -1,11 +1,15 @@
 package cc.onelooker.kaleido.dto.movie.resp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zjjcnt.common.core.annotation.Dict;
 import com.zjjcnt.common.core.annotation.StringDateFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -67,6 +71,9 @@ public class MovieBasicViewResp {
     @ApiModelProperty("观看次数")
     private Integer viewCount;
 
+    @ApiModelProperty("电影网站")
+    private String website;
+
     @ApiModelProperty("IMDb编号")
     private String imdb;
 
@@ -81,7 +88,25 @@ public class MovieBasicViewResp {
 
     private List<Country> countryList;
 
+    private List<Language> languageList;
+
     private List<Genre> genreList;
+
+    private List<Actor> directorList;
+
+    private List<Actor> writerList;
+
+    private List<Actor> actorList;
+
+    private List<String> akaList;
+
+    private List<String> tagList;
+
+    @JsonProperty
+    public List<String> summaryList() {
+        return Arrays.asList(StringUtils.split(summary, "\n"));
+    }
+
 
     @Data
     public static class Country {
@@ -102,5 +127,27 @@ public class MovieBasicViewResp {
             this.id = id;
         }
     }
+
+    @Data
+    public static class Language {
+        @Dict("movieLanguage")
+        private String id;
+
+        public Language(String id) {
+            this.id = id;
+        }
+    }
+
+    @Data
+    public static class Actor {
+
+        private String id;
+
+        private String name;
+
+        private String role;
+
+    }
+
 
 }

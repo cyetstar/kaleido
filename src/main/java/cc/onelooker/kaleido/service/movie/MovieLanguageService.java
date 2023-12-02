@@ -12,4 +12,7 @@ import cc.onelooker.kaleido.dto.movie.MovieLanguageDTO;
  */
 public interface MovieLanguageService extends IBaseService<MovieLanguageDTO> {
 
+    MovieLanguageDTO findByTag(String tag);
+
+    MovieLanguageDTO insert(String tag);
 }
