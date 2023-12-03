@@ -8,7 +8,7 @@ import lombok.Data;
  * @Description TODO
  */
 @Data
-public class MovieBasicSyncPlexReq {
+public class MovieBasicRefreshPlexByIdReq {
 
     private Long id;
 }

@@ -32,6 +32,7 @@ public class PlexApiService {
     private final static String API_LIST_MOVIE = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
     private final static String API_LIST_MOVIE_BY_UPDATED_AT = "/library/sections/{libraryId}/all?updatedAt>={updatedAt}&X-Plex-Token={plexToken}";
     private final static String API_FIND_MOVIE = "/library/metadata/{movieId}?X-Plex-Token={plexToken}";
+    private final static String API_REFRESH_MOVIE = "/library/metadata/{movieId}/refresh?force=1&X-Plex-Token={plexToken}";
     private final static String API_LIST_TVSHOW = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
     private final static String API_LIST_TVSHOW_BY_UPDATED_AT = "/library/sections/{libraryId}/all?updatedAt>={updatedAt}&X-Plex-Token={plexToken}";
     private final static String API_LIST_EPISODE = "/library/sections/{libraryId}/all?type=4&X-Plex-Token={plexToken}";
@@ -189,4 +190,8 @@ public class PlexApiService {
         return mediaContainer.getMetadata();
     }
 
+    public void refreshMovieById(Long movieId) {
+        init();
+        restTemplate.put(plexUrl + API_REFRESH_MOVIE, String.class, movieId, plexToken);
+    }
 }

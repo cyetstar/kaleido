@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.web.controller.movie;
 
 import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
-import cc.onelooker.kaleido.convert.music.MusicAlbumConvert;
 import cc.onelooker.kaleido.dto.movie.*;
 import cc.onelooker.kaleido.dto.movie.req.*;
 import cc.onelooker.kaleido.dto.movie.resp.MovieBasicCreateResp;
@@ -40,7 +39,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -164,9 +162,16 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     }
 
     @PostMapping("syncPlexById")
-    @ApiOperation(value = "同步资料库")
-    public CommonResult<Boolean> syncPlexById(@RequestBody MovieBasicSyncPlexReq req) {
+    @ApiOperation(value = "同步资料")
+    public CommonResult<Boolean> syncPlexById(@RequestBody MovieBasicSyncPlexByIdReq req) {
         movieManager.syncPlexMovieById(req.getId());
+        return CommonResult.success(true);
+    }
+
+    @PostMapping("refreshPlexById")
+    @ApiOperation(value = "刷新资料")
+    public CommonResult<Boolean> refreshPlexById(@RequestBody MovieBasicRefreshPlexByIdReq req) {
+        plexApiService.refreshMovieById(req.getId());
         return CommonResult.success(true);
     }
 
