@@ -14,6 +14,9 @@ import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.service.movie.*;
 import cc.onelooker.kaleido.third.douban.DoubanApiService;
 import cc.onelooker.kaleido.third.douban.Movie;
+import cc.onelooker.kaleido.third.plex.GetMovies;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.utils.PlexUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
@@ -25,12 +28,20 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,6 +84,9 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
 
     @Autowired
     private AsyncTaskManager taskManager;
+
+    @Autowired
+    private PlexApiService plexApiService;
 
     @Autowired
     private DoubanApiService doubanApiService;
@@ -178,5 +192,14 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @ApiOperation(value = "匹配豆瓣")
     public CommonResult<Boolean> matchDouban(@RequestBody MovieBasicMatchDoubanReq req) {
         return CommonResult.success(movieBasicService.updateDoubanId(req.getId(), req.getDoubanId()));
+    }
+
+    @GetMapping("viewNFO")
+    @ApiOperation(value = "查看NFO")
+    public HttpEntity<byte[]> viewNFO(Long id) throws IOException {
+        GetMovies.Metadata metadata = plexApiService.findMovieById(id);
+        String movieFolder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
+        File file = Paths.get(movieFolder, "movie.nfo").toFile();
+        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=movie.nfo.xml").contentType(MediaType.APPLICATION_XML).body(FileUtils.readFileToByteArray(file));
     }
 }
