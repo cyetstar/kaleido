@@ -6,10 +6,10 @@ import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
 import cc.onelooker.kaleido.dto.music.req.*;
 import cc.onelooker.kaleido.dto.music.resp.*;
 import cc.onelooker.kaleido.exp.music.MusicAlbumExp;
-import cc.onelooker.kaleido.netease.NeteaseApiService;
-import cc.onelooker.kaleido.netease.domain.Album;
-import cc.onelooker.kaleido.plex.PlexApiService;
-import cc.onelooker.kaleido.plex.resp.GetMusicAlbums;
+import cc.onelooker.kaleido.third.netease.NeteaseApiService;
+import cc.onelooker.kaleido.third.netease.Album;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.third.plex.GetMusicAlbums;
 import cc.onelooker.kaleido.service.music.MusicAlbumService;
 import cc.onelooker.kaleido.service.music.MusicArtistService;
 import cc.onelooker.kaleido.service.music.MusicManager;
@@ -161,7 +161,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
         List<Album> albumList = neteaseApiService.searchAlbum(req.getKeywords(), req.getLimit());
         List<MusicAlbumSearchNeteaseResp> respList = Lists.newArrayList();
         for (Album album : albumList) {
-            MusicAlbumSearchNeteaseResp resp = MusicAlbumConvert.INSTANCE.convertToSearchAlbumResp(album);
+            MusicAlbumSearchNeteaseResp resp = MusicAlbumConvert.INSTANCE.convertToSearchNeteaseResp(album);
             resp.setPublishTime(DateTimeUtils.parseTimestamp(album.getPublishTime()));
             respList.add(resp);
         }

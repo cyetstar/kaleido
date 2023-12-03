@@ -1,7 +1,11 @@
 package cc.onelooker.kaleido.convert.movie;
 
 import cc.onelooker.kaleido.dto.movie.MovieActorDTO;
+import cc.onelooker.kaleido.dto.movie.resp.MovieBasicSearchDoubanResp;
+import cc.onelooker.kaleido.third.douban.Movie;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 import org.mapstruct.InheritInverseConfiguration;
 
@@ -47,4 +51,9 @@ public interface MovieBasicConvert {
 
     MovieBasicExp convertToExp(MovieBasicDTO dto);
 
+    @Mappings({
+        @Mapping(source = "id", target = "doubanId"),
+        @Mapping(source = "images.small", target = "picUrl")
+    })
+    MovieBasicSearchDoubanResp convertToSearchDoubanResp(Movie movie);
 }

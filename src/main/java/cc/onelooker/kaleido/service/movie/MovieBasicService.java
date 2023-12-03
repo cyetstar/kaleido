@@ -14,4 +14,5 @@ public interface MovieBasicService extends IBaseService<MovieBasicDTO> {
 
     Long findMaxUpdatedAt();
 
+    Boolean updateDoubanId(Long id, String doubanId);
 }

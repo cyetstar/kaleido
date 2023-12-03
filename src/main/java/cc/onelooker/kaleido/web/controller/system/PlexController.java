@@ -2,8 +2,8 @@ package cc.onelooker.kaleido.web.controller.system;
 
 import cc.onelooker.kaleido.dto.system.req.PlexGetLibrariesReq;
 import cc.onelooker.kaleido.dto.system.resp.PlexGetLibrariesResp;
-import cc.onelooker.kaleido.plex.PlexApiService;
-import cc.onelooker.kaleido.plex.resp.GetLibraries;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.third.plex.GetLibraries;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
 import org.apache.commons.lang3.StringUtils;

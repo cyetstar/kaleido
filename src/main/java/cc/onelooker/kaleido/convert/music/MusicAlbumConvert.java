@@ -7,7 +7,7 @@ import cc.onelooker.kaleido.dto.music.req.MusicAlbumUpdateReq;
 import cc.onelooker.kaleido.dto.music.resp.*;
 import cc.onelooker.kaleido.entity.music.MusicAlbumDO;
 import cc.onelooker.kaleido.exp.music.MusicAlbumExp;
-import cc.onelooker.kaleido.netease.domain.Album;
+import cc.onelooker.kaleido.third.netease.Album;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -49,7 +49,7 @@ public interface MusicAlbumConvert {
             @Mapping(source = "name", target = "title"),
             @Mapping(source = "artist.name", target = "artist"),
     })
-    MusicAlbumSearchNeteaseResp convertToSearchAlbumResp(Album album);
+    MusicAlbumSearchNeteaseResp convertToSearchNeteaseResp(Album album);
 
     MusicAlbumListByArtistIdResp convertToListByArtistIdResp(MusicAlbumDTO musicAlbumDTO);
 

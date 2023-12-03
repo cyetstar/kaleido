@@ -1,35 +1,36 @@
 package cc.onelooker.kaleido.web.controller.movie;
 
 import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
+import cc.onelooker.kaleido.convert.music.MusicAlbumConvert;
 import cc.onelooker.kaleido.dto.movie.*;
 import cc.onelooker.kaleido.dto.movie.req.*;
 import cc.onelooker.kaleido.dto.movie.resp.MovieBasicCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieBasicPageResp;
+import cc.onelooker.kaleido.dto.movie.resp.MovieBasicSearchDoubanResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieBasicViewResp;
 import cc.onelooker.kaleido.enums.ActorRole;
 import cc.onelooker.kaleido.exp.movie.MovieBasicExp;
-import cc.onelooker.kaleido.plex.PlexApiService;
-import cc.onelooker.kaleido.plex.resp.GetMovies;
+import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.service.movie.*;
-import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.third.douban.DoubanApiService;
+import cc.onelooker.kaleido.third.douban.Movie;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
-import com.zjjcnt.common.core.exception.ServiceException;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,7 +72,10 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     private MovieManager movieManager;
 
     @Autowired
-    private PlexApiService plexApiService;
+    private AsyncTaskManager taskManager;
+
+    @Autowired
+    private DoubanApiService doubanApiService;
 
     @Override
     protected IBaseService getService() {
@@ -81,7 +85,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @GetMapping("page")
     @ApiOperation(value = "查询电影")
     public CommonResult<PageResult<MovieBasicPageResp>> page(MovieBasicPageReq req, PageParam pageParam) {
-        pageParam.setOrderBy("DESC:id");
+        pageParam.setOrderBy("DESC:added_at");
         return super.page(req, pageParam, MovieBasicConvert.INSTANCE::convertToDTO, MovieBasicConvert.INSTANCE::convertToPageResp);
     }
 
@@ -141,21 +145,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("syncPlex")
     @ApiOperation(value = "同步资料库")
     public CommonResult<Boolean> syncPlex() {
-        String libraryId = ConfigUtils.getSysConfig("plexMovieLibraryId");
-        if (StringUtils.isBlank(libraryId)) {
-            throw new ServiceException(2005, "请设置需同步资料库信息");
-        }
-        //获取最后修改时间
-        Long maxUpdatedAt = movieBasicService.findMaxUpdatedAt();
-        List<GetMovies.Metadata> metadataList = maxUpdatedAt == null ? plexApiService.listMovie(libraryId) : plexApiService.listMovieByUpdatedAt(libraryId, maxUpdatedAt);
-        metadataList.sort(Comparator.comparing(GetMovies.Metadata::getUpdatedAt, Comparator.nullsLast(Comparator.naturalOrder())));
-        for (GetMovies.Metadata metadata : metadataList) {
-            try {
-                movieManager.syncPlexMovieById(metadata.getRatingKey());
-            } catch (Exception e) {
-                log.error("同步资料库失败，错误信息：", e);
-            }
-        }
+        taskManager.syncPlexMovie();
         return CommonResult.success(true);
     }
 
@@ -173,4 +163,20 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         return CommonResult.success(true);
     }
 
+    @PostMapping("searchDouban")
+    @ApiOperation(value = "查询豆瓣")
+    public CommonResult<List<MovieBasicSearchDoubanResp>> searchDouban(@RequestBody MovieBasicSearchDoubanReq req) {
+        List<Movie> movieList = doubanApiService.searchMovie(req.getKeywords());
+        List<MovieBasicSearchDoubanResp> respList = Lists.newArrayList();
+        for (Movie movie : movieList) {
+            respList.add(MovieBasicConvert.INSTANCE.convertToSearchDoubanResp(movie));
+        }
+        return CommonResult.success(respList);
+    }
+
+    @PostMapping("matchDouban")
+    @ApiOperation(value = "匹配豆瓣")
+    public CommonResult<Boolean> matchDouban(@RequestBody MovieBasicMatchDoubanReq req) {
+        return CommonResult.success(movieBasicService.updateDoubanId(req.getId(), req.getDoubanId()));
+    }
 }

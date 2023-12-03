@@ -36,4 +36,6 @@ public class SysConfigfindByKeysResp {
     private String plexTvshowLibraryId;
 
     private String neteaseUrl;
+
+    private String doubanApikey;
 }

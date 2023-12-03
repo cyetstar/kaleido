@@ -107,7 +107,6 @@ public class MovieBasicViewResp {
         return Arrays.asList(StringUtils.split(summary, "\n"));
     }
 
-
     @Data
     public static class Country {
         @Dict("movieCountry")
@@ -145,9 +144,14 @@ public class MovieBasicViewResp {
 
         private String name;
 
+        private String cnName;
+
+        private String thumb;
+
         private String role;
 
-    }
+        private String playRole;
 
+    }
 
 }

@@ -48,6 +48,17 @@ public class MovieActorDO implements IdEntity<Long> {
     @TableField(value = "original_name")
     private String originalName;
 
+    /**
+     * 中文名
+     */
+    @TableField(value = "cn_name")
+    private String cnName;
+
+    /**
+     * 缩略图
+     */
+    @TableField(value = "thumb")
+    private String thumb;
 
     @Override
     public Long getId() {

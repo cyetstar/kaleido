@@ -10,7 +10,7 @@ import cc.onelooker.kaleido.dto.system.resp.SysConfigCreateResp;
 import cc.onelooker.kaleido.dto.system.resp.SysConfigfindByKeysResp;
 import cc.onelooker.kaleido.dto.system.resp.SysConfigPageResp;
 import cc.onelooker.kaleido.dto.system.resp.SysConfigViewResp;
-import cc.onelooker.kaleido.plex.PlexApiService;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.service.system.SysConfigService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cn.hutool.core.util.ReflectUtil;

@@ -2,11 +2,11 @@ package cc.onelooker.kaleido.service.tvshow;
 
 import cc.onelooker.kaleido.dto.tvshow.*;
 import cc.onelooker.kaleido.enums.ActorRole;
-import cc.onelooker.kaleido.plex.PlexApiService;
-import cc.onelooker.kaleido.plex.resp.GetEpisodes;
-import cc.onelooker.kaleido.plex.resp.GetSeasons;
-import cc.onelooker.kaleido.plex.resp.GetTvshows;
-import cc.onelooker.kaleido.plex.resp.Tag;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.third.plex.GetEpisodes;
+import cc.onelooker.kaleido.third.plex.GetSeasons;
+import cc.onelooker.kaleido.third.plex.GetTvshows;
+import cc.onelooker.kaleido.third.plex.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

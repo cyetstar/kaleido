@@ -10,7 +10,7 @@ import cc.onelooker.kaleido.dto.music.resp.MusicArtistSearchNeteaseResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicArtistViewResp;
 import cc.onelooker.kaleido.entity.music.MusicArtistDO;
 import cc.onelooker.kaleido.exp.music.MusicArtistExp;
-import cc.onelooker.kaleido.netease.domain.Artist;
+import cc.onelooker.kaleido.third.netease.Artist;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

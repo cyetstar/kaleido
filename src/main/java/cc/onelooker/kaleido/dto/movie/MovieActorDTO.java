@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.dto.movie;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
@@ -34,9 +35,21 @@ public class MovieActorDTO implements BaseDTO<Long> {
      */
     private String originalName;
 
+    /**
+     * 中文名
+     */
+    private String cnName;
+
+    /**
+     * 缩略图
+     */
+    private String thumb;
+
     // ------ 非数据库表字段 -------
 
     private String role;
+
+    private String playRole;
 
 
     @Override

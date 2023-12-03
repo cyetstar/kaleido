@@ -34,8 +34,12 @@ public class MovieBasicActorDTO implements BaseDTO<Long> {
      */
     private String role;
 
-    // ------ 非数据库表字段 -------
+    /**
+     * 饰演
+     */
+    private String playRole;
 
+    // ------ 非数据库表字段 -------
 
     @Override
     public Long getId() {

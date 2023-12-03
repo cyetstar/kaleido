@@ -58,6 +58,7 @@ public class MovieActorServiceImpl extends AbstractBaseServiceImpl<MovieActorMap
         return movieBasicActorDTOList.stream().map(s -> {
             MovieActorDTO movieActorDTO = findById(s.getActorId());
             movieActorDTO.setRole(s.getRole());
+            movieActorDTO.setPlayRole(s.getPlayRole());
             return movieActorDTO;
         }).collect(Collectors.toList());
     }

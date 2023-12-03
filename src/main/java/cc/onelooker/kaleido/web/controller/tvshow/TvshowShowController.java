@@ -9,7 +9,7 @@ import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowCreateResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowPageResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowViewResp;
 import cc.onelooker.kaleido.exp.tvshow.TvshowShowExp;
-import cc.onelooker.kaleido.plex.PlexApiService;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.service.tvshow.TvshowManager;
 import cc.onelooker.kaleido.service.tvshow.TvshowShowService;
 import com.zjjcnt.common.core.domain.CommonResult;

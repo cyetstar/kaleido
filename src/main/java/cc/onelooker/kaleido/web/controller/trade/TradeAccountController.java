@@ -1,7 +1,7 @@
 package cc.onelooker.kaleido.web.controller.trade;
 
-import cc.onelooker.kaleido.mexc.resp.AccountResp;
-import cc.onelooker.kaleido.mexc.MexcApiService;
+import cc.onelooker.kaleido.third.mexc.resp.AccountResp;
+import cc.onelooker.kaleido.third.mexc.MexcApiService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;

@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -11,8 +12,8 @@ import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
 import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
 import cc.onelooker.kaleido.mapper.movie.MovieBasicMapper;
 
-
 import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 
 /**
@@ -65,5 +66,13 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
     @Override
     public Long findMaxUpdatedAt() {
         return baseMapper.findMaxUpdatedAt();
+    }
+
+    @Override
+    public Boolean updateDoubanId(Long id, String doubanId) {
+        MovieBasicDO movieBasicDO = new MovieBasicDO();
+        movieBasicDO.setDoubanId(doubanId);
+        movieBasicDO.setId(id);
+        return SqlHelper.retBool(baseMapper.updateById(movieBasicDO));
     }
 }

@@ -1,12 +1,11 @@
 package cc.onelooker.kaleido.schedule;
 
-import cc.onelooker.kaleido.dto.trade.TradeGridDTO;
 import cc.onelooker.kaleido.dto.trade.TradeOrderDTO;
 import cc.onelooker.kaleido.dto.trade.TradeStrategyDTO;
 import cc.onelooker.kaleido.dto.trade.TradeSymbolDTO;
-import cc.onelooker.kaleido.mexc.MexcApiService;
-import cc.onelooker.kaleido.mexc.req.OrderReq;
-import cc.onelooker.kaleido.mexc.resp.OrderResp;
+import cc.onelooker.kaleido.third.mexc.MexcApiService;
+import cc.onelooker.kaleido.third.mexc.req.OrderReq;
+import cc.onelooker.kaleido.third.mexc.resp.OrderResp;
 import cc.onelooker.kaleido.service.trade.TradeGridService;
 import cc.onelooker.kaleido.service.trade.TradeOrderService;
 import cc.onelooker.kaleido.service.trade.TradeStrategyService;
@@ -25,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

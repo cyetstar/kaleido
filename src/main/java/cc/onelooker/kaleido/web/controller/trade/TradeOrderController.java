@@ -1,9 +1,9 @@
 package cc.onelooker.kaleido.web.controller.trade;
 
 import cc.onelooker.kaleido.dto.trade.TradeSymbolDTO;
-import cc.onelooker.kaleido.mexc.MexcApiService;
-import cc.onelooker.kaleido.mexc.req.OrderReq;
-import cc.onelooker.kaleido.mexc.resp.OrderResp;
+import cc.onelooker.kaleido.third.mexc.MexcApiService;
+import cc.onelooker.kaleido.third.mexc.req.OrderReq;
+import cc.onelooker.kaleido.third.mexc.resp.OrderResp;
 import cc.onelooker.kaleido.service.trade.TradeSymbolService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -5,14 +5,10 @@ import cc.onelooker.kaleido.enums.ActorRole;
 import cc.onelooker.kaleido.enums.SourceType;
 import cc.onelooker.kaleido.nfo.MovieNFO;
 import cc.onelooker.kaleido.nfo.UniqueidNFO;
-import cc.onelooker.kaleido.plex.PlexApiService;
-import cc.onelooker.kaleido.plex.resp.GetMovies;
-import cc.onelooker.kaleido.plex.resp.Tag;
-import cc.onelooker.kaleido.utils.ConvertUtils;
-import cc.onelooker.kaleido.utils.KaleidoConstants;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.third.plex.GetMovies;
+import cc.onelooker.kaleido.third.plex.Tag;
 import cc.onelooker.kaleido.utils.PlexUtils;
-import cn.hutool.core.util.IdUtil;
-import com.zjjcnt.common.core.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +21,6 @@ import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Author cyetstar
@@ -131,22 +126,27 @@ public class MovieManager {
         syncActor(metadata.getRoleList(), movieBasicDTO.getId(), ActorRole.Actor);
     }
 
-    private void syncActor(List<Tag> directorList, Long movieId, ActorRole actorRole) {
-        if (directorList == null) {
+    private void syncActor(List<Tag> actorList, Long movieId, ActorRole actorRole) {
+        if (actorList == null) {
             return;
         }
-        for (Tag tag : directorList) {
+        for (Tag tag : actorList) {
             MovieActorDTO movieActorDTO = movieActorService.findById(tag.getId());
             if (movieActorDTO == null) {
                 movieActorDTO = new MovieActorDTO();
                 movieActorDTO.setId(tag.getId());
                 movieActorDTO.setName(tag.getTag());
-                movieActorDTO.setOriginalName(tag.getTag());
+                movieActorDTO.setThumb(tag.getThumb());
                 movieActorDTO = movieActorService.insert(movieActorDTO);
             }
             MovieBasicActorDTO movieBasicActorDTO = movieBasicActorService.findByMovieIdAndActorId(movieId, movieActorDTO.getId());
             if (movieBasicActorDTO == null) {
-                movieBasicActorService.insertByMovieIdAndActorIdAndRole(movieId, movieActorDTO.getId(), actorRole.name());
+                movieBasicActorDTO = new MovieBasicActorDTO();
+                movieBasicActorDTO.setMovieId(movieId);
+                movieBasicActorDTO.setActorId(movieActorDTO.getId());
+                movieBasicActorDTO.setRole(actorRole.name());
+                movieBasicActorDTO.setPlayRole(tag.getRole());
+                movieBasicActorService.insert(movieBasicActorDTO);
             }
         }
     }

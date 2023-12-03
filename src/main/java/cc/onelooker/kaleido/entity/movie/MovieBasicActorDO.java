@@ -48,6 +48,11 @@ public class MovieBasicActorDO implements IdEntity<Long> {
     @TableField(value = "role")
     private String role;
 
+    /**
+     * 饰演
+     */
+    @TableField(value = "play_role")
+    private String playRole;
 
     @Override
     public Long getId() {

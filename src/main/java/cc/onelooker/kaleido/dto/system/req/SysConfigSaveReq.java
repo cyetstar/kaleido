@@ -36,4 +36,6 @@ public class SysConfigSaveReq {
     private String plexTvshowLibraryId;
 
     private String neteaseUrl;
+
+    private String doubanApikey;
 }
