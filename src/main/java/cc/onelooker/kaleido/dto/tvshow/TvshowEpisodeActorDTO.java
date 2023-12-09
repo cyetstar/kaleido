@@ -37,6 +37,11 @@ public class TvshowEpisodeActorDTO implements BaseDTO<Long> {
      */
     private String role;
 
+    /**
+     * 饰演角色
+     */
+    private String playRole;
+
     // ------ 非数据库表字段 -------
 
 

@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.service.tvshow;
 
+import cc.onelooker.kaleido.dto.movie.MovieBasicActorDTO;
 import cc.onelooker.kaleido.dto.tvshow.*;
 import cc.onelooker.kaleido.enums.ActorRole;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
@@ -8,6 +9,7 @@ import cc.onelooker.kaleido.third.plex.GetSeasons;
 import cc.onelooker.kaleido.third.plex.GetTvshows;
 import cc.onelooker.kaleido.third.plex.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +64,7 @@ public class TvshowManager {
         if (tvshowEpisodeDTO == null) {
             tvshowEpisodeDTO = new TvshowEpisodeDTO();
             tvshowEpisodeDTO.setId(metadata.getRatingKey());
+            tvshowEpisodeDTO.setShowId(metadata.getGrandparentRatingKey());
             tvshowEpisodeDTO.setSeasonId(metadata.getParentRatingKey());
             tvshowEpisodeDTO.setTitle(metadata.getTitle());
             tvshowEpisodeDTO.setContentRating(metadata.getContentRating());
@@ -141,6 +144,7 @@ public class TvshowManager {
         if (tvshowSeasonDTO == null) {
             tvshowSeasonDTO = new TvshowSeasonDTO();
             tvshowSeasonDTO.setId(metadata.getRatingKey());
+            tvshowSeasonDTO.setShowId(metadata.getParentRatingKey());
             tvshowSeasonDTO.setTitle(metadata.getTitle());
             tvshowSeasonDTO.setSummary(metadata.getSummary());
             tvshowSeasonDTO.setSeasonIndex(metadata.getIndex());
@@ -173,17 +177,31 @@ public class TvshowManager {
                 tvshowActorDTO.setId(tag.getId());
                 tvshowActorDTO.setName(tag.getTag());
                 tvshowActorDTO.setOriginalName(tag.getTag());
+                tvshowActorDTO.setThumb(tag.getThumb());
                 tvshowActorDTO = tvshowActorService.insert(tvshowActorDTO);
+            } else if (StringUtils.isNotEmpty(tag.getThumb())) {
+                tvshowActorDTO.setThumb(tag.getThumb());
+                tvshowActorService.update(tvshowActorDTO);
             }
             if (showId != null) {
                 TvshowShowActorDTO tvshowShowActorDTO = tvshowShowActorService.findByShowIdAndActorId(showId, tvshowActorDTO.getId());
                 if (tvshowShowActorDTO == null) {
-                    tvshowShowActorService.insert(showId, tvshowActorDTO.getId(), actorRole.name());
+                    tvshowShowActorDTO = new TvshowShowActorDTO();
+                    tvshowShowActorDTO.setShowId(showId);
+                    tvshowShowActorDTO.setActorId(tvshowActorDTO.getId());
+                    tvshowShowActorDTO.setRole(actorRole.name());
+                    tvshowShowActorDTO.setPlayRole(tag.getRole());
+                    tvshowShowActorService.insert(tvshowShowActorDTO);
                 }
             } else if (episodeId != null) {
                 TvshowEpisodeActorDTO tvshowEpisodeActorDTO = tvshowEpisodeActorService.findByEpisodeIdAndActorId(episodeId, tvshowActorDTO.getId());
                 if (tvshowEpisodeActorDTO == null) {
-                    tvshowEpisodeActorService.insert(episodeId, tvshowActorDTO.getId(), actorRole.name());
+                    tvshowEpisodeActorDTO = new TvshowEpisodeActorDTO();
+                    tvshowEpisodeActorDTO.setEpisodeId(episodeId);
+                    tvshowEpisodeActorDTO.setActorId(tvshowActorDTO.getId());
+                    tvshowEpisodeActorDTO.setRole(actorRole.name());
+                    tvshowEpisodeActorDTO.setPlayRole(tag.getRole());
+                    tvshowEpisodeActorService.insert(tvshowEpisodeActorDTO);
                 }
             }
 

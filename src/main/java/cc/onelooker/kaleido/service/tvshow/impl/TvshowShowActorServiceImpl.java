@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -61,5 +62,13 @@ public class TvshowShowActorServiceImpl extends AbstractBaseServiceImpl<TvshowSh
         dto.setActorId(actorId);
         dto.setRole(role);
         return insert(dto);
+    }
+
+    @Override
+    public List<TvshowShowActorDTO> listByShowId(Long showId) {
+        Validate.notNull(showId);
+        TvshowShowActorDTO param = new TvshowShowActorDTO();
+        param.setShowId(showId);
+        return list(param);
     }
 }

@@ -27,6 +27,12 @@ public class TvshowActorPageResp{
     @ApiModelProperty("原名")
     private String originalName;
 
+    @ApiModelProperty("中文名")
+    private String cnName;
+
+    @ApiModelProperty("缩略图")
+    private String thumb;
+
     @ApiModelProperty("豆瓣编号")
     private String doubanId;
 }

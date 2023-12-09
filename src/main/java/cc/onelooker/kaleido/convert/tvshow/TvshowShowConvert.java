@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.convert.tvshow;
 
+import cc.onelooker.kaleido.dto.tvshow.TvshowActorDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.mapstruct.InheritInverseConfiguration;
@@ -15,11 +16,11 @@ import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowCreateResp;
 import cc.onelooker.kaleido.exp.tvshow.TvshowShowExp;
 
 /**
-* 剧集Convert
-*
-* @author cyetstar
-* @date 2023-11-26 23:27:03
-*/
+ * 剧集Convert
+ *
+ * @author cyetstar
+ * @date 2023-11-26 23:27:03
+ */
 @Mapper
 public interface TvshowShowConvert {
 
@@ -27,7 +28,7 @@ public interface TvshowShowConvert {
 
     TvshowShowDTO convert(TvshowShowDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     TvshowShowDO convertToDO(TvshowShowDTO dto);
 
     TvshowShowDTO convertToDTO(TvshowShowPageReq req);
@@ -39,6 +40,8 @@ public interface TvshowShowConvert {
     TvshowShowPageResp convertToPageResp(TvshowShowDTO dto);
 
     TvshowShowViewResp convertToViewResp(TvshowShowDTO dto);
+
+    TvshowShowViewResp.Actor convertToViewResp(TvshowActorDTO dto);
 
     TvshowShowCreateResp convertToCreateResp(TvshowShowDTO dto);
 

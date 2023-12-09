@@ -10,6 +10,7 @@ import cc.onelooker.kaleido.dto.tvshow.resp.TvshowEpisodeCreateResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowEpisodePageResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowEpisodeViewResp;
 import cc.onelooker.kaleido.exp.tvshow.TvshowEpisodeExp;
+import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.third.plex.GetEpisodes;
 import cc.onelooker.kaleido.service.tvshow.TvshowEpisodeService;
@@ -52,6 +53,9 @@ public class TvshowEpisodeController extends AbstractCrudController<TvshowEpisod
 
     @Autowired
     private TvshowManager tvshowManager;
+
+    @Autowired
+    private AsyncTaskManager asyncTaskManager;
 
     @Autowired
     private PlexApiService plexApiService;
@@ -108,21 +112,7 @@ public class TvshowEpisodeController extends AbstractCrudController<TvshowEpisod
     @PostMapping("syncPlex")
     @ApiOperation(value = "同步资料库")
     public CommonResult<Boolean> syncPlex() {
-        String libraryId = ConfigUtils.getSysConfig("plexTvshowLibraryId");
-        if (StringUtils.isBlank(libraryId)) {
-            throw new ServiceException(2005, "请设置需同步资料库信息");
-        }
-        //获取最后修改时间
-        Long maxUpdatedAt = tvshowEpisodeService.findMaxUpdatedAt();
-        List<GetEpisodes.Metadata> metadataList = maxUpdatedAt == null ? plexApiService.listEpsiode(libraryId) : plexApiService.listEpsiodeByUpdatedAt(libraryId, maxUpdatedAt);
-        metadataList.sort(Comparator.comparing(GetEpisodes.Metadata::getUpdatedAt, Comparator.nullsLast(Comparator.naturalOrder())));
-        for (GetEpisodes.Metadata metadata : metadataList) {
-            try {
-                tvshowManager.syncPlexEpisodeById(metadata.getRatingKey());
-            } catch (Exception e) {
-                log.error("同步资料库失败，错误信息：", e);
-            }
-        }
+        asyncTaskManager.syncPlexTvshow();
         return CommonResult.success(true);
     }
 

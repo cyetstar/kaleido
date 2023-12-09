@@ -20,6 +20,9 @@ import java.lang.Integer;
 @ApiModel("单集请求对象")
 public class TvshowEpisodePageReq{
 
+    @ApiModelProperty("剧集id")
+    private Long showId;
+
     @ApiModelProperty("单季id")
     private Long seasonId;
 

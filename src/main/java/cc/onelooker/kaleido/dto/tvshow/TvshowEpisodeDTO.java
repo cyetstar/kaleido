@@ -25,6 +25,11 @@ public class TvshowEpisodeDTO implements BaseDTO<Long> {
     private Long id;
 
     /**
+     * 剧集id
+     */
+    private Long showId;
+
+    /**
      * 单季id
      */
     private Long seasonId;

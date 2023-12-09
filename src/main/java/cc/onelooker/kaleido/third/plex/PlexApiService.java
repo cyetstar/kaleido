@@ -28,6 +28,7 @@ public class PlexApiService {
     private final static String API_LIST_ALBUM_BY_UPDATED_AT = "/library/sections/{libraryId}/all?type=9&updatedAt>={updatedAt}&X-Plex-Token={plexToken}";
     private final static String API_LIST_ALBUM_BY_ARTIST = "/library/sections/{libraryId}/all?artist.id={artistId}&type=9&X-Plex-Token={plexToken}";
     private final static String API_FIND_ALBUM = "/library/metadata/{albumId}?X-Plex-Token={plexToken}";
+    private final static String API_REFRESH_ALBUM = "/library/metadata/{albumId}/refresh?force=1&X-Plex-Token={plexToken}";
     private final static String API_LIST_TRACK_BY_ALBUM = "/library/metadata/{albumId}/children?X-Plex-Token={plexToken}";
     private final static String API_LIST_MOVIE = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
     private final static String API_LIST_MOVIE_BY_UPDATED_AT = "/library/sections/{libraryId}/all?updatedAt>={updatedAt}&X-Plex-Token={plexToken}";
@@ -46,10 +47,8 @@ public class PlexApiService {
 
     @PostConstruct
     public void init() {
-        if (StringUtils.isEmpty(this.plexUrl) || StringUtils.isEmpty(this.plexToken)) {
-            this.plexUrl = ConfigUtils.getSysConfig("plexUrl");
-            this.plexToken = ConfigUtils.getSysConfig("plexToken");
-        }
+        this.plexUrl = ConfigUtils.getSysConfig("plexUrl");
+        this.plexToken = ConfigUtils.getSysConfig("plexToken");
     }
 
     @Deprecated
@@ -193,5 +192,10 @@ public class PlexApiService {
     public void refreshMovieById(Long movieId) {
         init();
         restTemplate.put(plexUrl + API_REFRESH_MOVIE, String.class, movieId, plexToken);
+    }
+
+    public void refresAlbumById(Long albumId) {
+        init();
+        restTemplate.put(plexUrl + API_REFRESH_ALBUM, String.class, albumId, plexToken);
     }
 }

@@ -43,6 +43,12 @@ public class TvshowEpisodeActorDO implements IdEntity<Long> {
     @TableField(value = "role")
     private String role;
 
+    /**
+     * 饰演角色
+     */
+    @TableField(value = "play_role")
+    private String playRole;
+
     @Override
     public Long getId() {
         return this.id;

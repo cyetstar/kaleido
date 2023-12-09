@@ -4,6 +4,7 @@ import cc.onelooker.kaleido.convert.tvshow.TvshowGenreConvert;
 import cc.onelooker.kaleido.dto.tvshow.TvshowGenreDTO;
 import cc.onelooker.kaleido.entity.tvshow.TvshowGenreDO;
 import cc.onelooker.kaleido.mapper.tvshow.TvshowGenreMapper;
+import cc.onelooker.kaleido.service.DictionaryBaseServiceImpl;
 import cc.onelooker.kaleido.service.tvshow.TvshowGenreService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
  * @date 2023-11-26 23:27:03
  */
 @Service
-public class TvshowGenreServiceImpl extends AbstractBaseServiceImpl<TvshowGenreMapper, TvshowGenreDO, TvshowGenreDTO> implements TvshowGenreService {
+public class TvshowGenreServiceImpl extends DictionaryBaseServiceImpl<TvshowGenreMapper, TvshowGenreDO, TvshowGenreDTO> implements TvshowGenreService {
 
     TvshowGenreConvert convert = TvshowGenreConvert.INSTANCE;
 

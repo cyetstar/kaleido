@@ -15,6 +15,8 @@ import cc.onelooker.kaleido.third.douban.DoubanApiService;
 import cc.onelooker.kaleido.third.douban.Movie;
 import cc.onelooker.kaleido.third.plex.GetMovies;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.utils.NioFileUtils;
 import cc.onelooker.kaleido.utils.PlexUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
@@ -39,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,7 +99,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @GetMapping("page")
     @ApiOperation(value = "查询电影")
     public CommonResult<PageResult<MovieBasicPageResp>> page(MovieBasicPageReq req, PageParam pageParam) {
-        pageParam.setOrderBy("DESC:added_at");
+        pageParam.setOrderBy("DESC:id");
         return super.page(req, pageParam, MovieBasicConvert.INSTANCE::convertToDTO, MovieBasicConvert.INSTANCE::convertToPageResp);
     }
 
@@ -205,6 +207,23 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         GetMovies.Metadata metadata = plexApiService.findMovieById(id);
         String movieFolder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
         File file = Paths.get(movieFolder, "movie.nfo").toFile();
-        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=movie.nfo.xml").contentType(MediaType.APPLICATION_XML).body(FileUtils.readFileToByteArray(file));
+        //file to byte array
+
+        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=movie.nfo.xml").contentType(MediaType.APPLICATION_XML)
+                .body(FileUtils.readFileToByteArray(file));
+    }
+
+    @PostMapping("autoCopy")
+    @ApiOperation(value = "自动拷贝")
+    public CommonResult<Boolean> autoCopy(@RequestBody MovieBasicAutoCopyReq req) throws IOException {
+        String movieLibraryPath = ConfigUtils.getSysConfig("movieLibraryPath");
+        String movieDownloadPath = ConfigUtils.getSysConfig("movieDownloadPath");
+        for (String path : req.getPathList()) {
+            if (StringUtils.isBlank(path)) {
+                continue;
+            }
+            NioFileUtils.moveDir(Paths.get(movieDownloadPath, path), Paths.get(movieLibraryPath, path));
+        }
+        return CommonResult.success(true);
     }
 }

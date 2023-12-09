@@ -4,6 +4,8 @@ import com.zjjcnt.common.core.service.IBaseService;
 
 import cc.onelooker.kaleido.dto.tvshow.TvshowActorDTO;
 
+import java.util.List;
+
 /**
  * 剧集演职员Service
  *
@@ -12,4 +14,5 @@ import cc.onelooker.kaleido.dto.tvshow.TvshowActorDTO;
  */
 public interface TvshowActorService extends IBaseService<TvshowActorDTO> {
 
+    List<TvshowActorDTO> listByShowId(Long showId);
 }

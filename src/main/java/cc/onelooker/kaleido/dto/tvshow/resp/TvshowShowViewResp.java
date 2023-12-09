@@ -1,5 +1,7 @@
 package cc.onelooker.kaleido.dto.tvshow.resp;
 
+import cc.onelooker.kaleido.dto.movie.resp.MovieBasicViewResp;
+import com.zjjcnt.common.core.annotation.Dict;
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,6 +10,7 @@ import java.math.BigDecimal;
 import java.lang.Long;
 import java.lang.String;
 import java.lang.Integer;
+import java.util.List;
 
 /**
  * 剧集响应对象
@@ -45,7 +48,7 @@ public class TvshowShowViewResp{
     private String originallyAvailableAt;
 
     @ApiModelProperty("评分")
-    private BigDecimal rating;
+    private Float rating;
 
     @ApiModelProperty("海报")
     private String thumb;
@@ -61,4 +64,36 @@ public class TvshowShowViewResp{
 
     @ApiModelProperty("更新时间")
     private Long updatedAt;
+
+    private List<Genre> genreList;
+
+    private List<Actor> actorList;
+
+    @Data
+    public static class Genre {
+        @Dict("tvshowGenre")
+        private String id;
+
+        public Genre(String id) {
+            this.id = id;
+        }
+    }
+
+    @Data
+    public static class Actor {
+
+        private String id;
+
+        private String name;
+
+        private String cnName;
+
+        private String thumb;
+
+        private String role;
+
+        private String playRole;
+
+    }
+
 }

@@ -3,6 +3,8 @@ package cc.onelooker.kaleido.service.tvshow;
 import cc.onelooker.kaleido.dto.tvshow.TvshowShowGenreDTO;
 import com.zjjcnt.common.core.service.IBaseService;
 
+import java.util.List;
+
 /**
  * 剧集类型关联表Service
  *
@@ -14,4 +16,6 @@ public interface TvshowShowGenreService extends IBaseService<TvshowShowGenreDTO>
     TvshowShowGenreDTO findByShowIdAndGenreId(Long showId, Long genreId);
 
     TvshowShowGenreDTO insert(Long showId, Long genreId);
+
+    List<TvshowShowGenreDTO> listByShowId(Long showId);
 }

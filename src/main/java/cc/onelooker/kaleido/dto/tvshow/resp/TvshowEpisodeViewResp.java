@@ -23,6 +23,9 @@ public class TvshowEpisodeViewResp{
     @ApiModelProperty("主键")
     private Long id;
 
+    @ApiModelProperty("剧集id")
+    private Long showId;
+
     @ApiModelProperty("单季id")
     private Long seasonId;
 

@@ -4,31 +4,29 @@ import cc.onelooker.kaleido.convert.system.SysConfigConvert;
 import cc.onelooker.kaleido.dto.system.SysConfigDTO;
 import cc.onelooker.kaleido.dto.system.req.SysConfigCreateReq;
 import cc.onelooker.kaleido.dto.system.req.SysConfigPageReq;
-import cc.onelooker.kaleido.dto.system.req.SysConfigSaveReq;
 import cc.onelooker.kaleido.dto.system.req.SysConfigUpdateReq;
 import cc.onelooker.kaleido.dto.system.resp.SysConfigCreateResp;
-import cc.onelooker.kaleido.dto.system.resp.SysConfigfindByKeysResp;
 import cc.onelooker.kaleido.dto.system.resp.SysConfigPageResp;
 import cc.onelooker.kaleido.dto.system.resp.SysConfigViewResp;
-import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.service.system.SysConfigService;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
-import cn.hutool.core.util.ReflectUtil;
+import com.google.common.collect.Maps;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.reflect.ReflectionUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 系统配置表前端控制器
@@ -55,28 +53,26 @@ public class SysConfigController extends AbstractCrudController<SysConfigDTO> {
 
     @PostMapping("save")
     @ApiOperation(value = "保存系统配置表")
-    public CommonResult<Boolean> save(@RequestBody SysConfigSaveReq req) {
-        Field[] fields = ReflectUtil.getFields(req.getClass());
+    public CommonResult<Boolean> save(@RequestBody Map<String, Object> req) {
         List<SysConfigDTO> sysConfigDTOList = Lists.newArrayList();
-        for (Field field : fields) {
+        for (String key : req.keySet()) {
             SysConfigDTO sysConfigDTO = new SysConfigDTO();
-            sysConfigDTO.setConfigKey(field.getName());
-            sysConfigDTO.setConfigValue((String) ReflectUtil.getFieldValue(req, field));
+            sysConfigDTO.setConfigKey(key);
+            sysConfigDTO.setConfigValue(MapUtils.getString(req, key));
             sysConfigDTOList.add(sysConfigDTO);
         }
         sysConfigService.save(sysConfigDTOList);
-        plexApiService.init();
         return CommonResult.success(true);
     }
 
     @PostMapping("findByKeys")
     @ApiOperation(value = "获取系统配置")
-    public CommonResult<SysConfigfindByKeysResp> findByKeys(@RequestBody String[] keys) {
-        SysConfigfindByKeysResp resp = new SysConfigfindByKeysResp();
+    public CommonResult<Map<String, Object>> findByKeys(@RequestBody String[] keys) {
+        Map<String, Object> resultMap = Maps.newHashMap();
         for (String key : keys) {
-            ReflectionUtils.setProperty(resp, key, ConfigUtils.getSysConfig(key, StringUtils.EMPTY));
+            resultMap.put(key, ConfigUtils.getSysConfig(key, StringUtils.EMPTY));
         }
-        return CommonResult.success(resp);
+        return CommonResult.success(resultMap);
     }
 
     @GetMapping("page")

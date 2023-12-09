@@ -3,7 +3,6 @@ package cc.onelooker.kaleido.convert.system;
 import cc.onelooker.kaleido.dto.system.SysConfigDTO;
 import cc.onelooker.kaleido.dto.system.req.SysConfigCreateReq;
 import cc.onelooker.kaleido.dto.system.req.SysConfigPageReq;
-import cc.onelooker.kaleido.dto.system.req.SysConfigSaveReq;
 import cc.onelooker.kaleido.dto.system.req.SysConfigUpdateReq;
 import cc.onelooker.kaleido.dto.system.resp.SysConfigCreateResp;
 import cc.onelooker.kaleido.dto.system.resp.SysConfigPageResp;
@@ -33,8 +32,6 @@ public interface SysConfigConvert {
     SysConfigDTO convertToDTO(SysConfigCreateReq req);
 
     SysConfigDTO convertToDTO(SysConfigUpdateReq req);
-
-    SysConfigDTO convertToDTO(SysConfigSaveReq req);
 
     SysConfigPageResp convertToPageResp(SysConfigDTO dto);
 

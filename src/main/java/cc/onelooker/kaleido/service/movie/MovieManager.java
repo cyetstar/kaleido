@@ -136,8 +136,12 @@ public class MovieManager {
                 movieActorDTO = new MovieActorDTO();
                 movieActorDTO.setId(tag.getId());
                 movieActorDTO.setName(tag.getTag());
+                movieActorDTO.setOriginalName(tag.getTag());
                 movieActorDTO.setThumb(tag.getThumb());
                 movieActorDTO = movieActorService.insert(movieActorDTO);
+            } else if (StringUtils.isNotEmpty(tag.getThumb())) {
+                movieActorDTO.setThumb(tag.getThumb());
+                movieActorService.update(movieActorDTO);
             }
             MovieBasicActorDTO movieBasicActorDTO = movieBasicActorService.findByMovieIdAndActorId(movieId, movieActorDTO.getId());
             if (movieBasicActorDTO == null) {

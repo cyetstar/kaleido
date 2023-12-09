@@ -8,12 +8,14 @@ import cc.onelooker.kaleido.dto.music.resp.*;
 import cc.onelooker.kaleido.exp.music.MusicAlbumExp;
 import cc.onelooker.kaleido.third.netease.NeteaseApiService;
 import cc.onelooker.kaleido.third.netease.Album;
+import cc.onelooker.kaleido.third.plex.GetMusicTracks;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.third.plex.GetMusicAlbums;
 import cc.onelooker.kaleido.service.music.MusicAlbumService;
 import cc.onelooker.kaleido.service.music.MusicArtistService;
 import cc.onelooker.kaleido.service.music.MusicManager;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.utils.PlexUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
@@ -25,12 +27,17 @@ import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -181,7 +188,6 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     }
 
     @GetMapping("listByArtistId")
-    @ApiOperation(value = "查询发行品")
     public CommonResult<List<MusicAlbumListByArtistIdResp>> listByArtistId(Long artistId) {
         List<MusicAlbumDTO> musicAlbumDTOList = musicAlbumService.listByArtistId(artistId);
         List<MusicAlbumListByArtistIdResp> respList = Lists.newArrayList();
@@ -190,6 +196,23 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
             respList.add(resp);
         }
         return CommonResult.success(respList);
+    }
+
+    @GetMapping("viewPath")
+    @ApiOperation(value = "获取目录")
+    public CommonResult<String> viewPath(Long id) {
+        List<GetMusicTracks.Metadata> metadataList = plexApiService.listTrackByAlbumId(id);
+        GetMusicTracks.Metadata metadata = metadataList.get(0);
+        String musicFolder = PlexUtils.getMusicFolder(metadata.getMedia().getPart().getFile());
+        return CommonResult.success(musicFolder);
+    }
+
+    @PostMapping("uploadCover")
+    @ApiOperation(value = "上传海报")
+    public CommonResult<Boolean> uploadCover(MusicAlbumUploadCoverReq req) throws IOException {
+        Files.write(Paths.get(req.getPath(), "cover.jpg"), req.getFile().getBytes());
+        plexApiService.refresAlbumById(req.getId());
+        return CommonResult.success(true);
     }
 
 }

@@ -1,5 +1,9 @@
 package cc.onelooker.kaleido.service.tvshow.impl;
 
+import cc.onelooker.kaleido.dto.tvshow.TvshowShowActorDTO;
+import cc.onelooker.kaleido.service.tvshow.TvshowShowActorService;
+import org.apache.commons.lang3.Validate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -13,7 +17,9 @@ import cc.onelooker.kaleido.mapper.tvshow.TvshowActorMapper;
 
 import com.zjjcnt.common.core.utils.ColumnUtils;
 import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 剧集演职员ServiceImpl
@@ -25,6 +31,9 @@ import java.util.*;
 public class TvshowActorServiceImpl extends AbstractBaseServiceImpl<TvshowActorMapper, TvshowActorDO, TvshowActorDTO> implements TvshowActorService {
 
     TvshowActorConvert convert = TvshowActorConvert.INSTANCE;
+
+    @Autowired
+    private TvshowShowActorService tvshowShowActorService;
 
     @Override
     protected Wrapper<TvshowActorDO> genQueryWrapper(TvshowActorDTO dto) {
@@ -43,5 +52,17 @@ public class TvshowActorServiceImpl extends AbstractBaseServiceImpl<TvshowActorM
     @Override
     public TvshowActorDO convertToDO(TvshowActorDTO tvshowActorDTO) {
         return convert.convertToDO(tvshowActorDTO);
+    }
+
+    @Override
+    public List<TvshowActorDTO> listByShowId(Long showId) {
+        List<TvshowShowActorDTO> tvshowShowActorDTOList = tvshowShowActorService.listByShowId(showId);
+        return tvshowShowActorDTOList.stream().map(s -> {
+                    TvshowActorDTO tvshowActorDTO = findById(s.getActorId());
+                    tvshowActorDTO.setRole(s.getRole());
+                    tvshowActorDTO.setPlayRole(s.getPlayRole());
+                    return tvshowActorDTO;
+                })
+                .collect(Collectors.toList());
     }
 }

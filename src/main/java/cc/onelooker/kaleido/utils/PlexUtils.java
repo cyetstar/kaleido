@@ -15,4 +15,11 @@ public class PlexUtils {
         path = StringUtils.replace(path, plexMovieLibraryPath, movieLibraryPath);
         return path.substring(0, path.lastIndexOf("/"));
     }
+
+    public static String getMusicFolder(String path) {
+        String plexMovieLibraryPath = ConfigUtils.getSysConfig("plexMusicLibraryPath");
+        String movieLibraryPath = ConfigUtils.getSysConfig("musicLibraryPath");
+        path = StringUtils.replace(path, plexMovieLibraryPath, movieLibraryPath);
+        return path.substring(0, path.lastIndexOf("/"));
+    }
 }

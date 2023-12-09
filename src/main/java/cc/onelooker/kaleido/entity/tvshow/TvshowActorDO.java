@@ -43,11 +43,22 @@ public class TvshowActorDO implements IdEntity<Long> {
     private String originalName;
 
     /**
+     * 中文名
+     */
+    @TableField(value = "cn_name")
+    private String cnName;
+
+    /**
+     * 缩略图
+     */
+    @TableField(value = "thumb")
+    private String thumb;
+
+    /**
      * 豆瓣编号
      */
     @TableField(value = "douban_id")
     private String doubanId;
-
 
     @Override
     public Long getId() {

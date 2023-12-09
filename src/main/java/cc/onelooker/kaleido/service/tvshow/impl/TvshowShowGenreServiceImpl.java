@@ -11,6 +11,7 @@ import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -58,5 +59,13 @@ public class TvshowShowGenreServiceImpl extends AbstractBaseServiceImpl<TvshowSh
         tvshowShowGenreDTO.setShowId(showId);
         tvshowShowGenreDTO.setGenreId(genreId);
         return insert(tvshowShowGenreDTO);
+    }
+
+    @Override
+    public List<TvshowShowGenreDTO> listByShowId(Long showId) {
+        Validate.notNull(showId);
+        TvshowShowGenreDTO param = new TvshowShowGenreDTO();
+        param.setShowId(showId);
+        return list(param);
     }
 }

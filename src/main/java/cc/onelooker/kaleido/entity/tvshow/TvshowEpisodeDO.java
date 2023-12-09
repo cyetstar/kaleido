@@ -33,6 +33,12 @@ public class TvshowEpisodeDO implements IdEntity<Long> {
     private Long id;
 
     /**
+     * 剧集id
+     */
+    @TableField(value = "show_id")
+    private Long showId;
+
+    /**
      * 单季id
      */
     @TableField(value = "season_id")

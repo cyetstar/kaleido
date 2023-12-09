@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.dto.tvshow;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
 
@@ -33,11 +34,25 @@ public class TvshowActorDTO implements BaseDTO<Long> {
     private String originalName;
 
     /**
+     * 中文名
+     */
+    private String cnName;
+
+    /**
+     * 缩略图
+     */
+    private String thumb;
+
+    /**
      * 豆瓣编号
      */
     private String doubanId;
 
     // ------ 非数据库表字段 -------
+
+    private String role;
+
+    private String playRole;
 
 
     @Override
