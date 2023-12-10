@@ -1,3 +1,5 @@
+server:
+  port: 8001
 spring:
   datasource:
     dynamic:
@@ -5,12 +7,12 @@ spring:
       primary: auth
       datasource:
         auth:
-          url: jdbc:mysql://127.0.0.1:3306/kaleido2?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          url: jdbc:mysql://192.168.3.100:3306/kaleido?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
           username: root
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver
         master:
-          url: jdbc:mysql://127.0.0.1:3306/kaleido2?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          url: jdbc:mysql://192.168.3.100:3306/kaleido?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
           username: root
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver

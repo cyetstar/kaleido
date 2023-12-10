@@ -1,5 +1,5 @@
 server:
-  port: 8001
+  port: 8080
   servlet:
     context-path: /
   tomcat:
@@ -7,6 +7,8 @@ server:
       remote-ip-header: 'x-forwarded-for'
 
 spring:
+  profiles:
+    active: prod
   main:
     allow-bean-definition-overriding: true #当遇到同样名字的时候，是否允许覆盖注册
     allow-circular-references: true
@@ -18,12 +20,12 @@ spring:
       primary: auth
       datasource:
         auth:
-          url: jdbc:mysql://127.0.0.1:3306/kaleido?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          url: jdbc:mysql://192.168.3.100:3306/kaleido?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
           username: root
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver
         master:
-          url: jdbc:mysql://127.0.0.1:3306/kaleido?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          url: jdbc:mysql://192.168.3.100:3306/kaleido?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
           username: root
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver
@@ -38,7 +40,7 @@ spring:
       connection-test-query: select 1
   redis:
     database: 1
-    host: 127.0.0.1
+    host: 192.168.3.100
     port: 6379
     password:
     timeout: 5000
@@ -143,20 +145,20 @@ zjjcnt:
   security:
     url-filter:
       urls:
-        - /movie/poster/**
-        - /movie/fanart/**
-        - /fileInfo/small/**
-        - /fileInfo/medium/**
-        - /fileInfo/original/**
-        - /musicRelease/cover/**
-        - /captcha/code
+        - /login**
+        - /movie/**
+        - /tvshow/**
+        - /music/**
+        - /sysadmin/**
         # 静态资源
         - /
         - /*.html
         - /static/**
+        - /assets/**
         # swagger
         - /doc.html
         - /webjars/**
+        - /favicon.jpg
         - /favicon.ico
         - /swagger-resources
         - /v2/api-docs

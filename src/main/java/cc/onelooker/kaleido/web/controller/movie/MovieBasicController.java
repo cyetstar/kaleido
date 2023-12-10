@@ -209,8 +209,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         File file = Paths.get(movieFolder, "movie.nfo").toFile();
         //file to byte array
 
-        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=movie.nfo.xml").contentType(MediaType.APPLICATION_XML)
-                .body(FileUtils.readFileToByteArray(file));
+        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=movie.nfo.xml").contentType(MediaType.APPLICATION_XML).body(FileUtils.readFileToByteArray(file));
     }
 
     @PostMapping("autoCopy")
@@ -224,6 +223,22 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
             }
             NioFileUtils.moveDir(Paths.get(movieDownloadPath, path), Paths.get(movieLibraryPath, path));
         }
+        return CommonResult.success(true);
+    }
+
+    @GetMapping("viewPath")
+    @ApiOperation(value = "获取目录")
+    public CommonResult<String> viewPath(Long id) {
+        GetMovies.Metadata metadata = plexApiService.findMovieById(id);
+        String folder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
+        return CommonResult.success(folder);
+    }
+
+    @PostMapping("uploadPoster")
+    @ApiOperation(value = "上传海报")
+    public CommonResult<Boolean> uploadPoster(MovieBasicUploadPosterReq req) throws IOException {
+        Files.write(Paths.get(req.getPath(), "poster.jpg"), req.getFile().getBytes());
+        plexApiService.refreshMovieById(req.getId());
         return CommonResult.success(true);
     }
 }

@@ -2,3 +2,4 @@
 /.idea/
 /kaleido.iml
 /logs/
+/src/main/resources/static/**

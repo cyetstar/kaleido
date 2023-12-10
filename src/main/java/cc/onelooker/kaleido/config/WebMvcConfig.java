@@ -15,19 +15,20 @@ import com.zjjcnt.common.core.jackson.BigNumberSerializer;
 import com.zjjcnt.common.core.jackson.ExJacksonAnnotationIntrospector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
+import org.springframework.boot.web.server.ConfigurableWebServerFactory;
+import org.springframework.boot.web.server.ErrorPage;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -64,7 +65,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addRedirectViewController("", "/index.html");
+        registry.addRedirectViewController("", "/login");
     }
 
     @Override
@@ -103,6 +104,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
         objectMapper.setTimeZone(TimeZone.getDefault());
         objectMapper.setAnnotationIntrospector(new ExJacksonAnnotationIntrospector());
         return new MappingJackson2HttpMessageConverter(objectMapper);
+    }
+
+    @Bean
+    public WebServerFactoryCustomizer<ConfigurableWebServerFactory> webServerFactoryCustomizer() {
+        return (factory -> {
+            ErrorPage errorPage404 = new ErrorPage(HttpStatus.NOT_FOUND, "/index.html");
+            factory.addErrorPages(errorPage404);
+        });
     }
 
 }

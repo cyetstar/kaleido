@@ -203,12 +203,12 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     public CommonResult<String> viewPath(Long id) {
         List<GetMusicTracks.Metadata> metadataList = plexApiService.listTrackByAlbumId(id);
         GetMusicTracks.Metadata metadata = metadataList.get(0);
-        String musicFolder = PlexUtils.getMusicFolder(metadata.getMedia().getPart().getFile());
-        return CommonResult.success(musicFolder);
+        String folder = PlexUtils.getMusicFolder(metadata.getMedia().getPart().getFile());
+        return CommonResult.success(folder);
     }
 
     @PostMapping("uploadCover")
-    @ApiOperation(value = "上传海报")
+    @ApiOperation(value = "上传封面")
     public CommonResult<Boolean> uploadCover(MusicAlbumUploadCoverReq req) throws IOException {
         Files.write(Paths.get(req.getPath(), "cover.jpg"), req.getFile().getBytes());
         plexApiService.refresAlbumById(req.getId());
