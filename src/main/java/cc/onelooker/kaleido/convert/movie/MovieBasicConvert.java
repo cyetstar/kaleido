@@ -1,7 +1,7 @@
 package cc.onelooker.kaleido.convert.movie;
 
 import cc.onelooker.kaleido.dto.movie.MovieActorDTO;
-import cc.onelooker.kaleido.dto.movie.resp.MovieBasicSearchDoubanResp;
+import cc.onelooker.kaleido.dto.movie.resp.*;
 import cc.onelooker.kaleido.third.douban.Movie;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,9 +14,6 @@ import cc.onelooker.kaleido.entity.movie.MovieBasicDO;
 import cc.onelooker.kaleido.dto.movie.req.MovieBasicPageReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieBasicCreateReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieBasicUpdateReq;
-import cc.onelooker.kaleido.dto.movie.resp.MovieBasicPageResp;
-import cc.onelooker.kaleido.dto.movie.resp.MovieBasicViewResp;
-import cc.onelooker.kaleido.dto.movie.resp.MovieBasicCreateResp;
 import cc.onelooker.kaleido.exp.movie.MovieBasicExp;
 
 /**
@@ -60,4 +57,6 @@ public interface MovieBasicConvert {
             @Mapping(source = "images.small", target = "picUrl")
     })
     MovieBasicSearchDoubanResp convertToSearchDoubanResp(Movie movie);
+
+    MovieBasicListByCollectionIdResp convertToListByCollectionIdResp(MovieBasicDTO dto);
 }

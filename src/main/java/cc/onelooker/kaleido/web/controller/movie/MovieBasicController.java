@@ -3,10 +3,7 @@ package cc.onelooker.kaleido.web.controller.movie;
 import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
 import cc.onelooker.kaleido.dto.movie.*;
 import cc.onelooker.kaleido.dto.movie.req.*;
-import cc.onelooker.kaleido.dto.movie.resp.MovieBasicCreateResp;
-import cc.onelooker.kaleido.dto.movie.resp.MovieBasicPageResp;
-import cc.onelooker.kaleido.dto.movie.resp.MovieBasicSearchDoubanResp;
-import cc.onelooker.kaleido.dto.movie.resp.MovieBasicViewResp;
+import cc.onelooker.kaleido.dto.movie.resp.*;
 import cc.onelooker.kaleido.enums.ActorRole;
 import cc.onelooker.kaleido.exp.movie.MovieBasicExp;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
@@ -79,6 +76,9 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
 
     @Autowired
     private MovieTagService movieTagService;
+
+    @Autowired
+    private MovieBasicCollectionService movieBasicCollectionService;
 
     @Autowired
     private MovieManager movieManager;
@@ -250,11 +250,26 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     }
 
     @PostMapping("downloadPoster")
-    public CommonResult<Boolean> downloadPoster(MovieBasicDownloadPosterReq req) {
+    public CommonResult<Boolean> downloadPoster(@RequestBody MovieBasicDownloadPosterReq req) {
         Metadata metadata = plexApiService.findMovieById(req.getId());
         String movieFolder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
         File file = Paths.get(movieFolder, "poster.jpg").toFile();
         HttpUtil.downloadFile(req.getUrl(), file);
         return CommonResult.success(true);
+    }
+
+    @GetMapping("listByCollectionId")
+    public CommonResult<List<MovieBasicListByCollectionIdResp>> listByCollectionId(Long collectionId) {
+        List<MovieBasicCollectionDTO> movieBasicCollectionDTOList = movieBasicCollectionService.listByCollectionId(collectionId);
+        List<Long> movieIdList = movieBasicCollectionDTOList.stream().map(MovieBasicCollectionDTO::getMovieId).collect(Collectors.toList());
+        MovieBasicDTO param = new MovieBasicDTO();
+        param.setIdList(movieIdList);
+        List<MovieBasicDTO> movieBasicDTOList = movieBasicService.list(param);
+        List<MovieBasicListByCollectionIdResp> respList = Lists.newArrayList();
+        for (MovieBasicDTO movieBasicDTO : movieBasicDTOList) {
+            MovieBasicListByCollectionIdResp resp = MovieBasicConvert.INSTANCE.convertToListByCollectionIdResp(movieBasicDTO);
+            respList.add(resp);
+        }
+        return CommonResult.success(respList);
     }
 }

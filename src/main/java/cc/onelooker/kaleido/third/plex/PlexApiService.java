@@ -210,9 +210,9 @@ public class PlexApiService {
         return mediaContainer.getDirectoryList();
     }
 
-    public void deleteCollection(String collectionId) {
+    public void deleteCollection(Long collectionId) {
         init();
-        restTemplate.delete(plexUrl + API_COLLECTION, String.class, collectionId, plexToken);
+        restTemplate.delete(plexUrl + API_COLLECTION, collectionId, plexToken);
     }
 
     public Metadata findCollectionById(Long collectionId) {

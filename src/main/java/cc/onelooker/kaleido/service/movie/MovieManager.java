@@ -354,4 +354,12 @@ public class MovieManager {
         movieBasicService.update(movieBasicDTO);
         updateAkas(doubanMovie.getAka(), id);
     }
+
+    @Transactional
+    public void deleteMovieCollection(Long[] idArray) {
+        for (Long id : idArray) {
+            plexApiService.deleteCollection(id);
+            movieCollectionService.deleteById(id);
+        }
+    }
 }

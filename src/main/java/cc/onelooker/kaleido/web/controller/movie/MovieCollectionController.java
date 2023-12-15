@@ -1,8 +1,14 @@
 package cc.onelooker.kaleido.web.controller.movie;
 
+import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
+import cc.onelooker.kaleido.dto.movie.MovieBasicCollectionDTO;
+import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
+import cc.onelooker.kaleido.service.movie.MovieBasicCollectionService;
+import cc.onelooker.kaleido.service.movie.MovieManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +25,7 @@ import cc.onelooker.kaleido.exp.movie.MovieCollectionExp;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 电影集合前端控制器
@@ -36,7 +43,13 @@ public class MovieCollectionController extends AbstractCrudController<MovieColle
     private MovieCollectionService movieCollectionService;
 
     @Autowired
+    private MovieBasicCollectionService movieBasicCollectionService;
+
+    @Autowired
     private AsyncTaskManager asyncTaskManager;
+
+    @Autowired
+    private MovieManager movieManager;
 
     @Override
     protected IBaseService getService() {
@@ -70,7 +83,8 @@ public class MovieCollectionController extends AbstractCrudController<MovieColle
     @DeleteMapping(value = "delete")
     @ApiOperation(value = "删除电影集合")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
-        return super.delete(id);
+        movieManager.deleteMovieCollection(id);
+        return CommonResult.success(true);
     }
 
     @GetMapping(value = "/column")
@@ -92,6 +106,28 @@ public class MovieCollectionController extends AbstractCrudController<MovieColle
     public CommonResult<Boolean> syncPlex() {
         asyncTaskManager.syncPlexMovieCollection();
         return CommonResult.success(true);
+    }
+
+    @PostMapping("syncPlexById")
+    @ApiOperation(value = "同步资料库")
+    public CommonResult<Boolean> syncPlexById(@RequestBody MovieCollectionSyncPlexByIdReq req) {
+        movieManager.syncPlexMovieCollectionById(req.getId());
+        return CommonResult.success(true);
+    }
+
+    @GetMapping("listByMovieId")
+    public CommonResult<List<MovieCollectionListByMovieIdResp>> listByMovieId(Long movieId) {
+        List<MovieBasicCollectionDTO> movieBasicCollectionDTOList = movieBasicCollectionService.listMovieId(movieId);
+        List<Long> movieIdList = movieBasicCollectionDTOList.stream().map(MovieBasicCollectionDTO::getCollectionId).collect(Collectors.toList());
+        MovieCollectionDTO param = new MovieCollectionDTO();
+        param.setIdList(movieIdList);
+        List<MovieCollectionDTO> movieCollectionDTOList = movieCollectionService.list(param);
+        List<MovieCollectionListByMovieIdResp> respList = Lists.newArrayList();
+        for (MovieCollectionDTO movieCollectionDTO : movieCollectionDTOList) {
+            MovieCollectionListByMovieIdResp resp = MovieCollectionConvert.INSTANCE.convertToListByMovieIdResp(movieCollectionDTO);
+            respList.add(resp);
+        }
+        return CommonResult.success(respList);
     }
 
 }

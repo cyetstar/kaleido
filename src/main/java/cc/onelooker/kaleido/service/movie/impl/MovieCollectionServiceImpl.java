@@ -9,6 +9,7 @@ import cc.onelooker.kaleido.service.movie.MovieCollectionService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ public class MovieCollectionServiceImpl extends AbstractBaseServiceImpl<MovieCol
         LambdaQueryWrapper<MovieCollectionDO> query = new LambdaQueryWrapper<>();
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), MovieCollectionDO::getTitle, dto.getTitle());
         query.eq(Objects.nonNull(dto.getSummary()), MovieCollectionDO::getSummary, dto.getSummary());
+        query.in(CollectionUtils.isNotEmpty(dto.getIdList()), MovieCollectionDO::getId, dto.getIdList());
         return query;
     }
 

@@ -55,6 +55,14 @@ public class MovieBasicCollectionServiceImpl extends AbstractBaseServiceImpl<Mov
     }
 
     @Override
+    public List<MovieBasicCollectionDTO> listMovieId(Long movieId) {
+        Validate.notNull(movieId);
+        MovieBasicCollectionDTO param = new MovieBasicCollectionDTO();
+        param.setMovieId(movieId);
+        return list(param);
+    }
+
+    @Override
     public MovieBasicCollectionDTO findByMovieIdAndCollectionId(Long movieId, Long countryId) {
         Validate.notNull(movieId);
         Validate.notNull(countryId);

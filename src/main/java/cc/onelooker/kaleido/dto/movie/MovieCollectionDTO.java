@@ -3,6 +3,8 @@ package cc.onelooker.kaleido.dto.movie;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 电影集合DTO
  *
@@ -49,10 +51,12 @@ public class MovieCollectionDTO implements BaseDTO<Long> {
      */
     private Long updatedAt;
 
-
-
     // ------ 非数据库表字段 -------
 
+    /**
+     * 主键队列
+     */
+    private List<Long> idList;
 
     @Override
     public Long getId() {
