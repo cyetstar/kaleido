@@ -20,4 +20,6 @@ public interface MovieBasicGenreService extends IBaseService<MovieBasicGenreDTO>
     MovieBasicGenreDTO insertByMovieIdAndGenreId(Long movieId, Long countryId);
 
     List<MovieBasicGenreDTO> listByMovieId(Long movieId);
+
+    List<MovieBasicGenreDTO> listByGenreId(Long genreId);
 }

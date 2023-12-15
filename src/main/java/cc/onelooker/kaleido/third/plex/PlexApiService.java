@@ -21,19 +21,20 @@ public class PlexApiService {
     private String plexToken;
     private String plexUrl;
 
-    private final static String API_LIST_LIBRARY = "/library/sections/?X-Plex-Token={plexToken}";
-    private final static String API_LIST_ARTIST = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
-    private final static String API_FIND_ARTIST = "/library/metadata/{artistId}?X-Plex-Token={plexToken}";
-    private final static String API_LIST_ALBUM = "/library/sections/{libraryId}/all?type=9&X-Plex-Token={plexToken}";
-    private final static String API_LIST_ALBUM_BY_UPDATED_AT = "/library/sections/{libraryId}/all?type=9&updatedAt>={updatedAt}&X-Plex-Token={plexToken}";
-    private final static String API_LIST_ALBUM_BY_ARTIST = "/library/sections/{libraryId}/all?artist.id={artistId}&type=9&X-Plex-Token={plexToken}";
-    private final static String API_FIND_ALBUM = "/library/metadata/{albumId}?X-Plex-Token={plexToken}";
-    private final static String API_REFRESH_ALBUM = "/library/metadata/{albumId}/refresh?force=1&X-Plex-Token={plexToken}";
-    private final static String API_LIST_TRACK_BY_ALBUM = "/library/metadata/{albumId}/children?X-Plex-Token={plexToken}";
-    private final static String API_LIST_MOVIE = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
-    private final static String API_LIST_MOVIE_BY_UPDATED_AT = "/library/sections/{libraryId}/all?updatedAt>={updatedAt}&X-Plex-Token={plexToken}";
-    private final static String API_FIND_MOVIE = "/library/metadata/{movieId}?X-Plex-Token={plexToken}";
-    private final static String API_REFRESH_MOVIE = "/library/metadata/{movieId}/refresh?force=1&X-Plex-Token={plexToken}";
+    private final static String API_LIBRARY_LIST = "/library/sections/?X-Plex-Token={plexToken}";
+    private final static String API_LIBRARY_LIST_SECONDARY = "/library/sections/{libraryId}/{secondary}?X-Plex-Token={plexToken}";
+    private final static String API_ARTIST_LIST = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
+    private final static String API_ARTIST_FIND = "/library/metadata/{artistId}?X-Plex-Token={plexToken}";
+    private final static String API_ALBUM_LIST = "/library/sections/{libraryId}/all?type=9&X-Plex-Token={plexToken}";
+    private final static String API_ALBUM_LIST_BY_UPDATED_AT = "/library/sections/{libraryId}/all?type=9&updatedAt>={updatedAt}&X-Plex-Token={plexToken}";
+    private final static String API_ALBUM_LIST_BY_ARTIST = "/library/sections/{libraryId}/all?artist.id={artistId}&type=9&X-Plex-Token={plexToken}";
+    private final static String API_ALBUM_FIND = "/library/metadata/{albumId}?X-Plex-Token={plexToken}";
+    private final static String API_ALBUM_REFRESH = "/library/metadata/{albumId}/refresh?force=1&X-Plex-Token={plexToken}";
+    private final static String API_TRACK_LIST_BY_ALBUM = "/library/metadata/{albumId}/children?X-Plex-Token={plexToken}";
+    private final static String API_MOVIE_LIST = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
+    private final static String API_MOVIE_LIST_BY_UPDATED_AT = "/library/sections/{libraryId}/all?updatedAt>={updatedAt}&X-Plex-Token={plexToken}";
+    private final static String API_MOVIE_FIND = "/library/metadata/{movieId}?X-Plex-Token={plexToken}";
+    private final static String API_MOVIE_REFRESH = "/library/metadata/{movieId}/refresh?force=1&X-Plex-Token={plexToken}";
     private final static String API_LIST_TVSHOW = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
     private final static String API_LIST_TVSHOW_BY_UPDATED_AT = "/library/sections/{libraryId}/all?updatedAt>={updatedAt}&X-Plex-Token={plexToken}";
     private final static String API_LIST_EPISODE = "/library/sections/{libraryId}/all?type=4&X-Plex-Token={plexToken}";
@@ -59,83 +60,83 @@ public class PlexApiService {
         this.plexToken = plexToken;
     }
 
-    public List<GetLibraries.Directory> listLibrary() {
+    public List<Directory> listLibrary() {
         init();
-        GetLibraries resp = restTemplate.getForObject(plexUrl + API_LIST_LIBRARY, GetLibraries.class, plexToken);
+        GetLibraries resp = restTemplate.getForObject(plexUrl + API_LIBRARY_LIST, GetLibraries.class, plexToken);
         GetLibraries.MediaContainer mediaContainer = resp.getMediaContainer();
         return mediaContainer.getDirectoryList();
     }
 
     public List<GetMusicArtists.Metadata> listArtist(String libraryId) {
         init();
-        GetMusicArtists musicArtists = restTemplate.getForObject(plexUrl + API_LIST_ARTIST, GetMusicArtists.class, libraryId, plexToken);
+        GetMusicArtists musicArtists = restTemplate.getForObject(plexUrl + API_ARTIST_LIST, GetMusicArtists.class, libraryId, plexToken);
         GetMusicArtists.MediaContainer mediaContainer = musicArtists.getMediaContainer();
         return mediaContainer.getMetadataList();
     }
 
     public GetMusicArtists.Metadata findArtistById(Long artistId) {
         init();
-        GetMusicArtists musicArtists = restTemplate.getForObject(plexUrl + API_FIND_ARTIST, GetMusicArtists.class, artistId, plexToken);
+        GetMusicArtists musicArtists = restTemplate.getForObject(plexUrl + API_ARTIST_FIND, GetMusicArtists.class, artistId, plexToken);
         GetMusicArtists.MediaContainer mediaContainer = musicArtists.getMediaContainer();
         return mediaContainer.getMetadata();
     }
 
     public List<GetMusicAlbums.Metadata> listAlbum(String libraryId) {
         init();
-        GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_LIST_ALBUM, GetMusicAlbums.class, libraryId, plexToken);
+        GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_ALBUM_LIST, GetMusicAlbums.class, libraryId, plexToken);
         GetMusicAlbums.MediaContainer mediaContainer = musicAlbums.getMediaContainer();
         return mediaContainer.getMetadataList();
     }
 
     public List<GetMusicAlbums.Metadata> listAlbumByUpdatedAt(String libraryId, Long updatedAt) {
         init();
-        GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_LIST_ALBUM_BY_UPDATED_AT, GetMusicAlbums.class, libraryId, updatedAt, plexToken);
+        GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_ALBUM_LIST_BY_UPDATED_AT, GetMusicAlbums.class, libraryId, updatedAt, plexToken);
         GetMusicAlbums.MediaContainer mediaContainer = musicAlbums.getMediaContainer();
         return mediaContainer.getMetadataList();
     }
 
     public GetMusicAlbums.Metadata findAlbumById(Long albumId) {
         init();
-        GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_FIND_ALBUM, GetMusicAlbums.class, albumId, plexToken);
+        GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_ALBUM_FIND, GetMusicAlbums.class, albumId, plexToken);
         GetMusicAlbums.MediaContainer mediaContainer = musicAlbums.getMediaContainer();
         return mediaContainer.getMetadata();
     }
 
     public List<GetMusicAlbums.Metadata> listAlbumByArtist(String libraryId, Long artistId) {
-        GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_LIST_ALBUM_BY_ARTIST, GetMusicAlbums.class, libraryId, artistId, plexToken);
+        GetMusicAlbums musicAlbums = restTemplate.getForObject(plexUrl + API_ALBUM_LIST_BY_ARTIST, GetMusicAlbums.class, libraryId, artistId, plexToken);
         GetMusicAlbums.MediaContainer mediaContainer = musicAlbums.getMediaContainer();
         return mediaContainer.getMetadataList();
     }
 
     public List<GetMusicTracks.Metadata> listTrackByAlbumId(Long albumId) {
         init();
-        GetMusicTracks musicTracks = restTemplate.getForObject(plexUrl + API_LIST_TRACK_BY_ALBUM, GetMusicTracks.class, albumId, plexToken);
+        GetMusicTracks musicTracks = restTemplate.getForObject(plexUrl + API_TRACK_LIST_BY_ALBUM, GetMusicTracks.class, albumId, plexToken);
         GetMusicTracks.MediaContainer mediaContainer = musicTracks.getMediaContainer();
         return mediaContainer.getMetadataList();
     }
 
     public String getLibraryPath(String libraryId) {
-        GetLibraries.Directory directory = listLibrary().stream().filter(s -> StringUtils.equals(s.getKey(), libraryId)).findFirst().get();
+        Directory directory = listLibrary().stream().filter(s -> StringUtils.equals(s.getKey(), libraryId)).findFirst().get();
         return directory.getLocation().getPath();
     }
 
     public GetMovies.Metadata findMovieById(Long movieId) {
         init();
-        GetMovies movies = restTemplate.getForObject(plexUrl + API_FIND_MOVIE, GetMovies.class, movieId, plexToken);
+        GetMovies movies = restTemplate.getForObject(plexUrl + API_MOVIE_FIND, GetMovies.class, movieId, plexToken);
         GetMovies.MediaContainer mediaContainer = movies.getMediaContainer();
         return mediaContainer.getMetadata();
     }
 
     public List<GetMovies.Metadata> listMovie(String libraryId) {
         init();
-        GetMovies movies = restTemplate.getForObject(plexUrl + API_LIST_MOVIE, GetMovies.class, libraryId, plexToken);
+        GetMovies movies = restTemplate.getForObject(plexUrl + API_MOVIE_LIST, GetMovies.class, libraryId, plexToken);
         GetMovies.MediaContainer mediaContainer = movies.getMediaContainer();
         return mediaContainer.getMetadataList();
     }
 
     public List<GetMovies.Metadata> listMovieByUpdatedAt(String libraryId, Long updatedAt) {
         init();
-        GetMovies movies = restTemplate.getForObject(plexUrl + API_LIST_MOVIE_BY_UPDATED_AT, GetMovies.class, libraryId, updatedAt, plexToken);
+        GetMovies movies = restTemplate.getForObject(plexUrl + API_MOVIE_LIST_BY_UPDATED_AT, GetMovies.class, libraryId, updatedAt, plexToken);
         GetMovies.MediaContainer mediaContainer = movies.getMediaContainer();
         return mediaContainer.getMetadataList();
     }
@@ -191,11 +192,18 @@ public class PlexApiService {
 
     public void refreshMovieById(Long movieId) {
         init();
-        restTemplate.put(plexUrl + API_REFRESH_MOVIE, String.class, movieId, plexToken);
+        restTemplate.put(plexUrl + API_MOVIE_REFRESH, String.class, movieId, plexToken);
     }
 
     public void refresAlbumById(Long albumId) {
         init();
-        restTemplate.put(plexUrl + API_REFRESH_ALBUM, String.class, albumId, plexToken);
+        restTemplate.put(plexUrl + API_ALBUM_REFRESH, String.class, albumId, plexToken);
+    }
+
+    public List<Directory> listDirectory(String libraryId, String secondary) {
+        init();
+        GetLibraries libraries = restTemplate.getForObject(plexUrl + API_LIBRARY_LIST_SECONDARY, GetLibraries.class, libraryId, secondary, plexToken);
+        GetLibraries.MediaContainer mediaContainer = libraries.getMediaContainer();
+        return mediaContainer.getDirectoryList();
     }
 }

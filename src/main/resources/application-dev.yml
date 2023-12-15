@@ -7,19 +7,25 @@ spring:
       primary: auth
       datasource:
         auth:
-          url: jdbc:mysql://192.168.3.100:3306/kaleido?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          url: jdbc:mysql://127.0.0.1:3306/kaleido2?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
           username: root
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver
         master:
-          url: jdbc:mysql://192.168.3.100:3306/kaleido?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          url: jdbc:mysql://127.0.0.1:3306/kaleido2?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
           username: root
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    database: 1
+    host: 127.0.0.1
+    port: 6379
+    password:
+    timeout: 5000
 
 mybatis-plus:
   configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 zjjcnt:
   file-transport:

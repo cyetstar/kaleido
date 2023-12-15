@@ -68,4 +68,12 @@ public class MovieBasicGenreServiceImpl extends AbstractBaseServiceImpl<MovieBas
         param.setMovieId(movieId);
         return list(param);
     }
+
+    @Override
+    public List<MovieBasicGenreDTO> listByGenreId(Long genreId) {
+        Validate.notNull(genreId);
+        MovieBasicGenreDTO param = new MovieBasicGenreDTO();
+        param.setGenreId(genreId);
+        return list(param);
+    }
 }

@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.service;
 
+import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
 import cc.onelooker.kaleido.service.tvshow.TvshowEpisodeService;
 import cc.onelooker.kaleido.service.tvshow.TvshowManager;
 import cc.onelooker.kaleido.third.plex.GetEpisodes;
@@ -9,9 +10,12 @@ import cc.onelooker.kaleido.service.movie.MovieBasicService;
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
-import com.zjjcnt.common.core.domain.CommonResult;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -20,8 +24,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author xiadawei
@@ -53,18 +59,56 @@ public class AsyncTaskManager {
         if (StringUtils.isBlank(libraryId)) {
             throw new ServiceException(2005, "请设置需同步资料库信息");
         }
-        //获取最后修改时间
-        Long maxUpdatedAt = movieBasicService.findMaxUpdatedAt();
-        List<GetMovies.Metadata> metadataList = maxUpdatedAt == null ? plexApiService.listMovie(libraryId) : plexApiService.listMovieByUpdatedAt(libraryId, maxUpdatedAt);
-        metadataList.sort(Comparator.comparing(GetMovies.Metadata::getUpdatedAt, Comparator.nullsLast(Comparator.naturalOrder())));
+        List<GetMovies.Metadata> metadataList = plexApiService.listMovie(libraryId);
+        //根据更新时间，判断是否需要更新
         for (GetMovies.Metadata metadata : metadataList) {
             try {
-                movieManager.syncPlexMovieById(metadata.getRatingKey());
+                MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
+                if (movieBasicDTO == null) {
+                    movieManager.syncPlexMovieAndReadNFO(metadata.getRatingKey());
+                } else if (metadata.getUpdatedAt().compareTo(movieBasicDTO.getUpdatedAt()) > 0) {
+                    movieManager.syncPlexMovieById(metadata.getRatingKey());
+                }
                 log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());
             } catch (Exception e) {
                 log.error("【{}】ID:{}，同步错误：{}", metadata.getTitle(), metadata.getRatingKey(), e.getMessage());
             }
         }
+        //删除plex已经不存在记录
+        List<Long> movieIdList = listMovieId();
+        List<Long> plexIdList = metadataList.stream().map(GetMovies.Metadata::getRatingKey).collect(Collectors.toList());
+        Collection<Long> subtract = CollectionUtils.subtract(movieIdList, plexIdList);
+        if (CollectionUtils.isNotEmpty(subtract)) {
+            for (Long id : subtract) {
+                movieBasicService.deleteById(id);
+            }
+        }
+    }
+
+    @Async
+    public void readNFO() {
+        List<Long> movieIdList = listMovieId();
+        for (Long movieId : movieIdList) {
+            try {
+                movieManager.readNFOById(movieId);
+            } catch (Exception e) {
+                log.error("ID:{}，读取NFO错误：{}", movieId, e.getMessage());
+            }
+        }
+    }
+
+    private List<Long> listMovieId() {
+        int pageNumber = 1;
+        List<Long> idList = Lists.newArrayList();
+        while (true) {
+            PageResult<MovieBasicDTO> page = movieBasicService.page(null, Page.of(pageNumber, 1000));
+            if (page.isEmpty()) {
+                break;
+            }
+            idList.addAll(page.getRecords().stream().map(MovieBasicDTO::getId).collect(Collectors.toList()));
+            pageNumber++;
+        }
+        return idList;
     }
 
     @Async

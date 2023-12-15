@@ -4,18 +4,30 @@ import cc.onelooker.kaleido.dto.system.req.FileMoveReq;
 import cc.onelooker.kaleido.dto.system.req.FileRenameReq;
 import cc.onelooker.kaleido.dto.system.resp.FileListResp;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
+import cc.onelooker.kaleido.third.plex.GetMovies;
 import cc.onelooker.kaleido.utils.NioFileUtils;
+import cc.onelooker.kaleido.utils.PlexUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.util.DateTimeUtils;
+import io.swagger.annotations.ApiOperation;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
+import org.springframework.http.MediaTypeFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -70,5 +82,17 @@ public class FileController {
     public CommonResult<Boolean> move(@RequestBody FileMoveReq req) throws IOException {
         asyncTaskManager.moveFile(req.getPathList(), req.getDestPath());
         return CommonResult.success(true);
+    }
+
+    @GetMapping("open")
+    @ApiOperation(value = "打开文件")
+    public HttpEntity<byte[]> open(String path) throws IOException {
+        File file = Paths.get(path).toFile();
+        String filename = file.getName();
+        MediaType mediaType = MediaTypeFactory.getMediaType(filename).orElse(MediaType.TEXT_PLAIN);
+        if (MediaType.parseMediaType("text/*").isCompatibleWith(mediaType)) {
+            mediaType = new MediaType(mediaType, StandardCharsets.UTF_8);
+        }
+        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + filename).contentType(mediaType).body(FileUtils.readFileToByteArray(file));
     }
 }

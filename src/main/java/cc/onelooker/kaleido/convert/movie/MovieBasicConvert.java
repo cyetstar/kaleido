@@ -35,6 +35,10 @@ public interface MovieBasicConvert {
     @InheritInverseConfiguration(name = "convert")
     MovieBasicDO convertToDO(MovieBasicDTO dto);
 
+    @Mappings({
+            @Mapping(source = "genre", target = "genreId"),
+            @Mapping(source = "country", target = "countryId")
+    })
     MovieBasicDTO convertToDTO(MovieBasicPageReq req);
 
     MovieBasicDTO convertToDTO(MovieBasicCreateReq req);
@@ -52,8 +56,8 @@ public interface MovieBasicConvert {
     MovieBasicExp convertToExp(MovieBasicDTO dto);
 
     @Mappings({
-        @Mapping(source = "id", target = "doubanId"),
-        @Mapping(source = "images.small", target = "picUrl")
+            @Mapping(source = "id", target = "doubanId"),
+            @Mapping(source = "images.small", target = "picUrl")
     })
     MovieBasicSearchDoubanResp convertToSearchDoubanResp(Movie movie);
 }

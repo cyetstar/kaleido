@@ -80,6 +80,13 @@ public class MovieManager {
     }
 
     @Transactional
+    public void syncPlexMovieAndReadNFO(Long movieId) throws JAXBException {
+        GetMovies.Metadata metadata = plexApiService.findMovieById(movieId);
+        syncPlexMovie(metadata);
+        readNFOById(metadata);
+    }
+
+    @Transactional
     public void syncPlexMovie(GetMovies.Metadata metadata) {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
         if (movieBasicDTO == null) {
@@ -204,8 +211,14 @@ public class MovieManager {
     }
 
     @Transactional
-    public void readNFO(Long movieId) throws JAXBException {
+    public void readNFOById(Long movieId) throws JAXBException {
         GetMovies.Metadata metadata = plexApiService.findMovieById(movieId);
+        readNFOById(metadata);
+    }
+
+    @Transactional
+    public void readNFOById(GetMovies.Metadata metadata) throws JAXBException {
+        Long movieId = metadata.getRatingKey();
         String movieFolder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
         File file = Paths.get(movieFolder, "movie.nfo").toFile();
         MovieNFO movieNFO = parseNFO(file);

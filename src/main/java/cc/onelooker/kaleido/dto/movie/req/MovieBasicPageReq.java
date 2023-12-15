@@ -10,11 +10,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-11-26 01:19:02
- *
  */
 @Data
 @ApiModel("电影请求对象")
-public class MovieBasicPageReq{
+public class MovieBasicPageReq {
 
     @ApiModelProperty("电影名")
     private String title;
@@ -27,6 +26,9 @@ public class MovieBasicPageReq{
 
     @ApiModelProperty("首映年份")
     private String year;
+
+    @ApiModelProperty("首映年代")
+    private String decade;
 
     @ApiModelProperty("海报")
     private String thumb;
@@ -73,5 +75,14 @@ public class MovieBasicPageReq{
 
     @ApiModelProperty("更新时间")
     private Long updatedAt;
+
+    @ApiModelProperty("关键字")
+    private String keyword;
+
+    @ApiModelProperty("类型")
+    private String genre;
+
+    @ApiModelProperty("国家地区")
+    private String country;
 
 }

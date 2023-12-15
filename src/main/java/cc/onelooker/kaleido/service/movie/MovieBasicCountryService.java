@@ -18,4 +18,6 @@ public interface MovieBasicCountryService extends IBaseService<MovieBasicCountry
     MovieBasicCountryDTO insertByMovieIdAndCountryId(Long movieId, Long countryId);
 
     List<MovieBasicCountryDTO> listByMovieId(Long movieId);
+
+    List<MovieBasicCountryDTO> listByCountryId(Long countryId);
 }

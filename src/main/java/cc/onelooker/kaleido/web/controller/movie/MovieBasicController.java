@@ -163,6 +163,13 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         return CommonResult.success(true);
     }
 
+    @PostMapping("readNFO")
+    @ApiOperation(value = "同步资料库")
+    public CommonResult<Boolean> readNFO() {
+        taskManager.readNFO();
+        return CommonResult.success(true);
+    }
+
     @PostMapping("syncPlexById")
     @ApiOperation(value = "同步资料")
     public CommonResult<Boolean> syncPlexById(@RequestBody MovieBasicSyncPlexByIdReq req) {
@@ -177,10 +184,10 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         return CommonResult.success(true);
     }
 
-    @PostMapping("readNFO")
+    @PostMapping("readNFOById")
     @ApiOperation(value = "同步资料库")
-    public CommonResult<Boolean> readNFO(@RequestBody MovieBasicReadNFOReq req) throws JAXBException {
-        movieManager.readNFO(req.getId());
+    public CommonResult<Boolean> readNFOById(@RequestBody MovieBasicReadNFOByIdReq req) throws JAXBException {
+        movieManager.readNFOById(req.getId());
         return CommonResult.success(true);
     }
 

@@ -1,6 +1,14 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
+import cc.onelooker.kaleido.dto.movie.MovieBasicCountryDTO;
+import cc.onelooker.kaleido.dto.movie.MovieBasicGenreDTO;
+import cc.onelooker.kaleido.service.movie.MovieBasicCountryService;
+import cc.onelooker.kaleido.service.movie.MovieBasicGenreService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.zjjcnt.common.core.domain.PageResult;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -14,7 +22,9 @@ import cc.onelooker.kaleido.mapper.movie.MovieBasicMapper;
 
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 电影ServiceImpl
@@ -26,6 +36,12 @@ import java.util.*;
 public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMapper, MovieBasicDO, MovieBasicDTO> implements MovieBasicService {
 
     MovieBasicConvert convert = MovieBasicConvert.INSTANCE;
+
+    @Autowired
+    private MovieBasicCountryService movieBasicCountryService;
+
+    @Autowired
+    private MovieBasicGenreService movieBasicGenreService;
 
     @Override
     protected Wrapper<MovieBasicDO> genQueryWrapper(MovieBasicDTO dto) {
@@ -50,7 +66,25 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
         query.eq(StringUtils.isNotEmpty(dto.getDoubanId()), MovieBasicDO::getDoubanId, dto.getDoubanId());
         query.eq(Objects.nonNull(dto.getAddedAt()), MovieBasicDO::getAddedAt, dto.getAddedAt());
         query.eq(Objects.nonNull(dto.getUpdatedAt()), MovieBasicDO::getUpdatedAt, dto.getUpdatedAt());
+        if (StringUtils.isNotEmpty(dto.getKeyword())) {
+            query.like(MovieBasicDO::getTitle, dto.getKeyword()).or().like(MovieBasicDO::getOriginalTitle, dto.getKeyword()).or().eq(MovieBasicDO::getDoubanId, dto.getKeyword()).or().eq(MovieBasicDO::getImdb, dto.getKeyword());
+        }
+        query.likeRight(StringUtils.length(dto.getDecade()) > 3, MovieBasicDO::getYear, StringUtils.substring(dto.getDecade(), 0, 3));
+        query.in(CollectionUtils.isNotEmpty(dto.getIdList()), MovieBasicDO::getId, dto.getIdList());
         return query;
+    }
+
+    @Override
+    public PageResult<MovieBasicDTO> page(@Nullable MovieBasicDTO dto, Page page) {
+        if (Objects.nonNull(dto.getGenreId())) {
+            List<MovieBasicGenreDTO> movieBasicGenreDTOList = movieBasicGenreService.listByGenreId(dto.getGenreId());
+            dto.setIdList(movieBasicGenreDTOList.stream().map(MovieBasicGenreDTO::getMovieId).collect(Collectors.toList()));
+        }
+        if (Objects.nonNull(dto.getCountryId())) {
+            List<MovieBasicCountryDTO> movieBasicCountryDTOList = movieBasicCountryService.listByCountryId(dto.getCountryId());
+            dto.setIdList(movieBasicCountryDTOList.stream().map(MovieBasicCountryDTO::getMovieId).collect(Collectors.toList()));
+        }
+        return super.page(dto, page);
     }
 
     @Override

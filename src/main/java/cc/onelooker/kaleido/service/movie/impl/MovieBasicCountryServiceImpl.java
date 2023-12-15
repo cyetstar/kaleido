@@ -68,4 +68,12 @@ public class MovieBasicCountryServiceImpl extends AbstractBaseServiceImpl<MovieB
         param.setMovieId(movieId);
         return list(param);
     }
+
+    @Override
+    public List<MovieBasicCountryDTO> listByCountryId(Long countryId) {
+        Validate.notNull(countryId);
+        MovieBasicCountryDTO param = new MovieBasicCountryDTO();
+        param.setCountryId(countryId);
+        return list(param);
+    }
 }

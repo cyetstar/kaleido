@@ -8,7 +8,7 @@ import lombok.Data;
  * @Description TODO
  */
 @Data
-public class MovieBasicReadNFOReq {
+public class MovieBasicReadNFOByIdReq {
 
     private Long id;
 }
