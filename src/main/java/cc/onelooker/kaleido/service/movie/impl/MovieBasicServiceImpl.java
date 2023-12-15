@@ -2,8 +2,7 @@ package cc.onelooker.kaleido.service.movie.impl;
 
 import cc.onelooker.kaleido.dto.movie.MovieBasicCountryDTO;
 import cc.onelooker.kaleido.dto.movie.MovieBasicGenreDTO;
-import cc.onelooker.kaleido.service.movie.MovieBasicCountryService;
-import cc.onelooker.kaleido.service.movie.MovieBasicGenreService;
+import cc.onelooker.kaleido.service.movie.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.zjjcnt.common.core.domain.PageResult;
@@ -14,7 +13,6 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.movie.MovieBasicService;
 import cc.onelooker.kaleido.entity.movie.MovieBasicDO;
 import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
 import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
@@ -23,6 +21,7 @@ import cc.onelooker.kaleido.mapper.movie.MovieBasicMapper;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,6 +41,21 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
 
     @Autowired
     private MovieBasicGenreService movieBasicGenreService;
+
+    @Autowired
+    private MovieBasicLanguageService movieBasicLanguageService;
+
+    @Autowired
+    private MovieBasicActorService movieBasicActorService;
+
+    @Autowired
+    private MovieAkaService movieAkaService;
+
+    @Autowired
+    private MovieBasicCollectionService movieBasicCollectionService;
+
+    @Autowired
+    private MovieTagService movieTagService;
 
     @Override
     protected Wrapper<MovieBasicDO> genQueryWrapper(MovieBasicDTO dto) {
@@ -108,5 +122,17 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
         movieBasicDO.setDoubanId(doubanId);
         movieBasicDO.setId(id);
         return SqlHelper.retBool(baseMapper.updateById(movieBasicDO));
+    }
+
+    @Override
+    public boolean deleteById(Serializable id) {
+        movieBasicCountryService.deleteByMovieId((Long) id);
+        movieBasicGenreService.deleteByMovieId((Long) id);
+        movieBasicLanguageService.deleteByMovieId((Long) id);
+        movieBasicActorService.deleteByMovieId((Long) id);
+        movieAkaService.deleteByMovieId((Long) id);
+        movieTagService.deleteByMovieId((Long) id);
+        movieBasicCollectionService.deleteByMovieId((Long) id);
+        return super.deleteById(id);
     }
 }

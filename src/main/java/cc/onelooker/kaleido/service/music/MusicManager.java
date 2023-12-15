@@ -8,10 +8,8 @@ import cc.onelooker.kaleido.third.netease.NeteaseApiService;
 import cc.onelooker.kaleido.third.netease.Album;
 import cc.onelooker.kaleido.third.netease.Artist;
 import cc.onelooker.kaleido.third.netease.Song;
+import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.third.plex.GetMusicAlbums;
-import cc.onelooker.kaleido.third.plex.GetMusicArtists;
-import cc.onelooker.kaleido.third.plex.GetMusicTracks;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -65,12 +63,12 @@ public class MusicManager {
 
     @Transactional
     public void syncPlexAlbumById(String libraryPath, Long albumId) {
-        GetMusicAlbums.Metadata metadata = plexApiService.findAlbumById(albumId);
+        Metadata metadata = plexApiService.findAlbumById(albumId);
         syncPlexAlbum(libraryPath, metadata);
     }
 
     @Transactional
-    public void syncPlexAlbum(String libraryPath, GetMusicAlbums.Metadata metadata) {
+    public void syncPlexAlbum(String libraryPath, Metadata metadata) {
         MusicArtistDTO musicArtistDTO = syncPlexArtist(metadata.getParentRatingKey());
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(metadata.getRatingKey());
         if (musicAlbumDTO == null) {
@@ -107,7 +105,7 @@ public class MusicManager {
     private MusicArtistDTO syncPlexArtist(Long artistId) {
         MusicArtistDTO musicArtistDTO = musicArtistService.findById(artistId);
         if (musicArtistDTO == null) {
-            GetMusicArtists.Metadata artist = plexApiService.findArtistById(artistId);
+            Metadata artist = plexApiService.findArtistById(artistId);
             musicArtistDTO = new MusicArtistDTO();
             musicArtistDTO.setId(artist.getRatingKey());
             musicArtistDTO.setTitle(artist.getTitle());
@@ -122,9 +120,9 @@ public class MusicManager {
     }
 
     private List<MusicTrackDTO> syncPlexTrack(String libraryPath, Long albumId) {
-        List<GetMusicTracks.Metadata> metadataList = plexApiService.listTrackByAlbumId(albumId);
+        List<Metadata> metadataList = plexApiService.listTrackByAlbumId(albumId);
         List<MusicTrackDTO> musicTrackDTOList = Lists.newArrayList();
-        for (GetMusicTracks.Metadata metadata : metadataList) {
+        for (Metadata metadata : metadataList) {
             MusicTrackDTO musicTrackDTO = musicTrackService.findById(metadata.getRatingKey());
             if (musicTrackDTO == null) {
                 musicTrackDTO = new MusicTrackDTO();

@@ -3,10 +3,8 @@ package cc.onelooker.kaleido.service.tvshow;
 import cc.onelooker.kaleido.dto.movie.MovieBasicActorDTO;
 import cc.onelooker.kaleido.dto.tvshow.*;
 import cc.onelooker.kaleido.enums.ActorRole;
+import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.third.plex.GetEpisodes;
-import cc.onelooker.kaleido.third.plex.GetSeasons;
-import cc.onelooker.kaleido.third.plex.GetTvshows;
 import cc.onelooker.kaleido.third.plex.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -54,12 +52,12 @@ public class TvshowManager {
 
     @Transactional
     public void syncPlexEpisodeById(Long showId) {
-        GetEpisodes.Metadata metadata = plexApiService.findEpisodeById(showId);
+        Metadata metadata = plexApiService.findEpisodeById(showId);
         syncPlexEpisode(metadata);
     }
 
     @Transactional
-    public void syncPlexEpisode(GetEpisodes.Metadata metadata) {
+    public void syncPlexEpisode(Metadata metadata) {
         TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(metadata.getRatingKey());
         if (tvshowEpisodeDTO == null) {
             tvshowEpisodeDTO = new TvshowEpisodeDTO();
@@ -101,7 +99,7 @@ public class TvshowManager {
     }
 
     private void syncPlexShow(Long tvshowId) {
-        GetTvshows.Metadata metadata = plexApiService.findTvshowById(tvshowId);
+        Metadata metadata = plexApiService.findTvshowById(tvshowId);
         TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowId);
         if (tvshowShowDTO == null) {
             tvshowShowDTO = new TvshowShowDTO();
@@ -139,7 +137,7 @@ public class TvshowManager {
     }
 
     public void syncPlexSeason(Long seasonId) {
-        GetSeasons.Metadata metadata = plexApiService.findSeasonById(seasonId);
+        Metadata metadata = plexApiService.findSeasonById(seasonId);
         TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(seasonId);
         if (tvshowSeasonDTO == null) {
             tvshowSeasonDTO = new TvshowSeasonDTO();

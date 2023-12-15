@@ -8,9 +8,8 @@ import cc.onelooker.kaleido.dto.music.resp.*;
 import cc.onelooker.kaleido.exp.music.MusicAlbumExp;
 import cc.onelooker.kaleido.third.netease.NeteaseApiService;
 import cc.onelooker.kaleido.third.netease.Album;
-import cc.onelooker.kaleido.third.plex.GetMusicTracks;
+import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.third.plex.GetMusicAlbums;
 import cc.onelooker.kaleido.service.music.MusicAlbumService;
 import cc.onelooker.kaleido.service.music.MusicArtistService;
 import cc.onelooker.kaleido.service.music.MusicManager;
@@ -133,9 +132,9 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
         //获取最后修改时间
         Long maxUpdatedAt = musicAlbumService.findMaxUpdatedAt();
         String libraryPath = plexApiService.getLibraryPath(libraryId);
-        List<GetMusicAlbums.Metadata> metadataList = maxUpdatedAt == null ? plexApiService.listAlbum(libraryId) : plexApiService.listAlbumByUpdatedAt(libraryId, maxUpdatedAt);
-        metadataList.sort(Comparator.comparing(GetMusicAlbums.Metadata::getUpdatedAt, Comparator.nullsLast(Comparator.naturalOrder())));
-        for (GetMusicAlbums.Metadata metadata : metadataList) {
+        List<Metadata> metadataList = maxUpdatedAt == null ? plexApiService.listAlbum(libraryId) : plexApiService.listAlbumByUpdatedAt(libraryId, maxUpdatedAt);
+        metadataList.sort(Comparator.comparing(Metadata::getUpdatedAt, Comparator.nullsLast(Comparator.naturalOrder())));
+        for (Metadata metadata : metadataList) {
             try {
                 musicManager.syncPlexAlbum(libraryPath, metadata);
             } catch (Exception e) {
@@ -202,8 +201,8 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @GetMapping("viewPath")
     @ApiOperation(value = "获取目录")
     public CommonResult<String> viewPath(Long id) {
-        List<GetMusicTracks.Metadata> metadataList = plexApiService.listTrackByAlbumId(id);
-        GetMusicTracks.Metadata metadata = metadataList.get(0);
+        List<Metadata> metadataList = plexApiService.listTrackByAlbumId(id);
+        Metadata metadata = metadataList.get(0);
         String folder = PlexUtils.getMusicFolder(metadata.getMedia().getPart().getFile());
         return CommonResult.success(folder);
     }

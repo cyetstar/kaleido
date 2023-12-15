@@ -1,11 +1,13 @@
 package cc.onelooker.kaleido.service;
 
 import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
+import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
+import cc.onelooker.kaleido.service.movie.MovieBasicCollectionService;
+import cc.onelooker.kaleido.service.movie.MovieCollectionService;
 import cc.onelooker.kaleido.service.tvshow.TvshowEpisodeService;
 import cc.onelooker.kaleido.service.tvshow.TvshowManager;
-import cc.onelooker.kaleido.third.plex.GetEpisodes;
+import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.third.plex.GetMovies;
 import cc.onelooker.kaleido.service.movie.MovieBasicService;
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.utils.ConfigUtils;
@@ -45,6 +47,9 @@ public class AsyncTaskManager {
     private TvshowEpisodeService tvshowEpisodeService;
 
     @Autowired
+    private MovieCollectionService movieCollectionService;
+
+    @Autowired
     private MovieManager movieManager;
 
     @Autowired
@@ -59,9 +64,9 @@ public class AsyncTaskManager {
         if (StringUtils.isBlank(libraryId)) {
             throw new ServiceException(2005, "请设置需同步资料库信息");
         }
-        List<GetMovies.Metadata> metadataList = plexApiService.listMovie(libraryId);
+        List<Metadata> metadataList = plexApiService.listMovie(libraryId);
         //根据更新时间，判断是否需要更新
-        for (GetMovies.Metadata metadata : metadataList) {
+        for (Metadata metadata : metadataList) {
             try {
                 MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
                 if (movieBasicDTO == null) {
@@ -76,7 +81,7 @@ public class AsyncTaskManager {
         }
         //删除plex已经不存在记录
         List<Long> movieIdList = listMovieId();
-        List<Long> plexIdList = metadataList.stream().map(GetMovies.Metadata::getRatingKey).collect(Collectors.toList());
+        List<Long> plexIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
         Collection<Long> subtract = CollectionUtils.subtract(movieIdList, plexIdList);
         if (CollectionUtils.isNotEmpty(subtract)) {
             for (Long id : subtract) {
@@ -93,6 +98,39 @@ public class AsyncTaskManager {
                 movieManager.readNFOById(movieId);
             } catch (Exception e) {
                 log.error("ID:{}，读取NFO错误：{}", movieId, e.getMessage());
+            }
+        }
+    }
+
+    @Async
+    public void syncPlexMovieCollection() {
+        String libraryId = ConfigUtils.getSysConfig("plexMovieLibraryId");
+        if (StringUtils.isBlank(libraryId)) {
+            throw new ServiceException(2005, "请设置需同步资料库信息");
+        }
+        List<Metadata> metadataList = plexApiService.listCollection(libraryId);
+        //根据更新时间，判断是否需要更新
+        for (Metadata metadata : metadataList) {
+            try {
+                MovieCollectionDTO movieCollectionDTO = movieCollectionService.findById(metadata.getRatingKey());
+                if (movieCollectionDTO == null) {
+                    movieManager.syncPlexMovieCollection(metadata);
+                } else if (movieCollectionDTO.getUpdatedAt() == null || metadata.getUpdatedAt().compareTo(movieCollectionDTO.getUpdatedAt()) > 0) {
+                    movieManager.syncPlexMovieCollection(metadata);
+                }
+                log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());
+            } catch (Exception e) {
+                log.error("【{}】ID:{}，同步错误：{}", metadata.getTitle(), metadata.getRatingKey(), e.getMessage());
+            }
+        }
+        //删除plex已经不存在记录
+        List<MovieCollectionDTO> movieCollectionDTOList = movieCollectionService.list(null);
+        List<Long> collectionIdList = movieCollectionDTOList.stream().map(MovieCollectionDTO::getId).collect(Collectors.toList());
+        List<Long> plexIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
+        Collection<Long> deleteIdList = CollectionUtils.subtract(collectionIdList, plexIdList);
+        if (CollectionUtils.isNotEmpty(deleteIdList)) {
+            for (Long deleteId : deleteIdList) {
+                movieCollectionService.deleteById(deleteId);
             }
         }
     }
@@ -119,9 +157,9 @@ public class AsyncTaskManager {
         }
         //获取最后修改时间
         Long maxUpdatedAt = tvshowEpisodeService.findMaxUpdatedAt();
-        List<GetEpisodes.Metadata> metadataList = maxUpdatedAt == null ? plexApiService.listEpsiode(libraryId) : plexApiService.listEpsiodeByUpdatedAt(libraryId, maxUpdatedAt);
-        metadataList.sort(Comparator.comparing(GetEpisodes.Metadata::getUpdatedAt, Comparator.nullsLast(Comparator.naturalOrder())));
-        for (GetEpisodes.Metadata metadata : metadataList) {
+        List<Metadata> metadataList = maxUpdatedAt == null ? plexApiService.listEpsiode(libraryId) : plexApiService.listEpsiodeByUpdatedAt(libraryId, maxUpdatedAt);
+        metadataList.sort(Comparator.comparing(Metadata::getUpdatedAt, Comparator.nullsLast(Comparator.naturalOrder())));
+        for (Metadata metadata : metadataList) {
             try {
                 tvshowManager.syncPlexEpisodeById(metadata.getRatingKey());
                 log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());

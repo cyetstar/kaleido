@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.web.controller.movie;
 
+import cc.onelooker.kaleido.service.AsyncTaskManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +21,22 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
-* 电影集合前端控制器
-*
-* @author cyetstar
-* @date 2023-11-26 01:19:02
-*/
+ * 电影集合前端控制器
+ *
+ * @author cyetstar
+ * @date 2023-11-26 01:19:02
+ */
 
 @Api(tags = "电影集合")
 @RestController
 @RequestMapping("/movieCollection")
-public class MovieCollectionController extends AbstractCrudController<MovieCollectionDTO>{
+public class MovieCollectionController extends AbstractCrudController<MovieCollectionDTO> {
 
     @Autowired
     private MovieCollectionService movieCollectionService;
+
+    @Autowired
+    private AsyncTaskManager asyncTaskManager;
 
     @Override
     protected IBaseService getService() {
@@ -80,8 +84,14 @@ public class MovieCollectionController extends AbstractCrudController<MovieColle
     @ApiOperation(value = "导出电影集合")
     public void export(MovieCollectionPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
         String filename = "电影集合" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, MovieCollectionExp.class,
-                    MovieCollectionConvert.INSTANCE::convertToDTO, MovieCollectionConvert.INSTANCE::convertToExp, response);
+        super.export(req, columns, pageParam, filename, MovieCollectionExp.class, MovieCollectionConvert.INSTANCE::convertToDTO, MovieCollectionConvert.INSTANCE::convertToExp, response);
+    }
+
+    @PostMapping("syncPlex")
+    @ApiOperation(value = "同步资料库")
+    public CommonResult<Boolean> syncPlex() {
+        asyncTaskManager.syncPlexMovieCollection();
+        return CommonResult.success(true);
     }
 
 }

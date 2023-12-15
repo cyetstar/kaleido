@@ -61,7 +61,7 @@ public class OrderJob {
         symbolMap = tradeSymbolDTOList.stream().collect(Collectors.toMap(TradeSymbolDTO::getId, TradeSymbolDTO::getSpmc));
     }
 
-    @Scheduled(fixedDelay = 1000, initialDelay = 1000)
+//    @Scheduled(fixedDelay = 1000, initialDelay = 1000)
     public void order() {
         while (true) {
             TradeOrderDTO param = new TradeOrderDTO();
@@ -86,7 +86,7 @@ public class OrderJob {
         }
     }
 
-    @Scheduled(fixedDelay = 1000, initialDelay = 1000)
+//    @Scheduled(fixedDelay = 1000, initialDelay = 1000)
     public void checkStrategy() {
         List<TradeStrategyDTO> tradeStrategyDTOList = listRunningTradeStrategy();
         for (TradeStrategyDTO tradeStrategyDTO : tradeStrategyDTOList) {

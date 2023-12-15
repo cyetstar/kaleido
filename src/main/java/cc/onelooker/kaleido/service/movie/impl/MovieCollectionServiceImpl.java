@@ -4,14 +4,17 @@ import cc.onelooker.kaleido.convert.movie.MovieCollectionConvert;
 import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
 import cc.onelooker.kaleido.entity.movie.MovieCollectionDO;
 import cc.onelooker.kaleido.mapper.movie.MovieCollectionMapper;
+import cc.onelooker.kaleido.service.movie.MovieBasicCollectionService;
 import cc.onelooker.kaleido.service.movie.MovieCollectionService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -24,6 +27,9 @@ import java.util.Objects;
 public class MovieCollectionServiceImpl extends AbstractBaseServiceImpl<MovieCollectionMapper, MovieCollectionDO, MovieCollectionDTO> implements MovieCollectionService {
 
     MovieCollectionConvert convert = MovieCollectionConvert.INSTANCE;
+
+    @Autowired
+    private MovieBasicCollectionService movieBasicCollectionService;
 
     @Override
     protected Wrapper<MovieCollectionDO> genQueryWrapper(MovieCollectionDTO dto) {
@@ -57,5 +63,11 @@ public class MovieCollectionServiceImpl extends AbstractBaseServiceImpl<MovieCol
         movieCollectionDTO.setId(id);
         movieCollectionDTO.setTitle(title);
         return insert(movieCollectionDTO);
+    }
+
+    @Override
+    public boolean deleteById(Serializable id) {
+        movieBasicCollectionService.deleteByCollectionId((Long) id);
+        return super.deleteById(id);
     }
 }

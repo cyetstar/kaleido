@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.service.movie;
 import cc.onelooker.kaleido.dto.movie.MovieBasicCountryDTO;
 import com.zjjcnt.common.core.service.IBaseService;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -20,4 +21,6 @@ public interface MovieBasicCountryService extends IBaseService<MovieBasicCountry
     List<MovieBasicCountryDTO> listByMovieId(Long movieId);
 
     List<MovieBasicCountryDTO> listByCountryId(Long countryId);
+
+    boolean deleteByMovieId(Long movieId);
 }

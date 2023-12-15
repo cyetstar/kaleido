@@ -4,14 +4,11 @@ import cc.onelooker.kaleido.dto.system.req.FileMoveReq;
 import cc.onelooker.kaleido.dto.system.req.FileRenameReq;
 import cc.onelooker.kaleido.dto.system.resp.FileListResp;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
-import cc.onelooker.kaleido.third.plex.GetMovies;
 import cc.onelooker.kaleido.utils.NioFileUtils;
-import cc.onelooker.kaleido.utils.PlexUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -22,12 +19,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**

@@ -17,4 +17,6 @@ public interface MovieTagService extends IBaseService<MovieTagDTO> {
     List<MovieTagDTO> listByMovieId(Long movieId);
 
     MovieTagDTO findByTagAndMovieId(String tag, Long movieId);
+
+    boolean deleteByMovieId(Long movieId);
 }

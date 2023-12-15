@@ -13,8 +13,8 @@ import cc.onelooker.kaleido.dto.movie.MovieBasicCollectionDTO;
 import cc.onelooker.kaleido.convert.movie.MovieBasicCollectionConvert;
 import cc.onelooker.kaleido.mapper.movie.MovieBasicCollectionMapper;
 
-
 import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 
 /**
@@ -47,6 +47,14 @@ public class MovieBasicCollectionServiceImpl extends AbstractBaseServiceImpl<Mov
     }
 
     @Override
+    public List<MovieBasicCollectionDTO> listByCollectionId(Long collectionId) {
+        Validate.notNull(collectionId);
+        MovieBasicCollectionDTO param = new MovieBasicCollectionDTO();
+        param.setCollectionId(collectionId);
+        return list(param);
+    }
+
+    @Override
     public MovieBasicCollectionDTO findByMovieIdAndCollectionId(Long movieId, Long countryId) {
         Validate.notNull(movieId);
         Validate.notNull(countryId);
@@ -63,5 +71,32 @@ public class MovieBasicCollectionServiceImpl extends AbstractBaseServiceImpl<Mov
         movieBasicCollectionDTO.setCollectionId(countryId);
         return insert(movieBasicCollectionDTO);
     }
+
+    @Override
+    public boolean deleteByMovieId(Long movieId) {
+        Validate.notNull(movieId);
+        MovieBasicCollectionDTO param = new MovieBasicCollectionDTO();
+        param.setMovieId(movieId);
+        return delete(param);
+    }
+
+    @Override
+    public boolean deleteByCollectionId(Long collectionId) {
+        Validate.notNull(collectionId);
+        MovieBasicCollectionDTO param = new MovieBasicCollectionDTO();
+        param.setCollectionId(collectionId);
+        return delete(param);
+    }
+
+    @Override
+    public boolean deleteByMovieIdAndCollectionId(Long movieId, Long collectionId) {
+        Validate.notNull(movieId);
+        Validate.notNull(collectionId);
+        MovieBasicCollectionDTO param = new MovieBasicCollectionDTO();
+        param.setMovieId(movieId);
+        param.setCollectionId(collectionId);
+        return delete(param);
+    }
+
 }
 

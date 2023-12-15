@@ -70,4 +70,12 @@ public class MovieBasicLanguageServiceImpl extends AbstractBaseServiceImpl<Movie
         param.setMovieId(movieId);
         return list(param);
     }
+
+    @Override
+    public boolean deleteByMovieId(Long movieId) {
+        Validate.notNull(movieId);
+        MovieBasicLanguageDTO param = new MovieBasicLanguageDTO();
+        param.setMovieId(movieId);
+        return delete(param);
+    }
 }

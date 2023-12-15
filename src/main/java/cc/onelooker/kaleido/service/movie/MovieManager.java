@@ -5,11 +5,14 @@ import cc.onelooker.kaleido.enums.ActorRole;
 import cc.onelooker.kaleido.enums.SourceType;
 import cc.onelooker.kaleido.nfo.MovieNFO;
 import cc.onelooker.kaleido.nfo.UniqueidNFO;
+import cc.onelooker.kaleido.third.douban.DoubanApiService;
+import cc.onelooker.kaleido.third.douban.Movie;
+import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.third.plex.GetMovies;
 import cc.onelooker.kaleido.third.plex.Tag;
 import cc.onelooker.kaleido.utils.PlexUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,7 +23,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author cyetstar
@@ -73,21 +78,24 @@ public class MovieManager {
     @Autowired
     private PlexApiService plexApiService;
 
+    @Autowired
+    private DoubanApiService doubanApiService;
+
     @Transactional
     public void syncPlexMovieById(Long movieId) {
-        GetMovies.Metadata metadata = plexApiService.findMovieById(movieId);
+        Metadata metadata = plexApiService.findMovieById(movieId);
         syncPlexMovie(metadata);
     }
 
     @Transactional
     public void syncPlexMovieAndReadNFO(Long movieId) throws JAXBException {
-        GetMovies.Metadata metadata = plexApiService.findMovieById(movieId);
+        Metadata metadata = plexApiService.findMovieById(movieId);
         syncPlexMovie(metadata);
         readNFOById(metadata);
     }
 
     @Transactional
-    public void syncPlexMovie(GetMovies.Metadata metadata) {
+    public void syncPlexMovie(Metadata metadata) {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
         if (movieBasicDTO == null) {
             movieBasicDTO = new MovieBasicDTO();
@@ -131,6 +139,51 @@ public class MovieManager {
         syncActor(metadata.getDirectorList(), movieBasicDTO.getId(), ActorRole.Director);
         syncActor(metadata.getWriterList(), movieBasicDTO.getId(), ActorRole.Writer);
         syncActor(metadata.getRoleList(), movieBasicDTO.getId(), ActorRole.Actor);
+    }
+
+    @Transactional
+    public void syncPlexMovieCollectionById(Long collectionId) {
+        Metadata metadata = plexApiService.findCollectionById(collectionId);
+        syncPlexMovieCollection(metadata);
+    }
+
+    @Transactional
+    public void syncPlexMovieCollection(Metadata metadata) {
+        Long collectionId = metadata.getRatingKey();
+        MovieCollectionDTO movieCollectionDTO = movieCollectionService.findById(collectionId);
+        if (movieCollectionDTO == null) {
+            movieCollectionDTO = new MovieCollectionDTO();
+            movieCollectionDTO.setId(metadata.getRatingKey());
+            movieCollectionDTO.setTitle(metadata.getTitle());
+            movieCollectionDTO.setSummary(metadata.getSummary());
+            movieCollectionDTO.setThumb(metadata.getThumb());
+            movieCollectionDTO.setChildCount(metadata.getChildCount());
+            movieCollectionDTO.setAddedAt(metadata.getAddedAt());
+            movieCollectionDTO.setUpdatedAt(metadata.getUpdatedAt());
+            movieCollectionService.insert(movieCollectionDTO);
+        } else {
+            movieCollectionDTO.setThumb(metadata.getThumb());
+            movieCollectionDTO.setChildCount(metadata.getChildCount());
+            movieCollectionDTO.setAddedAt(metadata.getAddedAt());
+            movieCollectionDTO.setUpdatedAt(metadata.getUpdatedAt());
+            movieCollectionService.update(movieCollectionDTO);
+        }
+        List<Metadata> metadataList = plexApiService.listMovieByCollectionId(collectionId);
+        List<MovieBasicCollectionDTO> movieBasicCollectionDTOList = movieBasicCollectionService.listByCollectionId(collectionId);
+        List<Long> movieIdList = movieBasicCollectionDTOList.stream().map(MovieBasicCollectionDTO::getMovieId).collect(Collectors.toList());
+        List<Long> metadataIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
+        Collection<Long> deleteMovieIdList = CollectionUtils.subtract(movieIdList, metadataIdList);
+        if (CollectionUtils.isNotEmpty(deleteMovieIdList)) {
+            for (Long deleteMovieId : deleteMovieIdList) {
+                movieBasicCollectionService.deleteByMovieIdAndCollectionId(deleteMovieId, collectionId);
+            }
+        }
+        Collection<Long> addMovieIdList = CollectionUtils.subtract(metadataIdList, movieIdList);
+        if (CollectionUtils.isNotEmpty(addMovieIdList)) {
+            for (Long addMovieId : addMovieIdList) {
+                movieBasicCollectionService.insertByMovieIdAndCollectionId(addMovieId, collectionId);
+            }
+        }
     }
 
     private void syncActor(List<Tag> actorList, Long movieId, ActorRole actorRole) {
@@ -212,12 +265,12 @@ public class MovieManager {
 
     @Transactional
     public void readNFOById(Long movieId) throws JAXBException {
-        GetMovies.Metadata metadata = plexApiService.findMovieById(movieId);
+        Metadata metadata = plexApiService.findMovieById(movieId);
         readNFOById(metadata);
     }
 
     @Transactional
-    public void readNFOById(GetMovies.Metadata metadata) throws JAXBException {
+    public void readNFOById(Metadata metadata) throws JAXBException {
         Long movieId = metadata.getRatingKey();
         String movieFolder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
         File file = Paths.get(movieFolder, "movie.nfo").toFile();
@@ -230,9 +283,8 @@ public class MovieManager {
         movieBasicDTO.setWebsite(movieNFO.getWebsite());
         movieBasicService.update(movieBasicDTO);
 
-        readLanguages(movieNFO.getLanguages(), movieId);
-        readAkas(movieNFO.getAkas(), movieId);
-        readTags(movieNFO.getTags(), movieId);
+        updateAkas(movieNFO.getAkas(), movieId);
+        updateTags(movieNFO.getTags(), movieId);
     }
 
     private MovieNFO parseNFO(File file) throws JAXBException {
@@ -261,7 +313,7 @@ public class MovieManager {
         }
     }
 
-    private void readAkas(List<String> akas, Long movieId) {
+    private void updateAkas(List<String> akas, Long movieId) {
         if (akas == null) {
             return;
         }
@@ -276,7 +328,7 @@ public class MovieManager {
         }
     }
 
-    private void readTags(List<String> tags, Long movieId) {
+    private void updateTags(List<String> tags, Long movieId) {
         if (tags == null) {
             return;
         }
@@ -291,4 +343,15 @@ public class MovieManager {
         }
     }
 
+    @Transactional
+    public void matchDouban(Long id, String doubanId) {
+        Movie doubanMovie = doubanApiService.findMovieById(doubanId);
+        MovieBasicDTO movieBasicDTO = movieBasicService.findById(id);
+        movieBasicDTO.setDoubanId(doubanMovie.getId());
+        movieBasicDTO.setSummary(doubanMovie.getSummary());
+        movieBasicDTO.setRating(doubanMovie.getRating().getAverage());
+        movieBasicDTO.setOriginalTitle(doubanMovie.getOriginalTitle());
+        movieBasicService.update(movieBasicDTO);
+        updateAkas(doubanMovie.getAka(), id);
+    }
 }

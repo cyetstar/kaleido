@@ -22,4 +22,6 @@ public interface MovieBasicGenreService extends IBaseService<MovieBasicGenreDTO>
     List<MovieBasicGenreDTO> listByMovieId(Long movieId);
 
     List<MovieBasicGenreDTO> listByGenreId(Long genreId);
+
+    boolean deleteByMovieId(Long movieId);
 }

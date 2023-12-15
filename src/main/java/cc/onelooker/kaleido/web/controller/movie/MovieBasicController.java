@@ -13,11 +13,12 @@ import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.service.movie.*;
 import cc.onelooker.kaleido.third.douban.DoubanApiService;
 import cc.onelooker.kaleido.third.douban.Movie;
-import cc.onelooker.kaleido.third.plex.GetMovies;
+import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
 import cc.onelooker.kaleido.utils.PlexUtils;
+import cn.hutool.http.HttpUtil;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
@@ -205,18 +206,17 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("matchDouban")
     @ApiOperation(value = "匹配豆瓣")
     public CommonResult<Boolean> matchDouban(@RequestBody MovieBasicMatchDoubanReq req) {
-        return CommonResult.success(movieBasicService.updateDoubanId(req.getId(), req.getDoubanId()));
+        movieManager.matchDouban(req.getId(), req.getDoubanId());
+        return CommonResult.success(true);
     }
 
     @GetMapping("viewNFO")
     @ApiOperation(value = "查看NFO")
     public HttpEntity<byte[]> viewNFO(Long id) throws IOException {
-        GetMovies.Metadata metadata = plexApiService.findMovieById(id);
+        Metadata metadata = plexApiService.findMovieById(id);
         String movieFolder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
         File file = Paths.get(movieFolder, "movie.nfo").toFile();
-        //file to byte array
-
-        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=movie.nfo.xml").contentType(MediaType.APPLICATION_XML).body(FileUtils.readFileToByteArray(file));
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(FileUtils.readFileToByteArray(file));
     }
 
     @PostMapping("autoCopy")
@@ -236,7 +236,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @GetMapping("viewPath")
     @ApiOperation(value = "获取目录")
     public CommonResult<String> viewPath(Long id) {
-        GetMovies.Metadata metadata = plexApiService.findMovieById(id);
+        Metadata metadata = plexApiService.findMovieById(id);
         String folder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
         return CommonResult.success(folder);
     }
@@ -246,6 +246,15 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     public CommonResult<Boolean> uploadPoster(MovieBasicUploadPosterReq req) throws IOException {
         Files.write(Paths.get(req.getPath(), "poster.jpg"), req.getFile().getBytes());
         plexApiService.refreshMovieById(req.getId());
+        return CommonResult.success(true);
+    }
+
+    @PostMapping("downloadPoster")
+    public CommonResult<Boolean> downloadPoster(MovieBasicDownloadPosterReq req) {
+        Metadata metadata = plexApiService.findMovieById(req.getId());
+        String movieFolder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
+        File file = Paths.get(movieFolder, "poster.jpg").toFile();
+        HttpUtil.downloadFile(req.getUrl(), file);
         return CommonResult.success(true);
     }
 }

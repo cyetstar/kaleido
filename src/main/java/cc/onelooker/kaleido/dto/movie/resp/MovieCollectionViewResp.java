@@ -23,4 +23,16 @@ public class MovieCollectionViewResp{
 
     @ApiModelProperty("简介")
     private String summary;
+
+    @ApiModelProperty("缩略图")
+    private String thumb;
+
+    @ApiModelProperty("项目数量")
+    private String childCount;
+
+    @ApiModelProperty("加入时间")
+    private Long addedAt;
+
+    @ApiModelProperty("更新时间")
+    private Long updatedAt;
 }

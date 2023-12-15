@@ -62,4 +62,12 @@ public class MovieTagServiceImpl extends AbstractBaseServiceImpl<MovieTagMapper,
         param.setMovieId(movieId);
         return find(param);
     }
+
+    @Override
+    public boolean deleteByMovieId(Long movieId) {
+        Validate.notNull(movieId);
+        MovieTagDTO param = new MovieTagDTO();
+        param.setMovieId(movieId);
+        return delete(param);
+    }
 }

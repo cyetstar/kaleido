@@ -62,4 +62,12 @@ public class MovieAkaServiceImpl extends AbstractBaseServiceImpl<MovieAkaMapper,
         param.setMovieId(movieId);
         return find(param);
     }
+
+    @Override
+    public boolean deleteByMovieId(Long movieId) {
+        Validate.notNull(movieId);
+        MovieAkaDTO param = new MovieAkaDTO();
+        param.setMovieId(movieId);
+        return delete(param);
+    }
 }

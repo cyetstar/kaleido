@@ -5,6 +5,8 @@ import com.zjjcnt.common.core.service.IBaseService;
 
 import cc.onelooker.kaleido.dto.movie.MovieBasicCollectionDTO;
 
+import java.util.List;
+
 /**
  * 电影集合关联表Service
  *
@@ -13,7 +15,16 @@ import cc.onelooker.kaleido.dto.movie.MovieBasicCollectionDTO;
  */
 public interface MovieBasicCollectionService extends IBaseService<MovieBasicCollectionDTO> {
 
-    MovieBasicCollectionDTO findByMovieIdAndCollectionId(Long movieId, Long countryId);
+    List<MovieBasicCollectionDTO> listByCollectionId(Long collectionId);
 
-    MovieBasicCollectionDTO insertByMovieIdAndCollectionId(Long movieId, Long countryId);
+    MovieBasicCollectionDTO findByMovieIdAndCollectionId(Long movieId, Long collectionId);
+
+    MovieBasicCollectionDTO insertByMovieIdAndCollectionId(Long movieId, Long collectionId);
+
+    boolean deleteByMovieId(Long movieId);
+
+    boolean deleteByCollectionId(Long collectionId);
+
+    boolean deleteByMovieIdAndCollectionId(Long movieId, Long collectionId);
+
 }

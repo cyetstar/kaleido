@@ -19,4 +19,6 @@ public interface MovieBasicLanguageService extends IBaseService<MovieBasicLangua
     MovieBasicLanguageDTO insertByMovieIdAndLanguageId(Long movieId, Long languageId);
 
     List<MovieBasicLanguageDTO> listByMovieId(Long movieId);
+
+    boolean deleteByMovieId(Long movieId);
 }

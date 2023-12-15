@@ -17,4 +17,6 @@ public interface MovieAkaService extends IBaseService<MovieAkaDTO> {
     List<MovieAkaDTO> listByMovieId(Long movieId);
 
     MovieAkaDTO findByTitleAndMovieId(String title, Long movieId);
+
+    boolean deleteByMovieId(Long movieId);
 }

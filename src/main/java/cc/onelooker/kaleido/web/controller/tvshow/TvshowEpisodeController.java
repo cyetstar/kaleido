@@ -12,7 +12,6 @@ import cc.onelooker.kaleido.dto.tvshow.resp.TvshowEpisodeViewResp;
 import cc.onelooker.kaleido.exp.tvshow.TvshowEpisodeExp;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.third.plex.GetEpisodes;
 import cc.onelooker.kaleido.service.tvshow.TvshowEpisodeService;
 import cc.onelooker.kaleido.service.tvshow.TvshowManager;
 import cc.onelooker.kaleido.utils.ConfigUtils;

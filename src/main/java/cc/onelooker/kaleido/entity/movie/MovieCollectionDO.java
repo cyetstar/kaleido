@@ -42,6 +42,29 @@ public class MovieCollectionDO implements IdEntity<Long> {
     @TableField(value = "summary")
     private String summary;
 
+    /**
+     * 缩略图
+     */
+    @TableField(value = "thumb")
+    private String thumb;
+
+    /**
+     * 项目数量
+     */
+    @TableField(value = "child_count")
+    private Integer childCount;
+
+    /**
+     * 加入时间
+     */
+    @TableField(value = "added_at")
+    private Long addedAt;
+
+    /**
+     * 更新时间
+     */
+    @TableField(value = "updated_at")
+    private Long updatedAt;
 
     @Override
     public Long getId() {

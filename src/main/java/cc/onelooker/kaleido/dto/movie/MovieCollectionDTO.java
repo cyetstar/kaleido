@@ -29,6 +29,28 @@ public class MovieCollectionDTO implements BaseDTO<Long> {
      */
     private String summary;
 
+    /**
+     * 缩略图
+     */
+    private String thumb;
+
+    /**
+     * 项目数量
+     */
+    private Integer childCount;
+
+    /**
+     * 加入时间
+     */
+    private Long addedAt;
+
+    /**
+     * 更新时间
+     */
+    private Long updatedAt;
+
+
+
     // ------ 非数据库表字段 -------
 
 
