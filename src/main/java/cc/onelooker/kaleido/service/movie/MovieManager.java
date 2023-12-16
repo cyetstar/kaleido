@@ -135,7 +135,6 @@ public class MovieManager {
         }
         syncCountry(metadata.getCountryList(), movieBasicDTO.getId());
         syncGenre(metadata.getGenreList(), movieBasicDTO.getId());
-        syncCollection(metadata.getCollectionList(), movieBasicDTO.getId());
         syncActor(metadata.getDirectorList(), movieBasicDTO.getId(), ActorRole.Director);
         syncActor(metadata.getWriterList(), movieBasicDTO.getId(), ActorRole.Writer);
         syncActor(metadata.getRoleList(), movieBasicDTO.getId(), ActorRole.Actor);
@@ -247,22 +246,6 @@ public class MovieManager {
         }
     }
 
-    private void syncCollection(List<Tag> collectionList, Long movieId) {
-        if (collectionList == null) {
-            return;
-        }
-        for (Tag tag : collectionList) {
-            MovieCollectionDTO movieCollectionDTO = movieCollectionService.findById(tag.getId());
-            if (movieCollectionDTO == null) {
-                movieCollectionDTO = movieCollectionService.insert(tag.getId(), tag.getTag());
-            }
-            MovieBasicCollectionDTO movieBasicCollectionDTO = movieBasicCollectionService.findByMovieIdAndCollectionId(movieId, movieCollectionDTO.getId());
-            if (movieBasicCollectionDTO == null) {
-                movieBasicCollectionService.insertByMovieIdAndCollectionId(movieId, movieCollectionDTO.getId());
-            }
-        }
-    }
-
     @Transactional
     public void readNFOById(Long movieId) throws JAXBException {
         Metadata metadata = plexApiService.findMovieById(movieId);
@@ -295,22 +278,6 @@ public class MovieManager {
 
     private String getUniqueid(List<UniqueidNFO> uniqueids, String type) {
         return uniqueids.stream().filter(s -> StringUtils.equals(s.getType(), type)).map(s -> s.getValue()).findFirst().orElse(null);
-    }
-
-    private void readLanguages(List<String> languages, Long movieId) {
-        if (languages == null) {
-            return;
-        }
-        for (String language : languages) {
-            MovieLanguageDTO movieLanguageDTO = movieLanguageService.findByTag(language);
-            if (movieLanguageDTO == null) {
-                movieLanguageDTO = movieLanguageService.insert(language);
-            }
-            MovieBasicLanguageDTO movieBasicLanguageDTO = movieBasicLanguageService.findByMovieIdAndLanguageId(movieId, movieLanguageDTO.getId());
-            if (movieBasicLanguageDTO == null) {
-                movieBasicLanguageService.insertByMovieIdAndLanguageId(movieId, movieLanguageDTO.getId());
-            }
-        }
     }
 
     private void updateAkas(List<String> akas, Long movieId) {

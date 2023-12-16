@@ -1,5 +1,9 @@
 package cc.onelooker.kaleido.service.tvshow.impl;
 
+import cc.onelooker.kaleido.dto.tvshow.TvshowEpisodeDTO;
+import cc.onelooker.kaleido.service.tvshow.TvshowShowService;
+import org.checkerframework.checker.units.qual.A;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -13,6 +17,9 @@ import cc.onelooker.kaleido.mapper.tvshow.TvshowSeasonMapper;
 
 import com.zjjcnt.common.core.utils.ColumnUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -25,6 +32,9 @@ import java.util.*;
 public class TvshowSeasonServiceImpl extends AbstractBaseServiceImpl<TvshowSeasonMapper, TvshowSeasonDO, TvshowSeasonDTO> implements TvshowSeasonService {
 
     TvshowSeasonConvert convert = TvshowSeasonConvert.INSTANCE;
+
+    @Autowired
+    private TvshowShowService tvshowShowService;
 
     @Override
     protected Wrapper<TvshowSeasonDO> genQueryWrapper(TvshowSeasonDTO dto) {
@@ -48,5 +58,19 @@ public class TvshowSeasonServiceImpl extends AbstractBaseServiceImpl<TvshowSeaso
     @Override
     public TvshowSeasonDO convertToDO(TvshowSeasonDTO tvshowSeasonDTO) {
         return convert.convertToDO(tvshowSeasonDTO);
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteById(Serializable id) {
+        TvshowSeasonDTO tvshowSeasonDTO = findById(id);
+        boolean result = super.deleteById(id);
+        TvshowSeasonDTO param = new TvshowSeasonDTO();
+        param.setShowId(tvshowSeasonDTO.getShowId());
+        long count = count(param);
+        if (count == 0) {
+            tvshowShowService.deleteById(tvshowSeasonDTO.getShowId());
+        }
+        return result;
     }
 }

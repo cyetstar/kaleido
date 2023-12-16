@@ -26,6 +26,7 @@ public class Directory {
     private String scanner;
     private String language;
     private String uuid;
+    private Boolean secondary;
     private Long updatedAt;
     private Long createdAt;
     private Long scannedAt;

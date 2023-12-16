@@ -1,5 +1,7 @@
 package cc.onelooker.kaleido.service.tvshow.impl;
 
+import cc.onelooker.kaleido.service.tvshow.TvshowSeasonService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -13,6 +15,9 @@ import cc.onelooker.kaleido.mapper.tvshow.TvshowEpisodeMapper;
 
 import com.zjjcnt.common.core.utils.ColumnUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -25,6 +30,9 @@ import java.util.*;
 public class TvshowEpisodeServiceImpl extends AbstractBaseServiceImpl<TvshowEpisodeMapper, TvshowEpisodeDO, TvshowEpisodeDTO> implements TvshowEpisodeService {
 
     TvshowEpisodeConvert convert = TvshowEpisodeConvert.INSTANCE;
+
+    @Autowired
+    private TvshowSeasonService tvshowSeasonService;
 
     @Override
     protected Wrapper<TvshowEpisodeDO> genQueryWrapper(TvshowEpisodeDTO dto) {
@@ -61,5 +69,19 @@ public class TvshowEpisodeServiceImpl extends AbstractBaseServiceImpl<TvshowEpis
     @Override
     public Long findMaxUpdatedAt() {
         return baseMapper.findMaxUpdatedAt();
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteById(Serializable id) {
+        TvshowEpisodeDTO tvshowEpisodeDTO = findById(id);
+        boolean result = super.deleteById(id);
+        TvshowEpisodeDTO param = new TvshowEpisodeDTO();
+        param.setSeasonId(tvshowEpisodeDTO.getSeasonId());
+        long count = count(param);
+        if (count == 0) {
+            tvshowSeasonService.deleteById(tvshowEpisodeDTO.getSeasonId());
+        }
+        return result;
     }
 }

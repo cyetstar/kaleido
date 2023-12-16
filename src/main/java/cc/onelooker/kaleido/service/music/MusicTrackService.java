@@ -13,5 +13,7 @@ import java.util.List;
  */
 public interface MusicTrackService extends IBaseService<MusicTrackDTO> {
 
-    List<MusicTrackDTO> listByAlbumId(Long AlbumId);
+    List<MusicTrackDTO> listByAlbumId(Long albumId);
+
+    boolean deleteByAlbumId(Long albumId);
 }

@@ -22,7 +22,8 @@ public class PlexApiService {
     private String plexUrl;
 
     private final static String API_LIBRARY_LIST = "/library/sections/?X-Plex-Token={plexToken}";
-    private final static String API_LIBRARY_LIST_SECONDARY = "/library/sections/{libraryId}/{secondary}?X-Plex-Token={plexToken}";
+    private final static String API_LIBRARY_LIST_SECONDARY = "/library/sections/{libraryId}?X-Plex-Token={plexToken}";
+    private final static String API_LIBRARY_VIEW_SECONDARY = "/library/sections/{libraryId}/{secondary}?X-Plex-Token={plexToken}";
     private final static String API_ARTIST_LIST = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
     private final static String API_ARTIST_FIND = "/library/metadata/{artistId}?X-Plex-Token={plexToken}";
     private final static String API_ALBUM_LIST = "/library/sections/{libraryId}/all?type=9&X-Plex-Token={plexToken}";
@@ -203,9 +204,17 @@ public class PlexApiService {
         restTemplate.put(plexUrl + API_ALBUM_REFRESH, String.class, albumId, plexToken);
     }
 
-    public List<Directory> listDirectory(String libraryId, String secondary) {
+
+    public List<Directory> listSecondary(String libraryId) {
         init();
-        PlexResult plexResult = restTemplate.getForObject(plexUrl + API_LIBRARY_LIST_SECONDARY, PlexResult.class, libraryId, secondary, plexToken);
+        PlexResult plexResult = restTemplate.getForObject(plexUrl + API_LIBRARY_LIST_SECONDARY, PlexResult.class, libraryId, plexToken);
+        MediaContainer mediaContainer = plexResult.getMediaContainer();
+        return mediaContainer.getDirectoryList();
+    }
+
+    public List<Directory> listDirectoryBySecondary(String libraryId, String secondary) {
+        init();
+        PlexResult plexResult = restTemplate.getForObject(plexUrl + API_LIBRARY_VIEW_SECONDARY, PlexResult.class, libraryId, secondary, plexToken);
         MediaContainer mediaContainer = plexResult.getMediaContainer();
         return mediaContainer.getDirectoryList();
     }

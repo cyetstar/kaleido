@@ -59,4 +59,10 @@ public class TvshowShowPageReq{
     @ApiModelProperty("更新时间")
     private Long updatedAt;
 
+    @ApiModelProperty("关键字")
+    private String keyword;
+
+    @ApiModelProperty("类型")
+    private String genre;
+
 }

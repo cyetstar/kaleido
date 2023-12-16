@@ -3,19 +3,24 @@ package cc.onelooker.kaleido.service.music.impl;
 import cc.onelooker.kaleido.convert.music.MusicAlbumConvert;
 import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.music.MusicArtistAlbumDTO;
+import cc.onelooker.kaleido.entity.movie.MovieBasicDO;
 import cc.onelooker.kaleido.entity.music.MusicAlbumDO;
 import cc.onelooker.kaleido.mapper.music.MusicAlbumMapper;
 import cc.onelooker.kaleido.service.music.MusicAlbumService;
 import cc.onelooker.kaleido.service.music.MusicArtistAlbumService;
+import cc.onelooker.kaleido.service.music.MusicTrackService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,6 +37,9 @@ public class MusicAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAlbumMap
 
     @Autowired
     private MusicArtistAlbumService musicArtistAlbumService;
+
+    @Autowired
+    private MusicTrackService musicTrackService;
 
     @Override
     protected Wrapper<MusicAlbumDO> genQueryWrapper(MusicAlbumDTO dto) {
@@ -53,6 +61,10 @@ public class MusicAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAlbumMap
         query.eq(StringUtils.isNotEmpty(dto.getThumb()), MusicAlbumDO::getThumb, dto.getThumb());
         query.eq(Objects.nonNull(dto.getAddedAt()), MusicAlbumDO::getAddedAt, dto.getAddedAt());
         query.eq(Objects.nonNull(dto.getUpdatedAt()), MusicAlbumDO::getUpdatedAt, dto.getUpdatedAt());
+        if (StringUtils.isNotEmpty(dto.getKeyword())) {
+            query.like(MusicAlbumDO::getTitle, dto.getKeyword()).or().like(MusicAlbumDO::getArtists, dto.getKeyword());
+        }
+        query.likeRight(StringUtils.length(dto.getDecade()) > 3, MusicAlbumDO::getYear, StringUtils.substring(dto.getDecade(), 0, 3));
         return query;
     }
 
@@ -65,7 +77,6 @@ public class MusicAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAlbumMap
     public MusicAlbumDO convertToDO(MusicAlbumDTO musicAlbumDTO) {
         return convert.convertToDO(musicAlbumDTO);
     }
-
 
     @Override
     public List<MusicAlbumDTO> listByArtistId(Long artistId) {
@@ -84,5 +95,13 @@ public class MusicAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAlbumMap
     @Override
     public Long findMaxUpdatedAt() {
         return baseMapper.findMaxUpdatedAt();
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteById(Serializable id) {
+        musicArtistAlbumService.deleteByAlbumId((Long) id);
+        musicTrackService.deleteByAlbumId((Long) id);
+        return super.deleteById(id);
     }
 }

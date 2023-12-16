@@ -6,6 +6,7 @@ import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
 import cc.onelooker.kaleido.dto.music.req.*;
 import cc.onelooker.kaleido.dto.music.resp.*;
 import cc.onelooker.kaleido.exp.music.MusicAlbumExp;
+import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.third.netease.NeteaseApiService;
 import cc.onelooker.kaleido.third.netease.Album;
 import cc.onelooker.kaleido.third.plex.Metadata;
@@ -69,6 +70,9 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @Autowired
     private PlexApiService plexApiService;
 
+    @Autowired
+    private AsyncTaskManager asyncTaskManager;
+
     @Override
     protected IBaseService getService() {
         return musicAlbumService;
@@ -125,22 +129,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @PostMapping("syncPlex")
     @ApiOperation(value = "同步资料库")
     public CommonResult<Boolean> syncPlex() {
-        String libraryId = ConfigUtils.getSysConfig("plexMusicLibraryId");
-        if (StringUtils.isBlank(libraryId)) {
-            throw new ServiceException(2005, "请设置需要同步资料库信息");
-        }
-        //获取最后修改时间
-        Long maxUpdatedAt = musicAlbumService.findMaxUpdatedAt();
-        String libraryPath = plexApiService.getLibraryPath(libraryId);
-        List<Metadata> metadataList = maxUpdatedAt == null ? plexApiService.listAlbum(libraryId) : plexApiService.listAlbumByUpdatedAt(libraryId, maxUpdatedAt);
-        metadataList.sort(Comparator.comparing(Metadata::getUpdatedAt, Comparator.nullsLast(Comparator.naturalOrder())));
-        for (Metadata metadata : metadataList) {
-            try {
-                musicManager.syncPlexAlbum(libraryPath, metadata);
-            } catch (Exception e) {
-                log.error("同步资料库失败，错误信息：", e);
-            }
-        }
+        asyncTaskManager.syncPlexAlbum();
         return CommonResult.success(true);
     }
 

@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.lang.Long;
 import java.lang.String;
 import java.lang.Integer;
+import java.util.List;
 
 /**
  * 剧集DTO
@@ -91,6 +92,20 @@ public class TvshowShowDTO implements BaseDTO<Long> {
 
     // ------ 非数据库表字段 -------
 
+    /**
+     * 关键字
+     */
+    private String keyword;
+
+    /**
+     * 类型
+     */
+    private Long genreId;
+
+    /**
+     * 主键队列
+     */
+    private List<Long> idList;
 
     @Override
     public Long getId() {

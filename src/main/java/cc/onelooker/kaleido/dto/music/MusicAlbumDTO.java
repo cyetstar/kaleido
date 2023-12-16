@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.dto.music;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
 
@@ -110,6 +111,15 @@ public class MusicAlbumDTO implements BaseDTO<Long> {
 
     // ------ 非数据库表字段 -------
 
+    /**
+     * 关键字
+     */
+    private String keyword;
+
+    /**
+     * 首发年代
+     */
+    private String decade;
 
     @Override
     public Long getId() {

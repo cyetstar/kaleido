@@ -1,5 +1,12 @@
 package cc.onelooker.kaleido.service.tvshow.impl;
 
+import cc.onelooker.kaleido.dto.tvshow.TvshowShowGenreDTO;
+import cc.onelooker.kaleido.entity.movie.MovieBasicDO;
+import cc.onelooker.kaleido.service.tvshow.TvshowShowGenreService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zjjcnt.common.core.domain.PageResult;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -13,7 +20,10 @@ import cc.onelooker.kaleido.mapper.tvshow.TvshowShowMapper;
 
 import com.zjjcnt.common.core.utils.ColumnUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 剧集ServiceImpl
@@ -25,6 +35,9 @@ import java.util.*;
 public class TvshowShowServiceImpl extends AbstractBaseServiceImpl<TvshowShowMapper, TvshowShowDO, TvshowShowDTO> implements TvshowShowService {
 
     TvshowShowConvert convert = TvshowShowConvert.INSTANCE;
+
+    @Autowired
+    private TvshowShowGenreService tvshowShowGenreService;
 
     @Override
     protected Wrapper<TvshowShowDO> genQueryWrapper(TvshowShowDTO dto) {
@@ -42,6 +55,10 @@ public class TvshowShowServiceImpl extends AbstractBaseServiceImpl<TvshowShowMap
         query.eq(Objects.nonNull(dto.getTotalSeasons()), TvshowShowDO::getTotalSeasons, dto.getTotalSeasons());
         query.eq(Objects.nonNull(dto.getAddedAt()), TvshowShowDO::getAddedAt, dto.getAddedAt());
         query.eq(Objects.nonNull(dto.getUpdatedAt()), TvshowShowDO::getUpdatedAt, dto.getUpdatedAt());
+        if (StringUtils.isNotEmpty(dto.getKeyword())) {
+            query.like(TvshowShowDO::getTitle, dto.getKeyword()).or().like(TvshowShowDO::getOriginalTitle, dto.getKeyword());
+        }
+        query.in(CollectionUtils.isNotEmpty(dto.getIdList()), TvshowShowDO::getId, dto.getIdList());
         return query;
     }
 
@@ -53,6 +70,16 @@ public class TvshowShowServiceImpl extends AbstractBaseServiceImpl<TvshowShowMap
     @Override
     public TvshowShowDO convertToDO(TvshowShowDTO tvshowShowDTO) {
         return convert.convertToDO(tvshowShowDTO);
+    }
+
+    @Override
+    public PageResult<TvshowShowDTO> page(@Nullable TvshowShowDTO dto, Page page) {
+        if (Objects.nonNull(dto.getGenreId())) {
+            List<TvshowShowGenreDTO> tvshowShowGenreDTOList = tvshowShowGenreService.listByGenreId(dto.getGenreId());
+            List<Long> tvshowIdList = tvshowShowGenreDTOList.stream().map(TvshowShowGenreDTO::getShowId).collect(Collectors.toList());
+            dto.setIdList(tvshowIdList);
+        }
+        return super.page(dto, page);
     }
 
     @Override

@@ -68,4 +68,12 @@ public class TvshowShowGenreServiceImpl extends AbstractBaseServiceImpl<TvshowSh
         param.setShowId(showId);
         return list(param);
     }
+
+    @Override
+    public List<TvshowShowGenreDTO> listByGenreId(Long genreId) {
+        Validate.notNull(genreId);
+        TvshowShowGenreDTO param = new TvshowShowGenreDTO();
+        param.setGenreId(genreId);
+        return list(param);
+    }
 }

@@ -20,4 +20,6 @@ public interface MusicArtistAlbumService extends IBaseService<MusicArtistAlbumDT
     MusicArtistAlbumDTO findByArtistIdAndAlbumId(Long artistId, Long albumId);
 
     MusicArtistAlbumDTO insertByArtistIdAndAlbumId(Long artistId, Long albumId);
+
+    boolean deleteByAlbumId(Long albumId);
 }

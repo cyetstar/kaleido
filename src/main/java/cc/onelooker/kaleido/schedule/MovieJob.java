@@ -23,4 +23,20 @@ public class MovieJob {
     public void syncPlexMovie() {
         taskManager.syncPlexMovie();
     }
+
+
+    @Scheduled(cron = "0 30 2 * * ?")
+    public void syncPlexMovieCollection() {
+        taskManager.syncPlexMovieCollection();
+    }
+
+    @Scheduled(cron = "0 0 3 * * ?")
+    public void syncPlexTvshow() {
+        taskManager.syncPlexTvshow();
+    }
+
+    @Scheduled(cron = "0 30 3 * * ?")
+    public void syncPlexMusic() {
+        taskManager.syncPlexAlbum();
+    }
 }

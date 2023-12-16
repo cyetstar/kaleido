@@ -19,6 +19,7 @@ import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
 import cc.onelooker.kaleido.mapper.movie.MovieBasicMapper;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -125,6 +126,7 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
     }
 
     @Override
+    @Transactional
     public boolean deleteById(Serializable id) {
         movieBasicCountryService.deleteByMovieId((Long) id);
         movieBasicGenreService.deleteByMovieId((Long) id);

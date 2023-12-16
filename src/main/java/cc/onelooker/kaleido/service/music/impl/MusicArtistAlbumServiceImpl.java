@@ -76,4 +76,12 @@ public class MusicArtistAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAr
         musicArtistAlbumDTO.setAlbumId(albumId);
         return insert(musicArtistAlbumDTO);
     }
+
+    @Override
+    public boolean deleteByAlbumId(Long albumId) {
+        Validate.notNull(albumId);
+        MusicArtistAlbumDTO param = new MusicArtistAlbumDTO();
+        param.setAlbumId(albumId);
+        return delete(param);
+    }
 }

@@ -2,6 +2,8 @@ package cc.onelooker.kaleido.convert.tvshow;
 
 import cc.onelooker.kaleido.dto.tvshow.TvshowActorDTO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 import org.mapstruct.InheritInverseConfiguration;
 
@@ -31,6 +33,9 @@ public interface TvshowShowConvert {
     @InheritInverseConfiguration(name = "convert")
     TvshowShowDO convertToDO(TvshowShowDTO dto);
 
+    @Mappings({
+            @Mapping(source = "genre", target = "genreId")
+    })
     TvshowShowDTO convertToDTO(TvshowShowPageReq req);
 
     TvshowShowDTO convertToDTO(TvshowShowCreateReq req);
