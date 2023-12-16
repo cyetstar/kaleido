@@ -20,6 +20,8 @@ public class Album {
 
     private String picUrl;
 
+    private String description;
+
     private Long publishTime;
 
     private Artist artist;

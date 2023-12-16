@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.web.controller.music;
 
 import cc.onelooker.kaleido.convert.music.MusicAlbumConvert;
+import cc.onelooker.kaleido.dto.movie.req.MovieBasicDownloadPosterReq;
 import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
 import cc.onelooker.kaleido.dto.music.req.*;
@@ -16,6 +17,7 @@ import cc.onelooker.kaleido.service.music.MusicArtistService;
 import cc.onelooker.kaleido.service.music.MusicManager;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.PlexUtils;
+import cn.hutool.http.HttpUtil;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
@@ -35,6 +37,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -201,6 +204,16 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     public CommonResult<Boolean> uploadCover(MusicAlbumUploadCoverReq req) throws IOException {
         Files.write(Paths.get(req.getPath(), "cover.jpg"), req.getFile().getBytes());
         plexApiService.refresAlbumById(req.getId());
+        return CommonResult.success(true);
+    }
+
+    @PostMapping("downloadCover")
+    public CommonResult<Boolean> downloadCover(@RequestBody MusicAlbumDownloadCoverReq req) {
+        List<Metadata> metadataList = plexApiService.listTrackByAlbumId(req.getId());
+        Metadata metadata = metadataList.get(0);
+        String folder = PlexUtils.getMusicFolder(metadata.getMedia().getPart().getFile());
+        File file = Paths.get(folder, "cover.jpg").toFile();
+        HttpUtil.downloadFile(req.getUrl(), file);
         return CommonResult.success(true);
     }
 

@@ -252,8 +252,8 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("downloadPoster")
     public CommonResult<Boolean> downloadPoster(@RequestBody MovieBasicDownloadPosterReq req) {
         Metadata metadata = plexApiService.findMovieById(req.getId());
-        String movieFolder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
-        File file = Paths.get(movieFolder, "poster.jpg").toFile();
+        String folder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
+        File file = Paths.get(folder, "poster.jpg").toFile();
         HttpUtil.downloadFile(req.getUrl(), file);
         return CommonResult.success(true);
     }

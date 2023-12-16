@@ -248,6 +248,7 @@ public class MusicManager {
 
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(albumId);
         musicAlbumDTO.setNeteaseId(neteaseId);
+        musicAlbumDTO.setSummary(album.getDescription());
         musicAlbumService.update(musicAlbumDTO);
 
         List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(albumId);
