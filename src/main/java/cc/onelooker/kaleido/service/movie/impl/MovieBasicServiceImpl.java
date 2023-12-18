@@ -91,11 +91,11 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
 
     @Override
     public PageResult<MovieBasicDTO> page(@Nullable MovieBasicDTO dto, Page page) {
-        if (Objects.nonNull(dto.getGenreId())) {
+        if (dto != null && Objects.nonNull(dto.getGenreId())) {
             List<MovieBasicGenreDTO> movieBasicGenreDTOList = movieBasicGenreService.listByGenreId(dto.getGenreId());
             dto.setIdList(movieBasicGenreDTOList.stream().map(MovieBasicGenreDTO::getMovieId).collect(Collectors.toList()));
         }
-        if (Objects.nonNull(dto.getCountryId())) {
+        if (dto != null && Objects.nonNull(dto.getCountryId())) {
             List<MovieBasicCountryDTO> movieBasicCountryDTOList = movieBasicCountryService.listByCountryId(dto.getCountryId());
             dto.setIdList(movieBasicCountryDTOList.stream().map(MovieBasicCountryDTO::getMovieId).collect(Collectors.toList()));
         }

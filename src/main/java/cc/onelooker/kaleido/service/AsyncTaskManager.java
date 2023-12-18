@@ -82,10 +82,11 @@ public class AsyncTaskManager {
                 MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
                 if (movieBasicDTO == null) {
                     movieManager.syncPlexMovieAndReadNFO(metadata.getRatingKey());
+                    log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());
                 } else if (metadata.getUpdatedAt().compareTo(movieBasicDTO.getUpdatedAt()) > 0) {
                     movieManager.syncPlexMovieById(metadata.getRatingKey());
+                    log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());
                 }
-                log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());
             } catch (Exception e) {
                 log.error("【{}】ID:{}，同步错误：{}", metadata.getTitle(), metadata.getRatingKey(), e.getMessage());
             }
@@ -98,6 +99,7 @@ public class AsyncTaskManager {
         if (CollectionUtils.isNotEmpty(deleteIdList)) {
             for (Long deleteId : deleteIdList) {
                 movieBasicService.deleteById(deleteId);
+                log.info("ID:{}，删除成功", deleteId);
             }
         }
     }
@@ -115,10 +117,11 @@ public class AsyncTaskManager {
                 MovieCollectionDTO movieCollectionDTO = movieCollectionService.findById(metadata.getRatingKey());
                 if (movieCollectionDTO == null) {
                     movieManager.syncPlexMovieCollection(metadata);
+                    log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());
                 } else if (movieCollectionDTO.getUpdatedAt() == null || metadata.getUpdatedAt().compareTo(movieCollectionDTO.getUpdatedAt()) > 0) {
                     movieManager.syncPlexMovieCollection(metadata);
+                    log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());
                 }
-                log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());
             } catch (Exception e) {
                 log.error("【{}】ID:{}，同步错误：{}", metadata.getTitle(), metadata.getRatingKey(), e.getMessage());
             }
@@ -131,6 +134,7 @@ public class AsyncTaskManager {
         if (CollectionUtils.isNotEmpty(deleteIdList)) {
             for (Long deleteId : deleteIdList) {
                 movieCollectionService.deleteById(deleteId);
+                log.info("ID:{}，删除成功", deleteId);
             }
         }
     }
@@ -147,10 +151,11 @@ public class AsyncTaskManager {
                 TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(metadata.getRatingKey());
                 if (tvshowEpisodeDTO == null) {
                     tvshowManager.syncPlexEpisodeById(metadata.getRatingKey());
+                    log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());
                 } else if (metadata.getUpdatedAt().compareTo(tvshowEpisodeDTO.getUpdatedAt()) > 0) {
                     tvshowManager.syncPlexEpisodeById(metadata.getRatingKey());
+                    log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());
                 }
-                log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());
             } catch (Exception e) {
                 log.error("【{}】ID:{}，同步错误：{}", metadata.getTitle(), metadata.getRatingKey(), e.getMessage());
             }
@@ -163,6 +168,7 @@ public class AsyncTaskManager {
         if (CollectionUtils.isNotEmpty(deleteIdList)) {
             for (Long deleteId : deleteIdList) {
                 tvshowEpisodeService.deleteById(deleteId);
+                log.info("ID:{}，删除成功", deleteId);
             }
         }
     }
@@ -180,10 +186,11 @@ public class AsyncTaskManager {
                 MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(metadata.getRatingKey());
                 if (musicAlbumDTO == null) {
                     musicManager.syncPlexAlbumById(libraryPath, metadata.getRatingKey());
+                    log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());
                 } else if (metadata.getUpdatedAt().compareTo(musicAlbumDTO.getUpdatedAt()) > 0) {
                     musicManager.syncPlexAlbumById(libraryPath, metadata.getRatingKey());
+                    log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());
                 }
-                log.info("【{}】ID:{}，同步成功", metadata.getTitle(), metadata.getRatingKey());
             } catch (Exception e) {
                 log.error("【{}】ID:{}，同步错误：{}", metadata.getTitle(), metadata.getRatingKey(), e.getMessage());
             }
@@ -196,6 +203,7 @@ public class AsyncTaskManager {
         if (CollectionUtils.isNotEmpty(deleteIdList)) {
             for (Long deleteId : deleteIdList) {
                 musicAlbumService.deleteById(deleteId);
+                log.info("ID:{}，删除成功", deleteId);
             }
         }
     }

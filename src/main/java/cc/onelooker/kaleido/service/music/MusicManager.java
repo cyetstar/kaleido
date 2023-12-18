@@ -77,19 +77,20 @@ public class MusicManager {
             musicAlbumDTO.setTitle(metadata.getTitle());
             musicAlbumDTO.setArtists(metadata.getParentTitle());
             musicAlbumDTO.setSummary(metadata.getSummary());
-            musicAlbumDTO.setType(metadata.getType());
-            musicAlbumDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
             musicAlbumDTO.setThumb(metadata.getThumb());
+            musicAlbumDTO.setYear(metadata.getYear());
+            musicAlbumDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
             musicAlbumDTO.setAddedAt(metadata.getAddedAt());
             musicAlbumDTO.setUpdatedAt(metadata.getUpdatedAt());
             musicAlbumDTO = musicAlbumService.insert(musicAlbumDTO);
 
             musicArtistAlbumService.insertByArtistIdAndAlbumId(musicArtistDTO.getId(), musicAlbumDTO.getId());
         } else {
+            musicAlbumDTO.setTitle(metadata.getTitle());
+            musicAlbumDTO.setArtists(metadata.getParentTitle());
             musicAlbumDTO.setThumb(metadata.getThumb());
             musicAlbumDTO.setYear(metadata.getYear());
             musicAlbumDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
-            musicAlbumDTO.setSummary(metadata.getSummary());
             musicAlbumDTO.setUpdatedAt(metadata.getUpdatedAt());
             musicAlbumService.update(musicAlbumDTO);
 

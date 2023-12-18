@@ -74,7 +74,7 @@ public class TvshowShowServiceImpl extends AbstractBaseServiceImpl<TvshowShowMap
 
     @Override
     public PageResult<TvshowShowDTO> page(@Nullable TvshowShowDTO dto, Page page) {
-        if (Objects.nonNull(dto.getGenreId())) {
+        if (dto != null && Objects.nonNull(dto.getGenreId())) {
             List<TvshowShowGenreDTO> tvshowShowGenreDTOList = tvshowShowGenreService.listByGenreId(dto.getGenreId());
             List<Long> tvshowIdList = tvshowShowGenreDTOList.stream().map(TvshowShowGenreDTO::getShowId).collect(Collectors.toList());
             dto.setIdList(tvshowIdList);
