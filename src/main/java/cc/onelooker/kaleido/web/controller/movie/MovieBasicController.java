@@ -14,7 +14,7 @@ import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
-import cc.onelooker.kaleido.utils.PlexUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cn.hutool.http.HttpUtil;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
@@ -171,6 +171,13 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         return CommonResult.success(true);
     }
 
+    @PostMapping("updateSource")
+    @ApiOperation(value = "同步资料库")
+    public CommonResult<Boolean> updateSource() {
+        taskManager.updateMovieSource();
+        return CommonResult.success(true);
+    }
+
     @PostMapping("syncPlexById")
     @ApiOperation(value = "同步资料")
     public CommonResult<Boolean> syncPlexById(@RequestBody MovieBasicSyncPlexByIdReq req) {
@@ -214,7 +221,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @ApiOperation(value = "查看NFO")
     public HttpEntity<byte[]> viewNFO(Long id) throws IOException {
         Metadata metadata = plexApiService.findMovieById(id);
-        String movieFolder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
+        String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
         File file = Paths.get(movieFolder, "movie.nfo").toFile();
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(FileUtils.readFileToByteArray(file));
     }
@@ -237,7 +244,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @ApiOperation(value = "获取目录")
     public CommonResult<String> viewPath(Long id) {
         Metadata metadata = plexApiService.findMovieById(id);
-        String folder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
+        String folder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
         return CommonResult.success(folder);
     }
 
@@ -252,7 +259,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("downloadPoster")
     public CommonResult<Boolean> downloadPoster(@RequestBody MovieBasicDownloadPosterReq req) {
         Metadata metadata = plexApiService.findMovieById(req.getId());
-        String folder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
+        String folder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
         File file = Paths.get(folder, "poster.jpg").toFile();
         HttpUtil.downloadFile(req.getUrl(), file);
         return CommonResult.success(true);

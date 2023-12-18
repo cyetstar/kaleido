@@ -3,16 +3,23 @@ package cc.onelooker.kaleido.service.movie;
 import cc.onelooker.kaleido.dto.movie.*;
 import cc.onelooker.kaleido.enums.ActorRole;
 import cc.onelooker.kaleido.enums.SourceType;
+import cc.onelooker.kaleido.nfo.ActorNFO;
 import cc.onelooker.kaleido.nfo.MovieNFO;
+import cc.onelooker.kaleido.nfo.RatingNFO;
 import cc.onelooker.kaleido.nfo.UniqueidNFO;
 import cc.onelooker.kaleido.third.douban.DoubanApiService;
 import cc.onelooker.kaleido.third.douban.Movie;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.third.plex.Tag;
-import cc.onelooker.kaleido.utils.PlexUtils;
+import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.NioFileUtils;
+import cn.hutool.http.HttpUtil;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,11 +27,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -46,9 +59,6 @@ public class MovieManager {
     private MovieGenreService movieGenreService;
 
     @Autowired
-    private MovieLanguageService movieLanguageService;
-
-    @Autowired
     private MovieAkaService movieAkaService;
 
     @Autowired
@@ -67,13 +77,13 @@ public class MovieManager {
     private MovieBasicGenreService movieBasicGenreService;
 
     @Autowired
-    private MovieBasicLanguageService movieBasicLanguageService;
-
-    @Autowired
     private MovieBasicCollectionService movieBasicCollectionService;
 
     @Autowired
     private MovieBasicActorService movieBasicActorService;
+
+    @Autowired
+    private MovieThreadService movieThreadService;
 
     @Autowired
     private PlexApiService plexApiService;
@@ -255,7 +265,7 @@ public class MovieManager {
     @Transactional
     public void readNFOById(Metadata metadata) throws JAXBException {
         Long movieId = metadata.getRatingKey();
-        String movieFolder = PlexUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
+        String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
         File file = Paths.get(movieFolder, "movie.nfo").toFile();
         MovieNFO movieNFO = parseNFO(file);
         String doubanId = getUniqueid(movieNFO.getUniqueids(), SourceType.douban.name());
@@ -328,5 +338,121 @@ public class MovieManager {
             plexApiService.deleteCollection(id);
             movieCollectionService.deleteById(id);
         }
+    }
+
+    public void updateMovieSource(Path path) {
+        try {
+            String movieLibraryPath = ConfigUtils.getSysConfig("movieLibraryPath");
+            if (Files.isDirectory(path)) {
+                Optional<Path> optionalNFOPath = Files.list(path).filter(s -> FilenameUtils.isExtension(s.getFileName().toString(), "nfo")).findFirst();
+                if (optionalNFOPath.isPresent()) {
+                    MovieNFO movieNFO = parseNFO(optionalNFOPath.get().toFile());
+                    Movie movie = null;
+                    if (StringUtils.isNotEmpty(movieNFO.getDoubanid())) {
+                        movie = doubanApiService.findMovieById(movieNFO.getDoubanid());
+                    } else if (StringUtils.isNotEmpty(movieNFO.getImdbid())) {
+                        movie = doubanApiService.findMovieByImdbId(movieNFO.getImdbid());
+                    }
+                    if (movie != null) {
+                        //存在豆瓣信息，则删除老NFO文件，生成新NFO文件
+                        movie.setImdb(movieNFO.getImdbid());
+                        Files.delete(optionalNFOPath.get());
+                        generateNFO(movieNFO, movie, path);
+                    } else {
+                        //重命名
+                        Files.move(optionalNFOPath.get(), optionalNFOPath.get().resolve("movie.nfo"));
+                    }
+                    NioFileUtils.moveDir(path, Paths.get(movieLibraryPath));
+                } else {
+                    Files.list(path).forEach(this::updateMovieSource);
+                }
+            } else {
+                String filename = path.getFileName().toString();
+                if (!KaleidoUtils.isVideoFile(filename)) {
+                    return;
+                }
+                MovieThreadDTO movieThreadDTO = movieThreadService.findByFilename(filename);
+                if (movieThreadDTO == null) {
+                    return;
+                }
+                Movie movie = null;
+                if (StringUtils.isNotEmpty(movieThreadDTO.getDoubanId())) {
+                    movie = doubanApiService.findMovieById(movieThreadDTO.getDoubanId());
+                } else if (StringUtils.isNotEmpty(movieThreadDTO.getImdb())) {
+                    movie = doubanApiService.findMovieByImdbId(movieThreadDTO.getImdb());
+                }
+                if (movie == null) {
+                    return;
+                }
+                movie.setImdb(movieThreadDTO.getImdb());
+                Path folderPath = createFolderPath(movie, path);
+                Files.move(path, folderPath.resolve(path.getFileName()));
+                downloadPoster(movie, folderPath);
+                generateNFO(null, movie, folderPath);
+                NioFileUtils.moveDir(folderPath, Paths.get(movieLibraryPath));
+            }
+        } catch (Exception e) {
+            log.error("更新电影源发生错误", e);
+        }
+    }
+
+    private Path createFolderPath(Movie movie, Path path) throws IOException {
+        String folderName = movie.getTitle() + " (" + movie.getYear() + ")";
+        return Files.createDirectory(path.getParent().resolve(folderName));
+    }
+
+    private void downloadPoster(Movie movie, Path folderPath) {
+        Movie.Thumb thumb = movie.getImages();
+        String large = thumb.getLarge();
+        HttpUtil.downloadFile(large, folderPath.resolve("poster.jpg").toFile());
+    }
+
+    private void generateNFO(MovieNFO movieNFO, Movie movie, Path folderPath) throws JAXBException {
+        if (movieNFO == null) {
+            movieNFO = new MovieNFO();
+        }
+        movieNFO.setTitle(movie.getTitle());
+        movieNFO.setOriginaltitle(movie.getOriginalTitle());
+        movieNFO.setYear(movie.getYear());
+        movieNFO.setRatings(Lists.newArrayList(toRatingNFO(movie.getRating())));
+        movieNFO.setUniqueids(Lists.newArrayList(toUniqueidNFO(SourceType.douban, movie.getId()), toUniqueidNFO(SourceType.imdb, movie.getImdb())));
+        movieNFO.setAkas(movie.getAka());
+        movieNFO.setPlot(movie.getSummary());
+        movieNFO.setGenres(movie.getGenres());
+        movieNFO.setCountries(movie.getCountries());
+        if (CollectionUtils.isNotEmpty(movie.getDirectors())) {
+            movieNFO.setDirectors(movie.getDirectors().stream().map(Movie.Cast::getName).collect(Collectors.toList()));
+        }
+        movieNFO.setActors(toActorNFOs(movie.getCasts()));
+        JAXBContext context = JAXBContext.newInstance(MovieNFO.class);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.marshal(movieNFO, folderPath.resolve("movie.nfo").toFile());
+    }
+
+    private RatingNFO toRatingNFO(Movie.Rating rating) {
+        RatingNFO ratingNFO = new RatingNFO();
+        ratingNFO.setName(SourceType.douban.name());
+        ratingNFO.setValue(String.valueOf(rating.getAverage()));
+        return ratingNFO;
+    }
+
+    private UniqueidNFO toUniqueidNFO(SourceType type, String value) {
+        UniqueidNFO uniqueidNFO = new UniqueidNFO();
+        uniqueidNFO.setType(type.name());
+        uniqueidNFO.setValue(value);
+        return uniqueidNFO;
+    }
+
+    private List<ActorNFO> toActorNFOs(List<Movie.Cast> castList) {
+        List<ActorNFO> actorNFOList = Lists.newArrayList();
+        if (castList != null) {
+            for (Movie.Cast cast : castList) {
+                ActorNFO actorNFO = new ActorNFO();
+                actorNFO.setName(cast.getName());
+                actorNFO.setThumb(cast.getAvatars().getLarge());
+                actorNFOList.add(actorNFO);
+            }
+        }
+        return actorNFOList;
     }
 }

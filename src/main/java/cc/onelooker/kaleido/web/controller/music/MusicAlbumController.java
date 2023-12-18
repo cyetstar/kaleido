@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.web.controller.music;
 
 import cc.onelooker.kaleido.convert.music.MusicAlbumConvert;
-import cc.onelooker.kaleido.dto.movie.req.MovieBasicDownloadPosterReq;
 import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
 import cc.onelooker.kaleido.dto.music.req.*;
@@ -16,7 +15,7 @@ import cc.onelooker.kaleido.service.music.MusicAlbumService;
 import cc.onelooker.kaleido.service.music.MusicArtistService;
 import cc.onelooker.kaleido.service.music.MusicManager;
 import cc.onelooker.kaleido.utils.ConfigUtils;
-import cc.onelooker.kaleido.utils.PlexUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cn.hutool.http.HttpUtil;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
@@ -29,11 +28,9 @@ import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -41,8 +38,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -195,7 +190,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     public CommonResult<String> viewPath(Long id) {
         List<Metadata> metadataList = plexApiService.listTrackByAlbumId(id);
         Metadata metadata = metadataList.get(0);
-        String folder = PlexUtils.getMusicFolder(metadata.getMedia().getPart().getFile());
+        String folder = KaleidoUtils.getMusicFolder(metadata.getMedia().getPart().getFile());
         return CommonResult.success(folder);
     }
 
@@ -211,7 +206,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     public CommonResult<Boolean> downloadCover(@RequestBody MusicAlbumDownloadCoverReq req) {
         List<Metadata> metadataList = plexApiService.listTrackByAlbumId(req.getId());
         Metadata metadata = metadataList.get(0);
-        String folder = PlexUtils.getMusicFolder(metadata.getMedia().getPart().getFile());
+        String folder = KaleidoUtils.getMusicFolder(metadata.getMedia().getPart().getFile());
         File file = Paths.get(folder, "cover.jpg").toFile();
         HttpUtil.downloadFile(req.getUrl(), file);
         return CommonResult.success(true);

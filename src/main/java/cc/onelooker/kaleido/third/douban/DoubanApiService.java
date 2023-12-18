@@ -2,6 +2,7 @@ package cc.onelooker.kaleido.third.douban;
 
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.alibaba.fastjson.JSONObject;
+import com.zjjcnt.common.util.constant.Constants;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ public class DoubanApiService {
     private final static String URL = "https://api.douban.com";
     private final static String API_SEARCH_MOVIE = "/v2/movie/search";
     private final static String API_FIND_MOVIE = "/v2/movie/subject/{doubanId}";
+    private final static String API_FIND_MOVIE_BY_IMDB = "/v2/movie/imdb/{imdbId}";
     private String apikey = null;
 
     @Autowired
@@ -63,5 +65,17 @@ public class DoubanApiService {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<Movie> response = restTemplate.postForEntity(URL + API_FIND_MOVIE, request, Movie.class, doubanId);
         return response.getBody();
+    }
+
+    public Movie findMovieByImdbId(String imdbId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("apikey", this.apikey);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+        ResponseEntity<JSONObject> response = restTemplate.postForEntity(URL + API_FIND_MOVIE_BY_IMDB, request, JSONObject.class, imdbId);
+        JSONObject jsonObject = response.getBody();
+        String doubanId = StringUtils.substringAfterLast(jsonObject.getString("id"), Constants.SLASH);
+        return findMovieById(doubanId);
     }
 }

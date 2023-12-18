@@ -54,6 +54,7 @@ public class Movie {
     @JsonProperty("ratings_count")
     private Integer ratingsCount;
     private List<String> aka;
+    private String imdb;
 
     @Data
     public static class Rating {
@@ -76,6 +77,16 @@ public class Movie {
         private String small;
         private String large;
         private String medium;
+
+        @JsonProperty
+        public String getMedium() {
+            return medium.replace("s_ratio_poster", "m_ratio_poster");
+        }
+
+        @JsonProperty
+        public String getLarge() {
+            return large.replace("s_ratio_poster", "l_ratio_poster");
+        }
     }
 
 }

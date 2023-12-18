@@ -54,7 +54,7 @@ public interface MovieBasicConvert {
 
     @Mappings({
             @Mapping(source = "id", target = "doubanId"),
-            @Mapping(source = "images.small", target = "picUrl")
+            @Mapping(source = "images.large", target = "picUrl")
     })
     MovieBasicSearchDoubanResp convertToSearchDoubanResp(Movie movie);
 

@@ -82,4 +82,9 @@ public class MovieNFO {
     @XmlElement(name = "aka")
     private List<String> akas;
 
+    //movie robot
+    private String imdbid;
+    private String doubanid;
+
+
 }

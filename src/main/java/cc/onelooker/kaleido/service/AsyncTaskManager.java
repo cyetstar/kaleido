@@ -2,10 +2,11 @@ package cc.onelooker.kaleido.service;
 
 import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
 import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
+import cc.onelooker.kaleido.dto.movie.MovieThreadDTO;
 import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.tvshow.TvshowEpisodeDTO;
-import cc.onelooker.kaleido.service.movie.MovieBasicCollectionService;
-import cc.onelooker.kaleido.service.movie.MovieCollectionService;
+import cc.onelooker.kaleido.nfo.MovieNFO;
+import cc.onelooker.kaleido.service.movie.*;
 import cc.onelooker.kaleido.service.music.MusicAlbumService;
 import cc.onelooker.kaleido.service.music.MusicManager;
 import cc.onelooker.kaleido.service.music.impl.MusicAlbumServiceImpl;
@@ -13,9 +14,8 @@ import cc.onelooker.kaleido.service.tvshow.TvshowEpisodeService;
 import cc.onelooker.kaleido.service.tvshow.TvshowManager;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.service.movie.MovieBasicService;
-import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
@@ -25,16 +25,23 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @Author xiadawei
@@ -210,12 +217,13 @@ public class AsyncTaskManager {
 
     @Async
     public void readNFO() {
-        List<Long> movieIdList = listMovieId();
-        for (Long movieId : movieIdList) {
+        List<MovieBasicDTO> movieBasicDTOList = movieBasicService.list(null);
+        List<Long> idList = movieBasicDTOList.stream().map(MovieBasicDTO::getId).collect(Collectors.toList());
+        for (Long id : idList) {
             try {
-                movieManager.readNFOById(movieId);
+                movieManager.readNFOById(id);
             } catch (Exception e) {
-                log.error("ID:{}，读取NFO错误：{}", movieId, e.getMessage());
+                log.error("ID:{}，读取NFO错误：{}", id, e.getMessage());
             }
         }
     }
@@ -231,17 +239,20 @@ public class AsyncTaskManager {
         }
     }
 
-    private List<Long> listMovieId() {
-        int pageNumber = 1;
-        List<Long> idList = Lists.newArrayList();
-        while (true) {
-            PageResult<MovieBasicDTO> page = movieBasicService.page(null, Page.of(pageNumber, 1000));
-            if (page.isEmpty()) {
-                break;
-            }
-            idList.addAll(page.getRecords().stream().map(MovieBasicDTO::getId).collect(Collectors.toList()));
-            pageNumber++;
+    @Async
+    public void updateMovieSource() {
+        String movieDownloadPath = ConfigUtils.getSysConfig("movieDownloadPath");
+        try {
+            Files.list(Paths.get(movieDownloadPath)).forEach(s -> {
+                try {
+                    movieManager.updateMovieSource(s);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (IOException e) {
+            log.error("更新发生错误", e);
         }
-        return idList;
     }
+
 }
