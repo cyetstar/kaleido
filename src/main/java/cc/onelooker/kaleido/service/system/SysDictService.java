@@ -1,11 +1,11 @@
 package cc.onelooker.kaleido.service.system;
 
-import com.zjjcnt.common.core.service.IBaseService;
 import cc.onelooker.kaleido.dto.system.SysDictDTO;
 import cc.onelooker.kaleido.dto.system.req.SysDictCreateReq;
 import cc.onelooker.kaleido.dto.system.req.SysDictPageReq;
 import cc.onelooker.kaleido.dto.system.req.SysDictUpdateReq;
 import cc.onelooker.kaleido.dto.system.resp.SysDictPageResp;
+import com.zjjcnt.common.core.service.IBaseService;
 
 import java.util.List;
 

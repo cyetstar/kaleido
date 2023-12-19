@@ -1,8 +1,5 @@
 package cc.onelooker.kaleido.service.system.impl;
 
-import cc.onelooker.kaleido.utils.CurrentUserUtils;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import cc.onelooker.kaleido.convert.system.SysUserConvert;
 import cc.onelooker.kaleido.dto.system.SysUserDTO;
 import cc.onelooker.kaleido.entity.system.SysUserDO;
@@ -10,6 +7,9 @@ import cc.onelooker.kaleido.mapper.system.SysUserMapper;
 import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
 import cc.onelooker.kaleido.service.system.SysUserRoleService;
 import cc.onelooker.kaleido.service.system.SysUserService;
+import cc.onelooker.kaleido.utils.CurrentUserUtils;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;

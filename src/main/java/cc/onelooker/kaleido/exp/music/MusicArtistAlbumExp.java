@@ -1,9 +1,7 @@
 package cc.onelooker.kaleido.exp.music;
 
-import lombok.Data;
 import com.alibaba.excel.annotation.ExcelProperty;
-
-import java.lang.Long;
+import lombok.Data;
 
 /**
  * 艺术家专辑关联表导出对象

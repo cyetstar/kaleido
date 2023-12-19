@@ -1,24 +1,17 @@
 package cc.onelooker.kaleido.convert.trade;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.trade.TradeSymbolDTO;
-import cc.onelooker.kaleido.entity.trade.TradeSymbolDO;
-import cc.onelooker.kaleido.dto.trade.req.TradeSymbolPageReq;
 import cc.onelooker.kaleido.dto.trade.req.TradeSymbolCreateReq;
+import cc.onelooker.kaleido.dto.trade.req.TradeSymbolPageReq;
 import cc.onelooker.kaleido.dto.trade.req.TradeSymbolUpdateReq;
+import cc.onelooker.kaleido.dto.trade.resp.TradeSymbolCreateResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeSymbolPageResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeSymbolViewResp;
-import cc.onelooker.kaleido.dto.trade.resp.TradeSymbolCreateResp;
+import cc.onelooker.kaleido.entity.trade.TradeSymbolDO;
 import cc.onelooker.kaleido.exp.trade.TradeSymbolExp;
-
-import java.lang.String;
-import java.lang.Long;
-import java.lang.Integer;
-import com.zjjcnt.common.core.annotation.Dict;
-import java.math.BigDecimal;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 /**
 * 交易商品Convert
 *

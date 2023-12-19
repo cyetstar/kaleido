@@ -1,12 +1,9 @@
 package cc.onelooker.kaleido.exp.tvshow;
 
-import lombok.Data;
 import com.alibaba.excel.annotation.ExcelProperty;
+import lombok.Data;
 
 import java.math.BigDecimal;
-import java.lang.Long;
-import java.lang.String;
-import java.lang.Integer;
 
 /**
  * 剧集导出对象

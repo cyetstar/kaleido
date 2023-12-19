@@ -1,8 +1,8 @@
 package cc.onelooker.kaleido.service.system;
 
+import cc.onelooker.kaleido.dto.system.SysRoleDTO;
 import cc.onelooker.kaleido.service.IDictionaryService;
 import com.zjjcnt.common.core.service.IBaseService;
-import cc.onelooker.kaleido.dto.system.SysRoleDTO;
 
 import java.util.List;
 

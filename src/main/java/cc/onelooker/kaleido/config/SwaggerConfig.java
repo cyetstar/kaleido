@@ -2,7 +2,6 @@ package cc.onelooker.kaleido.config;
 
 import cc.onelooker.kaleido.config.properties.JwtProperties;
 import cc.onelooker.kaleido.config.properties.SwaggerProperties;
-import cn.hutool.extra.spring.SpringUtil;
 import com.github.xiaoymin.knife4j.spring.extension.OpenApiExtensionResolver;
 import com.zjjcnt.common.core.utils.ApplicationContextHelper;
 import io.swagger.models.auth.In;

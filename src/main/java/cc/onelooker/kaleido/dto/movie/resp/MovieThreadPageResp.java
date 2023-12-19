@@ -1,15 +1,10 @@
 package cc.onelooker.kaleido.dto.movie.resp;
 
-import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
-import java.lang.Long;
-import java.lang.Double;
 import java.util.Date;
-import java.lang.Boolean;
-import java.lang.String;
-import java.lang.Integer;
 
 /**
  * 电影发布记录响应对象

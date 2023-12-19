@@ -1,6 +1,5 @@
 package cc.onelooker.kaleido.service.tvshow;
 
-import cc.onelooker.kaleido.dto.movie.MovieBasicActorDTO;
 import cc.onelooker.kaleido.dto.tvshow.*;
 import cc.onelooker.kaleido.enums.ActorRole;
 import cc.onelooker.kaleido.third.plex.Metadata;

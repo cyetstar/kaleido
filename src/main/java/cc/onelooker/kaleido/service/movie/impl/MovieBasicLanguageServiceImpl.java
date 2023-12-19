@@ -1,20 +1,18 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
-import org.apache.commons.lang3.Validate;
-import org.springframework.stereotype.Service;
+import cc.onelooker.kaleido.convert.movie.MovieBasicLanguageConvert;
+import cc.onelooker.kaleido.dto.movie.MovieBasicLanguageDTO;
+import cc.onelooker.kaleido.entity.movie.MovieBasicLanguageDO;
+import cc.onelooker.kaleido.mapper.movie.MovieBasicLanguageMapper;
+import cc.onelooker.kaleido.service.movie.MovieBasicLanguageService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.movie.MovieBasicLanguageService;
-import cc.onelooker.kaleido.entity.movie.MovieBasicLanguageDO;
-import cc.onelooker.kaleido.dto.movie.MovieBasicLanguageDTO;
-import cc.onelooker.kaleido.convert.movie.MovieBasicLanguageConvert;
-import cc.onelooker.kaleido.mapper.movie.MovieBasicLanguageMapper;
+import org.apache.commons.lang3.Validate;
+import org.springframework.stereotype.Service;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 电影语言关联表ServiceImpl

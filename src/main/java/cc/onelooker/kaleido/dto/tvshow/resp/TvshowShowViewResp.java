@@ -1,15 +1,10 @@
 package cc.onelooker.kaleido.dto.tvshow.resp;
 
-import cc.onelooker.kaleido.dto.movie.resp.MovieBasicViewResp;
 import com.zjjcnt.common.core.annotation.Dict;
-import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
-import java.math.BigDecimal;
-import java.lang.Long;
-import java.lang.String;
-import java.lang.Integer;
 import java.util.List;
 
 /**

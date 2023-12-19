@@ -1,13 +1,8 @@
 package cc.onelooker.kaleido.mapper.trade;
 
-import org.apache.ibatis.annotations.Mapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import cc.onelooker.kaleido.entity.trade.TradeRuleDO;
-
-import java.lang.Long;
-import java.math.BigDecimal;
-import java.lang.String;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 
 /**

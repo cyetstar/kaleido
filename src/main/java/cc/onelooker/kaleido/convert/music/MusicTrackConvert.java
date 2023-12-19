@@ -1,19 +1,18 @@
 package cc.onelooker.kaleido.convert.music;
 
-import cc.onelooker.kaleido.dto.music.resp.MusicTrackListByAlbumIdResp;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.music.MusicTrackDTO;
-import cc.onelooker.kaleido.entity.music.MusicTrackDO;
-import cc.onelooker.kaleido.dto.music.req.MusicTrackPageReq;
 import cc.onelooker.kaleido.dto.music.req.MusicTrackCreateReq;
+import cc.onelooker.kaleido.dto.music.req.MusicTrackPageReq;
 import cc.onelooker.kaleido.dto.music.req.MusicTrackUpdateReq;
+import cc.onelooker.kaleido.dto.music.resp.MusicTrackCreateResp;
+import cc.onelooker.kaleido.dto.music.resp.MusicTrackListByAlbumIdResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicTrackPageResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicTrackViewResp;
-import cc.onelooker.kaleido.dto.music.resp.MusicTrackCreateResp;
+import cc.onelooker.kaleido.entity.music.MusicTrackDO;
 import cc.onelooker.kaleido.exp.music.MusicTrackExp;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
 /**
 * 曲目Convert

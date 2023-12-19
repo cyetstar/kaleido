@@ -1,24 +1,17 @@
 package cc.onelooker.kaleido.convert.trade;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.trade.TradeLogDTO;
-import cc.onelooker.kaleido.entity.trade.TradeLogDO;
-import cc.onelooker.kaleido.dto.trade.req.TradeLogPageReq;
 import cc.onelooker.kaleido.dto.trade.req.TradeLogCreateReq;
+import cc.onelooker.kaleido.dto.trade.req.TradeLogPageReq;
 import cc.onelooker.kaleido.dto.trade.req.TradeLogUpdateReq;
+import cc.onelooker.kaleido.dto.trade.resp.TradeLogCreateResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeLogPageResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeLogViewResp;
-import cc.onelooker.kaleido.dto.trade.resp.TradeLogCreateResp;
+import cc.onelooker.kaleido.entity.trade.TradeLogDO;
 import cc.onelooker.kaleido.exp.trade.TradeLogExp;
-
-import java.lang.Long;
-import com.zjjcnt.common.core.annotation.Dict;
-import java.lang.String;
-import java.math.BigDecimal;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 /**
 * 交易记录Convert
 *

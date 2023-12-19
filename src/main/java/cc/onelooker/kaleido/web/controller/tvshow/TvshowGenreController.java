@@ -1,20 +1,26 @@
 package cc.onelooker.kaleido.web.controller.tvshow;
 
+import cc.onelooker.kaleido.convert.tvshow.TvshowGenreConvert;
+import cc.onelooker.kaleido.dto.tvshow.TvshowGenreDTO;
+import cc.onelooker.kaleido.dto.tvshow.req.TvshowGenreCreateReq;
+import cc.onelooker.kaleido.dto.tvshow.req.TvshowGenrePageReq;
+import cc.onelooker.kaleido.dto.tvshow.req.TvshowGenreUpdateReq;
+import cc.onelooker.kaleido.dto.tvshow.resp.TvshowGenreCreateResp;
+import cc.onelooker.kaleido.dto.tvshow.resp.TvshowGenrePageResp;
+import cc.onelooker.kaleido.dto.tvshow.resp.TvshowGenreViewResp;
+import cc.onelooker.kaleido.exp.tvshow.TvshowGenreExp;
+import cc.onelooker.kaleido.service.tvshow.TvshowGenreService;
+import com.zjjcnt.common.core.domain.CommonResult;
+import com.zjjcnt.common.core.domain.ExportColumn;
+import com.zjjcnt.common.core.domain.PageParam;
+import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.service.IBaseService;
+import com.zjjcnt.common.core.web.controller.AbstractCrudController;
+import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import com.zjjcnt.common.core.domain.*;
-import com.zjjcnt.common.core.service.IBaseService;
-import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
-import cc.onelooker.kaleido.service.tvshow.TvshowGenreService;
-import cc.onelooker.kaleido.dto.tvshow.TvshowGenreDTO;
-import cc.onelooker.kaleido.convert.tvshow.TvshowGenreConvert;
-import cc.onelooker.kaleido.dto.tvshow.req.*;
-import cc.onelooker.kaleido.dto.tvshow.resp.*;
-import cc.onelooker.kaleido.exp.tvshow.TvshowGenreExp;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;

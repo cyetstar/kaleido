@@ -3,8 +3,6 @@ package cc.onelooker.kaleido.service.movie;
 import cc.onelooker.kaleido.dto.movie.MovieBasicGenreDTO;
 import com.zjjcnt.common.core.service.IBaseService;
 
-import cc.onelooker.kaleido.dto.movie.MovieBasicGenreDTO;
-
 import java.util.List;
 
 /**

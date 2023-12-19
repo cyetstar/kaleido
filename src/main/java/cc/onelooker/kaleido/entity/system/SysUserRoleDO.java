@@ -1,11 +1,11 @@
 package cc.onelooker.kaleido.entity.system;
 
+import cc.onelooker.kaleido.dto.system.SysUserRoleDTO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zjjcnt.common.core.entity.IdEntity;
-import cc.onelooker.kaleido.dto.system.SysUserRoleDTO;
 import lombok.Data;
 
 import java.util.Date;

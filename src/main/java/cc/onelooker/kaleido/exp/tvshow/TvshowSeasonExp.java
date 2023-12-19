@@ -1,11 +1,7 @@
 package cc.onelooker.kaleido.exp.tvshow;
 
-import lombok.Data;
 import com.alibaba.excel.annotation.ExcelProperty;
-
-import java.lang.Long;
-import java.lang.String;
-import java.lang.Integer;
+import lombok.Data;
 
 /**
  * 单季导出对象

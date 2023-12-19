@@ -2,12 +2,6 @@ package cc.onelooker.kaleido.dto.trade;
 
 import cc.onelooker.kaleido.dto.ISystem;
 import lombok.Data;
-import com.zjjcnt.common.core.dto.BaseDTO;
-
-import java.lang.Long;
-import java.lang.String;
-import java.math.BigDecimal;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 
 /**
  * 交易账户DTO

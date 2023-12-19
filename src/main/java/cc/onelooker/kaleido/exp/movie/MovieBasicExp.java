@@ -1,13 +1,9 @@
 package cc.onelooker.kaleido.exp.movie;
 
-import lombok.Data;
 import com.alibaba.excel.annotation.ExcelProperty;
+import lombok.Data;
 
 import java.math.BigDecimal;
-import java.lang.Long;
-import java.lang.String;
-import java.lang.Integer;
-import com.zjjcnt.common.core.annotation.StringDateFormat;
 
 /**
  * 电影导出对象

@@ -1,7 +1,7 @@
 package cc.onelooker.kaleido.mapper.system;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import cc.onelooker.kaleido.entity.system.SysDeptDO;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

@@ -1,27 +1,20 @@
 package cc.onelooker.kaleido.convert.trade;
 
-import cc.onelooker.kaleido.dto.trade.resp.TradeGridListByStrategyIdResp;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.trade.TradeGridDTO;
-import cc.onelooker.kaleido.entity.trade.TradeGridDO;
-import cc.onelooker.kaleido.dto.trade.req.TradeGridPageReq;
 import cc.onelooker.kaleido.dto.trade.req.TradeGridCreateReq;
+import cc.onelooker.kaleido.dto.trade.req.TradeGridPageReq;
 import cc.onelooker.kaleido.dto.trade.req.TradeGridUpdateReq;
+import cc.onelooker.kaleido.dto.trade.resp.TradeGridCreateResp;
+import cc.onelooker.kaleido.dto.trade.resp.TradeGridListByStrategyIdResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeGridPageResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeGridViewResp;
-import cc.onelooker.kaleido.dto.trade.resp.TradeGridCreateResp;
+import cc.onelooker.kaleido.entity.trade.TradeGridDO;
 import cc.onelooker.kaleido.exp.trade.TradeGridExp;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
-import java.lang.Long;
-import java.lang.String;
-import java.math.BigDecimal;
-import java.lang.Integer;
 import java.util.List;
-
-import com.zjjcnt.common.core.annotation.Dict;
 /**
 * 交易网格Convert
 *

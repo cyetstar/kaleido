@@ -1,27 +1,33 @@
 package cc.onelooker.kaleido.web.controller.movie;
 
-import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
+import cc.onelooker.kaleido.convert.movie.MovieCollectionConvert;
 import cc.onelooker.kaleido.dto.movie.MovieBasicCollectionDTO;
-import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
+import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
+import cc.onelooker.kaleido.dto.movie.req.MovieCollectionCreateReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieCollectionPageReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieCollectionSyncPlexByIdReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieCollectionUpdateReq;
+import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionCreateResp;
+import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionListByMovieIdResp;
+import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionPageResp;
+import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionViewResp;
+import cc.onelooker.kaleido.exp.movie.MovieCollectionExp;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.service.movie.MovieBasicCollectionService;
+import cc.onelooker.kaleido.service.movie.MovieCollectionService;
 import cc.onelooker.kaleido.service.movie.MovieManager;
+import com.zjjcnt.common.core.domain.CommonResult;
+import com.zjjcnt.common.core.domain.ExportColumn;
+import com.zjjcnt.common.core.domain.PageParam;
+import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.service.IBaseService;
+import com.zjjcnt.common.core.web.controller.AbstractCrudController;
+import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import com.zjjcnt.common.core.domain.*;
-import com.zjjcnt.common.core.service.IBaseService;
-import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
-import cc.onelooker.kaleido.service.movie.MovieCollectionService;
-import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
-import cc.onelooker.kaleido.convert.movie.MovieCollectionConvert;
-import cc.onelooker.kaleido.dto.movie.req.*;
-import cc.onelooker.kaleido.dto.movie.resp.*;
-import cc.onelooker.kaleido.exp.movie.MovieCollectionExp;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;

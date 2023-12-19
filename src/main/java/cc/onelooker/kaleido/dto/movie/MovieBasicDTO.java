@@ -112,6 +112,11 @@ public class MovieBasicDTO implements BaseDTO<Long> {
     private String doubanId;
 
     /**
+     * TheMovieDB编号
+     */
+    private String tmdb;
+
+    /**
      * 加入时间
      */
     private Long addedAt;

@@ -1,20 +1,13 @@
 package cc.onelooker.kaleido.entity.movie;
 
-import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.IdType;
-
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.zjjcnt.common.core.entity.IdEntity;
-import com.zjjcnt.common.core.annotation.Crypto;
+import lombok.Data;
 
-import java.lang.Long;
-import java.lang.Double;
 import java.util.Date;
-import java.lang.Boolean;
-import java.lang.String;
-import java.lang.Integer;
 
 /**
  * 电影发布记录DO

@@ -1,18 +1,16 @@
 package cc.onelooker.kaleido.support;
 
-import cc.onelooker.kaleido.service.system.SysDictTypeService;
-import cc.onelooker.kaleido.third.plex.Directory;
-import cc.onelooker.kaleido.third.plex.MediaContainer;
-import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.utils.ConfigUtils;
-import com.google.common.collect.Maps;
-import com.zjjcnt.common.core.dict.BaseDictionaryInitializer;
 import cc.onelooker.kaleido.dto.system.SysDictDTO;
 import cc.onelooker.kaleido.dto.system.SysDictTypeDTO;
 import cc.onelooker.kaleido.service.IDictionaryService;
 import cc.onelooker.kaleido.service.system.SysDictService;
+import cc.onelooker.kaleido.service.system.SysDictTypeService;
+import cc.onelooker.kaleido.third.plex.Directory;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.utils.ConfigUtils;
+import com.google.common.collect.Maps;
+import com.zjjcnt.common.core.dict.BaseDictionaryInitializer;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

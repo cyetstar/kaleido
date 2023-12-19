@@ -1,28 +1,25 @@
 package cc.onelooker.kaleido.service.tvshow.impl;
 
+import cc.onelooker.kaleido.convert.tvshow.TvshowShowConvert;
+import cc.onelooker.kaleido.dto.tvshow.TvshowShowDTO;
 import cc.onelooker.kaleido.dto.tvshow.TvshowShowGenreDTO;
-import cc.onelooker.kaleido.entity.movie.MovieBasicDO;
+import cc.onelooker.kaleido.entity.tvshow.TvshowShowDO;
+import cc.onelooker.kaleido.mapper.tvshow.TvshowShowMapper;
 import cc.onelooker.kaleido.service.tvshow.TvshowShowGenreService;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zjjcnt.common.core.domain.PageResult;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import cc.onelooker.kaleido.service.tvshow.TvshowShowService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.tvshow.TvshowShowService;
-import cc.onelooker.kaleido.entity.tvshow.TvshowShowDO;
-import cc.onelooker.kaleido.dto.tvshow.TvshowShowDTO;
-import cc.onelooker.kaleido.convert.tvshow.TvshowShowConvert;
-import cc.onelooker.kaleido.mapper.tvshow.TvshowShowMapper;
-
-import com.zjjcnt.common.core.utils.ColumnUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**

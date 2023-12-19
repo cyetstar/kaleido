@@ -1,14 +1,14 @@
 package cc.onelooker.kaleido.service;
 
+import cc.onelooker.kaleido.dto.system.SysRoleDTO;
+import cc.onelooker.kaleido.dto.system.SysUserDTO;
+import cc.onelooker.kaleido.service.system.SysRoleService;
+import cc.onelooker.kaleido.service.system.SysUserService;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.zjjcnt.common.core.dict.Dictionary;
 import com.zjjcnt.common.security.component.AbstractCustomUserDetailsServiceImpl;
 import com.zjjcnt.common.security.component.CustomUserDetailsService;
 import com.zjjcnt.common.security.domain.CustomUserDetails;
-import cc.onelooker.kaleido.dto.system.SysRoleDTO;
-import cc.onelooker.kaleido.dto.system.SysUserDTO;
-import cc.onelooker.kaleido.service.system.SysRoleService;
-import cc.onelooker.kaleido.service.system.SysUserService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;

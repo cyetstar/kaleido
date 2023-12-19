@@ -1,18 +1,17 @@
 package cc.onelooker.kaleido.convert.movie;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.movie.MovieBasicLanguageDTO;
-import cc.onelooker.kaleido.entity.movie.MovieBasicLanguageDO;
-import cc.onelooker.kaleido.dto.movie.req.MovieBasicLanguagePageReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieBasicLanguageCreateReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieBasicLanguagePageReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieBasicLanguageUpdateReq;
+import cc.onelooker.kaleido.dto.movie.resp.MovieBasicLanguageCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieBasicLanguagePageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieBasicLanguageViewResp;
-import cc.onelooker.kaleido.dto.movie.resp.MovieBasicLanguageCreateResp;
+import cc.onelooker.kaleido.entity.movie.MovieBasicLanguageDO;
 import cc.onelooker.kaleido.exp.movie.MovieBasicLanguageExp;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
 /**
 * 电影语言关联表Convert

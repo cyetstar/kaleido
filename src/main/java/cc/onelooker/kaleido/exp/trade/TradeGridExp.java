@@ -1,13 +1,10 @@
 package cc.onelooker.kaleido.exp.trade;
 
-import lombok.Data;
 import com.alibaba.excel.annotation.ExcelProperty;
-
-import java.lang.Long;
-import java.lang.String;
-import java.math.BigDecimal;
-import java.lang.Integer;
 import com.zjjcnt.common.core.annotation.Dict;
+import lombok.Data;
+
+import java.math.BigDecimal;
 
 /**
  * 交易网格导出对象

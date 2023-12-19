@@ -1,10 +1,10 @@
 package cc.onelooker.kaleido.convert.system;
 
-import com.zjjcnt.common.file.FileInfo;
 import cc.onelooker.kaleido.dto.system.FileInfoDTO;
 import cc.onelooker.kaleido.dto.system.req.FileInfoUploadReq;
 import cc.onelooker.kaleido.dto.system.resp.FileInfoUploadResp;
 import cc.onelooker.kaleido.entity.system.FileInfoDO;
+import com.zjjcnt.common.file.FileInfo;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

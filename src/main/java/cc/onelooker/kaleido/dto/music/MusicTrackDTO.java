@@ -1,11 +1,7 @@
 package cc.onelooker.kaleido.dto.music;
 
-import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
-
-import java.lang.Long;
-import java.lang.String;
-import java.lang.Integer;
+import lombok.Data;
 
 /**
  * 曲目DTO

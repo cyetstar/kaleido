@@ -3,16 +3,7 @@ package cc.onelooker.kaleido.dto.trade;
 import cc.onelooker.kaleido.dto.IDictionary;
 import com.zjjcnt.common.util.constant.Constants;
 import lombok.Data;
-import com.zjjcnt.common.core.dto.BaseDTO;
-
-import java.lang.String;
-import java.lang.Long;
-import java.lang.Integer;
-
-import com.zjjcnt.common.core.annotation.Dict;
 import org.apache.commons.lang3.StringUtils;
-
-import java.math.BigDecimal;
 
 /**
  * 交易商品DTO

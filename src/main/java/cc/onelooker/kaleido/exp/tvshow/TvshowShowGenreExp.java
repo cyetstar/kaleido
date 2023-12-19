@@ -1,9 +1,7 @@
 package cc.onelooker.kaleido.exp.tvshow;
 
-import lombok.Data;
 import com.alibaba.excel.annotation.ExcelProperty;
-
-import java.lang.Long;
+import lombok.Data;
 
 /**
  * 剧集类型关联表导出对象

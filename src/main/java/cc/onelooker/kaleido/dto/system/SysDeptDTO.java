@@ -1,6 +1,5 @@
 package cc.onelooker.kaleido.dto.system;
 
-import cc.onelooker.kaleido.dto.IDictionary;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 

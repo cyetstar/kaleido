@@ -1,9 +1,7 @@
 package cc.onelooker.kaleido.exp.movie;
 
-import lombok.Data;
 import com.alibaba.excel.annotation.ExcelProperty;
-
-import java.lang.Long;
+import lombok.Data;
 
 /**
  * 电影集合关联表导出对象

@@ -1,10 +1,5 @@
 package cc.onelooker.kaleido.web.controller.system;
 
-import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.PageParam;
-import com.zjjcnt.common.core.domain.PageResult;
-import com.zjjcnt.common.core.service.IBaseService;
-import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import cc.onelooker.kaleido.convert.system.SysDeptConvert;
 import cc.onelooker.kaleido.dto.system.SysDeptDTO;
 import cc.onelooker.kaleido.dto.system.req.SysDeptCreateReq;
@@ -14,6 +9,11 @@ import cc.onelooker.kaleido.dto.system.resp.SysDeptCreateResp;
 import cc.onelooker.kaleido.dto.system.resp.SysDeptPageResp;
 import cc.onelooker.kaleido.dto.system.resp.SysDeptViewResp;
 import cc.onelooker.kaleido.service.system.SysDeptService;
+import com.zjjcnt.common.core.domain.CommonResult;
+import com.zjjcnt.common.core.domain.PageParam;
+import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.service.IBaseService;
+import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

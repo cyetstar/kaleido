@@ -1,7 +1,5 @@
 package cc.onelooker.kaleido.service.system.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import cc.onelooker.kaleido.convert.system.SysRoleResourceConvert;
 import cc.onelooker.kaleido.dto.system.SysRoleResourceDTO;
 import cc.onelooker.kaleido.dto.system.req.SysRoleResourceBindReq;
@@ -9,6 +7,8 @@ import cc.onelooker.kaleido.entity.system.SysRoleResourceDO;
 import cc.onelooker.kaleido.mapper.system.SysRoleResourceMapper;
 import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
 import cc.onelooker.kaleido.service.system.SysRoleResourceService;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

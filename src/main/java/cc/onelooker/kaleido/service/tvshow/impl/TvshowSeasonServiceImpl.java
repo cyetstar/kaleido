@@ -1,26 +1,21 @@
 package cc.onelooker.kaleido.service.tvshow.impl;
 
-import cc.onelooker.kaleido.dto.tvshow.TvshowEpisodeDTO;
+import cc.onelooker.kaleido.convert.tvshow.TvshowSeasonConvert;
+import cc.onelooker.kaleido.dto.tvshow.TvshowSeasonDTO;
+import cc.onelooker.kaleido.entity.tvshow.TvshowSeasonDO;
+import cc.onelooker.kaleido.mapper.tvshow.TvshowSeasonMapper;
+import cc.onelooker.kaleido.service.tvshow.TvshowSeasonService;
 import cc.onelooker.kaleido.service.tvshow.TvshowShowService;
-import org.checkerframework.checker.units.qual.A;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.tvshow.TvshowSeasonService;
-import cc.onelooker.kaleido.entity.tvshow.TvshowSeasonDO;
-import cc.onelooker.kaleido.dto.tvshow.TvshowSeasonDTO;
-import cc.onelooker.kaleido.convert.tvshow.TvshowSeasonConvert;
-import cc.onelooker.kaleido.mapper.tvshow.TvshowSeasonMapper;
-
-import com.zjjcnt.common.core.utils.ColumnUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Objects;
 
 /**
  * 单季ServiceImpl

@@ -8,7 +8,6 @@ import cc.onelooker.kaleido.service.DictionaryBaseServiceImpl;
 import cc.onelooker.kaleido.service.tvshow.TvshowGenreService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 

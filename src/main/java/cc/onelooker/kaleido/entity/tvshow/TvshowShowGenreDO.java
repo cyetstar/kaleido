@@ -1,15 +1,11 @@
 package cc.onelooker.kaleido.entity.tvshow;
 
-import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.IdType;
-
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.zjjcnt.common.core.entity.IdEntity;
-import com.zjjcnt.common.core.annotation.Crypto;
-
-import java.lang.Long;
+import lombok.Data;
 
 /**
  * 剧集类型关联表DO

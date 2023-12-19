@@ -1,12 +1,7 @@
 package cc.onelooker.kaleido.service.trade;
 
-import com.zjjcnt.common.core.service.IBaseService;
-
-import java.lang.Long;
-import java.lang.String;
-import java.math.BigDecimal;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 import cc.onelooker.kaleido.dto.trade.TradeAccountDTO;
+import com.zjjcnt.common.core.service.IBaseService;
 
 /**
  * 交易账户Service

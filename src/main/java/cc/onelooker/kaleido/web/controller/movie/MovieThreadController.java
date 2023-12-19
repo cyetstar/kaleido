@@ -1,38 +1,48 @@
 package cc.onelooker.kaleido.web.controller.movie;
 
+import cc.onelooker.kaleido.convert.movie.MovieThreadConvert;
+import cc.onelooker.kaleido.dto.movie.MovieThreadDTO;
+import cc.onelooker.kaleido.dto.movie.req.MovieThreadCreateReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieThreadPageReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieThreadUpdateReq;
+import cc.onelooker.kaleido.dto.movie.resp.MovieThreadCreateResp;
+import cc.onelooker.kaleido.dto.movie.resp.MovieThreadPageResp;
+import cc.onelooker.kaleido.dto.movie.resp.MovieThreadViewResp;
+import cc.onelooker.kaleido.exp.movie.MovieThreadExp;
+import cc.onelooker.kaleido.service.AsyncTaskManager;
+import cc.onelooker.kaleido.service.movie.MovieThreadService;
+import com.zjjcnt.common.core.domain.CommonResult;
+import com.zjjcnt.common.core.domain.ExportColumn;
+import com.zjjcnt.common.core.domain.PageParam;
+import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.service.IBaseService;
+import com.zjjcnt.common.core.web.controller.AbstractCrudController;
+import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.zjjcnt.common.core.domain.*;
-import com.zjjcnt.common.core.service.IBaseService;
-import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
-import cc.onelooker.kaleido.service.movie.MovieThreadService;
-import cc.onelooker.kaleido.dto.movie.MovieThreadDTO;
-import cc.onelooker.kaleido.convert.movie.MovieThreadConvert;
-import cc.onelooker.kaleido.dto.movie.req.*;
-import cc.onelooker.kaleido.dto.movie.resp.*;
-import cc.onelooker.kaleido.exp.movie.MovieThreadExp;
-
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
-* 电影发布记录前端控制器
-*
-* @author cyetstar
-* @date 2023-12-18 14:53:14
-*/
+ * 电影发布记录前端控制器
+ *
+ * @author cyetstar
+ * @date 2023-12-18 14:53:14
+ */
 
 @Api(tags = "电影发布记录")
 @RestController
 @RequestMapping("/movieThread")
-public class MovieThreadController extends AbstractCrudController<MovieThreadDTO>{
+public class MovieThreadController extends AbstractCrudController<MovieThreadDTO> {
 
     @Autowired
     private MovieThreadService movieThreadService;
+
+    @Autowired
+    private AsyncTaskManager asyncTaskManager;
 
     @Override
     protected IBaseService getService() {
@@ -80,8 +90,7 @@ public class MovieThreadController extends AbstractCrudController<MovieThreadDTO
     @ApiOperation(value = "导出电影发布记录")
     public void export(MovieThreadPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
         String filename = "电影发布记录" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, MovieThreadExp.class,
-                    MovieThreadConvert.INSTANCE::convertToDTO, MovieThreadConvert.INSTANCE::convertToExp, response);
+        super.export(req, columns, pageParam, filename, MovieThreadExp.class, MovieThreadConvert.INSTANCE::convertToDTO, MovieThreadConvert.INSTANCE::convertToExp, response);
     }
 
 }

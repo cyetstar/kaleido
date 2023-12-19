@@ -1,9 +1,7 @@
 package cc.onelooker.kaleido.web.controller.tvshow;
 
-import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
 import cc.onelooker.kaleido.convert.tvshow.TvshowShowConvert;
 import cc.onelooker.kaleido.dto.tvshow.TvshowActorDTO;
-import cc.onelooker.kaleido.dto.tvshow.TvshowGenreDTO;
 import cc.onelooker.kaleido.dto.tvshow.TvshowShowDTO;
 import cc.onelooker.kaleido.dto.tvshow.TvshowShowGenreDTO;
 import cc.onelooker.kaleido.dto.tvshow.req.TvshowShowCreateReq;
@@ -14,13 +12,15 @@ import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowPageResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowViewResp;
 import cc.onelooker.kaleido.enums.ActorRole;
 import cc.onelooker.kaleido.exp.tvshow.TvshowShowExp;
-import cc.onelooker.kaleido.service.tvshow.*;
+import cc.onelooker.kaleido.service.tvshow.TvshowActorService;
+import cc.onelooker.kaleido.service.tvshow.TvshowManager;
+import cc.onelooker.kaleido.service.tvshow.TvshowShowGenreService;
+import cc.onelooker.kaleido.service.tvshow.TvshowShowService;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
-import com.zjjcnt.common.core.function.ConvertFunction;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import com.zjjcnt.common.util.DateTimeUtils;
@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 

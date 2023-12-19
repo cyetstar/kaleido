@@ -1,8 +1,8 @@
 package cc.onelooker.kaleido.service.system;
 
-import com.zjjcnt.common.core.service.IBaseService;
 import cc.onelooker.kaleido.dto.system.SysRoleResourceDTO;
 import cc.onelooker.kaleido.dto.system.req.SysRoleResourceBindReq;
+import com.zjjcnt.common.core.service.IBaseService;
 
 import java.util.List;
 

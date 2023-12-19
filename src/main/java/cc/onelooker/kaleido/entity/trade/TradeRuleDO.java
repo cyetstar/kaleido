@@ -1,15 +1,11 @@
 package cc.onelooker.kaleido.entity.trade;
 
-import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.IdType;
-
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.zjjcnt.common.core.entity.IdEntity;
-import java.lang.Long;
-import java.math.BigDecimal;
-import java.lang.String;
+import lombok.Data;
 
 /**
  * 交易规则DO

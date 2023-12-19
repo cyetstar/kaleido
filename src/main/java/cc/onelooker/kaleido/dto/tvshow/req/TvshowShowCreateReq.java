@@ -1,13 +1,10 @@
 package cc.onelooker.kaleido.dto.tvshow.req;
 
-import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.math.BigDecimal;
-import java.lang.Long;
-import java.lang.String;
-import java.lang.Integer;
 
 /**
  * 剧集请求对象

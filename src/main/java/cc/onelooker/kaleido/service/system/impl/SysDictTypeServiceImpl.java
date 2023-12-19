@@ -1,10 +1,5 @@
 package cc.onelooker.kaleido.service.system.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.zjjcnt.common.core.dict.Dictionary;
-import com.zjjcnt.common.core.exception.ServiceException;
 import cc.onelooker.kaleido.convert.system.SysDictTypeConvert;
 import cc.onelooker.kaleido.dto.system.SysDictTypeDTO;
 import cc.onelooker.kaleido.dto.system.req.SysDictTypeUpdateReq;
@@ -13,6 +8,11 @@ import cc.onelooker.kaleido.mapper.system.SysDictTypeMapper;
 import cc.onelooker.kaleido.service.KaleidoBaseServiceImpl;
 import cc.onelooker.kaleido.service.system.SysDictService;
 import cc.onelooker.kaleido.service.system.SysDictTypeService;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.zjjcnt.common.core.dict.Dictionary;
+import com.zjjcnt.common.core.exception.ServiceException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

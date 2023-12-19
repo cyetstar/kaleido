@@ -1,11 +1,7 @@
 package cc.onelooker.kaleido.dto.trade;
 
-import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
-
-import java.lang.Long;
-import java.math.BigDecimal;
-import java.lang.String;
+import lombok.Data;
 
 /**
  * 交易规则DTO

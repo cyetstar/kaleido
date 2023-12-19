@@ -1,18 +1,17 @@
 package cc.onelooker.kaleido.convert.movie;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.movie.MovieGenreDTO;
-import cc.onelooker.kaleido.entity.movie.MovieGenreDO;
-import cc.onelooker.kaleido.dto.movie.req.MovieGenrePageReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieGenreCreateReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieGenrePageReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieGenreUpdateReq;
+import cc.onelooker.kaleido.dto.movie.resp.MovieGenreCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieGenrePageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieGenreViewResp;
-import cc.onelooker.kaleido.dto.movie.resp.MovieGenreCreateResp;
+import cc.onelooker.kaleido.entity.movie.MovieGenreDO;
 import cc.onelooker.kaleido.exp.movie.MovieGenreExp;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
 /**
 * 电影类型Convert

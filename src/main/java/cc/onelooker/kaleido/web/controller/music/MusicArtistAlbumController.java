@@ -1,20 +1,26 @@
 package cc.onelooker.kaleido.web.controller.music;
 
+import cc.onelooker.kaleido.convert.music.MusicArtistAlbumConvert;
+import cc.onelooker.kaleido.dto.music.MusicArtistAlbumDTO;
+import cc.onelooker.kaleido.dto.music.req.MusicArtistAlbumCreateReq;
+import cc.onelooker.kaleido.dto.music.req.MusicArtistAlbumPageReq;
+import cc.onelooker.kaleido.dto.music.req.MusicArtistAlbumUpdateReq;
+import cc.onelooker.kaleido.dto.music.resp.MusicArtistAlbumCreateResp;
+import cc.onelooker.kaleido.dto.music.resp.MusicArtistAlbumPageResp;
+import cc.onelooker.kaleido.dto.music.resp.MusicArtistAlbumViewResp;
+import cc.onelooker.kaleido.exp.music.MusicArtistAlbumExp;
+import cc.onelooker.kaleido.service.music.MusicArtistAlbumService;
+import com.zjjcnt.common.core.domain.CommonResult;
+import com.zjjcnt.common.core.domain.ExportColumn;
+import com.zjjcnt.common.core.domain.PageParam;
+import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.service.IBaseService;
+import com.zjjcnt.common.core.web.controller.AbstractCrudController;
+import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import com.zjjcnt.common.core.domain.*;
-import com.zjjcnt.common.core.service.IBaseService;
-import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
-import cc.onelooker.kaleido.service.music.MusicArtistAlbumService;
-import cc.onelooker.kaleido.dto.music.MusicArtistAlbumDTO;
-import cc.onelooker.kaleido.convert.music.MusicArtistAlbumConvert;
-import cc.onelooker.kaleido.dto.music.req.*;
-import cc.onelooker.kaleido.dto.music.resp.*;
-import cc.onelooker.kaleido.exp.music.MusicArtistAlbumExp;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;

@@ -1,11 +1,8 @@
 package cc.onelooker.kaleido.dto.music.resp;
 
-import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.lang.Long;
-import java.lang.String;
+import lombok.Data;
 
 /**
  * 艺术家响应对象

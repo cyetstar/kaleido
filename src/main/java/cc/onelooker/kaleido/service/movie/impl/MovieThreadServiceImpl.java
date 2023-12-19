@@ -1,24 +1,21 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
+import cc.onelooker.kaleido.convert.movie.MovieThreadConvert;
+import cc.onelooker.kaleido.dto.movie.MovieThreadDTO;
 import cc.onelooker.kaleido.dto.movie.MovieThreadFilenameDTO;
+import cc.onelooker.kaleido.entity.movie.MovieThreadDO;
+import cc.onelooker.kaleido.mapper.movie.MovieThreadMapper;
 import cc.onelooker.kaleido.service.movie.MovieThreadFilenameService;
+import cc.onelooker.kaleido.service.movie.MovieThreadService;
 import com.baomidou.dynamic.datasource.annotation.DS;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.movie.MovieThreadService;
-import cc.onelooker.kaleido.entity.movie.MovieThreadDO;
-import cc.onelooker.kaleido.dto.movie.MovieThreadDTO;
-import cc.onelooker.kaleido.convert.movie.MovieThreadConvert;
-import cc.onelooker.kaleido.mapper.movie.MovieThreadMapper;
-
-import com.zjjcnt.common.core.utils.ColumnUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Objects;
 
 /**
  * 电影发布记录ServiceImpl

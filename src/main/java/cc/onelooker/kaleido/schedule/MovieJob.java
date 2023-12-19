@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.schedule;
 
 import cc.onelooker.kaleido.service.AsyncTaskManager;
-import cc.onelooker.kaleido.service.movie.MovieManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,7 +23,6 @@ public class MovieJob {
         taskManager.syncPlexMovie();
     }
 
-
     @Scheduled(cron = "0 30 2 * * ?")
     public void syncPlexMovieCollection() {
         taskManager.syncPlexMovieCollection();
@@ -38,5 +36,10 @@ public class MovieJob {
     @Scheduled(cron = "0 30 3 * * ?")
     public void syncPlexMusic() {
         taskManager.syncPlexAlbum();
+    }
+
+    @Scheduled(cron = "0 5 0 * * ?")
+    public void checkThreadStatus() {
+        taskManager.checkThreadStatus();
     }
 }

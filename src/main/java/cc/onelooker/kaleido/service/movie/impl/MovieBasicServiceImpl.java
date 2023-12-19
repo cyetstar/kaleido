@@ -1,29 +1,29 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
+import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
 import cc.onelooker.kaleido.dto.movie.MovieBasicCountryDTO;
+import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
 import cc.onelooker.kaleido.dto.movie.MovieBasicGenreDTO;
+import cc.onelooker.kaleido.entity.movie.MovieBasicDO;
+import cc.onelooker.kaleido.mapper.movie.MovieBasicMapper;
 import cc.onelooker.kaleido.service.movie.*;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
-import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.entity.movie.MovieBasicDO;
-import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
-import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
-import cc.onelooker.kaleido.mapper.movie.MovieBasicMapper;
-
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -79,6 +79,7 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
         query.eq(Objects.nonNull(dto.getViewCount()), MovieBasicDO::getViewCount, dto.getViewCount());
         query.eq(StringUtils.isNotEmpty(dto.getImdb()), MovieBasicDO::getImdb, dto.getImdb());
         query.eq(StringUtils.isNotEmpty(dto.getDoubanId()), MovieBasicDO::getDoubanId, dto.getDoubanId());
+        query.eq(StringUtils.isNotEmpty(dto.getTmdb()), MovieBasicDO::getTmdb, dto.getTmdb());
         query.eq(Objects.nonNull(dto.getAddedAt()), MovieBasicDO::getAddedAt, dto.getAddedAt());
         query.eq(Objects.nonNull(dto.getUpdatedAt()), MovieBasicDO::getUpdatedAt, dto.getUpdatedAt());
         if (StringUtils.isNotEmpty(dto.getKeyword())) {
@@ -123,6 +124,22 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
         movieBasicDO.setDoubanId(doubanId);
         movieBasicDO.setId(id);
         return SqlHelper.retBool(baseMapper.updateById(movieBasicDO));
+    }
+
+    @Override
+    public MovieBasicDTO findByDoubanId(String doubanId) {
+        Validate.notEmpty(doubanId);
+        MovieBasicDTO param = new MovieBasicDTO();
+        param.setDoubanId(doubanId);
+        return find(param);
+    }
+
+    @Override
+    public MovieBasicDTO findByImdb(String imdb) {
+        Validate.notEmpty(imdb);
+        MovieBasicDTO param = new MovieBasicDTO();
+        param.setImdb(imdb);
+        return find(param);
     }
 
     @Override

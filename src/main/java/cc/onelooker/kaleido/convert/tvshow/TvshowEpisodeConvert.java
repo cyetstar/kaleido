@@ -1,18 +1,17 @@
 package cc.onelooker.kaleido.convert.tvshow;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.tvshow.TvshowEpisodeDTO;
-import cc.onelooker.kaleido.entity.tvshow.TvshowEpisodeDO;
-import cc.onelooker.kaleido.dto.tvshow.req.TvshowEpisodePageReq;
 import cc.onelooker.kaleido.dto.tvshow.req.TvshowEpisodeCreateReq;
+import cc.onelooker.kaleido.dto.tvshow.req.TvshowEpisodePageReq;
 import cc.onelooker.kaleido.dto.tvshow.req.TvshowEpisodeUpdateReq;
+import cc.onelooker.kaleido.dto.tvshow.resp.TvshowEpisodeCreateResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowEpisodePageResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowEpisodeViewResp;
-import cc.onelooker.kaleido.dto.tvshow.resp.TvshowEpisodeCreateResp;
+import cc.onelooker.kaleido.entity.tvshow.TvshowEpisodeDO;
 import cc.onelooker.kaleido.exp.tvshow.TvshowEpisodeExp;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
 /**
 * 单集Convert

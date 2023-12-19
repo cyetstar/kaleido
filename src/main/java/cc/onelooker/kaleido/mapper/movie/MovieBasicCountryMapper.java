@@ -1,9 +1,8 @@
 package cc.onelooker.kaleido.mapper.movie;
 
-import org.apache.ibatis.annotations.Mapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import cc.onelooker.kaleido.entity.movie.MovieBasicCountryDO;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 电影国家地区关联表Mapper接口

@@ -1,18 +1,17 @@
 package cc.onelooker.kaleido.convert.movie;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.movie.MovieTagDTO;
-import cc.onelooker.kaleido.entity.movie.MovieTagDO;
-import cc.onelooker.kaleido.dto.movie.req.MovieTagPageReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieTagCreateReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieTagPageReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieTagUpdateReq;
+import cc.onelooker.kaleido.dto.movie.resp.MovieTagCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieTagPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieTagViewResp;
-import cc.onelooker.kaleido.dto.movie.resp.MovieTagCreateResp;
+import cc.onelooker.kaleido.entity.movie.MovieTagDO;
 import cc.onelooker.kaleido.exp.movie.MovieTagExp;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
 /**
 * 电影标签Convert

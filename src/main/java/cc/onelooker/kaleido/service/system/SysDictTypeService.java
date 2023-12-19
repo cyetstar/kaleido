@@ -1,8 +1,8 @@
 package cc.onelooker.kaleido.service.system;
 
-import com.zjjcnt.common.core.service.IBaseService;
 import cc.onelooker.kaleido.dto.system.SysDictTypeDTO;
 import cc.onelooker.kaleido.dto.system.req.SysDictTypeUpdateReq;
+import com.zjjcnt.common.core.service.IBaseService;
 
 /**
  * 字典表类型表Service

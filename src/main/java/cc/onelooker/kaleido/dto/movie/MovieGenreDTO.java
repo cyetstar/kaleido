@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.dto.movie;
 
 import cc.onelooker.kaleido.dto.IDictionary;
-import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
 /**

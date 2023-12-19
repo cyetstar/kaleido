@@ -3,7 +3,6 @@ package cc.onelooker.kaleido.utils;
 import com.zjjcnt.common.core.exception.ServiceException;
 import com.zjjcnt.common.security.context.UserSecurityContextHolder;
 import com.zjjcnt.common.security.domain.CustomUserDetails;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 

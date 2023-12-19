@@ -1,7 +1,7 @@
 package cc.onelooker.kaleido.dto.system;
 
-import com.zjjcnt.common.core.dto.BaseDTO;
 import cc.onelooker.kaleido.entity.system.SysDictTypeDO;
+import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
 import java.util.Date;

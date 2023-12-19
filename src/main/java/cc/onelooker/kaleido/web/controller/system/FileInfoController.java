@@ -1,5 +1,10 @@
 package cc.onelooker.kaleido.web.controller.system;
 
+import cc.onelooker.kaleido.convert.system.FileInfoConvert;
+import cc.onelooker.kaleido.dto.system.FileInfoDTO;
+import cc.onelooker.kaleido.dto.system.req.FileInfoUploadReq;
+import cc.onelooker.kaleido.dto.system.resp.FileInfoUploadResp;
+import cc.onelooker.kaleido.service.system.FileInfoService;
 import com.zjjcnt.common.core.annotation.CacheControl;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.service.IBaseService;
@@ -8,11 +13,6 @@ import com.zjjcnt.common.file.FileInfo;
 import com.zjjcnt.common.file.FileTransportManager;
 import com.zjjcnt.common.file.enums.FileStorageType;
 import com.zjjcnt.common.file.enums.ThumbnailSize;
-import cc.onelooker.kaleido.convert.system.FileInfoConvert;
-import cc.onelooker.kaleido.dto.system.FileInfoDTO;
-import cc.onelooker.kaleido.dto.system.req.FileInfoUploadReq;
-import cc.onelooker.kaleido.dto.system.resp.FileInfoUploadResp;
-import cc.onelooker.kaleido.service.system.FileInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;

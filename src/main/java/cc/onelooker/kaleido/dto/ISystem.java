@@ -1,11 +1,8 @@
 package cc.onelooker.kaleido.dto;
 
 import com.zjjcnt.common.core.dto.BaseDTO;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Author cyetstar

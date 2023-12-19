@@ -1,11 +1,8 @@
 package cc.onelooker.kaleido.dto.tvshow.resp;
 
-import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.lang.Long;
-import java.lang.String;
+import lombok.Data;
 
 /**
  * 单集演职员关联表响应对象

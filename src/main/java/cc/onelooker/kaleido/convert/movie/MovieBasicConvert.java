@@ -1,20 +1,19 @@
 package cc.onelooker.kaleido.convert.movie;
 
 import cc.onelooker.kaleido.dto.movie.MovieActorDTO;
+import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
+import cc.onelooker.kaleido.dto.movie.req.MovieBasicCreateReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieBasicPageReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieBasicUpdateReq;
 import cc.onelooker.kaleido.dto.movie.resp.*;
+import cc.onelooker.kaleido.entity.movie.MovieBasicDO;
+import cc.onelooker.kaleido.exp.movie.MovieBasicExp;
 import cc.onelooker.kaleido.third.douban.Movie;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
-import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
-import cc.onelooker.kaleido.entity.movie.MovieBasicDO;
-import cc.onelooker.kaleido.dto.movie.req.MovieBasicPageReq;
-import cc.onelooker.kaleido.dto.movie.req.MovieBasicCreateReq;
-import cc.onelooker.kaleido.dto.movie.req.MovieBasicUpdateReq;
-import cc.onelooker.kaleido.exp.movie.MovieBasicExp;
 
 /**
  * 电影Convert

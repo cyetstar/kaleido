@@ -1,18 +1,17 @@
 package cc.onelooker.kaleido.convert.tvshow;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.tvshow.TvshowShowGenreDTO;
-import cc.onelooker.kaleido.entity.tvshow.TvshowShowGenreDO;
-import cc.onelooker.kaleido.dto.tvshow.req.TvshowShowGenrePageReq;
 import cc.onelooker.kaleido.dto.tvshow.req.TvshowShowGenreCreateReq;
+import cc.onelooker.kaleido.dto.tvshow.req.TvshowShowGenrePageReq;
 import cc.onelooker.kaleido.dto.tvshow.req.TvshowShowGenreUpdateReq;
+import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowGenreCreateResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowGenrePageResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowGenreViewResp;
-import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowGenreCreateResp;
+import cc.onelooker.kaleido.entity.tvshow.TvshowShowGenreDO;
 import cc.onelooker.kaleido.exp.tvshow.TvshowShowGenreExp;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
 /**
 * 剧集类型关联表Convert

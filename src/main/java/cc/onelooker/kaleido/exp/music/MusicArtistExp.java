@@ -1,10 +1,7 @@
 package cc.onelooker.kaleido.exp.music;
 
-import lombok.Data;
 import com.alibaba.excel.annotation.ExcelProperty;
-
-import java.lang.Long;
-import java.lang.String;
+import lombok.Data;
 
 /**
  * 艺术家导出对象

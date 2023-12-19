@@ -1,18 +1,17 @@
 package cc.onelooker.kaleido.convert.music;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.music.MusicArtistAlbumDTO;
-import cc.onelooker.kaleido.entity.music.MusicArtistAlbumDO;
-import cc.onelooker.kaleido.dto.music.req.MusicArtistAlbumPageReq;
 import cc.onelooker.kaleido.dto.music.req.MusicArtistAlbumCreateReq;
+import cc.onelooker.kaleido.dto.music.req.MusicArtistAlbumPageReq;
 import cc.onelooker.kaleido.dto.music.req.MusicArtistAlbumUpdateReq;
+import cc.onelooker.kaleido.dto.music.resp.MusicArtistAlbumCreateResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicArtistAlbumPageResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicArtistAlbumViewResp;
-import cc.onelooker.kaleido.dto.music.resp.MusicArtistAlbumCreateResp;
+import cc.onelooker.kaleido.entity.music.MusicArtistAlbumDO;
 import cc.onelooker.kaleido.exp.music.MusicArtistAlbumExp;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
 /**
 * 艺术家专辑关联表Convert

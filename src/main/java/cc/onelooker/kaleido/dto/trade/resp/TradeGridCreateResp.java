@@ -1,14 +1,9 @@
 package cc.onelooker.kaleido.dto.trade.resp;
 
-import lombok.Data;
+import com.zjjcnt.common.core.annotation.Dict;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.lang.Long;
-import java.lang.String;
-import java.math.BigDecimal;
-import java.lang.Integer;
-import com.zjjcnt.common.core.annotation.Dict;
+import lombok.Data;
 
 /**
  * 交易网格响应对象

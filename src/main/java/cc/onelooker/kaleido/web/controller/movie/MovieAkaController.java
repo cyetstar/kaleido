@@ -1,20 +1,26 @@
 package cc.onelooker.kaleido.web.controller.movie;
 
+import cc.onelooker.kaleido.convert.movie.MovieAkaConvert;
+import cc.onelooker.kaleido.dto.movie.MovieAkaDTO;
+import cc.onelooker.kaleido.dto.movie.req.MovieAkaCreateReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieAkaPageReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieAkaUpdateReq;
+import cc.onelooker.kaleido.dto.movie.resp.MovieAkaCreateResp;
+import cc.onelooker.kaleido.dto.movie.resp.MovieAkaPageResp;
+import cc.onelooker.kaleido.dto.movie.resp.MovieAkaViewResp;
+import cc.onelooker.kaleido.exp.movie.MovieAkaExp;
+import cc.onelooker.kaleido.service.movie.MovieAkaService;
+import com.zjjcnt.common.core.domain.CommonResult;
+import com.zjjcnt.common.core.domain.ExportColumn;
+import com.zjjcnt.common.core.domain.PageParam;
+import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.service.IBaseService;
+import com.zjjcnt.common.core.web.controller.AbstractCrudController;
+import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import com.zjjcnt.common.core.domain.*;
-import com.zjjcnt.common.core.service.IBaseService;
-import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
-import cc.onelooker.kaleido.service.movie.MovieAkaService;
-import cc.onelooker.kaleido.dto.movie.MovieAkaDTO;
-import cc.onelooker.kaleido.convert.movie.MovieAkaConvert;
-import cc.onelooker.kaleido.dto.movie.req.*;
-import cc.onelooker.kaleido.dto.movie.resp.*;
-import cc.onelooker.kaleido.exp.movie.MovieAkaExp;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;

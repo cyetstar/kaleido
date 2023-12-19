@@ -1,19 +1,18 @@
 package cc.onelooker.kaleido.convert.movie;
 
-import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionListByMovieIdResp;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
-import cc.onelooker.kaleido.entity.movie.MovieCollectionDO;
-import cc.onelooker.kaleido.dto.movie.req.MovieCollectionPageReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieCollectionCreateReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieCollectionPageReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieCollectionUpdateReq;
+import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionCreateResp;
+import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionListByMovieIdResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionViewResp;
-import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionCreateResp;
+import cc.onelooker.kaleido.entity.movie.MovieCollectionDO;
 import cc.onelooker.kaleido.exp.movie.MovieCollectionExp;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
 /**
  * 电影集合Convert

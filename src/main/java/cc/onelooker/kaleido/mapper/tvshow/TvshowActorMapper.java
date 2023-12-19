@@ -1,9 +1,8 @@
 package cc.onelooker.kaleido.mapper.tvshow;
 
-import org.apache.ibatis.annotations.Mapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import cc.onelooker.kaleido.entity.tvshow.TvshowActorDO;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 剧集演职员Mapper接口

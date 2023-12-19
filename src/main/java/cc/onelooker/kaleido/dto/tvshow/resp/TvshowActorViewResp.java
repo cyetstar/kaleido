@@ -1,12 +1,8 @@
 package cc.onelooker.kaleido.dto.tvshow.resp;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.lang.Long;
-import java.lang.String;
+import lombok.Data;
 
 /**
  * 剧集演职员响应对象

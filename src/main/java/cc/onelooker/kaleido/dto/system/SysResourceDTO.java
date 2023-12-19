@@ -1,7 +1,7 @@
 package cc.onelooker.kaleido.dto.system;
 
-import com.zjjcnt.common.core.dto.BaseDTO;
 import cc.onelooker.kaleido.entity.system.SysResourceDO;
+import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;

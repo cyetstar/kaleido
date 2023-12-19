@@ -1,8 +1,7 @@
 package cc.onelooker.kaleido.service.movie;
 
-import com.zjjcnt.common.core.service.IBaseService;
-
 import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
+import com.zjjcnt.common.core.service.IBaseService;
 
 /**
  * 电影Service
@@ -15,4 +14,8 @@ public interface MovieBasicService extends IBaseService<MovieBasicDTO> {
     Long findMaxUpdatedAt();
 
     Boolean updateDoubanId(Long id, String doubanId);
+
+    MovieBasicDTO findByDoubanId(String doubanId);
+
+    MovieBasicDTO findByImdb(String imdb);
 }

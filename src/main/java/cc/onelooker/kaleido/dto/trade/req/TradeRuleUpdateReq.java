@@ -1,12 +1,8 @@
 package cc.onelooker.kaleido.dto.trade.req;
 
-import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.lang.Long;
-import java.math.BigDecimal;
-import java.lang.String;
+import lombok.Data;
 
 /**
  * 交易规则请求对象

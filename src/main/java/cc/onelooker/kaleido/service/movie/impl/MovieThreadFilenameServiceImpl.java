@@ -1,21 +1,20 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
+import cc.onelooker.kaleido.convert.movie.MovieThreadFilenameConvert;
+import cc.onelooker.kaleido.dto.movie.MovieThreadFilenameDTO;
+import cc.onelooker.kaleido.entity.movie.MovieThreadFilenameDO;
+import cc.onelooker.kaleido.mapper.movie.MovieThreadFilenameMapper;
+import cc.onelooker.kaleido.service.movie.MovieThreadFilenameService;
 import com.baomidou.dynamic.datasource.annotation.DS;
-import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.movie.MovieThreadFilenameService;
-import cc.onelooker.kaleido.entity.movie.MovieThreadFilenameDO;
-import cc.onelooker.kaleido.dto.movie.MovieThreadFilenameDTO;
-import cc.onelooker.kaleido.convert.movie.MovieThreadFilenameConvert;
-import cc.onelooker.kaleido.mapper.movie.MovieThreadFilenameMapper;
-
-import com.zjjcnt.common.core.utils.ColumnUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 电影发布文件ServiceImpl
@@ -49,8 +48,17 @@ public class MovieThreadFilenameServiceImpl extends AbstractBaseServiceImpl<Movi
 
     @Override
     public MovieThreadFilenameDTO findByValue(String value) {
+        Validate.notEmpty(value);
         MovieThreadFilenameDTO param = new MovieThreadFilenameDTO();
         param.setValue(value);
         return find(param);
+    }
+
+    @Override
+    public List<MovieThreadFilenameDTO> listByThreadId(Long threadId) {
+        Validate.notNull(threadId);
+        MovieThreadFilenameDTO param = new MovieThreadFilenameDTO();
+        param.setThreadId(threadId);
+        return list(param);
     }
 }

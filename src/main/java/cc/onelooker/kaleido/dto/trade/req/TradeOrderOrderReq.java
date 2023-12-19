@@ -1,8 +1,5 @@
 package cc.onelooker.kaleido.dto.trade.req;
 
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**

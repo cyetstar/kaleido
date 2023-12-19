@@ -1,13 +1,5 @@
 package cc.onelooker.kaleido.web.controller.system;
 
-import cc.onelooker.kaleido.dto.system.SysUserDTO;
-import com.zjjcnt.common.core.dict.Dictionary;
-import com.zjjcnt.common.core.dict.DictionaryInitializer;
-import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.PageParam;
-import com.zjjcnt.common.core.domain.PageResult;
-import com.zjjcnt.common.core.service.IBaseService;
-import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import cc.onelooker.kaleido.convert.system.SysDictTypeConvert;
 import cc.onelooker.kaleido.dto.system.SysDictTypeDTO;
 import cc.onelooker.kaleido.dto.system.req.SysDictTypeCreateReq;
@@ -17,6 +9,12 @@ import cc.onelooker.kaleido.dto.system.resp.SysDictTypeCreateResp;
 import cc.onelooker.kaleido.dto.system.resp.SysDictTypePageResp;
 import cc.onelooker.kaleido.dto.system.resp.SysDictTypeViewResp;
 import cc.onelooker.kaleido.service.system.SysDictTypeService;
+import com.zjjcnt.common.core.dict.Dictionary;
+import com.zjjcnt.common.core.domain.CommonResult;
+import com.zjjcnt.common.core.domain.PageParam;
+import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.service.IBaseService;
+import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

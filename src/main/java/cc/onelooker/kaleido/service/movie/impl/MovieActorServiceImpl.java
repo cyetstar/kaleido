@@ -1,22 +1,20 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
+import cc.onelooker.kaleido.convert.movie.MovieActorConvert;
+import cc.onelooker.kaleido.dto.movie.MovieActorDTO;
 import cc.onelooker.kaleido.dto.movie.MovieBasicActorDTO;
+import cc.onelooker.kaleido.entity.movie.MovieActorDO;
+import cc.onelooker.kaleido.mapper.movie.MovieActorMapper;
+import cc.onelooker.kaleido.service.movie.MovieActorService;
 import cc.onelooker.kaleido.service.movie.MovieBasicActorService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.movie.MovieActorService;
-import cc.onelooker.kaleido.entity.movie.MovieActorDO;
-import cc.onelooker.kaleido.dto.movie.MovieActorDTO;
-import cc.onelooker.kaleido.convert.movie.MovieActorConvert;
-import cc.onelooker.kaleido.mapper.movie.MovieActorMapper;
-
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**

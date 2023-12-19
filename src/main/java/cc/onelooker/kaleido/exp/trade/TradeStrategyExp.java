@@ -1,14 +1,11 @@
 package cc.onelooker.kaleido.exp.trade;
 
-import lombok.Data;
 import com.alibaba.excel.annotation.ExcelProperty;
-
-import java.lang.Long;
-import java.lang.String;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 import com.zjjcnt.common.core.annotation.Dict;
+import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
+import lombok.Data;
+
 import java.math.BigDecimal;
-import java.lang.Integer;
 
 /**
  * 策略导出对象

@@ -13,8 +13,8 @@ import cc.onelooker.kaleido.third.douban.Movie;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
-import cc.onelooker.kaleido.utils.NioFileUtils;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.NioFileUtils;
 import cn.hutool.http.HttpUtil;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.ExportColumn;
@@ -39,7 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -199,6 +200,13 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         return CommonResult.success(true);
     }
 
+    @PostMapping("writeNFO")
+    @ApiOperation(value = "输出NFO")
+    public CommonResult<Boolean> writeNFO(@RequestBody MovieBasicWriteNFOReq req) throws JAXBException {
+        movieManager.writeNFO(req.getId());
+        return CommonResult.success(true);
+    }
+
     @PostMapping("searchDouban")
     @ApiOperation(value = "查询豆瓣")
     public CommonResult<List<MovieBasicSearchDoubanResp>> searchDouban(@RequestBody MovieBasicSearchDoubanReq req) {
@@ -278,5 +286,12 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
             respList.add(resp);
         }
         return CommonResult.success(respList);
+    }
+
+    @PostMapping("checkThreadStatus")
+    @ApiOperation(value = "检查发布收藏状态")
+    public CommonResult<Boolean> checkThreadStatus() {
+        taskManager.checkThreadStatus();
+        return CommonResult.success(true);
     }
 }

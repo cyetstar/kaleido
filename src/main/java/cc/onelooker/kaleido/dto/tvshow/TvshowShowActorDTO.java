@@ -1,10 +1,7 @@
 package cc.onelooker.kaleido.dto.tvshow;
 
-import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
-
-import java.lang.Long;
-import java.lang.String;
+import lombok.Data;
 
 /**
  * 剧集演职员关联表DTO

@@ -1,13 +1,9 @@
 package cc.onelooker.kaleido.dto.trade.req;
 
-import lombok.Data;
+import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.lang.Long;
-import java.lang.String;
-import java.math.BigDecimal;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
+import lombok.Data;
 
 /**
  * 交易账户请求对象

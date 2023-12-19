@@ -1,25 +1,17 @@
 package cc.onelooker.kaleido.convert.trade;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.trade.TradeStrategyDTO;
-import cc.onelooker.kaleido.entity.trade.TradeStrategyDO;
-import cc.onelooker.kaleido.dto.trade.req.TradeStrategyPageReq;
 import cc.onelooker.kaleido.dto.trade.req.TradeStrategyCreateReq;
+import cc.onelooker.kaleido.dto.trade.req.TradeStrategyPageReq;
 import cc.onelooker.kaleido.dto.trade.req.TradeStrategyUpdateReq;
+import cc.onelooker.kaleido.dto.trade.resp.TradeStrategyCreateResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeStrategyPageResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeStrategyViewResp;
-import cc.onelooker.kaleido.dto.trade.resp.TradeStrategyCreateResp;
+import cc.onelooker.kaleido.entity.trade.TradeStrategyDO;
 import cc.onelooker.kaleido.exp.trade.TradeStrategyExp;
-
-import java.lang.Long;
-import java.lang.String;
-import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
-import com.zjjcnt.common.core.annotation.Dict;
-import java.math.BigDecimal;
-import java.lang.Integer;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 /**
 * 策略Convert
 *

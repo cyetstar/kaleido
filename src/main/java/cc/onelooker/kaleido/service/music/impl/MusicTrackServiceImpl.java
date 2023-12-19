@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.service.music.impl;
 
 import cc.onelooker.kaleido.convert.music.MusicTrackConvert;
-import cc.onelooker.kaleido.dto.music.MusicArtistAlbumDTO;
 import cc.onelooker.kaleido.dto.music.MusicTrackDTO;
 import cc.onelooker.kaleido.entity.music.MusicTrackDO;
 import cc.onelooker.kaleido.mapper.music.MusicTrackMapper;

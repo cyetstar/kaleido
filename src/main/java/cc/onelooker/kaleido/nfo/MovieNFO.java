@@ -86,5 +86,4 @@ public class MovieNFO {
     private String imdbid;
     private String doubanid;
 
-
 }

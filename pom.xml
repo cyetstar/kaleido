@@ -127,16 +127,6 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.github.ulisesbocchio</groupId>
-            <artifactId>jasypt-spring-boot-starter</artifactId>
-            <version>${jasypt-spring-boot-starter.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.penggle</groupId>
-            <artifactId>kaptcha</artifactId>
-            <version>${kaptcha.version}</version>
-        </dependency>
-        <dependency>
             <groupId>net.jthink</groupId>
             <artifactId>jaudiotagger</artifactId>
             <version>${jaudiotagger.version}</version>
@@ -173,8 +163,14 @@
             <artifactId>yumbo-music-utils</artifactId>
             <version>1.2.3</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
+        <finalName>app</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

@@ -1,6 +1,5 @@
 package cc.onelooker.kaleido.dto.movie;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 

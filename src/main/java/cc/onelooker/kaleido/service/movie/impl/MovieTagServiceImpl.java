@@ -1,20 +1,19 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
-import org.apache.commons.lang3.Validate;
-import org.springframework.stereotype.Service;
+import cc.onelooker.kaleido.convert.movie.MovieTagConvert;
+import cc.onelooker.kaleido.dto.movie.MovieTagDTO;
+import cc.onelooker.kaleido.entity.movie.MovieTagDO;
+import cc.onelooker.kaleido.mapper.movie.MovieTagMapper;
+import cc.onelooker.kaleido.service.movie.MovieTagService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.movie.MovieTagService;
-import cc.onelooker.kaleido.entity.movie.MovieTagDO;
-import cc.onelooker.kaleido.dto.movie.MovieTagDTO;
-import cc.onelooker.kaleido.convert.movie.MovieTagConvert;
-import cc.onelooker.kaleido.mapper.movie.MovieTagMapper;
-
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 电影标签ServiceImpl

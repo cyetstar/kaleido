@@ -2,10 +2,6 @@ package cc.onelooker.kaleido.dto.tvshow;
 
 import cc.onelooker.kaleido.dto.IDictionary;
 import lombok.Data;
-import com.zjjcnt.common.core.dto.BaseDTO;
-
-import java.lang.Long;
-import java.lang.String;
 
 /**
  * 剧集类型DTO
