@@ -8,17 +8,16 @@ import cc.onelooker.kaleido.dto.movie.resp.MovieLanguageCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieLanguagePageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieLanguageViewResp;
 import cc.onelooker.kaleido.entity.movie.MovieLanguageDO;
-import cc.onelooker.kaleido.exp.movie.MovieLanguageExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 语言Convert
-*
-* @author cyetstar
-* @date 2023-11-26 01:19:02
-*/
+ * 语言Convert
+ *
+ * @author cyetstar
+ * @date 2023-11-26 01:19:02
+ */
 @Mapper
 public interface MovieLanguageConvert {
 
@@ -26,7 +25,7 @@ public interface MovieLanguageConvert {
 
     MovieLanguageDTO convert(MovieLanguageDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     MovieLanguageDO convertToDO(MovieLanguageDTO dto);
 
     MovieLanguageDTO convertToDTO(MovieLanguagePageReq req);
@@ -40,7 +39,5 @@ public interface MovieLanguageConvert {
     MovieLanguageViewResp convertToViewResp(MovieLanguageDTO dto);
 
     MovieLanguageCreateResp convertToCreateResp(MovieLanguageDTO dto);
-
-    MovieLanguageExp convertToExp(MovieLanguageDTO dto);
 
 }

@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-11-27 22:51:36
- *
  */
 @Data
 @ApiModel("剧集类型关联表请求对象")
-public class TvshowShowGenrePageReq{
+public class TvshowShowGenrePageReq {
 
     @ApiModelProperty("剧集id")
     private Long showId;

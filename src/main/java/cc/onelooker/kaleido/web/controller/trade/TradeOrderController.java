@@ -11,26 +11,20 @@ import cc.onelooker.kaleido.dto.trade.resp.TradeOrderCreateResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeOrderPageByGridIdResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeOrderPageResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeOrderViewResp;
-import cc.onelooker.kaleido.exp.trade.TradeOrderExp;
 import cc.onelooker.kaleido.service.trade.TradeOrderService;
 import cc.onelooker.kaleido.service.trade.TradeSymbolService;
 import cc.onelooker.kaleido.third.mexc.MexcApiService;
 import cc.onelooker.kaleido.third.mexc.req.OrderReq;
 import cc.onelooker.kaleido.third.mexc.resp.OrderResp;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * 交易订单前端控制器
@@ -86,20 +80,6 @@ public class TradeOrderController extends AbstractCrudController<TradeOrderDTO> 
     @ApiOperation(value = "删除交易订单")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
-    }
-
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(TradeOrderExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出交易订单")
-    public void export(TradeOrderPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "交易订单" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, TradeOrderExp.class, TradeOrderConvert.INSTANCE::convertToDTO, TradeOrderConvert.INSTANCE::convertToExp, response);
     }
 
     @GetMapping(value = "/pageByGridId")

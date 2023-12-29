@@ -79,10 +79,10 @@ public class SysRoleResourceServiceImpl extends KaleidoBaseServiceImpl<SysRoleRe
         SysRoleResourceDTO queryDto = new SysRoleResourceDTO();
         queryDto.setRoleId(req.getRoleId());
         List<SysRoleResourceDTO> roleResources = list(queryDto);
-        Map<Long,SysRoleResourceDTO> roleResourceMaps = roleResources.stream().collect(Collectors.toMap(SysRoleResourceDTO::getResourceId,item -> item));
+        Map<Long, SysRoleResourceDTO> roleResourceMaps = roleResources.stream().collect(Collectors.toMap(SysRoleResourceDTO::getResourceId, item -> item));
         for (Long resourceId : req.getResourceIds()) {
             SysRoleResourceDTO sysRoleResourceDTO = roleResourceMaps.remove(resourceId);
-            if(sysRoleResourceDTO == null) {
+            if (sysRoleResourceDTO == null) {
                 sysRoleResourceDTO = new SysRoleResourceDTO();
                 sysRoleResourceDTO.setRoleId(req.getRoleId());
                 sysRoleResourceDTO.setResourceId(resourceId);
@@ -97,6 +97,5 @@ public class SysRoleResourceServiceImpl extends KaleidoBaseServiceImpl<SysRoleRe
         }
         return true;
     }
-
 
 }

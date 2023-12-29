@@ -17,72 +17,71 @@ public class MovieThreadDTO implements BaseDTO<Long> {
     private static final long serialVersionUID = 1665172171093787891L;
 
     /**
-     * 
+     *
      */
     private Long id;
 
     /**
-     * 
+     *
      */
     private Date createdAt;
 
     /**
-     * 
+     *
      */
     private String doubanId;
 
     /**
-     * 
+     *
      */
     private String imdb;
 
     /**
-     * 
+     *
      */
     private String links;
 
     /**
-     * 
+     *
      */
     private String publishDate;
 
     /**
-     * 
+     *
      */
     private Double rating;
 
     /**
-     * 
+     *
      */
     private Integer status;
 
     /**
-     * 
+     *
      */
     private Boolean thanks;
 
     /**
-     * 
+     *
      */
     private String title;
 
     /**
-     * 
+     *
      */
     private String type;
 
     /**
-     * 
+     *
      */
     private Date updatedAt;
 
     /**
-     * 
+     *
      */
     private String url;
 
     // ------ 非数据库表字段 -------
-
 
     @Override
     public Long getId() {
@@ -92,5 +91,10 @@ public class MovieThreadDTO implements BaseDTO<Long> {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return title;
     }
 }

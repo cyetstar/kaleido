@@ -11,11 +11,10 @@ import java.util.Date;
  *
  * @author cyetstar
  * @date 2023-12-18 14:53:14
- *
  */
 @Data
 @ApiModel("电影发布记录请求对象")
-public class MovieThreadCreateReq{
+public class MovieThreadCreateReq {
 
     @ApiModelProperty("")
     private Date createdAt;

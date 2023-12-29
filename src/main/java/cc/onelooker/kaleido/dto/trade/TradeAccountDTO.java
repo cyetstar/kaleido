@@ -44,7 +44,6 @@ public class TradeAccountDTO implements ISystem<Long> {
      */
     private String xgsj;
 
-
     @Override
     public Long getId() {
         return this.id;

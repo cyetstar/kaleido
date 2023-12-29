@@ -22,83 +22,82 @@ public class MovieThreadDO implements IdEntity<Long> {
     private static final long serialVersionUID = 8141120704617576531L;
 
     /**
-     * 
+     *
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 
+     *
      */
     @TableField(value = "created_at")
     private Date createdAt;
 
     /**
-     * 
+     *
      */
     @TableField(value = "douban_id")
     private String doubanId;
 
     /**
-     * 
+     *
      */
     @TableField(value = "imdb")
     private String imdb;
 
     /**
-     * 
+     *
      */
     @TableField(value = "links")
     private String links;
 
     /**
-     * 
+     *
      */
     @TableField(value = "publish_date")
     private String publishDate;
 
     /**
-     * 
+     *
      */
     @TableField(value = "rating")
     private Double rating;
 
     /**
-     * 
+     *
      */
     @TableField(value = "status")
     private Integer status;
 
     /**
-     * 
+     *
      */
     @TableField(value = "thanks")
     private Boolean thanks;
 
     /**
-     * 
+     *
      */
     @TableField(value = "title")
     private String title;
 
     /**
-     * 
+     *
      */
     @TableField(value = "type")
     private String type;
 
     /**
-     * 
+     *
      */
     @TableField(value = "updated_at")
     private Date updatedAt;
 
     /**
-     * 
+     *
      */
     @TableField(value = "url")
     private String url;
-
 
     @Override
     public Long getId() {

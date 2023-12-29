@@ -81,7 +81,6 @@ public class MusicTrackDTO implements BaseDTO<Long> {
 
     // ------ 非数据库表字段 -------
 
-
     @Override
     public Long getId() {
         return this.id;

@@ -8,17 +8,16 @@ import cc.onelooker.kaleido.dto.movie.resp.MovieBasicCountryCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieBasicCountryPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieBasicCountryViewResp;
 import cc.onelooker.kaleido.entity.movie.MovieBasicCountryDO;
-import cc.onelooker.kaleido.exp.movie.MovieBasicCountryExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 电影国家地区关联表Convert
-*
-* @author cyetstar
-* @date 2023-11-26 01:19:02
-*/
+ * 电影国家地区关联表Convert
+ *
+ * @author cyetstar
+ * @date 2023-11-26 01:19:02
+ */
 @Mapper
 public interface MovieBasicCountryConvert {
 
@@ -26,7 +25,7 @@ public interface MovieBasicCountryConvert {
 
     MovieBasicCountryDTO convert(MovieBasicCountryDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     MovieBasicCountryDO convertToDO(MovieBasicCountryDTO dto);
 
     MovieBasicCountryDTO convertToDTO(MovieBasicCountryPageReq req);
@@ -40,7 +39,5 @@ public interface MovieBasicCountryConvert {
     MovieBasicCountryViewResp convertToViewResp(MovieBasicCountryDTO dto);
 
     MovieBasicCountryCreateResp convertToCreateResp(MovieBasicCountryDTO dto);
-
-    MovieBasicCountryExp convertToExp(MovieBasicCountryDTO dto);
 
 }

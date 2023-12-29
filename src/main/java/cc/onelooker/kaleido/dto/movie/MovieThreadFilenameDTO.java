@@ -15,22 +15,21 @@ public class MovieThreadFilenameDTO implements BaseDTO<Long> {
     private static final long serialVersionUID = -6384262958419053545L;
 
     /**
-     * 
+     *
      */
     private Long id;
 
     /**
-     * 
+     *
      */
     private String value;
 
     /**
-     * 
+     *
      */
     private Long threadId;
 
     // ------ 非数据库表字段 -------
-
 
     @Override
     public Long getId() {

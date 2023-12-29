@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-11-27 22:51:36
- *
  */
 @Data
 @ApiModel("单季请求对象")
-public class TvshowSeasonUpdateReq{
+public class TvshowSeasonUpdateReq {
 
     @ApiModelProperty("主键")
     private Long id;

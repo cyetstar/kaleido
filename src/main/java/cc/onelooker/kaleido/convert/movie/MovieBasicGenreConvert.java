@@ -8,17 +8,16 @@ import cc.onelooker.kaleido.dto.movie.resp.MovieBasicGenreCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieBasicGenrePageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieBasicGenreViewResp;
 import cc.onelooker.kaleido.entity.movie.MovieBasicGenreDO;
-import cc.onelooker.kaleido.exp.movie.MovieBasicGenreExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 电影类型关联表Convert
-*
-* @author cyetstar
-* @date 2023-11-26 01:19:02
-*/
+ * 电影类型关联表Convert
+ *
+ * @author cyetstar
+ * @date 2023-11-26 01:19:02
+ */
 @Mapper
 public interface MovieBasicGenreConvert {
 
@@ -26,7 +25,7 @@ public interface MovieBasicGenreConvert {
 
     MovieBasicGenreDTO convert(MovieBasicGenreDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     MovieBasicGenreDO convertToDO(MovieBasicGenreDTO dto);
 
     MovieBasicGenreDTO convertToDTO(MovieBasicGenrePageReq req);
@@ -40,7 +39,5 @@ public interface MovieBasicGenreConvert {
     MovieBasicGenreViewResp convertToViewResp(MovieBasicGenreDTO dto);
 
     MovieBasicGenreCreateResp convertToCreateResp(MovieBasicGenreDTO dto);
-
-    MovieBasicGenreExp convertToExp(MovieBasicGenreDTO dto);
 
 }

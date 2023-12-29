@@ -2,7 +2,10 @@ package cc.onelooker.kaleido.nfo;
 
 import cc.onelooker.kaleido.enums.SourceType;
 import cc.onelooker.kaleido.third.douban.Movie;
+import cc.onelooker.kaleido.third.plex.Metadata;
+import cc.onelooker.kaleido.third.plex.Tag;
 import com.google.common.collect.Lists;
+import com.zjjcnt.common.util.DateTimeUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -72,7 +75,57 @@ public class NFOUtil {
         return toMovieNFO(movieNFO, movie);
     }
 
-    public static RatingNFO toRatingNFO(Movie.Rating rating) {
+    public static MovieNFO toMovieNFO(Metadata metadata) {
+        MovieNFO movieNFO = new MovieNFO();
+        movieNFO.setId(String.valueOf(metadata.getRatingKey()));
+        movieNFO.setTitle(metadata.getTitle());
+        movieNFO.setOriginaltitle(metadata.getOriginalTitle());
+        movieNFO.setSorttitle(metadata.getTitleSort());
+        movieNFO.setYear(metadata.getYear());
+        movieNFO.setPlot(metadata.getSummary());
+        movieNFO.setMpaa(metadata.getContentRating());
+        if (StringUtils.isNotEmpty(metadata.getStudio())) {
+            movieNFO.setStudios(Lists.newArrayList(metadata.getStudio()));
+        }
+        if (metadata.getGenreList() != null) {
+            movieNFO.setGenres(metadata.getGenreList().stream().map(Tag::getTag).collect(Collectors.toList()));
+        }
+        if (metadata.getCountryList() != null) {
+            movieNFO.setCountries(metadata.getCountryList().stream().map(Tag::getTag).collect(Collectors.toList()));
+        }
+        if (metadata.getRating() != null) {
+            RatingNFO ratingNFO = new RatingNFO();
+            ratingNFO.setValue(String.valueOf(metadata.getRating()));
+            ratingNFO.setName(SourceType.douban.name());
+            movieNFO.setRatings(Lists.newArrayList(ratingNFO));
+        }
+        if (metadata.getDirectorList() != null) {
+            movieNFO.setDirectors(metadata.getDirectorList().stream().map(Tag::getTag).collect(Collectors.toList()));
+        }
+        if (metadata.getWriterList() != null) {
+            movieNFO.setCredits(metadata.getWriterList().stream().map(Tag::getTag).collect(Collectors.toList()));
+        }
+        if (metadata.getRoleList() != null) {
+            movieNFO.setActors(metadata.getRoleList().stream().map(s -> toActorNFO(s.getTag(), s.getRole(), s.getThumb())).collect(Collectors.toList()));
+        }
+        if (metadata.getCollectionList() != null) {
+            movieNFO.setSets(metadata.getCollectionList().stream().map(s -> toSetNFO(s.getTag())).collect(Collectors.toList()));
+        }
+        movieNFO.setDateadded(DateTimeUtils.formatDateTime(DateTimeUtils.parseSecondTimestamp(metadata.getAddedAt()), "yyyy-MM-dd HH:mm:ss"));
+        return movieNFO;
+    }
+
+    public static UniqueidNFO toUniqueidNFO(String value, SourceType type) {
+        if (StringUtils.isNotEmpty(value)) {
+            UniqueidNFO uniqueidNFO = new UniqueidNFO();
+            uniqueidNFO.setValue(value);
+            uniqueidNFO.setType(type.name());
+            return uniqueidNFO;
+        }
+        return null;
+    }
+
+    private static RatingNFO toRatingNFO(Movie.Rating rating) {
         if (rating == null || rating.getAverage() == null) {
             return null;
         }
@@ -82,7 +135,7 @@ public class NFOUtil {
         return ratingNFO;
     }
 
-    public static UniqueidNFO toUniqueidNFO(SourceType type, String value) {
+    private static UniqueidNFO toUniqueidNFO(SourceType type, String value) {
         if (StringUtils.isEmpty(value)) {
             return null;
         }
@@ -92,7 +145,7 @@ public class NFOUtil {
         return uniqueidNFO;
     }
 
-    public static List<ActorNFO> toActorNFOs(List<Movie.Cast> castList) {
+    private static List<ActorNFO> toActorNFOs(List<Movie.Cast> castList) {
         List<ActorNFO> actorNFOList = Lists.newArrayList();
         if (castList != null) {
             for (Movie.Cast cast : castList) {
@@ -107,6 +160,20 @@ public class NFOUtil {
         return actorNFOList;
     }
 
+    private static ActorNFO toActorNFO(String name, String role, String thumb) {
+        ActorNFO actorNFO = new ActorNFO();
+        actorNFO.setName(name);
+        actorNFO.setRole(role);
+        actorNFO.setThumb(thumb);
+        return actorNFO;
+    }
+
+    private static SetNFO toSetNFO(String name) {
+        SetNFO setNFO = new SetNFO();
+        setNFO.setName(name);
+        return setNFO;
+    }
+
     public static void write(MovieNFO movieNFO, Path path, String filename) throws JAXBException {
         marshaller.marshal(movieNFO, path.resolve(filename).toFile());
     }
@@ -115,3 +182,6 @@ public class NFOUtil {
         return (MovieNFO) unmarshaller.unmarshal(path.resolve(filename).toFile());
     }
 }
+
+
+

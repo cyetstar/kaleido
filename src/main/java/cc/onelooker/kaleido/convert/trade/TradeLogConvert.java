@@ -8,16 +8,16 @@ import cc.onelooker.kaleido.dto.trade.resp.TradeLogCreateResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeLogPageResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeLogViewResp;
 import cc.onelooker.kaleido.entity.trade.TradeLogDO;
-import cc.onelooker.kaleido.exp.trade.TradeLogExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+
 /**
-* 交易记录Convert
-*
-* @author cyetstar
-* @date 2023-06-23 13:38:46
-*/
+ * 交易记录Convert
+ *
+ * @author cyetstar
+ * @date 2023-06-23 13:38:46
+ */
 @Mapper
 public interface TradeLogConvert {
 
@@ -25,7 +25,7 @@ public interface TradeLogConvert {
 
     TradeLogDTO convert(TradeLogDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     TradeLogDO convertToDO(TradeLogDTO dto);
 
     TradeLogDTO convertToDTO(TradeLogPageReq req);
@@ -39,7 +39,5 @@ public interface TradeLogConvert {
     TradeLogViewResp convertToViewResp(TradeLogDTO dto);
 
     TradeLogCreateResp convertToCreateResp(TradeLogDTO dto);
-
-    TradeLogExp convertToExp(TradeLogDTO dto);
 
 }

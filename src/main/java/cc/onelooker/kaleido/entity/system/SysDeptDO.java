@@ -123,7 +123,6 @@ public class SysDeptDO implements IdEntity<Long> {
     @TableField(value = "ancestors")
     private String ancestors;
 
-
     @Override
     public Long getId() {
         return this.id;

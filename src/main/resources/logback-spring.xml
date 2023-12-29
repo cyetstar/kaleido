@@ -74,9 +74,6 @@
 
     <springProfile name="dev">
         <logger name="cc.onelooker" level="DEBUG" additivity="false">
-            <appender-ref ref="INFO_FILE"/>
-            <appender-ref ref="WARN_FILE"/>
-            <appender-ref ref="ERROR_FILE"/>
             <appender-ref ref="CONSOLE"/>
         </logger>
         <root level="INFO">

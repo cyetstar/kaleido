@@ -11,11 +11,10 @@ import java.util.Date;
  *
  * @author cyetstar
  * @date 2023-12-18 14:53:14
- *
  */
 @Data
 @ApiModel("电影发布记录响应对象")
-public class MovieThreadViewResp{
+public class MovieThreadViewResp {
 
     @ApiModelProperty("")
     private Long id;

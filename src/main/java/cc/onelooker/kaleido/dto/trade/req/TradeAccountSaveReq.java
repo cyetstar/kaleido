@@ -9,7 +9,6 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-06-23 13:38:46
- *
  */
 @Data
 @ApiModel("交易账户请求对象")

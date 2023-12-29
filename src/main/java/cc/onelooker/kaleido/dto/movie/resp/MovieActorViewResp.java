@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-11-26 01:19:02
- *
  */
 @Data
 @ApiModel("演职员响应对象")
-public class MovieActorViewResp{
+public class MovieActorViewResp {
 
     @ApiModelProperty("主键")
     private Long id;

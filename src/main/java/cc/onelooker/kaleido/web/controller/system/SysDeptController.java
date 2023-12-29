@@ -20,16 +20,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
-* 部门表前端控制器
-*
-* @author cyetstar
-* @date 2022-11-13 01:12:24
-*/
+ * 部门表前端控制器
+ *
+ * @author cyetstar
+ * @date 2022-11-13 01:12:24
+ */
 
 @Api(tags = "部门表")
 @RestController
 @RequestMapping("/sysDept")
-public class SysDeptController extends AbstractCrudController<SysDeptDTO>{
+public class SysDeptController extends AbstractCrudController<SysDeptDTO> {
 
     @Autowired
     private SysDeptService sysDeptService;

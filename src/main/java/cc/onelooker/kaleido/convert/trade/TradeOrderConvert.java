@@ -9,17 +9,16 @@ import cc.onelooker.kaleido.dto.trade.resp.TradeOrderPageByGridIdResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeOrderPageResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeOrderViewResp;
 import cc.onelooker.kaleido.entity.trade.TradeOrderDO;
-import cc.onelooker.kaleido.exp.trade.TradeOrderExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 交易订单Convert
-*
-* @author cyetstar
-* @date 2023-07-05 23:02:49
-*/
+ * 交易订单Convert
+ *
+ * @author cyetstar
+ * @date 2023-07-05 23:02:49
+ */
 @Mapper
 public interface TradeOrderConvert {
 
@@ -27,7 +26,7 @@ public interface TradeOrderConvert {
 
     TradeOrderDTO convert(TradeOrderDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     TradeOrderDO convertToDO(TradeOrderDTO dto);
 
     TradeOrderDTO convertToDTO(TradeOrderPageReq req);
@@ -41,8 +40,6 @@ public interface TradeOrderConvert {
     TradeOrderViewResp convertToViewResp(TradeOrderDTO dto);
 
     TradeOrderCreateResp convertToCreateResp(TradeOrderDTO dto);
-
-    TradeOrderExp convertToExp(TradeOrderDTO dto);
 
     TradeOrderPageByGridIdResp convertToPageByGridIdResp(TradeOrderDTO dto);
 }

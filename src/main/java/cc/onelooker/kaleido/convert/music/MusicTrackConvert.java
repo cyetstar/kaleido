@@ -9,17 +9,16 @@ import cc.onelooker.kaleido.dto.music.resp.MusicTrackListByAlbumIdResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicTrackPageResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicTrackViewResp;
 import cc.onelooker.kaleido.entity.music.MusicTrackDO;
-import cc.onelooker.kaleido.exp.music.MusicTrackExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 曲目Convert
-*
-* @author cyetstar
-* @date 2023-11-25 22:16:58
-*/
+ * 曲目Convert
+ *
+ * @author cyetstar
+ * @date 2023-11-25 22:16:58
+ */
 @Mapper
 public interface MusicTrackConvert {
 
@@ -27,7 +26,7 @@ public interface MusicTrackConvert {
 
     MusicTrackDTO convert(MusicTrackDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     MusicTrackDO convertToDO(MusicTrackDTO dto);
 
     MusicTrackDTO convertToDTO(MusicTrackPageReq req);
@@ -41,8 +40,6 @@ public interface MusicTrackConvert {
     MusicTrackViewResp convertToViewResp(MusicTrackDTO dto);
 
     MusicTrackCreateResp convertToCreateResp(MusicTrackDTO dto);
-
-    MusicTrackExp convertToExp(MusicTrackDTO dto);
 
     MusicTrackListByAlbumIdResp convertToListByAlbumIdResp(MusicTrackDTO dto);
 }

@@ -29,8 +29,27 @@ public class MovieBasicCollectionDTO implements BaseDTO<Long> {
      */
     private Long collectionId;
 
-    // ------ 非数据库表字段 -------
+    /**
+     * 电影名
+     */
+    private String title;
 
+    /**
+     * 首映年份
+     */
+    private String year;
+
+    /**
+     * 豆瓣编号
+     */
+    private String doubanId;
+
+    /**
+     * 海报
+     */
+    private String thumb;
+
+    // ------ 非数据库表字段 -------
 
     @Override
     public Long getId() {

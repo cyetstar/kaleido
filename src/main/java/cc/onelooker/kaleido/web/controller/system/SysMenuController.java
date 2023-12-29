@@ -3,7 +3,6 @@ package cc.onelooker.kaleido.web.controller.system;
 import cc.onelooker.kaleido.convert.system.SysMenuConvert;
 import cc.onelooker.kaleido.dto.system.SysMenuDTO;
 import cc.onelooker.kaleido.dto.system.SysResourceDTO;
-import cc.onelooker.kaleido.dto.system.exp.SysMenuExp;
 import cc.onelooker.kaleido.dto.system.req.*;
 import cc.onelooker.kaleido.dto.system.resp.SysMenuCreateResp;
 import cc.onelooker.kaleido.dto.system.resp.SysMenuPageResp;
@@ -13,24 +12,21 @@ import cc.onelooker.kaleido.service.system.SysMenuService;
 import cc.onelooker.kaleido.service.system.SysResourceService;
 import cc.onelooker.kaleido.utils.CurrentUserUtils;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -86,20 +82,6 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
     @ApiOperation(value = "删除菜单表")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
-    }
-
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(SysMenuExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出数据")
-    public void export(SysMenuPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "菜单表" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, SysMenuExp.class, SysMenuConvert.INSTANCE::convertToDTO, SysMenuConvert.INSTANCE::convertToExp, response);
     }
 
     @PostMapping("init")

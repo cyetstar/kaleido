@@ -49,7 +49,6 @@ public class TradeRuleDO implements IdEntity<Long> {
     @TableField(value = "fxje")
     private String fxje;
 
-
     @Override
     public Long getId() {
         return this.id;

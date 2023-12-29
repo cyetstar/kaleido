@@ -8,34 +8,28 @@ import cc.onelooker.kaleido.dto.movie.req.MovieAkaUpdateReq;
 import cc.onelooker.kaleido.dto.movie.resp.MovieAkaCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieAkaPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieAkaViewResp;
-import cc.onelooker.kaleido.exp.movie.MovieAkaExp;
 import cc.onelooker.kaleido.service.movie.MovieAkaService;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-
 /**
-* 别名前端控制器
-*
-* @author cyetstar
-* @date 2023-11-26 01:19:02
-*/
+ * 别名前端控制器
+ *
+ * @author cyetstar
+ * @date 2023-11-26 01:19:02
+ */
 
 @Api(tags = "别名")
 @RestController
 @RequestMapping("/movieAka")
-public class MovieAkaController extends AbstractCrudController<MovieAkaDTO>{
+public class MovieAkaController extends AbstractCrudController<MovieAkaDTO> {
 
     @Autowired
     private MovieAkaService movieAkaService;
@@ -73,21 +67,6 @@ public class MovieAkaController extends AbstractCrudController<MovieAkaDTO>{
     @ApiOperation(value = "删除别名")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
-    }
-
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(MovieAkaExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出别名")
-    public void export(MovieAkaPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "别名" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, MovieAkaExp.class,
-                    MovieAkaConvert.INSTANCE::convertToDTO, MovieAkaConvert.INSTANCE::convertToExp, response);
     }
 
 }

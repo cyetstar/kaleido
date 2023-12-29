@@ -3,7 +3,6 @@ package cc.onelooker.kaleido.web.controller.system;
 import cc.onelooker.kaleido.convert.ObjectConvert;
 import cc.onelooker.kaleido.convert.system.SysDictConvert;
 import cc.onelooker.kaleido.dto.system.SysDictDTO;
-import cc.onelooker.kaleido.dto.system.exp.SysDictExp;
 import cc.onelooker.kaleido.dto.system.req.SysDictCreateBatchReq;
 import cc.onelooker.kaleido.dto.system.req.SysDictCreateReq;
 import cc.onelooker.kaleido.dto.system.req.SysDictPageReq;
@@ -13,10 +12,12 @@ import cc.onelooker.kaleido.dto.system.resp.SysDictViewResp;
 import cc.onelooker.kaleido.service.system.SysDictService;
 import com.zjjcnt.common.core.annotation.CacheControl;
 import com.zjjcnt.common.core.dict.Dictionary;
-import com.zjjcnt.common.core.domain.*;
+import com.zjjcnt.common.core.domain.CommonResult;
+import com.zjjcnt.common.core.domain.PageParam;
+import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.domain.TextValue;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.ArrayUtils;
@@ -24,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -106,20 +106,6 @@ public class SysDictController extends AbstractCrudController<SysDictDTO> {
     @ApiOperation(value = "删除字典表")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
-    }
-
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(SysDictExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出数据")
-    public void export(SysDictPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "字典表" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, SysDictExp.class, SysDictConvert.INSTANCE::convertToDTO, SysDictConvert.INSTANCE::convertToExp, response);
     }
 
     @ApiOperation(value = "查询所有")

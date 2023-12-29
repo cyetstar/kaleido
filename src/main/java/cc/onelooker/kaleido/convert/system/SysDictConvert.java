@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.convert.system;
 
 import cc.onelooker.kaleido.dto.system.SysDictDTO;
-import cc.onelooker.kaleido.dto.system.exp.SysDictExp;
 import cc.onelooker.kaleido.dto.system.req.SysDictCreateReq;
 import cc.onelooker.kaleido.dto.system.req.SysDictPageReq;
 import cc.onelooker.kaleido.dto.system.req.SysDictUpdateReq;
@@ -29,7 +28,7 @@ public interface SysDictConvert {
 
     List<SysDictDTO> convert(List<SysDictDO> sysDictDOList);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     SysDictDO convertToDO(SysDictDTO sysDictDTO);
 
     SysDictDO convertToDO(SysDictCreateReq req);
@@ -49,7 +48,5 @@ public interface SysDictConvert {
     SysDictViewResp convertToViewResp(SysDictDTO dto);
 
     SysDictCreateResp convertToCreateResp(SysDictDTO dto);
-
-    SysDictExp convertToExp(SysDictDTO dto);
 
 }

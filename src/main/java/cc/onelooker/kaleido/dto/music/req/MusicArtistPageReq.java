@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-11-25 22:16:58
- *
  */
 @Data
 @ApiModel("艺术家请求对象")
-public class MusicArtistPageReq{
+public class MusicArtistPageReq {
 
     @ApiModelProperty("MusicBrainz编号")
     private String musicbrainzId;

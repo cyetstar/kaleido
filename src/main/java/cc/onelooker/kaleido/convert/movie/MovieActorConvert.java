@@ -8,17 +8,16 @@ import cc.onelooker.kaleido.dto.movie.resp.MovieActorCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieActorPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieActorViewResp;
 import cc.onelooker.kaleido.entity.movie.MovieActorDO;
-import cc.onelooker.kaleido.exp.movie.MovieActorExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 演职员Convert
-*
-* @author cyetstar
-* @date 2023-11-26 01:19:02
-*/
+ * 演职员Convert
+ *
+ * @author cyetstar
+ * @date 2023-11-26 01:19:02
+ */
 @Mapper
 public interface MovieActorConvert {
 
@@ -26,7 +25,7 @@ public interface MovieActorConvert {
 
     MovieActorDTO convert(MovieActorDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     MovieActorDO convertToDO(MovieActorDTO dto);
 
     MovieActorDTO convertToDTO(MovieActorPageReq req);
@@ -40,7 +39,5 @@ public interface MovieActorConvert {
     MovieActorViewResp convertToViewResp(MovieActorDTO dto);
 
     MovieActorCreateResp convertToCreateResp(MovieActorDTO dto);
-
-    MovieActorExp convertToExp(MovieActorDTO dto);
 
 }

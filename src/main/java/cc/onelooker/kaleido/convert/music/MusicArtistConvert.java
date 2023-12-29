@@ -9,7 +9,6 @@ import cc.onelooker.kaleido.dto.music.resp.MusicArtistPageResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicArtistSearchNeteaseResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicArtistViewResp;
 import cc.onelooker.kaleido.entity.music.MusicArtistDO;
-import cc.onelooker.kaleido.exp.music.MusicArtistExp;
 import cc.onelooker.kaleido.third.netease.Artist;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -44,8 +43,6 @@ public interface MusicArtistConvert {
     MusicArtistViewResp convertToViewResp(MusicArtistDTO dto);
 
     MusicArtistCreateResp convertToCreateResp(MusicArtistDTO dto);
-
-    MusicArtistExp convertToExp(MusicArtistDTO dto);
 
     @Mappings({
             @Mapping(source = "id", target = "neteaseId"),

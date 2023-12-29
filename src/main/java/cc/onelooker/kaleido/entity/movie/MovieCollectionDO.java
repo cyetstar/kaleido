@@ -50,6 +50,12 @@ public class MovieCollectionDO implements IdEntity<Long> {
     private Integer childCount;
 
     /**
+     * 豆瓣编号
+     */
+    @TableField(value = "douban_id")
+    private String doubanId;
+
+    /**
      * 加入时间
      */
     @TableField(value = "added_at")

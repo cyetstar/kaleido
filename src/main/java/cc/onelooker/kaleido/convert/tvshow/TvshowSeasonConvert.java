@@ -8,17 +8,16 @@ import cc.onelooker.kaleido.dto.tvshow.resp.TvshowSeasonCreateResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowSeasonPageResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowSeasonViewResp;
 import cc.onelooker.kaleido.entity.tvshow.TvshowSeasonDO;
-import cc.onelooker.kaleido.exp.tvshow.TvshowSeasonExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 单季Convert
-*
-* @author cyetstar
-* @date 2023-11-26 23:27:03
-*/
+ * 单季Convert
+ *
+ * @author cyetstar
+ * @date 2023-11-26 23:27:03
+ */
 @Mapper
 public interface TvshowSeasonConvert {
 
@@ -26,7 +25,7 @@ public interface TvshowSeasonConvert {
 
     TvshowSeasonDTO convert(TvshowSeasonDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     TvshowSeasonDO convertToDO(TvshowSeasonDTO dto);
 
     TvshowSeasonDTO convertToDTO(TvshowSeasonPageReq req);
@@ -40,7 +39,5 @@ public interface TvshowSeasonConvert {
     TvshowSeasonViewResp convertToViewResp(TvshowSeasonDTO dto);
 
     TvshowSeasonCreateResp convertToCreateResp(TvshowSeasonDTO dto);
-
-    TvshowSeasonExp convertToExp(TvshowSeasonDTO dto);
 
 }

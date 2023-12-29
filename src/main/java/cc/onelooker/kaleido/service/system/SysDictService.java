@@ -23,8 +23,9 @@ public interface SysDictService extends IBaseService<SysDictDTO> {
 
     void deleteByDictType(List<String> dictTypeList);
 
-    SysDictDTO findByDictTypeAndValue(String dictType,String value);
-    SysDictDTO findByDictTypeAndLabel(String dictType,String label);
+    SysDictDTO findByDictTypeAndValue(String dictType, String value);
+
+    SysDictDTO findByDictTypeAndLabel(String dictType, String label);
 
     Boolean updateByDictType(String oldDictType, String newDictType);
 

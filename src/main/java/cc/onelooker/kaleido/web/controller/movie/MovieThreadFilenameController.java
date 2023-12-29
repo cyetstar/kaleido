@@ -8,34 +8,28 @@ import cc.onelooker.kaleido.dto.movie.req.MovieThreadFilenameUpdateReq;
 import cc.onelooker.kaleido.dto.movie.resp.MovieThreadFilenameCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieThreadFilenamePageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieThreadFilenameViewResp;
-import cc.onelooker.kaleido.exp.movie.MovieThreadFilenameExp;
 import cc.onelooker.kaleido.service.movie.MovieThreadFilenameService;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-
 /**
-* 电影发布文件前端控制器
-*
-* @author cyetstar
-* @date 2023-12-18 16:03:32
-*/
+ * 电影发布文件前端控制器
+ *
+ * @author cyetstar
+ * @date 2023-12-18 16:03:32
+ */
 
 @Api(tags = "电影发布文件")
 @RestController
 @RequestMapping("/movieThreadFilename")
-public class MovieThreadFilenameController extends AbstractCrudController<MovieThreadFilenameDTO>{
+public class MovieThreadFilenameController extends AbstractCrudController<MovieThreadFilenameDTO> {
 
     @Autowired
     private MovieThreadFilenameService movieThreadFilenameService;
@@ -73,21 +67,6 @@ public class MovieThreadFilenameController extends AbstractCrudController<MovieT
     @ApiOperation(value = "删除电影发布文件")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
-    }
-
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(MovieThreadFilenameExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出电影发布文件")
-    public void export(MovieThreadFilenamePageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "电影发布文件" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, MovieThreadFilenameExp.class,
-                    MovieThreadFilenameConvert.INSTANCE::convertToDTO, MovieThreadFilenameConvert.INSTANCE::convertToExp, response);
     }
 
 }

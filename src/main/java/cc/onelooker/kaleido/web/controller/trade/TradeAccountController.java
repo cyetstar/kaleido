@@ -10,25 +10,19 @@ import cc.onelooker.kaleido.dto.trade.resp.TradeAccountCreateResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeAccountGetBalanceResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeAccountPageResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeAccountViewResp;
-import cc.onelooker.kaleido.exp.trade.TradeAccountExp;
 import cc.onelooker.kaleido.service.trade.TradeAccountService;
 import cc.onelooker.kaleido.third.mexc.MexcApiService;
 import cc.onelooker.kaleido.third.mexc.resp.AccountResp;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * 交易账户前端控制器
@@ -98,20 +92,6 @@ public class TradeAccountController extends AbstractCrudController<TradeAccountD
     @ApiOperation(value = "删除交易账户")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
-    }
-
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(TradeAccountExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出交易账户")
-    public void export(TradeAccountPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "交易账户" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, TradeAccountExp.class, TradeAccountConvert.INSTANCE::convertToDTO, TradeAccountConvert.INSTANCE::convertToExp, response);
     }
 
     @GetMapping(value = "/getBalance")

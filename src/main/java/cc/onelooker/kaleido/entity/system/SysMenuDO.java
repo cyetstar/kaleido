@@ -148,11 +148,10 @@ public class SysMenuDO implements IdEntity<Long> {
     private String updatedBy;
 
     /**
-     * 
+     *
      */
     @TableField(value = "permission")
     private String permission;
-
 
     @Override
     public Long getId() {

@@ -9,7 +9,6 @@ import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionListByMovieIdResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionViewResp;
 import cc.onelooker.kaleido.entity.movie.MovieCollectionDO;
-import cc.onelooker.kaleido.exp.movie.MovieCollectionExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -41,8 +40,6 @@ public interface MovieCollectionConvert {
     MovieCollectionViewResp convertToViewResp(MovieCollectionDTO dto);
 
     MovieCollectionCreateResp convertToCreateResp(MovieCollectionDTO dto);
-
-    MovieCollectionExp convertToExp(MovieCollectionDTO dto);
 
     MovieCollectionListByMovieIdResp convertToListByMovieIdResp(MovieCollectionDTO dto);
 }

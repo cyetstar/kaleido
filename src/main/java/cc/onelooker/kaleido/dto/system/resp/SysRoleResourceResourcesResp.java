@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
 
-
 /**
  * @author lijun
  * @date 2023/2/16 0016 14:50
@@ -39,7 +38,7 @@ public class SysRoleResourceResourcesResp {
     /**
      * 角色的资源状态信息
      */
-    public static class ResourceInfo{
+    public static class ResourceInfo {
         private Long id;
 
         private String action;

@@ -37,6 +37,8 @@ public class MovieCollectionServiceImpl extends AbstractBaseServiceImpl<MovieCol
         LambdaQueryWrapper<MovieCollectionDO> query = new LambdaQueryWrapper<>();
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), MovieCollectionDO::getTitle, dto.getTitle());
         query.eq(Objects.nonNull(dto.getSummary()), MovieCollectionDO::getSummary, dto.getSummary());
+        query.le(Objects.nonNull(dto.getChildCount()), MovieCollectionDO::getChildCount, dto.getChildCount());
+        query.le(StringUtils.isNotEmpty(dto.getDoubanId()), MovieCollectionDO::getDoubanId, dto.getDoubanId());
         query.in(CollectionUtils.isNotEmpty(dto.getIdList()), MovieCollectionDO::getId, dto.getIdList());
         return query;
     }

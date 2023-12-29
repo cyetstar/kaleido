@@ -5,7 +5,6 @@ import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
 import cc.onelooker.kaleido.dto.music.req.*;
 import cc.onelooker.kaleido.dto.music.resp.*;
-import cc.onelooker.kaleido.exp.music.MusicAlbumExp;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.service.music.MusicAlbumService;
 import cc.onelooker.kaleido.service.music.MusicArtistService;
@@ -17,8 +16,8 @@ import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cn.hutool.http.HttpUtil;
+import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.exception.ServiceException;
@@ -28,12 +27,10 @@ import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -108,20 +105,6 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @ApiOperation(value = "删除专辑")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
-    }
-
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(MusicAlbumExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出专辑")
-    public void export(MusicAlbumPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "专辑" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, MusicAlbumExp.class, MusicAlbumConvert.INSTANCE::convertToDTO, MusicAlbumConvert.INSTANCE::convertToExp, response);
     }
 
     @PostMapping("syncPlex")

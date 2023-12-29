@@ -6,21 +6,21 @@ package cc.onelooker.kaleido.enums;
  * @Description TODO
  */
 public enum SourceType {
-    imdb(0,1),
+    imdb(0, 1),
 
-    douban(1,0),
+    douban(1, 0),
 
-    tmdb(2,2),
+    tmdb(2, 2),
 
-    themoviedb(2,2),
+    themoviedb(2, 2),
 
-    tmdbSet(3,3),
+    tmdbSet(3, 3),
 
-    moviemeter(4,4),
+    moviemeter(4, 4),
 
-    trakt(5,5),
+    trakt(5, 5),
 
-    dmm(10,10);
+    dmm(10, 10);
 
     private final int score;
 

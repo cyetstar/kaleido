@@ -9,7 +9,6 @@ import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowCreateResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowPageResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowViewResp;
 import cc.onelooker.kaleido.entity.tvshow.TvshowShowDO;
-import cc.onelooker.kaleido.exp.tvshow.TvshowShowExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -48,7 +47,5 @@ public interface TvshowShowConvert {
     TvshowShowViewResp.Actor convertToViewResp(TvshowActorDTO dto);
 
     TvshowShowCreateResp convertToCreateResp(TvshowShowDTO dto);
-
-    TvshowShowExp convertToExp(TvshowShowDTO dto);
 
 }

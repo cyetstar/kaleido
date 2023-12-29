@@ -8,16 +8,16 @@ import cc.onelooker.kaleido.dto.trade.resp.TradeSymbolCreateResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeSymbolPageResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeSymbolViewResp;
 import cc.onelooker.kaleido.entity.trade.TradeSymbolDO;
-import cc.onelooker.kaleido.exp.trade.TradeSymbolExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+
 /**
-* 交易商品Convert
-*
-* @author cyetstar
-* @date 2023-07-06 11:56:08
-*/
+ * 交易商品Convert
+ *
+ * @author cyetstar
+ * @date 2023-07-06 11:56:08
+ */
 @Mapper
 public interface TradeSymbolConvert {
 
@@ -25,7 +25,7 @@ public interface TradeSymbolConvert {
 
     TradeSymbolDTO convert(TradeSymbolDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     TradeSymbolDO convertToDO(TradeSymbolDTO dto);
 
     TradeSymbolDTO convertToDTO(TradeSymbolPageReq req);
@@ -39,7 +39,5 @@ public interface TradeSymbolConvert {
     TradeSymbolViewResp convertToViewResp(TradeSymbolDTO dto);
 
     TradeSymbolCreateResp convertToCreateResp(TradeSymbolDTO dto);
-
-    TradeSymbolExp convertToExp(TradeSymbolDTO dto);
 
 }

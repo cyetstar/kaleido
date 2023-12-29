@@ -4,7 +4,6 @@ import cc.onelooker.kaleido.entity.trade.TradeRuleDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
-
 /**
  * 交易规则Mapper接口
  *

@@ -139,7 +139,6 @@ public class TradeOrderDO implements IdEntity<Long> {
     @TableField(value = "fssj")
     private String fssj;
 
-
     @Override
     public Long getId() {
         return this.id;

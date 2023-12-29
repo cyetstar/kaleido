@@ -8,17 +8,16 @@ import cc.onelooker.kaleido.dto.music.resp.MusicArtistAlbumCreateResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicArtistAlbumPageResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicArtistAlbumViewResp;
 import cc.onelooker.kaleido.entity.music.MusicArtistAlbumDO;
-import cc.onelooker.kaleido.exp.music.MusicArtistAlbumExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 艺术家专辑关联表Convert
-*
-* @author cyetstar
-* @date 2023-11-25 22:16:58
-*/
+ * 艺术家专辑关联表Convert
+ *
+ * @author cyetstar
+ * @date 2023-11-25 22:16:58
+ */
 @Mapper
 public interface MusicArtistAlbumConvert {
 
@@ -26,7 +25,7 @@ public interface MusicArtistAlbumConvert {
 
     MusicArtistAlbumDTO convert(MusicArtistAlbumDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     MusicArtistAlbumDO convertToDO(MusicArtistAlbumDTO dto);
 
     MusicArtistAlbumDTO convertToDTO(MusicArtistAlbumPageReq req);
@@ -40,7 +39,5 @@ public interface MusicArtistAlbumConvert {
     MusicArtistAlbumViewResp convertToViewResp(MusicArtistAlbumDTO dto);
 
     MusicArtistAlbumCreateResp convertToCreateResp(MusicArtistAlbumDTO dto);
-
-    MusicArtistAlbumExp convertToExp(MusicArtistAlbumDTO dto);
 
 }

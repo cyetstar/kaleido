@@ -37,7 +37,6 @@ public class MovieBasicGenreDO implements IdEntity<Long> {
     @TableField(value = "genre_id")
     private Long genreId;
 
-
     @Override
     public Long getId() {
         return this.id;

@@ -24,7 +24,7 @@ public interface SysUserRoleConvert {
 
     SysUserRoleDTO convert(SysUserRoleDO sysUserRoleDO);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     SysUserRoleDO convertToDO(SysUserRoleDTO sysUserRoleDTO);
 
     SysUserRoleDTO convertToDTO(SysUserRolePageReq req);

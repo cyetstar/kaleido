@@ -127,7 +127,6 @@ public class MusicAlbumDO implements IdEntity<Long> {
     @TableField(value = "updated_at")
     private Long updatedAt;
 
-
     @Override
     public Long getId() {
         return this.id;

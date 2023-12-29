@@ -8,17 +8,16 @@ import cc.onelooker.kaleido.dto.tvshow.resp.TvshowActorCreateResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowActorPageResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowActorViewResp;
 import cc.onelooker.kaleido.entity.tvshow.TvshowActorDO;
-import cc.onelooker.kaleido.exp.tvshow.TvshowActorExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 剧集演职员Convert
-*
-* @author cyetstar
-* @date 2023-11-26 23:27:03
-*/
+ * 剧集演职员Convert
+ *
+ * @author cyetstar
+ * @date 2023-11-26 23:27:03
+ */
 @Mapper
 public interface TvshowActorConvert {
 
@@ -26,7 +25,7 @@ public interface TvshowActorConvert {
 
     TvshowActorDTO convert(TvshowActorDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     TvshowActorDO convertToDO(TvshowActorDTO dto);
 
     TvshowActorDTO convertToDTO(TvshowActorPageReq req);
@@ -40,7 +39,5 @@ public interface TvshowActorConvert {
     TvshowActorViewResp convertToViewResp(TvshowActorDTO dto);
 
     TvshowActorCreateResp convertToCreateResp(TvshowActorDTO dto);
-
-    TvshowActorExp convertToExp(TvshowActorDTO dto);
 
 }

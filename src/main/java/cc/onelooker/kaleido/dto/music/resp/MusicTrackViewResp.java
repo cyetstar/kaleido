@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-11-25 22:16:58
- *
  */
 @Data
 @ApiModel("曲目响应对象")
-public class MusicTrackViewResp{
+public class MusicTrackViewResp {
 
     @ApiModelProperty("主键")
     private Long id;

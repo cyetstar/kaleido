@@ -8,7 +8,6 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Duration;
 
 /**
- *
  * @author yejianyu
  * @date 2021-07-06 15:35:00
  */

@@ -15,6 +15,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface SysDictMapper extends BaseMapper<SysDictDO> {
 
-    SysDictDTO findByDictTypeAndValue(@Param("dictType") String dictType, @Param("value")String value);
-    SysDictDTO findByDictTypeAndLabel(@Param("dictType") String dictType, @Param("label")String label);
+    SysDictDTO findByDictTypeAndValue(@Param("dictType") String dictType, @Param("value") String value);
+
+    SysDictDTO findByDictTypeAndLabel(@Param("dictType") String dictType, @Param("label") String label);
 }

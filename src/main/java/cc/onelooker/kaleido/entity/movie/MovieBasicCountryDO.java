@@ -37,7 +37,6 @@ public class MovieBasicCountryDO implements IdEntity<Long> {
     @TableField(value = "country_id")
     private Long countryId;
 
-
     @Override
     public Long getId() {
         return this.id;

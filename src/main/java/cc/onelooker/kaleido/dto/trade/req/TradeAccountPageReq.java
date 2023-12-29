@@ -10,11 +10,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-06-23 13:38:46
- *
  */
 @Data
 @ApiModel("交易账户请求对象")
-public class TradeAccountPageReq{
+public class TradeAccountPageReq {
 
     @ApiModelProperty("账户名称")
     private String zhmc;

@@ -8,17 +8,16 @@ import cc.onelooker.kaleido.dto.movie.resp.MovieTagCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieTagPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieTagViewResp;
 import cc.onelooker.kaleido.entity.movie.MovieTagDO;
-import cc.onelooker.kaleido.exp.movie.MovieTagExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 电影标签Convert
-*
-* @author cyetstar
-* @date 2023-11-26 01:19:02
-*/
+ * 电影标签Convert
+ *
+ * @author cyetstar
+ * @date 2023-11-26 01:19:02
+ */
 @Mapper
 public interface MovieTagConvert {
 
@@ -26,7 +25,7 @@ public interface MovieTagConvert {
 
     MovieTagDTO convert(MovieTagDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     MovieTagDO convertToDO(MovieTagDTO dto);
 
     MovieTagDTO convertToDTO(MovieTagPageReq req);
@@ -40,7 +39,5 @@ public interface MovieTagConvert {
     MovieTagViewResp convertToViewResp(MovieTagDTO dto);
 
     MovieTagCreateResp convertToCreateResp(MovieTagDTO dto);
-
-    MovieTagExp convertToExp(MovieTagDTO dto);
 
 }

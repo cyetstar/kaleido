@@ -8,17 +8,16 @@ import cc.onelooker.kaleido.dto.movie.resp.MovieBasicLanguageCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieBasicLanguagePageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieBasicLanguageViewResp;
 import cc.onelooker.kaleido.entity.movie.MovieBasicLanguageDO;
-import cc.onelooker.kaleido.exp.movie.MovieBasicLanguageExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 电影语言关联表Convert
-*
-* @author cyetstar
-* @date 2023-11-26 01:19:02
-*/
+ * 电影语言关联表Convert
+ *
+ * @author cyetstar
+ * @date 2023-11-26 01:19:02
+ */
 @Mapper
 public interface MovieBasicLanguageConvert {
 
@@ -26,7 +25,7 @@ public interface MovieBasicLanguageConvert {
 
     MovieBasicLanguageDTO convert(MovieBasicLanguageDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     MovieBasicLanguageDO convertToDO(MovieBasicLanguageDTO dto);
 
     MovieBasicLanguageDTO convertToDTO(MovieBasicLanguagePageReq req);
@@ -40,7 +39,5 @@ public interface MovieBasicLanguageConvert {
     MovieBasicLanguageViewResp convertToViewResp(MovieBasicLanguageDTO dto);
 
     MovieBasicLanguageCreateResp convertToCreateResp(MovieBasicLanguageDTO dto);
-
-    MovieBasicLanguageExp convertToExp(MovieBasicLanguageDTO dto);
 
 }

@@ -4,7 +4,6 @@ import cc.onelooker.kaleido.convert.system.SysUserConvert;
 import cc.onelooker.kaleido.dto.system.SysResourceDTO;
 import cc.onelooker.kaleido.dto.system.SysRoleDTO;
 import cc.onelooker.kaleido.dto.system.SysUserDTO;
-import cc.onelooker.kaleido.dto.system.exp.SysUserExp;
 import cc.onelooker.kaleido.dto.system.req.*;
 import cc.onelooker.kaleido.dto.system.resp.SysUserCreateResp;
 import cc.onelooker.kaleido.dto.system.resp.SysUserInfoResp;
@@ -14,17 +13,15 @@ import cc.onelooker.kaleido.service.system.SysResourceService;
 import cc.onelooker.kaleido.service.system.SysRoleService;
 import cc.onelooker.kaleido.service.system.SysUserService;
 import cc.onelooker.kaleido.utils.CurrentUserUtils;
+import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import com.zjjcnt.common.security.domain.CustomUserDetails;
-import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,7 +29,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -140,13 +136,6 @@ public class SysUserController extends AbstractCrudController<SysUserDTO> {
         return CommonResult.success(sysUserInfoResp);
     }
 
-    @ApiOperation(value = "查询可导出列")
-    @GetMapping(value = "/column")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(SysUserExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
     @ApiOperation("更新用户状态")
     @PostMapping("updateEnable")
     public CommonResult updateEnable(@RequestBody SysUserUpdateEnableReq req) {
@@ -155,14 +144,6 @@ public class SysUserController extends AbstractCrudController<SysUserDTO> {
         sysUserDTO.setId(req.getUserId());
         boolean result = sysUserService.update(sysUserDTO);
         return result ? CommonResult.success("更新成功") : CommonResult.error(500, "更新失败");
-    }
-
-    @ApiOperation(value = "导出数据")
-    @GetMapping("export")
-    public void export(SysUserPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "用户表" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, SysUserExp.class,
-                SysUserConvert.INSTANCE::convertToDTO, SysUserConvert.INSTANCE::convertToExp, response);
     }
 
     @Autowired

@@ -204,7 +204,6 @@ public class PlexApiService {
         restTemplate.put(plexUrl + API_ALBUM_REFRESH, String.class, albumId, plexToken);
     }
 
-
     public List<Directory> listSecondary(String libraryId) {
         init();
         PlexResult plexResult = restTemplate.getForObject(plexUrl + API_LIBRARY_LIST_SECONDARY, PlexResult.class, libraryId, plexToken);

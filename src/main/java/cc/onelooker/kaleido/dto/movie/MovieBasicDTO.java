@@ -171,4 +171,9 @@ public class MovieBasicDTO implements BaseDTO<Long> {
     public void setId(Long id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return title;
+    }
 }

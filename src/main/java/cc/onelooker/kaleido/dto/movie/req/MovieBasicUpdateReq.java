@@ -10,11 +10,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-11-26 01:19:02
- *
  */
 @Data
 @ApiModel("电影请求对象")
-public class MovieBasicUpdateReq{
+public class MovieBasicUpdateReq {
 
     @ApiModelProperty("主键")
     private Long id;

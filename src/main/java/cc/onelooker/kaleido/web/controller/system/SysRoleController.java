@@ -2,7 +2,6 @@ package cc.onelooker.kaleido.web.controller.system;
 
 import cc.onelooker.kaleido.convert.system.SysRoleConvert;
 import cc.onelooker.kaleido.dto.system.SysRoleDTO;
-import cc.onelooker.kaleido.dto.system.exp.SysRoleExp;
 import cc.onelooker.kaleido.dto.system.req.SysRoleAuthorizeReq;
 import cc.onelooker.kaleido.dto.system.req.SysRoleCreateReq;
 import cc.onelooker.kaleido.dto.system.req.SysRolePageReq;
@@ -12,19 +11,14 @@ import cc.onelooker.kaleido.dto.system.resp.SysRolePageResp;
 import cc.onelooker.kaleido.dto.system.resp.SysRoleViewResp;
 import cc.onelooker.kaleido.service.system.SysRoleService;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * 角色表前端控制器
@@ -76,27 +70,11 @@ public class SysRoleController extends AbstractCrudController<SysRoleDTO> {
         return super.delete(id);
     }
 
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(SysRoleExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出数据")
-    public void export(SysRolePageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "角色表" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, SysRoleExp.class,
-                SysRoleConvert.INSTANCE::convertToDTO, SysRoleConvert.INSTANCE::convertToExp, response);
-    }
-
     @PostMapping("authorize")
     @ApiOperation(value = "角色授权")
     public CommonResult<Boolean> authorize(@RequestBody SysRoleAuthorizeReq req) {
         sysRoleService.authorize(req.getId(), req.getResourceIdList());
         return CommonResult.success(true);
     }
-
 
 }

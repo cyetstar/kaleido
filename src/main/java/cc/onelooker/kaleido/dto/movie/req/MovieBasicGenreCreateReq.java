@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-11-26 01:19:02
- *
  */
 @Data
 @ApiModel("电影类型关联表请求对象")
-public class MovieBasicGenreCreateReq{
+public class MovieBasicGenreCreateReq {
 
     @ApiModelProperty("电影id")
     private Long movieId;

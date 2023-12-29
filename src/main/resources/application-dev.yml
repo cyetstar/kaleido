@@ -1,5 +1,5 @@
 server:
-  port: 8001
+  port: 8080
 spring:
   datasource:
     dynamic:
@@ -7,12 +7,12 @@ spring:
       primary: auth
       datasource:
         auth:
-          url: jdbc:mysql://127.0.0.1:3306/kaleido2?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          url: jdbc:mysql://localhost:3306/kaleido?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
           username: root
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver
         master:
-          url: jdbc:mysql://127.0.0.1:3306/kaleido2?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          url: jdbc:mysql://localhost:3306/kaleido?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
           username: root
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver
@@ -31,9 +31,3 @@ spring:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
-zjjcnt:
-  file-transport:
-    type: local
-    local:
-      root-path: /Users/cyetstar/dev/file

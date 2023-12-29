@@ -24,7 +24,7 @@ public interface SysRoleResourceConvert {
 
     SysRoleResourceDTO convert(SysRoleResourceDO sysRoleResourceDO);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     SysRoleResourceDO convertToDO(SysRoleResourceDTO sysRoleResourceDTO);
 
     SysRoleResourceDTO convertToDTO(SysRoleResourcePageReq req);

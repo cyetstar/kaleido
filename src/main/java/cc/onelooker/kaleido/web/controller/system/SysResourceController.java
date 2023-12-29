@@ -2,7 +2,6 @@ package cc.onelooker.kaleido.web.controller.system;
 
 import cc.onelooker.kaleido.convert.system.SysResourceConvert;
 import cc.onelooker.kaleido.dto.system.SysResourceDTO;
-import cc.onelooker.kaleido.dto.system.exp.SysResourceExp;
 import cc.onelooker.kaleido.dto.system.req.SysResourceCreateReq;
 import cc.onelooker.kaleido.dto.system.req.SysResourceInitReq;
 import cc.onelooker.kaleido.dto.system.req.SysResourcePageReq;
@@ -13,22 +12,19 @@ import cc.onelooker.kaleido.dto.system.resp.SysResourcePageResp;
 import cc.onelooker.kaleido.dto.system.resp.SysResourceViewResp;
 import cc.onelooker.kaleido.service.system.SysResourceService;
 import cc.onelooker.kaleido.service.system.SysRoleResourceService;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -86,20 +82,6 @@ public class SysResourceController extends AbstractCrudController<SysResourceDTO
     @ApiOperation(value = "删除资源表")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
-    }
-
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(SysResourceExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出数据")
-    public void export(SysResourcePageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "资源表" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, SysResourceExp.class, SysResourceConvert.INSTANCE::convertToDTO, SysResourceConvert.INSTANCE::convertToExp, response);
     }
 
     @PostMapping("init")

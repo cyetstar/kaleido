@@ -8,17 +8,16 @@ import cc.onelooker.kaleido.dto.movie.resp.MovieBasicCollectionCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieBasicCollectionPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieBasicCollectionViewResp;
 import cc.onelooker.kaleido.entity.movie.MovieBasicCollectionDO;
-import cc.onelooker.kaleido.exp.movie.MovieBasicCollectionExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 电影集合关联表Convert
-*
-* @author cyetstar
-* @date 2023-11-26 01:19:02
-*/
+ * 电影集合关联表Convert
+ *
+ * @author cyetstar
+ * @date 2023-11-26 01:19:02
+ */
 @Mapper
 public interface MovieBasicCollectionConvert {
 
@@ -26,7 +25,7 @@ public interface MovieBasicCollectionConvert {
 
     MovieBasicCollectionDTO convert(MovieBasicCollectionDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     MovieBasicCollectionDO convertToDO(MovieBasicCollectionDTO dto);
 
     MovieBasicCollectionDTO convertToDTO(MovieBasicCollectionPageReq req);
@@ -40,7 +39,5 @@ public interface MovieBasicCollectionConvert {
     MovieBasicCollectionViewResp convertToViewResp(MovieBasicCollectionDTO dto);
 
     MovieBasicCollectionCreateResp convertToCreateResp(MovieBasicCollectionDTO dto);
-
-    MovieBasicCollectionExp convertToExp(MovieBasicCollectionDTO dto);
 
 }

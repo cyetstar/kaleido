@@ -9,6 +9,7 @@ import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.nfo.UniqueidNFO;
 import cc.onelooker.kaleido.third.douban.DoubanApiService;
 import cc.onelooker.kaleido.third.douban.Movie;
+import cc.onelooker.kaleido.third.douban.Subject;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.third.plex.Tag;
@@ -17,6 +18,8 @@ import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
 import cn.hutool.http.HttpUtil;
 import com.baomidou.dynamic.datasource.annotation.DSTransactional;
+import com.google.common.collect.Lists;
+import com.zjjcnt.common.util.DateTimeUtils;
 import com.zjjcnt.common.util.constant.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -31,6 +34,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -85,6 +89,9 @@ public class MovieManager {
     private MovieThreadFilenameService movieThreadFilenameService;
 
     @Autowired
+    private MovieDoubanWeeklyService movieDoubanWeeklyService;
+
+    @Autowired
     private PlexApiService plexApiService;
 
     @Autowired
@@ -100,7 +107,7 @@ public class MovieManager {
     public void syncPlexMovieAndReadNFO(Long movieId) throws JAXBException {
         Metadata metadata = plexApiService.findMovieById(movieId);
         syncPlexMovie(metadata);
-        readNFOById(metadata);
+        readNFO(metadata);
     }
 
     @Transactional
@@ -256,27 +263,9 @@ public class MovieManager {
     }
 
     @Transactional
-    public void readNFOById(Long movieId) throws JAXBException {
+    public void readNFO(Long movieId) throws JAXBException {
         Metadata metadata = plexApiService.findMovieById(movieId);
-        readNFOById(metadata);
-    }
-
-    @Transactional
-    public void readNFOById(Metadata metadata) throws JAXBException {
-        Long movieId = metadata.getRatingKey();
-        String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
-        MovieNFO movieNFO = NFOUtil.read(Paths.get(movieFolder), "movie.nfo");
-        String doubanId = getUniqueid(movieNFO.getUniqueids(), SourceType.douban.name());
-        String imdb = getUniqueid(movieNFO.getUniqueids(), SourceType.imdb.name());
-        String tmdb = getUniqueid(movieNFO.getUniqueids(), SourceType.tmdb.name());
-        MovieBasicDTO movieBasicDTO = movieBasicService.findById(movieId);
-        movieBasicDTO.setDoubanId(StringUtils.defaultIfEmpty(doubanId, movieNFO.getDoubanid()));
-        movieBasicDTO.setImdb(StringUtils.defaultIfEmpty(imdb, movieNFO.getImdbid()));
-        movieBasicDTO.setTmdb(StringUtils.defaultIfEmpty(tmdb, movieNFO.getTmdbid()));
-        movieBasicDTO.setWebsite(movieNFO.getWebsite());
-        movieBasicService.update(movieBasicDTO);
-        updateAkas(movieNFO.getAkas(), movieId);
-        updateTags(movieNFO.getTags(), movieId);
+        readNFO(metadata);
     }
 
     private String getUniqueid(List<UniqueidNFO> uniqueids, String type) {
@@ -356,7 +345,7 @@ public class MovieManager {
                         //重命名
                         Files.move(optionalNFOPath.get(), optionalNFOPath.get().resolve("movie.nfo"));
                     }
-                    NioFileUtils.moveDir(path, Paths.get(movieLibraryPath));
+                    NioFileUtils.moveDir(path, Paths.get(movieLibraryPath), StandardCopyOption.REPLACE_EXISTING);
                 } else {
                     Files.list(path).forEach(this::updateMovieSource);
                 }
@@ -384,7 +373,7 @@ public class MovieManager {
                 downloadPoster(movie, folderPath);
                 MovieNFO movieNFO = NFOUtil.toMovieNFO(movie);
                 NFOUtil.write(movieNFO, folderPath, "movie.nfo");
-                NioFileUtils.moveDir(folderPath, Paths.get(movieLibraryPath));
+                NioFileUtils.moveDir(folderPath, Paths.get(movieLibraryPath), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {
             log.error("更新电影源发生错误", e);
@@ -426,19 +415,85 @@ public class MovieManager {
         }
     }
 
-    public void writeNFO(Long id) {
-//        Metadata metadata = plexApiService.findMovieById(id);
-//        String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
-//        File file = Paths.get(movieFolder, "movie.nfo").toFile();
-//        try {
-//            JAXBContext context = JAXBContext.newInstance(MovieNFO.class);
-//            Marshaller marshaller = context.createMarshaller();
-//            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-//            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-//            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, false);
-//            marshaller.marshal(movieNFO, file);
-//        } catch (JAXBException e) {
-//            e.printStackTrace();
-//        }
+    @Transactional
+    public void readNFO(Metadata metadata) throws JAXBException {
+        Long movieId = metadata.getRatingKey();
+        String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
+        MovieNFO movieNFO = NFOUtil.read(Paths.get(movieFolder), "movie.nfo");
+        String doubanId = getUniqueid(movieNFO.getUniqueids(), SourceType.douban.name());
+        String imdb = getUniqueid(movieNFO.getUniqueids(), SourceType.imdb.name());
+        String tmdb = getUniqueid(movieNFO.getUniqueids(), SourceType.tmdb.name());
+        MovieBasicDTO movieBasicDTO = movieBasicService.findById(movieId);
+        movieBasicDTO.setDoubanId(StringUtils.defaultIfEmpty(doubanId, movieNFO.getDoubanid()));
+        movieBasicDTO.setImdb(StringUtils.defaultIfEmpty(imdb, movieNFO.getImdbid()));
+        movieBasicDTO.setTmdb(StringUtils.defaultIfEmpty(tmdb, movieNFO.getTmdbid()));
+        movieBasicDTO.setWebsite(movieNFO.getWebsite());
+        movieBasicService.update(movieBasicDTO);
+        updateAkas(movieNFO.getAkas(), movieId);
+        updateTags(movieNFO.getTags(), movieId);
+    }
+
+    public void exportNFO(MovieBasicDTO dto) throws JAXBException {
+        Metadata metadata = plexApiService.findMovieById(dto.getId());
+        String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
+        MovieNFO movieNFO = NFOUtil.toMovieNFO(metadata);
+        movieNFO.setDoubanid(dto.getDoubanId());
+        movieNFO.setImdbid(dto.getImdb());
+        movieNFO.setTmdbid(dto.getTmdb());
+        List<UniqueidNFO> uniqueidNFOList = Lists.newArrayList();
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, NFOUtil.toUniqueidNFO(dto.getDoubanId(), SourceType.douban));
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, NFOUtil.toUniqueidNFO(dto.getImdb(), SourceType.imdb));
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, NFOUtil.toUniqueidNFO(dto.getTmdb(), SourceType.tmdb));
+        movieNFO.setUniqueids(uniqueidNFOList);
+        List<MovieAkaDTO> movieAkaDTOList = movieAkaService.listByMovieId(dto.getId());
+        if (movieAkaDTOList != null) {
+            movieNFO.setAkas(movieAkaDTOList.stream().map(MovieAkaDTO::getTitle).collect(Collectors.toList()));
+        }
+        NFOUtil.write(movieNFO, Paths.get(movieFolder), "movie.nfo");
+    }
+
+    public void syncDoubanWeekly() {
+        List<Subject> subjectList = doubanApiService.listMovieWeekly();
+        List<Long> idList = Lists.newArrayList();
+        for (Subject subject : subjectList) {
+            Movie movie = subject.getMovie();
+            Long id = Long.parseLong(movie.getId());
+            idList.add(id);
+            MovieDoubanWeeklyDTO movieDoubanWeeklyDTO = movieDoubanWeeklyService.findById(id);
+            if (movieDoubanWeeklyDTO != null && StringUtils.isEmpty(movieDoubanWeeklyDTO.getDelistingDate()) && movieDoubanWeeklyDTO.getTop().compareTo(subject.getRank()) < 0) {
+                //在榜且排名高于之前
+                movieDoubanWeeklyDTO.setTop(subject.getRank());
+                movieDoubanWeeklyService.update(movieDoubanWeeklyDTO);
+            } else if (movieDoubanWeeklyDTO == null) {
+                movieDoubanWeeklyDTO = new MovieDoubanWeeklyDTO();
+                movieDoubanWeeklyDTO.setId(id);
+                movieDoubanWeeklyDTO.setTitle(movie.getTitle());
+                movieDoubanWeeklyDTO.setOriginalTitle(movie.getOriginalTitle());
+                movieDoubanWeeklyDTO.setYear(movie.getYear());
+                movieDoubanWeeklyDTO.setListingDate(DateTimeUtils.today());
+                movieDoubanWeeklyDTO.setTop(subject.getRank());
+                movieDoubanWeeklyDTO.setThumb(movie.getImages().getSmall());
+                movieDoubanWeeklyService.insert(movieDoubanWeeklyDTO);
+            }
+        }
+        List<MovieDoubanWeeklyDTO> movieDoubanWeeklyDTOList = movieDoubanWeeklyService.list(null);
+        for (MovieDoubanWeeklyDTO movieDoubanWeeklyDTO : movieDoubanWeeklyDTOList) {
+            if (StringUtils.isNotEmpty(movieDoubanWeeklyDTO.getListingDate()) && StringUtils.isEmpty(movieDoubanWeeklyDTO.getDelistingDate()) && !idList.contains(movieDoubanWeeklyDTO.getId())) {
+                //未下榜，但不在本期榜单上
+                movieDoubanWeeklyDTO.setDelistingDate(DateTimeUtils.today());
+                movieDoubanWeeklyService.update(movieDoubanWeeklyDTO);
+            }
+        }
+    }
+
+    private MovieCollectionDTO initDoubanWeekly(List<Movie> movieList) {
+        MovieBasicDTO movieBasicDTO = null;
+        for (Movie movie : movieList) {
+            movieBasicDTO = movieBasicService.findByDoubanId(movie.getId());
+            if (movieBasicDTO != null) {
+                break;
+            }
+        }
+        return null;
     }
 }

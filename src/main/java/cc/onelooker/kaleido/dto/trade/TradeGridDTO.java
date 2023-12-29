@@ -64,7 +64,6 @@ public class TradeGridDTO implements BaseDTO<Long> {
      */
     private String sfyx;
 
-
     @Override
     public Long getId() {
         return this.id;

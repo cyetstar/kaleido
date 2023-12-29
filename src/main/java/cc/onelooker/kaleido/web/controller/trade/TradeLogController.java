@@ -9,23 +9,17 @@ import cc.onelooker.kaleido.dto.trade.req.TradeLogUpdateReq;
 import cc.onelooker.kaleido.dto.trade.resp.TradeLogCreateResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeLogPageResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeLogViewResp;
-import cc.onelooker.kaleido.exp.trade.TradeLogExp;
 import cc.onelooker.kaleido.service.trade.TradeAccountService;
 import cc.onelooker.kaleido.service.trade.TradeLogService;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * 交易记录前端控制器
@@ -84,20 +78,6 @@ public class TradeLogController extends AbstractCrudController<TradeLogDTO> {
     @ApiOperation(value = "删除交易记录")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
-    }
-
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(TradeLogExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出交易记录")
-    public void export(TradeLogPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "交易记录" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, TradeLogExp.class, TradeLogConvert.INSTANCE::convertToDTO, TradeLogConvert.INSTANCE::convertToExp, response);
     }
 
 }

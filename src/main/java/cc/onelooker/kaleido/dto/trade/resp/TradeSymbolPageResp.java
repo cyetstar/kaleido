@@ -10,11 +10,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-07-06 11:56:08
- *
  */
 @Data
 @ApiModel("交易商品响应对象")
-public class TradeSymbolPageResp{
+public class TradeSymbolPageResp {
 
     @ApiModelProperty("主键")
     private Long id;

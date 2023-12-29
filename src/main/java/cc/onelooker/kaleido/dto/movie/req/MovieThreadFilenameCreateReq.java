@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-12-18 16:03:32
- *
  */
 @Data
 @ApiModel("电影发布文件请求对象")
-public class MovieThreadFilenameCreateReq{
+public class MovieThreadFilenameCreateReq {
 
     @ApiModelProperty("")
     private String value;

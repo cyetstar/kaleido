@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-11-26 01:19:02
- *
  */
 @Data
 @ApiModel("语言响应对象")
-public class MovieLanguagePageResp{
+public class MovieLanguagePageResp {
 
     @ApiModelProperty("主键")
     private Long id;

@@ -13,4 +13,5 @@ public class ActorNFO {
     private String role;
     private String order;
     private String thumb;
+
 }

@@ -39,7 +39,6 @@ public class TradeRuleDTO implements BaseDTO<Long> {
      */
     private String fxje;
 
-
     @Override
     public Long getId() {
         return this.id;

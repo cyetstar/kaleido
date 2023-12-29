@@ -136,7 +136,7 @@ public class SysUserServiceImpl extends KaleidoBaseServiceImpl<SysUserMapper, Sy
 
     @Override
     protected boolean checkUnique(SysUserDTO dto) {
-        if(dto.getId() != null && dto.getUsername() == null) {
+        if (dto.getId() != null && dto.getUsername() == null) {
             return true;
         }
         SysUserDTO param = new SysUserDTO();

@@ -8,17 +8,16 @@ import cc.onelooker.kaleido.dto.movie.resp.MovieThreadCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieThreadPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieThreadViewResp;
 import cc.onelooker.kaleido.entity.movie.MovieThreadDO;
-import cc.onelooker.kaleido.exp.movie.MovieThreadExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 电影发布记录Convert
-*
-* @author cyetstar
-* @date 2023-12-18 14:53:14
-*/
+ * 电影发布记录Convert
+ *
+ * @author cyetstar
+ * @date 2023-12-18 14:53:14
+ */
 @Mapper
 public interface MovieThreadConvert {
 
@@ -26,7 +25,7 @@ public interface MovieThreadConvert {
 
     MovieThreadDTO convert(MovieThreadDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     MovieThreadDO convertToDO(MovieThreadDTO dto);
 
     MovieThreadDTO convertToDTO(MovieThreadPageReq req);
@@ -40,7 +39,5 @@ public interface MovieThreadConvert {
     MovieThreadViewResp convertToViewResp(MovieThreadDTO dto);
 
     MovieThreadCreateResp convertToCreateResp(MovieThreadDTO dto);
-
-    MovieThreadExp convertToExp(MovieThreadDTO dto);
 
 }

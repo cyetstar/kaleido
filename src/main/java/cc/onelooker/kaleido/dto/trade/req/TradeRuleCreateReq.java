@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-06-23 13:38:46
- *
  */
 @Data
 @ApiModel("交易规则请求对象")
-public class TradeRuleCreateReq{
+public class TradeRuleCreateReq {
 
     @ApiModelProperty("交易账户id")
     private Long accountId;

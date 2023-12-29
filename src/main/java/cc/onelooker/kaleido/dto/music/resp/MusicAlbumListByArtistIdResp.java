@@ -9,7 +9,6 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-11-20 22:35:26
- *
  */
 @Data
 @ApiModel("专辑响应对象")

@@ -43,7 +43,7 @@ public class DictInitializer extends BaseDictionaryInitializer {
     public Map<String, Map<String, String>> init() {
         Map<String, Map<String, String>> dicts = Maps.newLinkedHashMap();
         initSysDict(dicts);
-        initPlexDict(dicts);
+//        initPlexDict(dicts);
         for (IDictionaryService dictionaryService : dictionaryServices) {
             dicts.put(dictionaryService.getType(), dictionaryService.loadDict());
         }

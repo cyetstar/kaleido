@@ -31,7 +31,6 @@ public class MovieCountryDO implements IdEntity<Long> {
     @TableField(value = "tag")
     private String tag;
 
-
     @Override
     public Long getId() {
         return this.id;

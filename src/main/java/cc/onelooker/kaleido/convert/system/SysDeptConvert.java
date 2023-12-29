@@ -24,7 +24,7 @@ public interface SysDeptConvert {
 
     SysDeptDTO convert(SysDeptDO sysDeptDO);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     SysDeptDO convertToDO(SysDeptDTO sysDeptDTO);
 
     SysDeptDTO convertToDTO(SysDeptPageReq req);

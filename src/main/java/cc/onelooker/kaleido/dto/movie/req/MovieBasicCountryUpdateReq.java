@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-11-26 01:19:02
- *
  */
 @Data
 @ApiModel("电影国家地区关联表请求对象")
-public class MovieBasicCountryUpdateReq{
+public class MovieBasicCountryUpdateReq {
 
     @ApiModelProperty("主键")
     private Long id;

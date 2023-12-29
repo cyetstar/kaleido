@@ -24,7 +24,7 @@ public interface SysRoleMenuConvert {
 
     SysRoleMenuDTO convert(SysRoleMenuDO sysRoleMenuDO);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     SysRoleMenuDO convertToDO(SysRoleMenuDTO sysRoleMenuDTO);
 
     SysRoleMenuDTO convertToDTO(SysRoleMenuPageReq req);

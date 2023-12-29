@@ -69,4 +69,8 @@ public class Metadata {
         return CollectionUtils.get(mediaList, 0);
     }
 
+    @Override
+    public String toString() {
+        return title;
+    }
 }

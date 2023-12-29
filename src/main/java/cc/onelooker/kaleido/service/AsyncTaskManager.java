@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
@@ -268,7 +269,7 @@ public class AsyncTaskManager {
             List<MovieBasicDTO> movieBasicDTOList = movieBasicService.list(null);
             for (MovieBasicDTO movieBasicDTO : movieBasicDTOList) {
                 try {
-                    movieManager.readNFOById(movieBasicDTO.getId());
+                    movieManager.readNFO(movieBasicDTO.getId());
                     log.debug("【{}】{} 读取NFO成功。", movieBasicDTO.getTitle(), movieBasicDTO.getId());
                 } catch (Exception e) {
                     log.error("【{}】{} 读取NFO发生错误。{}", movieBasicDTO.getTitle(), movieBasicDTO.getId(), ExceptionUtil.getMessage(e));
@@ -285,9 +286,9 @@ public class AsyncTaskManager {
     public void moveFile(List<String> sourcePathList, String targetPath) throws IOException {
         for (String path : sourcePathList) {
             if (Files.isDirectory(Paths.get(path))) {
-                NioFileUtils.moveDir(Paths.get(path), Paths.get(targetPath));
+                NioFileUtils.moveDir(Paths.get(path), Paths.get(targetPath), StandardCopyOption.REPLACE_EXISTING);
             } else {
-                Files.move(Paths.get(path), Paths.get(targetPath));
+                Files.move(Paths.get(path), Paths.get(targetPath), StandardCopyOption.REPLACE_EXISTING);
             }
         }
     }

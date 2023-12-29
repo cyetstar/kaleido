@@ -8,17 +8,16 @@ import cc.onelooker.kaleido.dto.movie.resp.MovieAkaCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieAkaPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieAkaViewResp;
 import cc.onelooker.kaleido.entity.movie.MovieAkaDO;
-import cc.onelooker.kaleido.exp.movie.MovieAkaExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 别名Convert
-*
-* @author cyetstar
-* @date 2023-11-26 01:19:02
-*/
+ * 别名Convert
+ *
+ * @author cyetstar
+ * @date 2023-11-26 01:19:02
+ */
 @Mapper
 public interface MovieAkaConvert {
 
@@ -26,7 +25,7 @@ public interface MovieAkaConvert {
 
     MovieAkaDTO convert(MovieAkaDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     MovieAkaDO convertToDO(MovieAkaDTO dto);
 
     MovieAkaDTO convertToDTO(MovieAkaPageReq req);
@@ -40,7 +39,5 @@ public interface MovieAkaConvert {
     MovieAkaViewResp convertToViewResp(MovieAkaDTO dto);
 
     MovieAkaCreateResp convertToCreateResp(MovieAkaDTO dto);
-
-    MovieAkaExp convertToExp(MovieAkaDTO dto);
 
 }

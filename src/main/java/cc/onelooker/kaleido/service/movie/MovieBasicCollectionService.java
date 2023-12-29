@@ -14,6 +14,7 @@ import java.util.List;
 public interface MovieBasicCollectionService extends IBaseService<MovieBasicCollectionDTO> {
 
     List<MovieBasicCollectionDTO> listByCollectionId(Long collectionId);
+
     List<MovieBasicCollectionDTO> listMovieId(Long movieId);
 
     MovieBasicCollectionDTO findByMovieIdAndCollectionId(Long movieId, Long collectionId);

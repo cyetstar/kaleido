@@ -37,6 +37,30 @@ public class MovieBasicCollectionDO implements IdEntity<Long> {
     @TableField(value = "collection_id")
     private Long collectionId;
 
+    /**
+     * 电影名
+     */
+    @TableField(value = "title")
+    private String title;
+
+    /**
+     * 首映年份
+     */
+    @TableField(value = "year")
+    private String year;
+
+    /**
+     * 豆瓣编号
+     */
+    @TableField(value = "douban_id")
+    private String doubanId;
+
+    /**
+     * 海报
+     */
+    @TableField(value = "thumb")
+    private String thumb;
+
     @Override
     public Long getId() {
         return this.id;

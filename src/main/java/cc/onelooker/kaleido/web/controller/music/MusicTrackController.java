@@ -9,17 +9,14 @@ import cc.onelooker.kaleido.dto.music.resp.MusicTrackCreateResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicTrackListByAlbumIdResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicTrackPageResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicTrackViewResp;
-import cc.onelooker.kaleido.exp.music.MusicTrackExp;
 import cc.onelooker.kaleido.service.music.MusicTrackService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -84,21 +80,6 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
     @ApiOperation(value = "删除曲目")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
-    }
-
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(MusicTrackExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出曲目")
-    public void export(MusicTrackPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "曲目" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, MusicTrackExp.class,
-                MusicTrackConvert.INSTANCE::convertToDTO, MusicTrackConvert.INSTANCE::convertToExp, response);
     }
 
     @GetMapping("listByAlbumId")

@@ -24,7 +24,7 @@ public interface SysDictTypeConvert {
 
     SysDictTypeDTO convert(SysDictTypeDO sysDictTypeDO);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     SysDictTypeDO convertToDO(SysDictTypeDTO sysDictTypeDTO);
 
     SysDictTypeDTO convertToDTO(SysDictTypePageReq req);

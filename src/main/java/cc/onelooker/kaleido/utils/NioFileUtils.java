@@ -48,7 +48,7 @@ public class NioFileUtils {
      *
      * @param move    操作标记，为true时移动文件夹,否则为复制
      * @param source  要复制/移动的源文件夹
-     * @param dest  源文件夹要复制/移动到的目标文件夹
+     * @param dest    源文件夹要复制/移动到的目标文件夹
      * @param options 文件复制选项
      * @throws IOException
      * @see Files#move(Path, Path, CopyOption...)
@@ -76,7 +76,9 @@ public class NioFileUtils {
                 break;
             }
         // 如果指定了REPLACE_EXISTING选项则不清除目标文件夹
-        if (clear) deleteIfExists(dest);
+        if (clear) {
+            deleteIfExists(dest);
+        }
         Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
 
             @Override
@@ -89,16 +91,20 @@ public class NioFileUtils {
 
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                if (move)
+                if (move) {
                     Files.move(file, dest.resolve(file.subpath(source.getNameCount(), file.getNameCount())), options);
-                else Files.copy(file, dest.resolve(file.subpath(source.getNameCount(), file.getNameCount())), options);
+                } else {
+                    Files.copy(file, dest.resolve(file.subpath(source.getNameCount(), file.getNameCount())), options);
+                }
                 return FileVisitResult.CONTINUE;
             }
 
             @Override
             public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
                 // 移动操作时删除源文件夹
-                if (move) Files.delete(dir);
+                if (move) {
+                    Files.delete(dir);
+                }
                 return super.postVisitDirectory(dir, exc);
             }
         });
@@ -142,11 +148,16 @@ public class NioFileUtils {
      * @throws IOException
      */
     public static boolean sameOrSub(Path parent, Path sub) throws IOException {
-        if (null == parent) throw new NullPointerException("parent is null");
-        if (!Files.exists(parent) || !Files.isDirectory(parent))
+        if (null == parent) {
+            throw new NullPointerException("parent is null");
+        }
+        if (!Files.exists(parent) || !Files.isDirectory(parent)) {
             throw new IllegalArgumentException(String.format("the parent not exist or not directory %s", parent));
+        }
         while (null != sub) {
-            if (Files.exists(sub) && Files.isSameFile(parent, sub)) return true;
+            if (Files.exists(sub) && Files.isSameFile(parent, sub)) {
+                return true;
+            }
             sub = sub.getParent();
         }
         return false;

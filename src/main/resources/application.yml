@@ -150,6 +150,9 @@ zjjcnt:
   security:
     url-filter:
       urls:
+        - /ws/**
+        - /websocket/**
+        - /message/**
         - /login**
         - /movie/**
         - /tvshow/**

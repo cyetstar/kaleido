@@ -20,23 +20,22 @@ public class MovieThreadFilenameDO implements IdEntity<Long> {
     private static final long serialVersionUID = -5999073195498320838L;
 
     /**
-     * 
+     *
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 
+     *
      */
     @TableField(value = "value")
     private String value;
 
     /**
-     * 
+     *
      */
     @TableField(value = "thread_id")
     private Long threadId;
-
 
     @Override
     public Long getId() {

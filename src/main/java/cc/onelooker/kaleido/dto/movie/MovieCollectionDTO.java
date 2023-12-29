@@ -42,6 +42,16 @@ public class MovieCollectionDTO implements BaseDTO<Long> {
     private Integer childCount;
 
     /**
+     * 豆瓣编号
+     */
+    private String doubanId;
+
+    /**
+     * 豆瓣口碑榜
+     */
+    private String doubanWeekly;
+
+    /**
      * 加入时间
      */
     private Long addedAt;

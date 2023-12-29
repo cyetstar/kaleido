@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-11-26 01:19:02
- *
  */
 @Data
 @ApiModel("别名请求对象")
-public class MovieAkaUpdateReq{
+public class MovieAkaUpdateReq {
 
     @ApiModelProperty("主键")
     private Long id;

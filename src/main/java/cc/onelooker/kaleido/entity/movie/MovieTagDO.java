@@ -19,7 +19,6 @@ import lombok.Data;
 public class MovieTagDO implements IdEntity<Long> {
     private static final long serialVersionUID = -1114211264537010594L;
 
-
     /**
      * 主键
      */
@@ -36,7 +35,6 @@ public class MovieTagDO implements IdEntity<Long> {
      */
     @TableField(value = "tag")
     private String tag;
-
 
     @Override
     public Long getId() {

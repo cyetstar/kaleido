@@ -12,11 +12,10 @@ import java.util.List;
  *
  * @author cyetstar
  * @date 2023-11-27 22:51:36
- *
  */
 @Data
 @ApiModel("剧集响应对象")
-public class TvshowShowViewResp{
+public class TvshowShowViewResp {
 
     @ApiModelProperty("主键")
     private Long id;

@@ -8,34 +8,28 @@ import cc.onelooker.kaleido.dto.movie.req.MovieActorUpdateReq;
 import cc.onelooker.kaleido.dto.movie.resp.MovieActorCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieActorPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieActorViewResp;
-import cc.onelooker.kaleido.exp.movie.MovieActorExp;
 import cc.onelooker.kaleido.service.movie.MovieActorService;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-
 /**
-* 演职员前端控制器
-*
-* @author cyetstar
-* @date 2023-11-26 01:19:02
-*/
+ * 演职员前端控制器
+ *
+ * @author cyetstar
+ * @date 2023-11-26 01:19:02
+ */
 
 @Api(tags = "演职员")
 @RestController
 @RequestMapping("/movieActor")
-public class MovieActorController extends AbstractCrudController<MovieActorDTO>{
+public class MovieActorController extends AbstractCrudController<MovieActorDTO> {
 
     @Autowired
     private MovieActorService movieActorService;
@@ -73,21 +67,6 @@ public class MovieActorController extends AbstractCrudController<MovieActorDTO>{
     @ApiOperation(value = "删除演职员")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
-    }
-
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(MovieActorExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出演职员")
-    public void export(MovieActorPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "演职员" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, MovieActorExp.class,
-                    MovieActorConvert.INSTANCE::convertToDTO, MovieActorConvert.INSTANCE::convertToExp, response);
     }
 
 }

@@ -6,7 +6,6 @@ import cc.onelooker.kaleido.dto.trade.req.*;
 import cc.onelooker.kaleido.dto.trade.resp.TradeSymbolCreateResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeSymbolPageResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeSymbolViewResp;
-import cc.onelooker.kaleido.exp.trade.TradeSymbolExp;
 import cc.onelooker.kaleido.service.trade.TradeSymbolService;
 import cc.onelooker.kaleido.third.mexc.MexcApiService;
 import cc.onelooker.kaleido.third.mexc.resp.DefaultSymbolsResp;
@@ -14,12 +13,10 @@ import cc.onelooker.kaleido.third.mexc.resp.ExchangeInfoResp;
 import cc.onelooker.kaleido.third.mexc.resp.TickerPriceResp;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,9 +25,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * 交易商品前端控制器
@@ -84,20 +78,6 @@ public class TradeSymbolController extends AbstractCrudController<TradeSymbolDTO
     @ApiOperation(value = "删除交易商品")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
-    }
-
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(TradeSymbolExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出交易商品")
-    public void export(TradeSymbolPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "交易商品" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, TradeSymbolExp.class, TradeSymbolConvert.INSTANCE::convertToDTO, TradeSymbolConvert.INSTANCE::convertToExp, response);
     }
 
     @PostMapping("fetch")

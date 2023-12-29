@@ -5,7 +5,6 @@ import cc.onelooker.kaleido.dto.movie.*;
 import cc.onelooker.kaleido.dto.movie.req.*;
 import cc.onelooker.kaleido.dto.movie.resp.*;
 import cc.onelooker.kaleido.enums.ActorRole;
-import cc.onelooker.kaleido.exp.movie.MovieBasicExp;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.service.movie.*;
 import cc.onelooker.kaleido.third.douban.DoubanApiService;
@@ -16,17 +15,15 @@ import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
 import cn.hutool.http.HttpUtil;
+import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +32,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -144,20 +141,6 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         return super.delete(id);
     }
 
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(MovieBasicExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出电影")
-    public void export(MovieBasicPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "电影" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, MovieBasicExp.class, MovieBasicConvert.INSTANCE::convertToDTO, MovieBasicConvert.INSTANCE::convertToExp, response);
-    }
-
     @PostMapping("syncPlex")
     @ApiOperation(value = "同步资料库")
     public CommonResult<Boolean> syncPlex() {
@@ -196,14 +179,15 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("readNFOById")
     @ApiOperation(value = "同步资料库")
     public CommonResult<Boolean> readNFOById(@RequestBody MovieBasicReadNFOByIdReq req) throws JAXBException {
-        movieManager.readNFOById(req.getId());
+        movieManager.readNFO(req.getId());
         return CommonResult.success(true);
     }
 
-    @PostMapping("writeNFO")
+    @PostMapping("exportNFO")
     @ApiOperation(value = "输出NFO")
-    public CommonResult<Boolean> writeNFO(@RequestBody MovieBasicWriteNFOReq req) throws JAXBException {
-        movieManager.writeNFO(req.getId());
+    public CommonResult<Boolean> exportNFO(@RequestBody MovieBasicWriteNFOReq req) throws JAXBException {
+        MovieBasicDTO movieBasicDTO = movieBasicService.findById(req.getId());
+        movieManager.exportNFO(movieBasicDTO);
         return CommonResult.success(true);
     }
 
@@ -243,7 +227,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
             if (StringUtils.isBlank(path)) {
                 continue;
             }
-            NioFileUtils.moveDir(Paths.get(movieDownloadPath, path), Paths.get(movieLibraryPath, path));
+            NioFileUtils.moveDir(Paths.get(movieDownloadPath, path), Paths.get(movieLibraryPath, path), StandardCopyOption.REPLACE_EXISTING);
         }
         return CommonResult.success(true);
     }

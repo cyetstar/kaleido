@@ -11,11 +11,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-07-05 23:02:49
- *
  */
 @Data
 @ApiModel("策略响应对象")
-public class TradeStrategyViewResp{
+public class TradeStrategyViewResp {
 
     @ApiModelProperty("主键")
     private Long id;

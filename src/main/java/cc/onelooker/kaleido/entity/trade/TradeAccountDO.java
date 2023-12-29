@@ -55,7 +55,6 @@ public class TradeAccountDO implements IdEntity<Long> {
     @TableField(value = "xgsj")
     private String xgsj;
 
-
     @Override
     public Long getId() {
         return this.id;

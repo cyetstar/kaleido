@@ -11,25 +11,21 @@ import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionListByMovieIdResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionViewResp;
-import cc.onelooker.kaleido.exp.movie.MovieCollectionExp;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.service.movie.MovieBasicCollectionService;
 import cc.onelooker.kaleido.service.movie.MovieCollectionService;
 import cc.onelooker.kaleido.service.movie.MovieManager;
+import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,20 +89,6 @@ public class MovieCollectionController extends AbstractCrudController<MovieColle
         return CommonResult.success(true);
     }
 
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(MovieCollectionExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出电影集合")
-    public void export(MovieCollectionPageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "电影集合" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, MovieCollectionExp.class, MovieCollectionConvert.INSTANCE::convertToDTO, MovieCollectionConvert.INSTANCE::convertToExp, response);
-    }
-
     @PostMapping("syncPlex")
     @ApiOperation(value = "同步资料库")
     public CommonResult<Boolean> syncPlex() {
@@ -134,6 +116,12 @@ public class MovieCollectionController extends AbstractCrudController<MovieColle
             respList.add(resp);
         }
         return CommonResult.success(respList);
+    }
+
+    @PostMapping("syncDoubanWeekly")
+    public CommonResult<Boolean> syncDoubanWeekly() {
+        movieManager.syncDoubanWeekly();
+        return CommonResult.success(true);
     }
 
 }

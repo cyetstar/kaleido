@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.convert.system;
 
 import cc.onelooker.kaleido.dto.system.SysResourceDTO;
-import cc.onelooker.kaleido.dto.system.exp.SysResourceExp;
 import cc.onelooker.kaleido.dto.system.req.SysResourceCreateReq;
 import cc.onelooker.kaleido.dto.system.req.SysResourcePageReq;
 import cc.onelooker.kaleido.dto.system.req.SysResourceUpdateReq;
@@ -26,7 +25,7 @@ public interface SysResourceConvert {
 
     SysResourceDTO convert(SysResourceDO sysResourceDO);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     SysResourceDO convertToDO(SysResourceDTO sysResourceDTO);
 
     SysResourceDTO convertToDTO(SysResourcePageReq req);
@@ -43,5 +42,4 @@ public interface SysResourceConvert {
 
     SysResourceListTypeResp convertToListTypeResp(SysResourceDTO dto);
 
-    SysResourceExp convertToExp(SysResourceDTO dto);
 }

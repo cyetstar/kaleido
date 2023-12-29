@@ -37,7 +37,6 @@ public class MovieAkaDO implements IdEntity<Long> {
     @TableField(value = "title")
     private String title;
 
-
     @Override
     public Long getId() {
         return this.id;

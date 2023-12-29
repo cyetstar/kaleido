@@ -11,11 +11,10 @@ import java.math.BigDecimal;
  *
  * @author cyetstar
  * @date 2023-11-27 22:51:36
- *
  */
 @Data
 @ApiModel("剧集响应对象")
-public class TvshowShowCreateResp{
+public class TvshowShowCreateResp {
 
     @ApiModelProperty("主键")
     private Long id;

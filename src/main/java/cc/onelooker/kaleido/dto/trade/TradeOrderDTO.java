@@ -114,7 +114,6 @@ public class TradeOrderDTO implements BaseDTO<Long> {
      */
     private String fssj;
 
-
     @Override
     public Long getId() {
         return this.id;

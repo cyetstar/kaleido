@@ -8,34 +8,28 @@ import cc.onelooker.kaleido.dto.tvshow.req.TvshowGenreUpdateReq;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowGenreCreateResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowGenrePageResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowGenreViewResp;
-import cc.onelooker.kaleido.exp.tvshow.TvshowGenreExp;
 import cc.onelooker.kaleido.service.tvshow.TvshowGenreService;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-
 /**
-* 剧集类型前端控制器
-*
-* @author cyetstar
-* @date 2023-11-26 23:27:03
-*/
+ * 剧集类型前端控制器
+ *
+ * @author cyetstar
+ * @date 2023-11-26 23:27:03
+ */
 
 @Api(tags = "剧集类型")
 @RestController
 @RequestMapping("/tvshowGenre")
-public class TvshowGenreController extends AbstractCrudController<TvshowGenreDTO>{
+public class TvshowGenreController extends AbstractCrudController<TvshowGenreDTO> {
 
     @Autowired
     private TvshowGenreService tvshowGenreService;
@@ -73,21 +67,6 @@ public class TvshowGenreController extends AbstractCrudController<TvshowGenreDTO
     @ApiOperation(value = "删除剧集类型")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
-    }
-
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(TvshowGenreExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出剧集类型")
-    public void export(TvshowGenrePageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "剧集类型" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, TvshowGenreExp.class,
-                    TvshowGenreConvert.INSTANCE::convertToDTO, TvshowGenreConvert.INSTANCE::convertToExp, response);
     }
 
 }

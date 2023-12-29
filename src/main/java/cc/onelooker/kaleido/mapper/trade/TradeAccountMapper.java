@@ -4,7 +4,6 @@ import cc.onelooker.kaleido.entity.trade.TradeAccountDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
-
 /**
  * 交易账户Mapper接口
  *

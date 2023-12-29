@@ -9,7 +9,6 @@ import cc.onelooker.kaleido.dto.trade.resp.TradeRuleCreateResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeRulePageResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeRuleViewResp;
 import cc.onelooker.kaleido.entity.trade.TradeRuleDO;
-import cc.onelooker.kaleido.exp.trade.TradeRuleExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -41,8 +40,6 @@ public interface TradeRuleConvert {
     TradeRuleViewResp convertToViewResp(TradeRuleDTO dto);
 
     TradeRuleCreateResp convertToCreateResp(TradeRuleDTO dto);
-
-    TradeRuleExp convertToExp(TradeRuleDTO dto);
 
     TradeRuleDTO convertToDTO(TradeRuleSaveReq req);
 

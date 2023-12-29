@@ -10,11 +10,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-07-05 23:02:49
- *
  */
 @Data
 @ApiModel("交易订单请求对象")
-public class TradeOrderCreateReq{
+public class TradeOrderCreateReq {
 
     @ApiModelProperty("商品代码")
     private Long symbolId;

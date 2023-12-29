@@ -10,11 +10,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-07-05 23:02:49
- *
  */
 @Data
 @ApiModel("交易订单请求对象")
-public class TradeOrderUpdateReq{
+public class TradeOrderUpdateReq {
 
     @ApiModelProperty("主键")
     private Long id;

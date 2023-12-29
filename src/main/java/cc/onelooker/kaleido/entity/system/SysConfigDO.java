@@ -75,7 +75,6 @@ public class SysConfigDO implements IdEntity<Long> {
     @TableField(value = "updated_by")
     private String updatedBy;
 
-
     @Override
     public Long getId() {
         return this.id;

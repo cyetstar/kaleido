@@ -2,7 +2,6 @@ package cc.onelooker.kaleido.convert.system;
 
 import cc.onelooker.kaleido.dto.system.SysRoleDTO;
 import cc.onelooker.kaleido.dto.system.SysUserDTO;
-import cc.onelooker.kaleido.dto.system.exp.SysUserExp;
 import cc.onelooker.kaleido.dto.system.req.SysUserCreateReq;
 import cc.onelooker.kaleido.dto.system.req.SysUserPageReq;
 import cc.onelooker.kaleido.dto.system.req.SysUserUpdateReq;
@@ -26,7 +25,7 @@ public interface SysUserConvert {
 
     SysUserDTO convert(SysUserDO sysUserDO);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     SysUserDO convertToDO(SysUserDTO sysUserDTO);
 
     SysUserDTO convertToDTO(SysUserPageReq req);
@@ -40,8 +39,6 @@ public interface SysUserConvert {
     SysUserViewResp convertToViewResp(SysUserDTO dto);
 
     SysUserCreateResp convertToCreateResp(SysUserDTO dto);
-
-    SysUserExp convertToExp(SysUserDTO dto);
 
     SysUserPageResp.SysRolePageResp convertToPageResp(SysRoleDTO sysRoleDTO);
 

@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-11-26 01:19:02
- *
  */
 @Data
 @ApiModel("语言请求对象")
-public class MovieLanguagePageReq{
+public class MovieLanguagePageReq {
 
     @ApiModelProperty("标识")
     private String tag;

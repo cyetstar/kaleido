@@ -50,7 +50,6 @@ public class MovieActorDTO implements BaseDTO<Long> {
 
     private String playRole;
 
-
     @Override
     public Long getId() {
         return this.id;

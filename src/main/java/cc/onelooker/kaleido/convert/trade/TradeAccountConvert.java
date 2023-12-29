@@ -9,16 +9,16 @@ import cc.onelooker.kaleido.dto.trade.resp.TradeAccountCreateResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeAccountPageResp;
 import cc.onelooker.kaleido.dto.trade.resp.TradeAccountViewResp;
 import cc.onelooker.kaleido.entity.trade.TradeAccountDO;
-import cc.onelooker.kaleido.exp.trade.TradeAccountExp;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+
 /**
-* 交易账户Convert
-*
-* @author cyetstar
-* @date 2023-06-23 13:38:46
-*/
+ * 交易账户Convert
+ *
+ * @author cyetstar
+ * @date 2023-06-23 13:38:46
+ */
 @Mapper
 public interface TradeAccountConvert {
 
@@ -26,7 +26,7 @@ public interface TradeAccountConvert {
 
     TradeAccountDTO convert(TradeAccountDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     TradeAccountDO convertToDO(TradeAccountDTO dto);
 
     TradeAccountDTO convertToDTO(TradeAccountPageReq req);
@@ -40,8 +40,6 @@ public interface TradeAccountConvert {
     TradeAccountViewResp convertToViewResp(TradeAccountDTO dto);
 
     TradeAccountCreateResp convertToCreateResp(TradeAccountDTO dto);
-
-    TradeAccountExp convertToExp(TradeAccountDTO dto);
 
     TradeAccountDTO convertToDTO(TradeAccountSaveReq req);
 }

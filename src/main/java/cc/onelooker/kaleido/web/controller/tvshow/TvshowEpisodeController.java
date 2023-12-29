@@ -9,26 +9,20 @@ import cc.onelooker.kaleido.dto.tvshow.req.TvshowEpisodeUpdateReq;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowEpisodeCreateResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowEpisodePageResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowEpisodeViewResp;
-import cc.onelooker.kaleido.exp.tvshow.TvshowEpisodeExp;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.service.tvshow.TvshowEpisodeService;
 import cc.onelooker.kaleido.service.tvshow.TvshowManager;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.ExportColumn;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * 单集前端控制器
@@ -88,20 +82,6 @@ public class TvshowEpisodeController extends AbstractCrudController<TvshowEpisod
     @ApiOperation(value = "删除单集")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
-    }
-
-    @GetMapping(value = "/column")
-    @ApiOperation(value = "查询可导出列")
-    public CommonResult<List<ExportColumn>> column() {
-        List<ExportColumn> exportColumns = getColumns(TvshowEpisodeExp.class);
-        return CommonResult.success(exportColumns);
-    }
-
-    @GetMapping("export")
-    @ApiOperation(value = "导出单集")
-    public void export(TvshowEpisodePageReq req, String[] columns, PageParam pageParam, HttpServletResponse response) {
-        String filename = "单集" + DateTimeUtils.now() + ".xlsx";
-        super.export(req, columns, pageParam, filename, TvshowEpisodeExp.class, TvshowEpisodeConvert.INSTANCE::convertToDTO, TvshowEpisodeConvert.INSTANCE::convertToExp, response);
     }
 
     @PostMapping("syncPlex")

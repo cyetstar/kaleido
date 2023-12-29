@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-11-26 01:19:02
- *
  */
 @Data
 @ApiModel("电影集合关联表请求对象")
-public class MovieBasicCollectionUpdateReq{
+public class MovieBasicCollectionUpdateReq {
 
     @ApiModelProperty("主键")
     private Long id;

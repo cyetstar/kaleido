@@ -37,7 +37,6 @@ public class MovieBasicLanguageDO implements IdEntity<Long> {
     @TableField(value = "language_id")
     private Long languageId;
 
-
     @Override
     public Long getId() {
         return this.id;

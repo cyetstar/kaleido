@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.convert.system;
 
 import cc.onelooker.kaleido.dto.system.SysMenuDTO;
-import cc.onelooker.kaleido.dto.system.exp.SysMenuExp;
 import cc.onelooker.kaleido.dto.system.req.SysMenuCreateReq;
 import cc.onelooker.kaleido.dto.system.req.SysMenuInitReq;
 import cc.onelooker.kaleido.dto.system.req.SysMenuPageReq;
@@ -27,7 +26,7 @@ public interface SysMenuConvert {
 
     SysMenuDTO convert(SysMenuDO sysMenuDO);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     SysMenuDO convertToDO(SysMenuDTO sysMenuDTO);
 
     SysMenuDTO convertToDTO(SysMenuPageReq req);
@@ -41,8 +40,6 @@ public interface SysMenuConvert {
     SysMenuViewResp convertToViewResp(SysMenuDTO dto);
 
     SysMenuCreateResp convertToCreateResp(SysMenuDTO dto);
-
-    SysMenuExp convertToExp(SysMenuDTO dto);
 
     SysMenuDTO convertToDTO(SysMenuInitReq req);
 

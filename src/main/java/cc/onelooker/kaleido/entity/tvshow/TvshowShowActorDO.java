@@ -49,7 +49,6 @@ public class TvshowShowActorDO implements IdEntity<Long> {
     @TableField(value = "play_role")
     private String playRole;
 
-
     @Override
     public Long getId() {
         return this.id;
