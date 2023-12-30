@@ -38,4 +38,6 @@ public interface SysDictService extends IBaseService<SysDictDTO> {
     List<SysDictPageResp> listAll(SysDictPageReq req);
 
     Boolean createBatch(List<SysDictCreateReq> reqs);
+
+    void deleteByDictTypeAndValue(String dictType, String value);
 }

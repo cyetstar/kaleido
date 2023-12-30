@@ -5,20 +5,16 @@ import cc.onelooker.kaleido.dto.common.req.ActionStopReq;
 import cc.onelooker.kaleido.thread.Action;
 import cc.onelooker.kaleido.thread.ActionContext;
 import cc.onelooker.kaleido.thread.ActionRunnable;
-import cc.onelooker.kaleido.thread.ActionState;
-import cc.onelooker.kaleido.thread.movie.MovieCheckThreadStatusRunnable;
-import cc.onelooker.kaleido.thread.movie.MovieReadNFORunnable;
-import cc.onelooker.kaleido.thread.movie.MovieSyncPlexRunnable;
-import cc.onelooker.kaleido.thread.movie.MovieUpdateSourceRunnable;
 import com.zjjcnt.common.core.domain.CommonResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by cyetstar on 2020/12/22.
@@ -27,13 +23,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequestMapping("/action")
 public class ActionController {
 
-    Map<Action, ActionRunnable> running = new ConcurrentHashMap<>();
+    @Autowired
+    private List<ActionRunnable> actionRunnableList;
 
     @PostMapping("start")
     public CommonResult<Boolean> start(@RequestBody ActionStartReq req) throws IOException {
-        Action action = Action.valueOf(req.getAction());
-        ActionRunnable actionRunnable = generateRunnable(action);
-        new Thread(actionRunnable).start();
+        Optional<ActionRunnable> runnableOptional = actionRunnableList.stream().filter(actionRunnable -> actionRunnable.getAction().name().equals(req.getAction())).findFirst();
+        if (runnableOptional.isPresent()) {
+            ActionRunnable actionRunnable = runnableOptional.get();
+            new Thread(actionRunnable).start();
+        }
         return CommonResult.success(true);
     }
 
@@ -45,26 +44,6 @@ public class ActionController {
             actionRunnable.stop();
         }
         return CommonResult.success(true);
-    }
-
-    private ActionRunnable generateRunnable(Action action) {
-        switch (action) {
-            case movieUpdateSource: {
-                return new MovieUpdateSourceRunnable();
-            }
-            case movieCheckThreadStatus: {
-                return new MovieCheckThreadStatusRunnable();
-            }
-            case movieReadNFO: {
-                return new MovieReadNFORunnable();
-            }
-            case movieSyncPlex: {
-                return new MovieSyncPlexRunnable();
-            }
-            default:
-                return null;
-
-        }
     }
 
 }

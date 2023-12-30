@@ -1,23 +1,25 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
-import cc.onelooker.kaleido.convert.movie.MovieDoubanWeeklyConvert;
-import cc.onelooker.kaleido.dto.movie.MovieDoubanWeeklyDTO;
-import cc.onelooker.kaleido.entity.movie.MovieDoubanWeeklyDO;
-import cc.onelooker.kaleido.mapper.movie.MovieDoubanWeeklyMapper;
-import cc.onelooker.kaleido.service.movie.MovieDoubanWeeklyService;
+import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
+import cc.onelooker.kaleido.service.movie.MovieDoubanWeeklyService;
+import cc.onelooker.kaleido.entity.movie.MovieDoubanWeeklyDO;
+import cc.onelooker.kaleido.dto.movie.MovieDoubanWeeklyDTO;
+import cc.onelooker.kaleido.convert.movie.MovieDoubanWeeklyConvert;
+import cc.onelooker.kaleido.mapper.movie.MovieDoubanWeeklyMapper;
+
+import com.zjjcnt.common.core.utils.ColumnUtils;
+import org.apache.commons.lang3.StringUtils;
+import java.util.*;
 
 /**
  * 豆瓣电影口碑榜ServiceImpl
  *
  * @author cyetstar
- * @date 2023-12-22 11:18:26
+ * @date 2023-12-29 16:15:43
  */
 @Service
 public class MovieDoubanWeeklyServiceImpl extends AbstractBaseServiceImpl<MovieDoubanWeeklyMapper, MovieDoubanWeeklyDO, MovieDoubanWeeklyDTO> implements MovieDoubanWeeklyService {

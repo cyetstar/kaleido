@@ -1,7 +1,8 @@
 package cc.onelooker.kaleido.service.movie;
 
-import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
+import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.utils.ConfigUtils;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -10,8 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * @Author xiadawei
@@ -31,15 +30,16 @@ public class MovieCollectionServiceTest {
 
     @Test
     void deleteAll() {
-        List<MovieCollectionDTO> movieCollectionDTOList = movieCollectionService.list(null);
-        log.info("总共【{}】条记录待删除", movieCollectionDTOList.size());
-        for (MovieCollectionDTO movieCollectionDTO : movieCollectionDTOList) {
+        String plexMovieLibraryId = ConfigUtils.getSysConfig("plexMovieLibraryId");
+        List<Metadata> metadataList = plexApiService.listCollection(plexMovieLibraryId);
+        int size = metadataList.size();
+        log.info("总共【{}】条记录待删除", size);
+        for (Metadata metadata : metadataList) {
             try {
-                plexApiService.deleteCollection(movieCollectionDTO.getId());
-                movieCollectionService.deleteById(movieCollectionDTO.getId());
-                log.info("【{}】删除成功", movieCollectionDTO.getTitle());
+                plexApiService.deleteCollection(metadata.getRatingKey());
+                log.info("{}.【{}】含{}部，删除成功", size--, metadata.getTitle(), metadata.getChildCount());
             } catch (Exception e) {
-                log.error("【{}】删除发生错误:{}", movieCollectionDTO.getTitle(), ExceptionUtil.getMessage(e));
+                log.error("{}.【{}】含{}部，删除发生错误:{}", size--, metadata.getTitle(), metadata.getChildCount(), ExceptionUtil.getMessage(e));
             }
         }
     }

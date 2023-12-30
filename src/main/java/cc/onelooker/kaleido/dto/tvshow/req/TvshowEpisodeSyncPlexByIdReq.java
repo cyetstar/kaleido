@@ -3,7 +3,7 @@ package cc.onelooker.kaleido.dto.tvshow.req;
 import lombok.Data;
 
 /**
- * @Author xiadawei
+ * @Author cyetstar
  * @Date 2023-11-28 01:35:00
  * @Description TODO
  */

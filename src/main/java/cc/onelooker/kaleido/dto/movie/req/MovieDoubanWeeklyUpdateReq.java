@@ -1,19 +1,24 @@
 package cc.onelooker.kaleido.dto.movie.req;
 
-import com.zjjcnt.common.core.annotation.StringDateFormat;
+import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+
+import java.lang.Long;
+import java.lang.String;
+import java.lang.Integer;
+import com.zjjcnt.common.core.annotation.StringDateFormat;
 
 /**
  * 豆瓣电影口碑榜请求对象
  *
  * @author cyetstar
- * @date 2023-12-22 11:18:26
+ * @date 2023-12-29 16:15:43
+ *
  */
 @Data
 @ApiModel("豆瓣电影口碑榜请求对象")
-public class MovieDoubanWeeklyUpdateReq {
+public class MovieDoubanWeeklyUpdateReq{
 
     @ApiModelProperty("主键")
     private Long id;

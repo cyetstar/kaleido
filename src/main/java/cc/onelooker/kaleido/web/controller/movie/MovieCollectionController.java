@@ -5,13 +5,11 @@ import cc.onelooker.kaleido.dto.movie.MovieBasicCollectionDTO;
 import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
 import cc.onelooker.kaleido.dto.movie.req.MovieCollectionCreateReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieCollectionPageReq;
-import cc.onelooker.kaleido.dto.movie.req.MovieCollectionSyncPlexByIdReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieCollectionUpdateReq;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionListByMovieIdResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionViewResp;
-import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.service.movie.MovieBasicCollectionService;
 import cc.onelooker.kaleido.service.movie.MovieCollectionService;
 import cc.onelooker.kaleido.service.movie.MovieManager;
@@ -33,7 +31,7 @@ import java.util.stream.Collectors;
  * 电影集合前端控制器
  *
  * @author cyetstar
- * @date 2023-11-26 01:19:02
+ * @date 2023-12-29 16:15:43
  */
 
 @Api(tags = "电影集合")
@@ -46,9 +44,6 @@ public class MovieCollectionController extends AbstractCrudController<MovieColle
 
     @Autowired
     private MovieBasicCollectionService movieBasicCollectionService;
-
-    @Autowired
-    private AsyncTaskManager asyncTaskManager;
 
     @Autowired
     private MovieManager movieManager;
@@ -89,20 +84,6 @@ public class MovieCollectionController extends AbstractCrudController<MovieColle
         return CommonResult.success(true);
     }
 
-    @PostMapping("syncPlex")
-    @ApiOperation(value = "同步资料库")
-    public CommonResult<Boolean> syncPlex() {
-        asyncTaskManager.syncPlexMovieCollection();
-        return CommonResult.success(true);
-    }
-
-    @PostMapping("syncPlexById")
-    @ApiOperation(value = "同步资料库")
-    public CommonResult<Boolean> syncPlexById(@RequestBody MovieCollectionSyncPlexByIdReq req) {
-        movieManager.syncPlexMovieCollectionById(req.getId());
-        return CommonResult.success(true);
-    }
-
     @GetMapping("listByMovieId")
     public CommonResult<List<MovieCollectionListByMovieIdResp>> listByMovieId(Long movieId) {
         List<MovieBasicCollectionDTO> movieBasicCollectionDTOList = movieBasicCollectionService.listMovieId(movieId);
@@ -116,12 +97,6 @@ public class MovieCollectionController extends AbstractCrudController<MovieColle
             respList.add(resp);
         }
         return CommonResult.success(respList);
-    }
-
-    @PostMapping("syncDoubanWeekly")
-    public CommonResult<Boolean> syncDoubanWeekly() {
-        movieManager.syncDoubanWeekly();
-        return CommonResult.success(true);
     }
 
 }

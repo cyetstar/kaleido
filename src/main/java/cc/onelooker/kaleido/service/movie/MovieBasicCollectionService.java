@@ -9,7 +9,7 @@ import java.util.List;
  * 电影集合关联表Service
  *
  * @author cyetstar
- * @date 2023-11-26 01:19:02
+ * @date 2023-12-29 16:15:43
  */
 public interface MovieBasicCollectionService extends IBaseService<MovieBasicCollectionDTO> {
 

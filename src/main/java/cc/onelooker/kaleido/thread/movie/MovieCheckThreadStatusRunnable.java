@@ -7,20 +7,21 @@ import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
 import cc.onelooker.kaleido.thread.Action;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
-import com.zjjcnt.common.core.utils.ApplicationContextHelper;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by cyetstar on 2021/1/7.
  */
+@Component
 public class MovieCheckThreadStatusRunnable extends AbstractEntityActionRunnable<MovieThreadDTO> {
 
     private final MovieThreadService movieThreadService;
 
     private final MovieManager movieManager;
 
-    public MovieCheckThreadStatusRunnable() {
-        this.movieThreadService = ApplicationContextHelper.getBean(MovieThreadService.class);
-        this.movieManager = ApplicationContextHelper.getBean(MovieManager.class);
+    public MovieCheckThreadStatusRunnable(MovieThreadService movieThreadService, MovieManager movieManager) {
+        this.movieThreadService = movieThreadService;
+        this.movieManager = movieManager;
     }
 
     @Override

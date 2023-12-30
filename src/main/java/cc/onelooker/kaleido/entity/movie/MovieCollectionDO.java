@@ -1,23 +1,29 @@
 package cc.onelooker.kaleido.entity.movie;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.zjjcnt.common.core.entity.IdEntity;
 import lombok.Data;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
+
+import com.zjjcnt.common.core.entity.IdEntity;
+import com.zjjcnt.common.core.annotation.Crypto;
+
+import java.lang.Long;
+import java.lang.String;
+import java.lang.Integer;
 
 /**
  * 电影集合DO
  *
  * @author cyetstar
- * @date 2023-11-26 01:19:02
+ * @date 2023-12-29 16:15:43
  * @see cc.onelooker.kaleido.dto.movie.MovieCollectionDTO
  */
 @Data
 @TableName("movie_collection")
 public class MovieCollectionDO implements IdEntity<Long> {
-    private static final long serialVersionUID = 231377156611523164L;
+    private static final long serialVersionUID = 2043551627067037530L;
 
     /**
      * 主键
@@ -38,7 +44,7 @@ public class MovieCollectionDO implements IdEntity<Long> {
     private String summary;
 
     /**
-     * 缩略图
+     * 海报
      */
     @TableField(value = "thumb")
     private String thumb;

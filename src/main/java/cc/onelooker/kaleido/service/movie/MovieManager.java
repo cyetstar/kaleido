@@ -35,6 +35,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -453,6 +455,10 @@ public class MovieManager {
     }
 
     public void syncDoubanWeekly() {
+        LocalDate today = LocalDate.of(2023, 12, 30);
+        DayOfWeek dayOfWeek = today.getDayOfWeek();
+        int dayOfWeekValue = dayOfWeek.getValue();
+        String listingDate = DateTimeUtils.addDays("20231230", 5 - (dayOfWeekValue > 5 ? dayOfWeekValue : (7 + dayOfWeekValue)));
         List<Subject> subjectList = doubanApiService.listMovieWeekly();
         List<Long> idList = Lists.newArrayList();
         for (Subject subject : subjectList) {
@@ -460,7 +466,7 @@ public class MovieManager {
             Long id = Long.parseLong(movie.getId());
             idList.add(id);
             MovieDoubanWeeklyDTO movieDoubanWeeklyDTO = movieDoubanWeeklyService.findById(id);
-            if (movieDoubanWeeklyDTO != null && StringUtils.isEmpty(movieDoubanWeeklyDTO.getDelistingDate()) && movieDoubanWeeklyDTO.getTop().compareTo(subject.getRank()) < 0) {
+            if (movieDoubanWeeklyDTO != null && StringUtils.equals(movieDoubanWeeklyDTO.getDelistingDate(), "99999999") && movieDoubanWeeklyDTO.getTop().compareTo(subject.getRank()) < 0) {
                 //在榜且排名高于之前
                 movieDoubanWeeklyDTO.setTop(subject.getRank());
                 movieDoubanWeeklyService.update(movieDoubanWeeklyDTO);
@@ -470,7 +476,8 @@ public class MovieManager {
                 movieDoubanWeeklyDTO.setTitle(movie.getTitle());
                 movieDoubanWeeklyDTO.setOriginalTitle(movie.getOriginalTitle());
                 movieDoubanWeeklyDTO.setYear(movie.getYear());
-                movieDoubanWeeklyDTO.setListingDate(DateTimeUtils.today());
+                movieDoubanWeeklyDTO.setListingDate(listingDate);
+                movieDoubanWeeklyDTO.setDelistingDate("99999999");
                 movieDoubanWeeklyDTO.setTop(subject.getRank());
                 movieDoubanWeeklyDTO.setThumb(movie.getImages().getSmall());
                 movieDoubanWeeklyService.insert(movieDoubanWeeklyDTO);
@@ -478,9 +485,10 @@ public class MovieManager {
         }
         List<MovieDoubanWeeklyDTO> movieDoubanWeeklyDTOList = movieDoubanWeeklyService.list(null);
         for (MovieDoubanWeeklyDTO movieDoubanWeeklyDTO : movieDoubanWeeklyDTOList) {
-            if (StringUtils.isNotEmpty(movieDoubanWeeklyDTO.getListingDate()) && StringUtils.isEmpty(movieDoubanWeeklyDTO.getDelistingDate()) && !idList.contains(movieDoubanWeeklyDTO.getId())) {
+            if (StringUtils.equals(movieDoubanWeeklyDTO.getDelistingDate(), "99999999")
+                    && !idList.contains(movieDoubanWeeklyDTO.getId())) {
                 //未下榜，但不在本期榜单上
-                movieDoubanWeeklyDTO.setDelistingDate(DateTimeUtils.today());
+                movieDoubanWeeklyDTO.setDelistingDate(listingDate);
                 movieDoubanWeeklyService.update(movieDoubanWeeklyDTO);
             }
         }

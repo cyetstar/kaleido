@@ -1,23 +1,30 @@
 package cc.onelooker.kaleido.entity.movie;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.zjjcnt.common.core.entity.IdEntity;
 import lombok.Data;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
+
+import com.zjjcnt.common.core.entity.IdEntity;
+import com.zjjcnt.common.core.annotation.Crypto;
+
+import java.lang.Long;
+import java.lang.String;
+import java.lang.Integer;
+import com.zjjcnt.common.core.annotation.StringDateFormat;
 
 /**
  * 豆瓣电影口碑榜DO
  *
  * @author cyetstar
- * @date 2023-12-22 11:18:26
+ * @date 2023-12-29 16:15:43
  * @see cc.onelooker.kaleido.dto.movie.MovieDoubanWeeklyDTO
  */
 @Data
 @TableName("movie_douban_weekly")
 public class MovieDoubanWeeklyDO implements IdEntity<Long> {
-    private static final long serialVersionUID = -5978578384726931397L;
+    private static final long serialVersionUID = -6247935346600730459L;
 
     /**
      * 主键
@@ -72,6 +79,7 @@ public class MovieDoubanWeeklyDO implements IdEntity<Long> {
      */
     @TableField(value = "memo")
     private String memo;
+
 
     @Override
     public Long getId() {

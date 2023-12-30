@@ -7,15 +7,20 @@ import cc.onelooker.kaleido.dto.system.req.SysDictPageReq;
 import cc.onelooker.kaleido.dto.system.req.SysDictUpdateReq;
 import cc.onelooker.kaleido.dto.system.resp.SysDictPageResp;
 import cc.onelooker.kaleido.entity.system.SysDictDO;
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.mapper.system.SysDictMapper;
 import cc.onelooker.kaleido.service.system.SysDictService;
+import cc.onelooker.kaleido.third.plex.Directory;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.exception.ServiceException;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,6 +158,16 @@ public class SysDictServiceImpl extends AbstractBaseServiceImpl<SysDictMapper, S
         return SysDictConvert.INSTANCE.convertToPageResp(list(queryWrapper));
     }
 
+    @Override
+    public void deleteByDictTypeAndValue(String dictType, String value) {
+        Validate.notEmpty(dictType);
+        Validate.notEmpty(value);
+        SysDictDTO param = new SysDictDTO();
+        param.setDictType(dictType);
+        param.setValue(value);
+        delete(param);
+    }
+
     /**
      * 根据类型获取列表
      */
@@ -184,4 +199,5 @@ public class SysDictServiceImpl extends AbstractBaseServiceImpl<SysDictMapper, S
         queryWrapper.last(" limit 1");
         return Objects.nonNull(baseMapper.selectOne(queryWrapper));
     }
+
 }

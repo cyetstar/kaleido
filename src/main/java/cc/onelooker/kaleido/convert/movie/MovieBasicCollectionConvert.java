@@ -16,7 +16,7 @@ import org.mapstruct.factory.Mappers;
  * 电影集合关联表Convert
  *
  * @author cyetstar
- * @date 2023-11-26 01:19:02
+ * @date 2023-12-29 16:15:43
  */
 @Mapper
 public interface MovieBasicCollectionConvert {

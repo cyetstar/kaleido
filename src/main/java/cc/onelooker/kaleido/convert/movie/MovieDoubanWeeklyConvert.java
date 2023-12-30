@@ -13,11 +13,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
- * 豆瓣电影口碑榜Convert
- *
- * @author cyetstar
- * @date 2023-12-22 11:18:26
- */
+* 豆瓣电影口碑榜Convert
+*
+* @author cyetstar
+* @date 2023-12-29 16:15:43
+*/
 @Mapper
 public interface MovieDoubanWeeklyConvert {
 
@@ -25,7 +25,7 @@ public interface MovieDoubanWeeklyConvert {
 
     MovieDoubanWeeklyDTO convert(MovieDoubanWeeklyDO entity);
 
-    @InheritInverseConfiguration(name = "convert")
+    @InheritInverseConfiguration(name="convert")
     MovieDoubanWeeklyDO convertToDO(MovieDoubanWeeklyDTO dto);
 
     MovieDoubanWeeklyDTO convertToDTO(MovieDoubanWeeklyPageReq req);
@@ -39,5 +39,6 @@ public interface MovieDoubanWeeklyConvert {
     MovieDoubanWeeklyViewResp convertToViewResp(MovieDoubanWeeklyDTO dto);
 
     MovieDoubanWeeklyCreateResp convertToCreateResp(MovieDoubanWeeklyDTO dto);
+
 
 }

@@ -9,12 +9,12 @@ import java.util.List;
  * 电影集合DTO
  *
  * @author cyetstar
- * @date 2023-11-26 01:19:02
+ * @date 2023-12-29 16:15:43
  * @see cc.onelooker.kaleido.entity.movie.MovieCollectionDO
  */
 @Data
 public class MovieCollectionDTO implements BaseDTO<Long> {
-    private static final long serialVersionUID = 2663868481724312141L;
+    private static final long serialVersionUID = 8172676698256320845L;
 
     /**
      * 主键
@@ -32,7 +32,7 @@ public class MovieCollectionDTO implements BaseDTO<Long> {
     private String summary;
 
     /**
-     * 缩略图
+     * 海报
      */
     private String thumb;
 
@@ -45,11 +45,6 @@ public class MovieCollectionDTO implements BaseDTO<Long> {
      * 豆瓣编号
      */
     private String doubanId;
-
-    /**
-     * 豆瓣口碑榜
-     */
-    private String doubanWeekly;
 
     /**
      * 加入时间

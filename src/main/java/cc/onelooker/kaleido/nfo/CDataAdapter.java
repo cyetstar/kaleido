@@ -3,7 +3,7 @@ package cc.onelooker.kaleido.nfo;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
- * @Author xiadawei
+ * @Author cyetstar
  * @Date 2023-12-19 14:22:00
  * @Description TODO
  */

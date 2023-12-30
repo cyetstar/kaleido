@@ -14,11 +14,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
- * 电影集合Convert
- *
- * @author cyetstar
- * @date 2023-11-26 01:19:02
- */
+* 电影集合Convert
+*
+* @author cyetstar
+* @date 2023-12-29 16:15:43
+*/
 @Mapper
 public interface MovieCollectionConvert {
 
@@ -26,7 +26,7 @@ public interface MovieCollectionConvert {
 
     MovieCollectionDTO convert(MovieCollectionDO entity);
 
-    @InheritInverseConfiguration(name = "convert")
+    @InheritInverseConfiguration(name="convert")
     MovieCollectionDO convertToDO(MovieCollectionDTO dto);
 
     MovieCollectionDTO convertToDTO(MovieCollectionPageReq req);

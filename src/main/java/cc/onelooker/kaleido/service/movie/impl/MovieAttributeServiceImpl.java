@@ -1,21 +1,25 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
-import cc.onelooker.kaleido.convert.movie.MovieAttributeConvert;
-import cc.onelooker.kaleido.dto.movie.MovieAttributeDTO;
-import cc.onelooker.kaleido.entity.movie.MovieAttributeDO;
-import cc.onelooker.kaleido.mapper.movie.MovieAttributeMapper;
-import cc.onelooker.kaleido.service.movie.MovieAttributeService;
+import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
+import cc.onelooker.kaleido.service.movie.MovieAttributeService;
+import cc.onelooker.kaleido.entity.movie.MovieAttributeDO;
+import cc.onelooker.kaleido.dto.movie.MovieAttributeDTO;
+import cc.onelooker.kaleido.convert.movie.MovieAttributeConvert;
+import cc.onelooker.kaleido.mapper.movie.MovieAttributeMapper;
+
+import com.zjjcnt.common.core.utils.ColumnUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
+import java.util.*;
 
 /**
  * 电影属性值ServiceImpl
  *
  * @author cyetstar
- * @date 2023-12-22 11:18:26
+ * @date 2023-12-29 16:15:43
  */
 @Service
 public class MovieAttributeServiceImpl extends AbstractBaseServiceImpl<MovieAttributeMapper, MovieAttributeDO, MovieAttributeDTO> implements MovieAttributeService {

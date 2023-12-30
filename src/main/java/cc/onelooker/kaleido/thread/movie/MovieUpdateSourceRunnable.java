@@ -5,7 +5,7 @@ import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
 import cc.onelooker.kaleido.thread.Action;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.PageResult;
-import com.zjjcnt.common.core.utils.ApplicationContextHelper;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,14 +17,15 @@ import java.util.stream.Collectors;
 /**
  * Created by cyetstar on 2021/1/7.
  */
+@Component
 public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path> {
 
     private final MovieManager movieManager;
 
     private String movieDownloadPath;
 
-    public MovieUpdateSourceRunnable() {
-        this.movieManager = ApplicationContextHelper.getBean(MovieManager.class);
+    public MovieUpdateSourceRunnable(MovieManager movieManager) {
+        this.movieManager = movieManager;
     }
 
     @Override

@@ -14,8 +14,8 @@ import java.time.Duration;
 @Configuration
 public class RestConfig {
 
-    private static final long READ_TIMEOUT_SECONDS = 120L;
-    private static final long CONNECT_TIMEOUT_SECONDS = 150L;
+    private static final long READ_TIMEOUT_SECONDS = 60L;
+    private static final long CONNECT_TIMEOUT_SECONDS = 5L;
 
     @Bean
     public RestTemplate restTemplate() {

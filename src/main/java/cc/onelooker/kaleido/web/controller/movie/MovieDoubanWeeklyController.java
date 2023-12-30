@@ -9,6 +9,7 @@ import cc.onelooker.kaleido.dto.movie.resp.MovieDoubanWeeklyCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieDoubanWeeklyPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieDoubanWeeklyViewResp;
 import cc.onelooker.kaleido.service.movie.MovieDoubanWeeklyService;
+import cc.onelooker.kaleido.service.movie.MovieManager;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
  * 豆瓣电影口碑榜前端控制器
  *
  * @author cyetstar
- * @date 2023-12-22 11:18:26
+ * @date 2023-12-29 16:15:43
  */
 
 @Api(tags = "豆瓣电影口碑榜")
@@ -34,6 +35,9 @@ public class MovieDoubanWeeklyController extends AbstractCrudController<MovieDou
     @Autowired
     private MovieDoubanWeeklyService movieDoubanWeeklyService;
 
+    @Autowired
+    private MovieManager movieManager;
+
     @Override
     protected IBaseService getService() {
         return movieDoubanWeeklyService;
@@ -42,6 +46,7 @@ public class MovieDoubanWeeklyController extends AbstractCrudController<MovieDou
     @GetMapping("page")
     @ApiOperation(value = "查询豆瓣电影口碑榜")
     public CommonResult<PageResult<MovieDoubanWeeklyPageResp>> page(MovieDoubanWeeklyPageReq req, PageParam pageParam) {
+        pageParam.setOrderBy("DESC:delisting_date;ASC:top");
         return super.page(req, pageParam, MovieDoubanWeeklyConvert.INSTANCE::convertToDTO, MovieDoubanWeeklyConvert.INSTANCE::convertToPageResp);
     }
 
@@ -67,6 +72,13 @@ public class MovieDoubanWeeklyController extends AbstractCrudController<MovieDou
     @ApiOperation(value = "删除豆瓣电影口碑榜")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
+    }
+
+    @PostMapping("sync")
+    @ApiOperation(value = "同步豆瓣口碑榜")
+    public CommonResult<Boolean> sync() {
+        movieManager.syncDoubanWeekly();
+        return CommonResult.success(true);
     }
 
 }

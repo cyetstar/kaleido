@@ -13,11 +13,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
- * 电影属性值关联表Convert
- *
- * @author cyetstar
- * @date 2023-12-22 11:18:26
- */
+* 电影属性值关联表Convert
+*
+* @author cyetstar
+* @date 2023-12-29 16:15:43
+*/
 @Mapper
 public interface MovieBasicAttributeConvert {
 
@@ -25,7 +25,7 @@ public interface MovieBasicAttributeConvert {
 
     MovieBasicAttributeDTO convert(MovieBasicAttributeDO entity);
 
-    @InheritInverseConfiguration(name = "convert")
+    @InheritInverseConfiguration(name="convert")
     MovieBasicAttributeDO convertToDO(MovieBasicAttributeDTO dto);
 
     MovieBasicAttributeDTO convertToDTO(MovieBasicAttributePageReq req);

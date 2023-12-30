@@ -1,10 +1,12 @@
 package cc.onelooker.kaleido.third.plex;
 
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -212,10 +214,14 @@ public class PlexApiService {
     }
 
     public List<Directory> listDirectoryBySecondary(String libraryId, String secondary) {
-        init();
-        PlexResult plexResult = restTemplate.getForObject(plexUrl + API_LIBRARY_VIEW_SECONDARY, PlexResult.class, libraryId, secondary, plexToken);
-        MediaContainer mediaContainer = plexResult.getMediaContainer();
-        return mediaContainer.getDirectoryList();
+        try {
+            init();
+            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_LIBRARY_VIEW_SECONDARY, PlexResult.class, libraryId, secondary, plexToken);
+            MediaContainer mediaContainer = plexResult.getMediaContainer();
+            return mediaContainer.getDirectoryList();
+        } catch (HttpClientErrorException.NotFound ex) {
+            return Lists.newArrayList();
+        }
     }
 
     public void deleteCollection(Long collectionId) {

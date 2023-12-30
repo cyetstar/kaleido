@@ -1,18 +1,23 @@
 package cc.onelooker.kaleido.dto.movie.req;
 
+import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+
+import java.lang.Long;
+import java.lang.String;
+import java.lang.Integer;
 
 /**
  * 电影集合请求对象
  *
  * @author cyetstar
- * @date 2023-11-26 01:19:02
+ * @date 2023-12-29 16:15:43
+ *
  */
 @Data
 @ApiModel("电影集合请求对象")
-public class MovieCollectionUpdateReq {
+public class MovieCollectionUpdateReq{
 
     @ApiModelProperty("主键")
     private Long id;
@@ -22,5 +27,14 @@ public class MovieCollectionUpdateReq {
 
     @ApiModelProperty("简介")
     private String summary;
+
+    @ApiModelProperty("海报")
+    private String thumb;
+
+    @ApiModelProperty("项目数量")
+    private Integer childCount;
+
+    @ApiModelProperty("豆瓣编号")
+    private String doubanId;
 
 }

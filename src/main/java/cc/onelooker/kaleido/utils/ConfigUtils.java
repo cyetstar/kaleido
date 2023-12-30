@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.utils;
 
+import cc.onelooker.kaleido.enums.ConfigKey;
 import com.zjjcnt.common.core.redis.RedisService;
 import com.zjjcnt.common.core.utils.ApplicationContextHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -28,8 +29,17 @@ public class ConfigUtils {
         redisService.setCacheObject(wrapKey(configKey), configValue);
     }
 
+    @Deprecated
     public static String getSysConfig(String configKey) {
         return getSysConfig(configKey, "");
+    }
+
+    public static String getSysConfig(ConfigKey configKey) {
+        return getSysConfig(configKey.name(), "");
+    }
+
+    public static String getSysConfig(ConfigKey configKey, String defValue) {
+        return getSysConfig(configKey.name(), defValue);
     }
 
     public static String getSysConfig(String configKey, String defValue) {

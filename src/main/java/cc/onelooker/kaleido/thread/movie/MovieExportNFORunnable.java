@@ -7,20 +7,21 @@ import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
 import cc.onelooker.kaleido.thread.Action;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
-import com.zjjcnt.common.core.utils.ApplicationContextHelper;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by cyetstar on 2021/1/7.
  */
+@Component
 public class MovieExportNFORunnable extends AbstractEntityActionRunnable<MovieBasicDTO> {
 
     private final MovieBasicService movieBasicService;
 
     private final MovieManager movieManager;
 
-    public MovieExportNFORunnable() {
-        this.movieBasicService = ApplicationContextHelper.getBean(MovieBasicService.class);
-        this.movieManager = ApplicationContextHelper.getBean(MovieManager.class);
+    public MovieExportNFORunnable(MovieBasicService movieBasicService, MovieManager movieManager) {
+        this.movieBasicService = movieBasicService;
+        this.movieManager = movieManager;
     }
 
     @Override

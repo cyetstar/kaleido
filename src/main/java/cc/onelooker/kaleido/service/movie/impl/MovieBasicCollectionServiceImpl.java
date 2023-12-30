@@ -8,6 +8,7 @@ import cc.onelooker.kaleido.service.movie.MovieBasicCollectionService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ import java.util.Objects;
  * 电影集合关联表ServiceImpl
  *
  * @author cyetstar
- * @date 2023-11-26 01:19:02
+ * @date 2023-12-29 16:15:43
  */
 @Service
 public class MovieBasicCollectionServiceImpl extends AbstractBaseServiceImpl<MovieBasicCollectionMapper, MovieBasicCollectionDO, MovieBasicCollectionDTO> implements MovieBasicCollectionService {
@@ -30,6 +31,10 @@ public class MovieBasicCollectionServiceImpl extends AbstractBaseServiceImpl<Mov
         LambdaQueryWrapper<MovieBasicCollectionDO> query = new LambdaQueryWrapper<>();
         query.eq(Objects.nonNull(dto.getMovieId()), MovieBasicCollectionDO::getMovieId, dto.getMovieId());
         query.eq(Objects.nonNull(dto.getCollectionId()), MovieBasicCollectionDO::getCollectionId, dto.getCollectionId());
+        query.eq(StringUtils.isNotEmpty(dto.getTitle()), MovieBasicCollectionDO::getTitle, dto.getTitle());
+        query.eq(StringUtils.isNotEmpty(dto.getYear()), MovieBasicCollectionDO::getYear, dto.getYear());
+        query.eq(StringUtils.isNotEmpty(dto.getDoubanId()), MovieBasicCollectionDO::getDoubanId, dto.getDoubanId());
+        query.eq(StringUtils.isNotEmpty(dto.getThumb()), MovieBasicCollectionDO::getThumb, dto.getThumb());
         return query;
     }
 
@@ -104,4 +109,3 @@ public class MovieBasicCollectionServiceImpl extends AbstractBaseServiceImpl<Mov
     }
 
 }
-

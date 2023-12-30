@@ -9,8 +9,8 @@ import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
 import cc.onelooker.kaleido.thread.Action;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.PageResult;
-import com.zjjcnt.common.core.utils.ApplicationContextHelper;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 /**
  * Created by cyetstar on 2021/1/7.
  */
+@Component
 public class MovieSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata> {
 
     private final PlexApiService plexApiService;
@@ -31,10 +32,10 @@ public class MovieSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata
 
     private List<Metadata> records;
 
-    public MovieSyncPlexRunnable() {
-        this.plexApiService = ApplicationContextHelper.getBean(PlexApiService.class);
-        this.movieBasicService = ApplicationContextHelper.getBean(MovieBasicService.class);
-        this.movieManager = ApplicationContextHelper.getBean(MovieManager.class);
+    public MovieSyncPlexRunnable(PlexApiService plexApiService, MovieBasicService movieBasicService, MovieManager movieManager) {
+        this.plexApiService = plexApiService;
+        this.movieBasicService = movieBasicService;
+        this.movieManager = movieManager;
     }
 
     @Override

@@ -1,18 +1,23 @@
 package cc.onelooker.kaleido.dto.movie;
 
-import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
+import com.zjjcnt.common.core.dto.BaseDTO;
+
+import java.lang.Long;
+import java.lang.String;
+import java.lang.Integer;
+import com.zjjcnt.common.core.annotation.StringDateFormat;
 
 /**
  * 豆瓣电影口碑榜DTO
  *
  * @author cyetstar
- * @date 2023-12-22 11:18:26
+ * @date 2023-12-29 16:15:43
  * @see cc.onelooker.kaleido.entity.movie.MovieDoubanWeeklyDO
  */
 @Data
 public class MovieDoubanWeeklyDTO implements BaseDTO<Long> {
-    private static final long serialVersionUID = -4250822005198672823L;
+    private static final long serialVersionUID = 7307402215120090989L;
 
     /**
      * 主键
@@ -61,24 +66,26 @@ public class MovieDoubanWeeklyDTO implements BaseDTO<Long> {
 
     // ------ 非数据库表字段 -------
     /**
-     * 大于等于上榜日期
-     */
+    * 大于等于上榜日期
+    */
     private String listingDateStart;
 
     /**
-     * 小于等于上榜日期
-     */
+    * 小于等于上榜日期
+    */
     private String listingDateEnd;
 
     /**
-     * 大于等于下榜日期
-     */
+    * 大于等于下榜日期
+    */
     private String delistingDateStart;
 
     /**
-     * 小于等于下榜日期
-     */
+    * 小于等于下榜日期
+    */
     private String delistingDateEnd;
+
+
 
     @Override
     public Long getId() {

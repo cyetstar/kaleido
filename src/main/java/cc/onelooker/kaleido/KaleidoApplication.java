@@ -11,7 +11,9 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 @EnableScheduling
 @EnableAsync
 @EnableTransactionManagement
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+        com.zjjcnt.common.core.easyexcel.ExcelParser.class,
+})
 public class KaleidoApplication {
 
     public static void main(String[] args) {
