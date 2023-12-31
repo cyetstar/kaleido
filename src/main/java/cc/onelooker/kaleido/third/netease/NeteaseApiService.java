@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.third.netease;
 
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
@@ -32,7 +33,7 @@ public class NeteaseApiService {
     @PostConstruct
     public void init() {
         if (StringUtils.isEmpty(this.url)) {
-            this.url = ConfigUtils.getSysConfig("neteaseUrl");
+            this.url = ConfigUtils.getSysConfig(ConfigKey.neteaseUrl);
         }
     }
 

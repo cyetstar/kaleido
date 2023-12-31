@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.thread.movie;
 
 import cc.onelooker.kaleido.dto.movie.MovieThreadDTO;
+import cc.onelooker.kaleido.enums.ThreadStatus;
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.service.movie.MovieThreadService;
 import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
@@ -31,12 +32,17 @@ public class MovieCheckThreadStatusRunnable extends AbstractEntityActionRunnable
 
     @Override
     protected PageResult<MovieThreadDTO> page(int pageNumber, int pageSize) {
-        return movieThreadService.page(null, Page.of(pageNumber, pageSize, true));
+        if (pageNumber < 2) {
+            return movieThreadService.page(null, Page.of(pageNumber, pageSize, true));
+        }
+        return null;
     }
 
     @Override
     protected void processEntity(MovieThreadDTO dto) throws Exception {
-        movieManager.checkThreadStatus(dto);
+        if (dto.getStatus() == ThreadStatus.todo.ordinal()) {
+            movieManager.checkThreadStatus(dto);
+        }
     }
 
 }

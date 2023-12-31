@@ -24,6 +24,7 @@ public abstract class AbstractActionRunnable implements ActionRunnable {
     @Override
     public void run() {
         try {
+            log.info("【{}】开始执行", getAction());
             ActionContext.start(getAction(), this);
             beforeRun();
             innerRun();
@@ -33,6 +34,7 @@ public abstract class AbstractActionRunnable implements ActionRunnable {
             log.error("【{}】执行发生错误，{}", getAction(), ExceptionUtil.getMessage(e));
         } finally {
             ActionContext.clear(getAction());
+            log.info("【{}】执行完毕", getAction());
         }
     }
 

@@ -5,6 +5,7 @@ import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
 import cc.onelooker.kaleido.dto.music.req.*;
 import cc.onelooker.kaleido.dto.music.resp.*;
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.service.music.MusicAlbumService;
 import cc.onelooker.kaleido.service.music.MusicArtistService;
@@ -117,7 +118,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @PostMapping("syncPlexById")
     @ApiOperation(value = "同步资料库")
     public CommonResult<Boolean> syncPlexById(@RequestBody MusicAlbumSyncPlexReq req) {
-        String libraryId = ConfigUtils.getSysConfig("plexMusicLibraryId");
+        String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMusicLibraryId);
         if (StringUtils.isBlank(libraryId)) {
             throw new ServiceException(2005, "请设置需要同步资料库信息");
         }

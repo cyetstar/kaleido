@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.thread.movie;
 
 import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.movie.MovieBasicService;
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.third.plex.Metadata;
@@ -30,7 +31,7 @@ public class MovieSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata
 
     private String libraryId;
 
-    private List<Metadata> records;
+    private List<Metadata> metadataList;
 
     public MovieSyncPlexRunnable(PlexApiService plexApiService, MovieBasicService movieBasicService, MovieManager movieManager) {
         this.plexApiService = plexApiService;
@@ -45,14 +46,14 @@ public class MovieSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata
 
     @Override
     protected void beforeRun() {
-        libraryId = ConfigUtils.getSysConfig("plexMovieLibraryId");
+        libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
     }
 
     @Override
     protected void afterRun() {
         List<MovieBasicDTO> movieBasicDTOList = movieBasicService.list(null);
         List<Long> idList = movieBasicDTOList.stream().map(MovieBasicDTO::getId).collect(Collectors.toList());
-        List<Long> plexIdList = records.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
+        List<Long> plexIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
         Collection<Long> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
         if (CollectionUtils.isNotEmpty(deleteIdList)) {
             for (Long deleteId : deleteIdList) {
@@ -63,17 +64,24 @@ public class MovieSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata
 
     @Override
     protected PageResult<Metadata> page(int pageNumber, int pageSize) {
-        records = plexApiService.listMovie(libraryId);
         PageResult<Metadata> pageResult = new PageResult<>();
-        pageResult.setTotal((long) records.size());
         pageResult.setSearchCount(true);
-        pageResult.setRecords(records);
+        if (pageNumber < 2) {
+            metadataList = plexApiService.listMovie(libraryId);
+            pageResult.setTotal((long) metadataList.size());
+            pageResult.setRecords(metadataList);
+        }
         return pageResult;
     }
 
     @Override
     protected void processEntity(Metadata metadata) throws Exception {
-        movieManager.syncPlexMovie(metadata);
+        MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
+        if (movieBasicDTO == null) {
+            movieManager.syncPlexMovieAndReadNFO(metadata.getRatingKey());
+        } else if (metadata.getUpdatedAt().compareTo(movieBasicDTO.getUpdatedAt()) > 0) {
+            movieManager.syncPlexMovieById(metadata.getRatingKey());
+        }
     }
 
 }

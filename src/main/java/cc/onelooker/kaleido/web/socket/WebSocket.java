@@ -79,6 +79,7 @@ public class WebSocket {
 
     // 此为广播消息
     public void sendAllMessage(String message) {
+        log.debug("【websocket消息】 广播消息:" + message);
         for (WebSocket webSocket : webSockets) {
             synchronized (webSocket) {
                 try {

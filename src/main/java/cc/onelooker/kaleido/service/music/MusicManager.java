@@ -4,6 +4,7 @@ import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.music.MusicArtistAlbumDTO;
 import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
 import cc.onelooker.kaleido.dto.music.MusicTrackDTO;
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.third.netease.Album;
 import cc.onelooker.kaleido.third.netease.Artist;
 import cc.onelooker.kaleido.third.netease.NeteaseApiService;
@@ -151,7 +152,7 @@ public class MusicManager {
                 continue;
             }
             try {
-                String musicLibraryPath = ConfigUtils.getSysConfig("musicLibraryPath");
+                String musicLibraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
                 File file = Paths.get(musicLibraryPath, musicTrackDTO.getPath()).toFile();
                 AudioFile audioFile = AudioFileIO.read(file);
                 Map<String, String> infoMap = readTag(audioFile.getTag());
@@ -227,7 +228,7 @@ public class MusicManager {
                 continue;
             }
             try {
-                String musicLibraryPath = ConfigUtils.getSysConfig("musicLibraryPath");
+                String musicLibraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
                 File file = Paths.get(musicLibraryPath, FilenameUtils.removeExtension(musicTrackDTO.getPath()) + ".lrc").toFile();
                 String lyric = neteaseApiService.getLyric(musicTrackDTO.getNeteaseId());
                 if (StringUtils.isNotEmpty(lyric)) {

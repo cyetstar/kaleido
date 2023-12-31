@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.thread.movie;
 
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
 import cc.onelooker.kaleido.thread.Action;
@@ -35,7 +36,7 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     @Override
     protected void beforeRun() {
-        movieDownloadPath = ConfigUtils.getSysConfig("movieDownloadPath");
+        movieDownloadPath = ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath);
     }
 
     @Override

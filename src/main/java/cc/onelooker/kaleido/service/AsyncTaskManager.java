@@ -5,6 +5,7 @@ import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
 import cc.onelooker.kaleido.dto.movie.MovieThreadDTO;
 import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.tvshow.TvshowEpisodeDTO;
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.enums.ThreadStatus;
 import cc.onelooker.kaleido.service.movie.MovieBasicService;
 import cc.onelooker.kaleido.service.movie.MovieCollectionService;
@@ -77,7 +78,7 @@ public class AsyncTaskManager {
 
     @Async
     public void syncPlexMovie() {
-        String libraryId = ConfigUtils.getSysConfig("plexMovieLibraryId");
+        String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
         if (StringUtils.isBlank(libraryId)) {
             throw new ServiceException(2005, "请设置需同步资料库信息");
         }
@@ -124,7 +125,7 @@ public class AsyncTaskManager {
 
     @Async
     public void syncPlexMovieCollection() {
-        String libraryId = ConfigUtils.getSysConfig("plexMovieLibraryId");
+        String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
         if (StringUtils.isBlank(libraryId)) {
             throw new ServiceException(2005, "请设置需同步资料库信息");
         }
@@ -170,7 +171,7 @@ public class AsyncTaskManager {
 
     @Async
     public void syncPlexTvshow() {
-        String libraryId = ConfigUtils.getSysConfig("plexTvshowLibraryId");
+        String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryId);
         if (StringUtils.isBlank(libraryId)) {
             throw new ServiceException(2005, "请设置需同步资料库信息");
         }
@@ -216,7 +217,7 @@ public class AsyncTaskManager {
 
     @Async
     public void syncPlexAlbum() {
-        String libraryId = ConfigUtils.getSysConfig("plexMusicLibraryId");
+        String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMusicLibraryId);
         if (StringUtils.isBlank(libraryId)) {
             throw new ServiceException(2005, "请设置需要同步资料库信息");
         }
@@ -298,7 +299,7 @@ public class AsyncTaskManager {
         Instant start = Instant.now();
         try {
             log.info("更新电影源启动。");
-            String movieDownloadPath = ConfigUtils.getSysConfig("movieDownloadPath");
+            String movieDownloadPath = ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath);
             Files.list(Paths.get(movieDownloadPath)).forEach(s -> {
                 try {
                     movieManager.updateMovieSource(s);

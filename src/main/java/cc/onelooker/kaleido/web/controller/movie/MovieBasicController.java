@@ -5,6 +5,7 @@ import cc.onelooker.kaleido.dto.movie.*;
 import cc.onelooker.kaleido.dto.movie.req.*;
 import cc.onelooker.kaleido.dto.movie.resp.*;
 import cc.onelooker.kaleido.enums.ActorRole;
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.service.movie.*;
 import cc.onelooker.kaleido.third.douban.DoubanApiService;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -138,7 +140,10 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @DeleteMapping(value = "delete")
     @ApiOperation(value = "删除电影")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
-        return super.delete(id);
+        if (id != null) {
+            Arrays.stream(id).forEach(s -> movieManager.deleteMovie(s));
+        }
+        return CommonResult.success(true);
     }
 
     @PostMapping("syncPlex")
@@ -221,8 +226,8 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("autoCopy")
     @ApiOperation(value = "自动拷贝")
     public CommonResult<Boolean> autoCopy(@RequestBody MovieBasicAutoCopyReq req) throws IOException {
-        String movieLibraryPath = ConfigUtils.getSysConfig("movieLibraryPath");
-        String movieDownloadPath = ConfigUtils.getSysConfig("movieDownloadPath");
+        String movieLibraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
+        String movieDownloadPath = ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath);
         for (String path : req.getPathList()) {
             if (StringUtils.isBlank(path)) {
                 continue;
@@ -278,4 +283,5 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         taskManager.checkThreadStatus();
         return CommonResult.success(true);
     }
+
 }

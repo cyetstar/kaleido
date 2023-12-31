@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.service.movie;
 
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
@@ -30,7 +31,7 @@ public class MovieCollectionServiceTest {
 
     @Test
     void deleteAll() {
-        String plexMovieLibraryId = ConfigUtils.getSysConfig("plexMovieLibraryId");
+        String plexMovieLibraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
         List<Metadata> metadataList = plexApiService.listCollection(plexMovieLibraryId);
         int size = metadataList.size();
         log.info("总共【{}】条记录待删除", size);

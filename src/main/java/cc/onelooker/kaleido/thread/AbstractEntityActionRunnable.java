@@ -44,6 +44,7 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
             long total = pageResult.isSearchCount() ? pageResult.getTotal() : -1;
             for (T entity : pageResult.getRecords()) {
                 try {
+                    updateActionState(getMessage(entity), total, num++);
                     if (isStop()) {
                         break;
                     }
@@ -51,7 +52,6 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
                 } catch (Exception e) {
                     processError(entity, e);
                 } finally {
-                    updateActionState(getMessage(entity), total, num++);
                     sleep();
                 }
             }

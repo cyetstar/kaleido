@@ -1,11 +1,11 @@
 package cc.onelooker.kaleido.third.douban;
 
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.util.constant.Constants;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -17,9 +17,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -36,23 +33,16 @@ public class DoubanApiService {
     private final static String API_FIND_MOVIE = "/v2/movie/{doubanId}";
     private final static String API_FIND_MOVIE_BY_IMDB = "/v2/movie/imdb/{imdbId}";
     private final static String API_LIST_MOVIE_WEEKLY = "/v2/movie/weekly";
-    private String apikey = null;
 
     @Autowired
     private RestTemplate restTemplate;
 
-    @PostConstruct
-    public void init() {
-        if (StringUtils.isEmpty(this.apikey)) {
-            this.apikey = ConfigUtils.getSysConfig("doubanApikey");
-        }
-    }
-
     public List<Movie> searchMovie(String keywords) {
+        String apikey = ConfigUtils.getSysConfig(ConfigKey.doubanApikey);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("apikey", this.apikey);
+        map.add("apikey", apikey);
         map.add("q", keywords);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<JSONObject> response = restTemplate.postForEntity(URL + API_SEARCH_MOVIE, request, JSONObject.class);
@@ -64,20 +54,22 @@ public class DoubanApiService {
     }
 
     public Movie findMovieById(String doubanId) {
+        String apikey = ConfigUtils.getSysConfig(ConfigKey.doubanApikey);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("apikey", this.apikey);
+        map.add("apikey", apikey);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<Movie> response = restTemplate.postForEntity(URL + API_FIND_MOVIE_SUBJECT, request, Movie.class, doubanId);
         return response.getBody();
     }
 
     public Movie findMovieByImdbId(String imdbId) {
+        String apikey = ConfigUtils.getSysConfig(ConfigKey.doubanApikey);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("apikey", this.apikey);
+        map.add("apikey", apikey);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<JSONObject> response = restTemplate.postForEntity(URL + API_FIND_MOVIE_BY_IMDB, request, JSONObject.class, imdbId);
         JSONObject jsonObject = response.getBody();
@@ -86,10 +78,11 @@ public class DoubanApiService {
     }
 
     public List<Subject> listMovieWeekly() {
+        String apikey = ConfigUtils.getSysConfig(ConfigKey.doubanApikey);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("apikey", this.apikey);
+        map.add("apikey", apikey);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<JSONObject> response = restTemplate.postForEntity(URL + API_LIST_MOVIE_WEEKLY, request, JSONObject.class);
 //        String text = null;

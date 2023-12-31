@@ -2,6 +2,7 @@ package cc.onelooker.kaleido.service.movie;
 
 import cc.onelooker.kaleido.dto.movie.*;
 import cc.onelooker.kaleido.enums.ActorRole;
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.enums.SourceType;
 import cc.onelooker.kaleido.enums.ThreadStatus;
 import cc.onelooker.kaleido.nfo.MovieNFO;
@@ -326,8 +327,8 @@ public class MovieManager {
 
     public void updateMovieSource(Path path) {
         try {
-            String movieLibraryPath = ConfigUtils.getSysConfig("movieLibraryPath");
-            if (Files.isDirectory(path)) {
+            String movieLibraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
+            if (Files.isDirectory(path) && !StringUtils.equals(path.getFileName().toString(), "Other")) {
                 Optional<Path> optionalNFOPath = Files.list(path).filter(s -> FilenameUtils.isExtension(s.getFileName().toString(), "nfo")).findFirst();
                 if (optionalNFOPath.isPresent()) {
                     MovieNFO movieNFO = NFOUtil.read(path, optionalNFOPath.get().getFileName().toString());
@@ -372,6 +373,10 @@ public class MovieManager {
                 movie.setImdb(movieThreadDTO.getImdb());
                 Path folderPath = createFolderPath(movie, path);
                 Files.move(path, folderPath.resolve(path.getFileName()));
+                Path extraPath = path.getParent().resolve("Other");
+                if (Files.exists(extraPath)) {
+                    NioFileUtils.moveDir(extraPath, folderPath, StandardCopyOption.REPLACE_EXISTING);
+                }
                 downloadPoster(movie, folderPath);
                 MovieNFO movieNFO = NFOUtil.toMovieNFO(movie);
                 NFOUtil.write(movieNFO, folderPath, "movie.nfo");
@@ -485,8 +490,7 @@ public class MovieManager {
         }
         List<MovieDoubanWeeklyDTO> movieDoubanWeeklyDTOList = movieDoubanWeeklyService.list(null);
         for (MovieDoubanWeeklyDTO movieDoubanWeeklyDTO : movieDoubanWeeklyDTOList) {
-            if (StringUtils.equals(movieDoubanWeeklyDTO.getDelistingDate(), "99999999")
-                    && !idList.contains(movieDoubanWeeklyDTO.getId())) {
+            if (StringUtils.equals(movieDoubanWeeklyDTO.getDelistingDate(), "99999999") && !idList.contains(movieDoubanWeeklyDTO.getId())) {
                 //未下榜，但不在本期榜单上
                 movieDoubanWeeklyDTO.setDelistingDate(listingDate);
                 movieDoubanWeeklyService.update(movieDoubanWeeklyDTO);
@@ -494,14 +498,10 @@ public class MovieManager {
         }
     }
 
-    private MovieCollectionDTO initDoubanWeekly(List<Movie> movieList) {
-        MovieBasicDTO movieBasicDTO = null;
-        for (Movie movie : movieList) {
-            movieBasicDTO = movieBasicService.findByDoubanId(movie.getId());
-            if (movieBasicDTO != null) {
-                break;
-            }
-        }
-        return null;
+    @Transactional
+    public void deleteMovie(Long id) {
+        plexApiService.deleteMetadata(id);
+        movieBasicService.deleteById(id);
     }
+
 }

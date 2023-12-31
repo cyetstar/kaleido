@@ -2,6 +2,7 @@ package cc.onelooker.kaleido.web.controller.common;
 
 import cc.onelooker.kaleido.dto.system.req.PlexGetLibrariesReq;
 import cc.onelooker.kaleido.dto.system.resp.PlexGetLibrariesResp;
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.third.plex.Directory;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
@@ -30,10 +31,6 @@ public class PlexController {
 
     @PostMapping("getLibraries")
     public CommonResult<List<PlexGetLibrariesResp>> getLibraries(@RequestBody PlexGetLibrariesReq req) {
-        if (StringUtils.isEmpty(ConfigUtils.getSysConfig("plexUrl"))
-                || StringUtils.isEmpty(ConfigUtils.getSysConfig("plexToken"))) {
-            plexApiService.init(req.getPlexUrl(), req.getPlexToken());
-        }
         List<Directory> libraries = plexApiService.listLibrary();
         List<PlexGetLibrariesResp> result = libraries.stream().map(s -> {
             PlexGetLibrariesResp plexGetLibrariesResp = new PlexGetLibrariesResp();

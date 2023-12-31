@@ -2,6 +2,7 @@ package cc.onelooker.kaleido.support;
 
 import cc.onelooker.kaleido.dto.system.SysDictDTO;
 import cc.onelooker.kaleido.dto.system.SysDictTypeDTO;
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.IDictionaryService;
 import cc.onelooker.kaleido.service.system.SysDictService;
 import cc.onelooker.kaleido.service.system.SysDictTypeService;
@@ -65,9 +66,9 @@ public class DictInitializer extends BaseDictionaryInitializer {
     }
 
     private void initPlexDict(Map<String, Map<String, String>> dicts) {
-        String movieLibraryId = ConfigUtils.getSysConfig("plexMovieLibraryId");
-        String tvshowLibraryId = ConfigUtils.getSysConfig("plexTvshowLibraryId");
-        String musicLibraryId = ConfigUtils.getSysConfig("plexMusicLibraryId");
+        String movieLibraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
+        String tvshowLibraryId = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryId);
+        String musicLibraryId = ConfigUtils.getSysConfig(ConfigKey.plexMusicLibraryId);
         for (String libraryId : Arrays.asList(movieLibraryId, tvshowLibraryId, musicLibraryId)) {
             List<Directory> directoryList = plexApiService.listSecondary(libraryId);
             for (Directory directory : directoryList) {

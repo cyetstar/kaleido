@@ -9,6 +9,7 @@ import cc.onelooker.kaleido.dto.music.resp.MusicTrackCreateResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicTrackListByAlbumIdResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicTrackPageResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicTrackViewResp;
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.music.MusicTrackService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.google.common.collect.Lists;
@@ -85,7 +86,7 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
     @GetMapping("listByAlbumId")
     public CommonResult<List<MusicTrackListByAlbumIdResp>> listByAlbumId(Long albumId) {
         List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(albumId);
-        String musicLibraryPath = ConfigUtils.getSysConfig("musicLibraryPath");
+        String musicLibraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
         List<MusicTrackListByAlbumIdResp> respList = Lists.newArrayList();
         for (MusicTrackDTO musicTrackDTO : musicTrackDTOList) {
             File file = Paths.get(musicLibraryPath, FilenameUtils.removeExtension(musicTrackDTO.getPath()) + ".lrc").toFile();
@@ -99,7 +100,7 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
     @GetMapping("viewLyrics")
     public CommonResult<List<String>> viewLyrics(Long id) throws IOException {
         MusicTrackDTO musicTrackDTO = musicTrackService.findById(id);
-        String musicLibraryPath = ConfigUtils.getSysConfig("musicLibraryPath");
+        String musicLibraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
         File file = Paths.get(musicLibraryPath, FilenameUtils.removeExtension(musicTrackDTO.getPath()) + ".lrc").toFile();
         String content = FileUtils.readFileToString(file);
         List<String> result = Arrays.asList(StringUtils.split(content, "\n"));

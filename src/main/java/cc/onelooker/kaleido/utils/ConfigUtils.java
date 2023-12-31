@@ -29,11 +29,6 @@ public class ConfigUtils {
         redisService.setCacheObject(wrapKey(configKey), configValue);
     }
 
-    @Deprecated
-    public static String getSysConfig(String configKey) {
-        return getSysConfig(configKey, "");
-    }
-
     public static String getSysConfig(ConfigKey configKey) {
         return getSysConfig(configKey.name(), "");
     }
