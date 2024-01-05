@@ -218,8 +218,12 @@ public class PlexApiService {
     }
 
     public void deleteCollection(Long collectionId) {
-        getPlexConfig();
-        restTemplate.delete(plexUrl + API_COLLECTION, collectionId, plexToken);
+        try {
+            getPlexConfig();
+            restTemplate.delete(plexUrl + API_COLLECTION, collectionId, plexToken);
+        } catch (HttpClientErrorException.NotFound ex) {
+            //忽略不存在的合集
+        }
     }
 
     public Metadata findCollectionById(Long collectionId) {

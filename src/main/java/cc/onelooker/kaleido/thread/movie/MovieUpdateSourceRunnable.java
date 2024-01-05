@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -35,7 +36,7 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
     }
 
     @Override
-    protected void beforeRun() {
+    protected void beforeRun(Map<String, Object> params) {
         movieDownloadPath = ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath);
     }
 

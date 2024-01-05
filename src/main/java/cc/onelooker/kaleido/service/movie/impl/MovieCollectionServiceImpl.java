@@ -1,19 +1,21 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
-import org.springframework.stereotype.Service;
+import cc.onelooker.kaleido.convert.movie.MovieCollectionConvert;
+import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
+import cc.onelooker.kaleido.entity.movie.MovieCollectionDO;
+import cc.onelooker.kaleido.mapper.movie.MovieCollectionMapper;
+import cc.onelooker.kaleido.service.movie.MovieBasicCollectionService;
+import cc.onelooker.kaleido.service.movie.MovieCollectionService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.movie.MovieCollectionService;
-import cc.onelooker.kaleido.entity.movie.MovieCollectionDO;
-import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
-import cc.onelooker.kaleido.convert.movie.MovieCollectionConvert;
-import cc.onelooker.kaleido.mapper.movie.MovieCollectionMapper;
-
-import com.zjjcnt.common.core.utils.ColumnUtils;
 import org.apache.commons.lang3.StringUtils;
-import java.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * 电影集合ServiceImpl
@@ -25,6 +27,9 @@ import java.util.*;
 public class MovieCollectionServiceImpl extends AbstractBaseServiceImpl<MovieCollectionMapper, MovieCollectionDO, MovieCollectionDTO> implements MovieCollectionService {
 
     MovieCollectionConvert convert = MovieCollectionConvert.INSTANCE;
+
+    @Autowired
+    private MovieBasicCollectionService movieBasicCollectionService;
 
     @Override
     protected Wrapper<MovieCollectionDO> genQueryWrapper(MovieCollectionDTO dto) {
@@ -45,5 +50,12 @@ public class MovieCollectionServiceImpl extends AbstractBaseServiceImpl<MovieCol
     @Override
     public MovieCollectionDO convertToDO(MovieCollectionDTO movieCollectionDTO) {
         return convert.convertToDO(movieCollectionDTO);
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteById(Serializable id) {
+        movieBasicCollectionService.deleteByCollectionId((Long) id);
+        return super.deleteById(id);
     }
 }

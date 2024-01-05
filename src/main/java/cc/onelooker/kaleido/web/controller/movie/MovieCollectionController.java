@@ -5,8 +5,7 @@ import cc.onelooker.kaleido.dto.movie.MovieBasicCollectionDTO;
 import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
 import cc.onelooker.kaleido.dto.movie.req.MovieCollectionCreateReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieCollectionPageReq;
-import cc.onelooker.kaleido.dto.movie.req.MovieCollectionUpdateReq;
-import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionCreateResp;
+import cc.onelooker.kaleido.dto.movie.req.MovieCollectionSyncReq;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionListByMovieIdResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionViewResp;
@@ -67,21 +66,22 @@ public class MovieCollectionController extends AbstractCrudController<MovieColle
 
     @PostMapping("create")
     @ApiOperation(value = "新增电影集合")
-    public CommonResult<MovieCollectionCreateResp> create(@RequestBody MovieCollectionCreateReq req) {
-        return super.create(req, MovieCollectionConvert.INSTANCE::convertToDTO, MovieCollectionConvert.INSTANCE::convertToCreateResp);
+    public CommonResult<Boolean> create(@RequestBody MovieCollectionCreateReq req) {
+        movieManager.createCollection(req.getDoubanId());
+        return CommonResult.success(true);
     }
 
-    @PostMapping("update")
-    @ApiOperation(value = "编辑电影集合")
-    public CommonResult<Boolean> update(@RequestBody MovieCollectionUpdateReq req) {
-        return super.update(req, MovieCollectionConvert.INSTANCE::convertToDTO);
+    @PostMapping("sync")
+    @ApiOperation(value = "同步电影集合")
+    public CommonResult<Boolean> sync(@RequestBody MovieCollectionSyncReq req) {
+        movieManager.syncCollection(req.getId());
+        return CommonResult.success(true);
     }
 
     @DeleteMapping(value = "delete")
     @ApiOperation(value = "删除电影集合")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
-        movieManager.deleteMovieCollection(id);
-        return CommonResult.success(true);
+        return super.delete(id);
     }
 
     @GetMapping("listByMovieId")

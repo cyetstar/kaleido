@@ -14,7 +14,10 @@ import cc.onelooker.kaleido.third.douban.Subject;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.third.plex.Tag;
+import cc.onelooker.kaleido.third.tmm.Doulist;
+import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.utils.DateTimeUtil;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
 import cn.hutool.http.HttpUtil;
@@ -100,8 +103,11 @@ public class MovieManager {
     @Autowired
     private DoubanApiService doubanApiService;
 
+    @Autowired
+    private TmmApiService tmmApiService;
+
     @Transactional
-    public void syncPlexMovieById(Long movieId) {
+    public void syncPlexMovie(Long movieId) {
         Metadata metadata = plexApiService.findMovieById(movieId);
         syncPlexMovie(metadata);
     }
@@ -176,14 +182,10 @@ public class MovieManager {
             movieCollectionDTO.setSummary(metadata.getSummary());
             movieCollectionDTO.setThumb(metadata.getThumb());
             movieCollectionDTO.setChildCount(metadata.getChildCount());
-            movieCollectionDTO.setAddedAt(metadata.getAddedAt());
-            movieCollectionDTO.setUpdatedAt(metadata.getUpdatedAt());
             movieCollectionService.insert(movieCollectionDTO);
         } else {
             movieCollectionDTO.setThumb(metadata.getThumb());
             movieCollectionDTO.setChildCount(metadata.getChildCount());
-            movieCollectionDTO.setAddedAt(metadata.getAddedAt());
-            movieCollectionDTO.setUpdatedAt(metadata.getUpdatedAt());
             movieCollectionService.update(movieCollectionDTO);
         }
         List<Metadata> metadataList = plexApiService.listMovieByCollectionId(collectionId);
@@ -317,79 +319,102 @@ public class MovieManager {
         updateAkas(doubanMovie.getAka(), id);
     }
 
-    @Transactional
-    public void deleteMovieCollection(Long[] idArray) {
-        for (Long id : idArray) {
-            plexApiService.deleteCollection(id);
-            movieCollectionService.deleteById(id);
-        }
-    }
-
     public void updateMovieSource(Path path) {
         try {
-            String movieLibraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
+            Path movieLibraryPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath));
+            Path movieDownloadPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath));
+            String filename = path.getFileName().toString();
+            Movie movie = null;
             if (Files.isDirectory(path) && !StringUtils.equals(path.getFileName().toString(), "Other")) {
                 Optional<Path> optionalNFOPath = Files.list(path).filter(s -> FilenameUtils.isExtension(s.getFileName().toString(), "nfo")).findFirst();
                 if (optionalNFOPath.isPresent()) {
-                    MovieNFO movieNFO = NFOUtil.read(path, optionalNFOPath.get().getFileName().toString());
-                    Movie movie = null;
-                    if (StringUtils.isNotEmpty(movieNFO.getDoubanid())) {
-                        movie = doubanApiService.findMovieById(movieNFO.getDoubanid());
-                    } else if (StringUtils.isNotEmpty(movieNFO.getImdbid())) {
-                        movie = doubanApiService.findMovieByImdbId(movieNFO.getImdbid());
+                    MovieNFO movieNFO = null;
+                    try {
+                        movieNFO = NFOUtil.read(path, optionalNFOPath.get().getFileName().toString());
+                    } catch (Exception e) {
+                        log.warn("无法读取nfo文件");
                     }
-                    if (movie != null) {
-                        //存在豆瓣信息，则删除老NFO文件，生成新NFO文件
-                        movie.setImdb(movieNFO.getImdbid());
-                        Files.delete(optionalNFOPath.get());
-                        movieNFO = NFOUtil.toMovieNFO(movieNFO, movie);
-                        NFOUtil.write(movieNFO, path, "movie.nfo");
+                    if (movieNFO != null) {
+                        movie = findDoubanMovie(movieNFO.getDoubanid(), movieNFO.getImdbid());
                     } else {
-                        //重命名
-                        Files.move(optionalNFOPath.get(), optionalNFOPath.get().resolve("movie.nfo"));
+                        MovieThreadDTO movieThreadDTO = movieThreadService.findByFilename(filename);
+                        if (movieThreadDTO != null) {
+                            movie = findDoubanMovie(movieThreadDTO.getDoubanId(), movieThreadDTO.getImdb());
+                        }
                     }
-                    NioFileUtils.moveDir(path, Paths.get(movieLibraryPath), StandardCopyOption.REPLACE_EXISTING);
+                    if (movie == null) {
+                        return;
+                    }
+                    //删除老NFO文件
+                    Files.delete(optionalNFOPath.get());
+                    //创建规范文件夹
+                    Path folderPath = createFolderPath(movie, movieDownloadPath);
+                    //下载海报
+                    downloadPoster(movie, folderPath);
+                    //输出nfo文件
+                    movieNFO = NFOUtil.toMovieNFO(movieNFO, movie);
+                    NFOUtil.write(movieNFO, folderPath, "movie.nfo");
+                    //如果存在额外文件夹也移动
+                    Path extraPath = path.resolve("Other");
+                    if (Files.exists(extraPath)) {
+                        NioFileUtils.moveDir(extraPath, folderPath, StandardCopyOption.REPLACE_EXISTING);
+                    }
+                    //将文件夹移动到目标地址
+                    NioFileUtils.moveDir(folderPath, movieLibraryPath, StandardCopyOption.REPLACE_EXISTING);
                 } else {
                     Files.list(path).forEach(this::updateMovieSource);
                 }
             } else {
-                String filename = path.getFileName().toString();
                 if (!KaleidoUtils.isVideoFile(filename)) {
                     return;
                 }
                 MovieThreadDTO movieThreadDTO = movieThreadService.findByFilename(filename);
-                if (movieThreadDTO == null) {
-                    return;
-                }
-                Movie movie = null;
-                if (StringUtils.isNotEmpty(movieThreadDTO.getDoubanId())) {
-                    movie = doubanApiService.findMovieById(movieThreadDTO.getDoubanId());
-                } else if (StringUtils.isNotEmpty(movieThreadDTO.getImdb())) {
-                    movie = doubanApiService.findMovieByImdbId(movieThreadDTO.getImdb());
+                if (movieThreadDTO != null) {
+                    movie = findDoubanMovie(movieThreadDTO.getDoubanId(), movieThreadDTO.getImdb());
                 }
                 if (movie == null) {
                     return;
                 }
                 movie.setImdb(movieThreadDTO.getImdb());
-                Path folderPath = createFolderPath(movie, path);
+                //创建规范文件夹
+                Path folderPath = createFolderPath(movie, movieDownloadPath);
+                //将主文件移动到文件夹
                 Files.move(path, folderPath.resolve(path.getFileName()));
+                //如果存在额外文件夹也移动
                 Path extraPath = path.getParent().resolve("Other");
                 if (Files.exists(extraPath)) {
                     NioFileUtils.moveDir(extraPath, folderPath, StandardCopyOption.REPLACE_EXISTING);
                 }
+                //下载海报
                 downloadPoster(movie, folderPath);
+                //输出nfo文件
                 MovieNFO movieNFO = NFOUtil.toMovieNFO(movie);
                 NFOUtil.write(movieNFO, folderPath, "movie.nfo");
-                NioFileUtils.moveDir(folderPath, Paths.get(movieLibraryPath), StandardCopyOption.REPLACE_EXISTING);
+                //将文件夹移动到目标地址
+                NioFileUtils.moveDir(folderPath, movieLibraryPath, StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {
             log.error("更新电影源发生错误", e);
         }
     }
 
+    private Movie findDoubanMovie(String doubanId, String imdbId) {
+        Movie movie = null;
+        if (StringUtils.isNotEmpty(doubanId)) {
+            movie = doubanApiService.findMovieById(doubanId);
+        } else if (StringUtils.isNotEmpty(imdbId)) {
+            movie = doubanApiService.findMovieByImdbId(imdbId);
+        }
+        return movie;
+    }
+
     private Path createFolderPath(Movie movie, Path path) throws IOException {
         String folderName = movie.getTitle() + " (" + movie.getYear() + ")";
-        return Files.createDirectory(path.getParent().resolve(folderName));
+        Path folderPath = path.resolve(folderName);
+        if (Files.notExists(folderPath)) {
+            Files.createDirectory(folderPath);
+        }
+        return folderPath;
     }
 
     private void downloadPoster(Movie movie, Path folderPath) {
@@ -502,6 +527,61 @@ public class MovieManager {
     public void deleteMovie(Long id) {
         plexApiService.deleteMetadata(id);
         movieBasicService.deleteById(id);
+    }
+
+    @Transactional
+    public void createCollection(String doubanId) {
+        Doulist doulist = tmmApiService.findDoulist(doubanId);
+        MovieCollectionDTO movieCollectionDTO = new MovieCollectionDTO();
+        movieCollectionDTO.setDoubanId(doulist.getDoubanId());
+        movieCollectionDTO.setTitle(doulist.getTitle());
+        movieCollectionDTO.setSummary(doulist.getAbout());
+        movieCollectionDTO.setThumb(doulist.getThumb());
+        movieCollectionDTO.setChildCount(doulist.getTotal());
+        movieCollectionDTO.setUpdateTime(DateTimeUtil.formatDateTime(doulist.getUpdated()));
+        movieCollectionService.insert(movieCollectionDTO);
+    }
+
+    @Transactional
+    public MovieCollectionDTO syncCollection(Long id) {
+        MovieCollectionDTO movieCollectionDTO = movieCollectionService.findById(id);
+        Doulist doulist = tmmApiService.findDoulist(movieCollectionDTO.getDoubanId());
+        movieCollectionDTO.setChildCount(doulist.getTotal());
+        movieCollectionDTO.setSummary(doulist.getAbout());
+        movieCollectionDTO.setUpdateTime(DateTimeUtil.formatDateTime(doulist.getUpdated()));
+        movieCollectionService.update(movieCollectionDTO);
+        return movieCollectionDTO;
+    }
+
+    @Transactional
+    public MovieBasicCollectionDTO syncCollectionMovie(Long collectionId, cc.onelooker.kaleido.third.tmm.Movie movie) {
+        String doubanId = movie.getDoubanId();
+        MovieBasicCollectionDTO movieBasicCollectionDTO = movieBasicCollectionService.findByCollectionIdAndDoubanId(collectionId, doubanId);
+        if (movieBasicCollectionDTO == null) {
+            movieBasicCollectionDTO = new MovieBasicCollectionDTO();
+            movieBasicCollectionDTO.setCollectionId(collectionId);
+            movieBasicCollectionDTO.setYear(movie.getYear());
+            movieBasicCollectionDTO.setThumb(movie.getPoster());
+            movieBasicCollectionDTO.setTitle(movie.getTitle());
+            movieBasicCollectionDTO.setOriginalTitle(movie.getOriginalTitle());
+            movieBasicCollectionDTO.setDoubanId(movie.getDoubanId());
+            movieBasicCollectionDTO.setStatus(Constants.NO);
+            MovieBasicDTO movieBasicDTO = movieBasicService.findByDoubanId(movie.getDoubanId());
+            if (movieBasicDTO != null) {
+                movieBasicCollectionDTO.setStatus(Constants.YES);
+                movieBasicCollectionDTO.setMovieId(movieBasicDTO.getId());
+            }
+            movieBasicCollectionService.insert(movieBasicCollectionDTO);
+        } else {
+            MovieBasicDTO movieBasicDTO = movieBasicService.findByDoubanId(movie.getDoubanId());
+            if (movieBasicDTO != null) {
+                movieBasicCollectionDTO.setStatus(Constants.YES);
+                movieBasicCollectionDTO.setMovieId(movieBasicDTO.getId());
+                movieBasicCollectionService.update(movieBasicCollectionDTO);
+            }
+        }
+        return movieBasicCollectionDTO;
+
     }
 
 }

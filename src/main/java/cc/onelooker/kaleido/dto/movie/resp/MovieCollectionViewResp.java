@@ -1,12 +1,17 @@
 package cc.onelooker.kaleido.dto.movie.resp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.zjjcnt.common.core.annotation.StringDateFormat;
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.Long;
 import java.lang.String;
 import java.lang.Integer;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 电影集合响应对象
@@ -36,4 +41,13 @@ public class MovieCollectionViewResp{
 
     @ApiModelProperty("豆瓣编号")
     private String doubanId;
+
+    @StringDateFormat
+    @ApiModelProperty("更新时间")
+    private String updateTime;
+
+    @JsonProperty
+    public List<String> summaryList() {
+        return Arrays.asList(StringUtils.split(summary, "\r"));
+    }
 }

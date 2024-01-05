@@ -1,17 +1,11 @@
 package cc.onelooker.kaleido.entity.movie;
 
-import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.IdType;
-
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.zjjcnt.common.core.entity.IdEntity;
-import com.zjjcnt.common.core.annotation.Crypto;
-
-import java.lang.Long;
-import java.lang.String;
-import java.lang.Integer;
+import lombok.Data;
 
 /**
  * 电影集合DO
@@ -62,16 +56,10 @@ public class MovieCollectionDO implements IdEntity<Long> {
     private String doubanId;
 
     /**
-     * 加入时间
-     */
-    @TableField(value = "added_at")
-    private Long addedAt;
-
-    /**
      * 更新时间
      */
-    @TableField(value = "updated_at")
-    private Long updatedAt;
+    @TableField(value = "update_time")
+    private String updateTime;
 
     @Override
     public Long getId() {

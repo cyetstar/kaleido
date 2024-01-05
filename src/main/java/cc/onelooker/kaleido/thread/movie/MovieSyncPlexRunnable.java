@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -45,18 +46,21 @@ public class MovieSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata
     }
 
     @Override
-    protected void beforeRun() {
+    protected void beforeRun(Map<String, Object> params) {
         libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
     }
 
     @Override
-    protected void afterRun() {
+    protected void afterRun(Map<String, Object> params) {
         List<MovieBasicDTO> movieBasicDTOList = movieBasicService.list(null);
         List<Long> idList = movieBasicDTOList.stream().map(MovieBasicDTO::getId).collect(Collectors.toList());
         List<Long> plexIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
         Collection<Long> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
         if (CollectionUtils.isNotEmpty(deleteIdList)) {
             for (Long deleteId : deleteIdList) {
+                if (isStop()) {
+                    break;
+                }
                 movieBasicService.deleteById(deleteId);
             }
         }
@@ -80,7 +84,7 @@ public class MovieSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata
         if (movieBasicDTO == null) {
             movieManager.syncPlexMovieAndReadNFO(metadata.getRatingKey());
         } else if (metadata.getUpdatedAt().compareTo(movieBasicDTO.getUpdatedAt()) > 0) {
-            movieManager.syncPlexMovieById(metadata.getRatingKey());
+            movieManager.syncPlexMovie(metadata.getRatingKey());
         }
     }
 

@@ -47,14 +47,9 @@ public class MovieCollectionDTO implements BaseDTO<Long> {
     private String doubanId;
 
     /**
-     * 加入时间
-     */
-    private Long addedAt;
-
-    /**
      * 更新时间
      */
-    private Long updatedAt;
+    private String updateTime;
 
     // ------ 非数据库表字段 -------
 
@@ -71,5 +66,10 @@ public class MovieCollectionDTO implements BaseDTO<Long> {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return title;
     }
 }

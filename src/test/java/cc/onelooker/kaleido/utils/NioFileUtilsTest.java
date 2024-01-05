@@ -21,4 +21,10 @@ public class NioFileUtilsTest {
         NioFileUtils.moveDir(source, target, StandardCopyOption.REPLACE_EXISTING);
     }
 
+    @Test
+    public void test(){
+        int page = (int) Math.ceil((double) 13 / 25);
+        System.out.println(page);
+    }
+
 }

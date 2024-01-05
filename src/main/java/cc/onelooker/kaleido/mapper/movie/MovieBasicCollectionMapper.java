@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import cc.onelooker.kaleido.entity.movie.MovieBasicCollectionDO;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 电影集合关联表Mapper接口

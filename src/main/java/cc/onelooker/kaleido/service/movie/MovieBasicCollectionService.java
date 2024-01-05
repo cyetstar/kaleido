@@ -27,4 +27,7 @@ public interface MovieBasicCollectionService extends IBaseService<MovieBasicColl
 
     boolean deleteByMovieIdAndCollectionId(Long movieId, Long collectionId);
 
+    MovieBasicCollectionDTO findByCollectionIdAndDoubanId(Long collectionId, String doubanId);
+
+    void updateStatusByMovieId(String status, Long movieId);
 }

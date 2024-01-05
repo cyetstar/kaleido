@@ -1,0 +1,91 @@
+package cc.onelooker.kaleido.thread.movie;
+
+import cc.onelooker.kaleido.dto.movie.MovieBasicCollectionDTO;
+import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
+import cc.onelooker.kaleido.service.movie.MovieBasicCollectionService;
+import cc.onelooker.kaleido.service.movie.MovieManager;
+import cc.onelooker.kaleido.third.tmm.Movie;
+import cc.onelooker.kaleido.third.tmm.TmmApiService;
+import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
+import cc.onelooker.kaleido.thread.Action;
+import cn.hutool.core.thread.ThreadUtil;
+import com.google.common.collect.Lists;
+import com.zjjcnt.common.core.domain.PageResult;
+import org.apache.commons.collections4.MapUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+/**
+ * @Author xiadawei
+ * @Date 2024-01-04 19:47:00
+ * @Description TODO
+ */
+@Component
+public class MovieCollectionSyncDoubanRunnable extends AbstractEntityActionRunnable<Movie> {
+
+    private List<String> doubanIdList;
+
+    private MovieCollectionDTO movieCollectionDTO;
+
+    @Autowired
+    private MovieBasicCollectionService movieBasicCollectionService;
+
+    @Autowired
+    private MovieManager movieManager;
+
+    @Autowired
+    private TmmApiService tmmApiService;
+
+    @Override
+    public Action getAction() {
+        return Action.movieCollectionSyncDouban;
+    }
+
+    @Override
+    protected void beforeRun(Map<String, Object> params) {
+        super.beforeRun(params);
+        doubanIdList = Lists.newArrayList();
+        movieCollectionDTO = movieManager.syncCollection(MapUtils.getLong(params, "id"));
+    }
+
+    @Override
+    protected PageResult<Movie> page(int pageNumber, int pageSize) {
+        try {
+            int start = (pageNumber - 1) * 25;
+            if (start > movieCollectionDTO.getChildCount()) {
+                return new PageResult<>();
+            }
+            List<Movie> records = tmmApiService.listDoulistMovie(movieCollectionDTO.getDoubanId(), start);
+            PageResult<Movie> pageResult = new PageResult<>();
+            pageResult.setTotal((long) movieCollectionDTO.getChildCount());
+            pageResult.setSearchCount(true);
+            pageResult.setRecords(records);
+            return pageResult;
+        } finally {
+            ThreadUtil.sleep(new Random().nextInt(5) * 1000L);
+        }
+    }
+
+    @Override
+    protected void afterRun(Map<String, Object> params) {
+        super.afterRun(params);
+        List<MovieBasicCollectionDTO> movieBasicCollectionDTOList = movieBasicCollectionService.listByCollectionId(movieCollectionDTO.getId());
+        for (MovieBasicCollectionDTO movieBasicCollectionDTO : movieBasicCollectionDTOList) {
+            if (doubanIdList.contains(movieBasicCollectionDTO.getDoubanId())) {
+                continue;
+            }
+            movieBasicCollectionService.deleteById(movieBasicCollectionDTO.getId());
+        }
+    }
+
+    @Override
+    protected void processEntity(Movie movie) throws Exception {
+        doubanIdList.add(movie.getDoubanId());
+        movieManager.syncCollectionMovie(movieCollectionDTO.getId(), movie);
+    }
+
+}

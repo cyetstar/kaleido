@@ -25,6 +25,7 @@ import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,7 +171,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("syncPlexById")
     @ApiOperation(value = "同步资料")
     public CommonResult<Boolean> syncPlexById(@RequestBody MovieBasicSyncPlexByIdReq req) {
-        movieManager.syncPlexMovieById(req.getId());
+        movieManager.syncPlexMovie(req.getId());
         return CommonResult.success(true);
     }
 
@@ -266,6 +267,9 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     public CommonResult<List<MovieBasicListByCollectionIdResp>> listByCollectionId(Long collectionId) {
         List<MovieBasicCollectionDTO> movieBasicCollectionDTOList = movieBasicCollectionService.listByCollectionId(collectionId);
         List<Long> movieIdList = movieBasicCollectionDTOList.stream().map(MovieBasicCollectionDTO::getMovieId).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(movieIdList)) {
+            return CommonResult.success(Lists.newArrayList());
+        }
         MovieBasicDTO param = new MovieBasicDTO();
         param.setIdList(movieIdList);
         List<MovieBasicDTO> movieBasicDTOList = movieBasicService.list(param);

@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.web.controller.movie;
 
 import cc.onelooker.kaleido.convert.movie.MovieDoubanWeeklyConvert;
+import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
 import cc.onelooker.kaleido.dto.movie.MovieDoubanWeeklyDTO;
 import cc.onelooker.kaleido.dto.movie.req.MovieDoubanWeeklyCreateReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieDoubanWeeklyPageReq;
@@ -8,6 +9,7 @@ import cc.onelooker.kaleido.dto.movie.req.MovieDoubanWeeklyUpdateReq;
 import cc.onelooker.kaleido.dto.movie.resp.MovieDoubanWeeklyCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieDoubanWeeklyPageResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieDoubanWeeklyViewResp;
+import cc.onelooker.kaleido.service.movie.MovieBasicService;
 import cc.onelooker.kaleido.service.movie.MovieDoubanWeeklyService;
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import com.zjjcnt.common.core.domain.CommonResult;
@@ -36,6 +38,9 @@ public class MovieDoubanWeeklyController extends AbstractCrudController<MovieDou
     private MovieDoubanWeeklyService movieDoubanWeeklyService;
 
     @Autowired
+    private MovieBasicService movieBasicService;
+
+    @Autowired
     private MovieManager movieManager;
 
     @Override
@@ -47,7 +52,15 @@ public class MovieDoubanWeeklyController extends AbstractCrudController<MovieDou
     @ApiOperation(value = "查询豆瓣电影口碑榜")
     public CommonResult<PageResult<MovieDoubanWeeklyPageResp>> page(MovieDoubanWeeklyPageReq req, PageParam pageParam) {
         pageParam.setOrderBy("DESC:delisting_date;ASC:top");
-        return super.page(req, pageParam, MovieDoubanWeeklyConvert.INSTANCE::convertToDTO, MovieDoubanWeeklyConvert.INSTANCE::convertToPageResp);
+        PageResult<MovieDoubanWeeklyPageResp> pageResult = super.doPage(req, pageParam, MovieDoubanWeeklyConvert.INSTANCE::convertToDTO, MovieDoubanWeeklyConvert.INSTANCE::convertToPageResp);
+        pageResult.getRecords().stream().forEach(s -> {
+            MovieBasicDTO movieBasicDTO = movieBasicService.findByDoubanId(String.valueOf(s.getId()));
+            if (movieBasicDTO != null) {
+                s.setMovieId(movieBasicDTO.getId());
+                s.setImdb(movieBasicDTO.getImdb());
+            }
+        });
+        return CommonResult.success(pageResult);
     }
 
     @GetMapping("view")

@@ -3,7 +3,7 @@ package cc.onelooker.kaleido.convert.movie;
 import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
 import cc.onelooker.kaleido.dto.movie.req.MovieCollectionCreateReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieCollectionPageReq;
-import cc.onelooker.kaleido.dto.movie.req.MovieCollectionUpdateReq;
+import cc.onelooker.kaleido.dto.movie.req.MovieCollectionSyncReq;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionCreateResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionListByMovieIdResp;
 import cc.onelooker.kaleido.dto.movie.resp.MovieCollectionPageResp;
@@ -33,7 +33,7 @@ public interface MovieCollectionConvert {
 
     MovieCollectionDTO convertToDTO(MovieCollectionCreateReq req);
 
-    MovieCollectionDTO convertToDTO(MovieCollectionUpdateReq req);
+    MovieCollectionDTO convertToDTO(MovieCollectionSyncReq req);
 
     MovieCollectionPageResp convertToPageResp(MovieCollectionDTO dto);
 

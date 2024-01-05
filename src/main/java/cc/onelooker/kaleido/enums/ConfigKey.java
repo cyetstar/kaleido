@@ -21,4 +21,5 @@ public enum ConfigKey {
     plexTvshowLibraryId,
     neteaseUrl,
     doubanApikey,
+    tmmUrl,
 }

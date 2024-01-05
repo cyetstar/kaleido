@@ -5,7 +5,6 @@ import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -30,15 +29,12 @@ public class NeteaseApiService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @PostConstruct
-    public void init() {
-        if (StringUtils.isEmpty(this.url)) {
-            this.url = ConfigUtils.getSysConfig(ConfigKey.neteaseUrl);
-        }
+    public void getConfigInfo() {
+        this.url = ConfigUtils.getSysConfig(ConfigKey.neteaseUrl);
     }
 
     public List<Album> searchAlbum(String keywords, Integer limit) {
-        init();
+        getConfigInfo();
         JSONObject jsonObject = restTemplate.getForObject(url + API_CLOUDSEARCH, JSONObject.class, keywords, "10", limit);
         JSONObject resultJsonObject = jsonObject.getJSONObject("result");
         Integer albumCount = resultJsonObject.getInteger("albumCount");
@@ -50,7 +46,7 @@ public class NeteaseApiService {
     }
 
     public List<Artist> searchArtist(String keywords, Integer limit) {
-        init();
+        getConfigInfo();
         JSONObject jsonObject = restTemplate.getForObject(url + API_CLOUDSEARCH, JSONObject.class, keywords, "100", limit);
         JSONObject resultJsonObject = jsonObject.getJSONObject("result");
         Integer artistCount = resultJsonObject.getInteger("artistCount");
@@ -62,7 +58,7 @@ public class NeteaseApiService {
     }
 
     public Album getAlbum(String id) {
-        init();
+        getConfigInfo();
         JSONObject jsonObject = restTemplate.getForObject(url + API_ALBUM, JSONObject.class, id);
         JSONObject albumJsonObject = jsonObject.getJSONObject("album");
         JSONArray songJSONArray = jsonObject.getJSONArray("songs");
@@ -73,7 +69,7 @@ public class NeteaseApiService {
     }
 
     public String getLyric(String id) {
-        init();
+        getConfigInfo();
         JSONObject jsonObject = restTemplate.getForObject(url + API_LYRIC, JSONObject.class, id);
         JSONObject lyricJsonObject = jsonObject.getJSONObject("lrc");
         return lyricJsonObject.getString("lyric");

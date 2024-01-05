@@ -2,6 +2,8 @@ package cc.onelooker.kaleido.dto.common.req;
 
 import lombok.Data;
 
+import java.util.Map;
+
 /**
  * @Author cyetstar
  * @Date 2023-12-26 11:33:00
@@ -11,5 +13,7 @@ import lombok.Data;
 public class ActionStartReq {
 
     private String action;
+
+    private Map<String, Object> params;
 
 }

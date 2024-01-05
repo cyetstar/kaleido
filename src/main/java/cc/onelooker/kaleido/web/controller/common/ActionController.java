@@ -28,9 +28,14 @@ public class ActionController {
 
     @PostMapping("start")
     public CommonResult<Boolean> start(@RequestBody ActionStartReq req) throws IOException {
-        Optional<ActionRunnable> runnableOptional = actionRunnableList.stream().filter(actionRunnable -> actionRunnable.getAction().name().equals(req.getAction())).findFirst();
+        Action action = Action.valueOf(req.getAction());
+        if (ActionContext.getRunnable(action) != null) {
+            return CommonResult.success(true);
+        }
+        Optional<ActionRunnable> runnableOptional = actionRunnableList.stream().filter(actionRunnable -> actionRunnable.getAction().equals(action)).findFirst();
         if (runnableOptional.isPresent()) {
             ActionRunnable actionRunnable = runnableOptional.get();
+            actionRunnable.setParams(req.getParams());
             new Thread(actionRunnable).start();
         }
         return CommonResult.success(true);

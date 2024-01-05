@@ -4,8 +4,8 @@ import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.service.system.SysDictTypeService;
 import cc.onelooker.kaleido.thread.movie.MovieCheckThreadStatusRunnable;
+import cc.onelooker.kaleido.thread.movie.MovieCollectionCheckMovieStatusRunnable;
 import cc.onelooker.kaleido.thread.movie.MovieSyncPlexRunnable;
-import cc.onelooker.kaleido.thread.movie.MovieUpdateSourceRunnable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,6 +22,9 @@ public class JobManager {
 
     @Autowired
     private MovieCheckThreadStatusRunnable movieCheckThreadStatusRunnable;
+
+    @Autowired
+    private MovieCollectionCheckMovieStatusRunnable movieCollectionCheckMovieStatusRunnable;
 
     @Autowired
     private MovieSyncPlexRunnable movieSyncPlexRunnable;
@@ -50,9 +53,14 @@ public class JobManager {
         taskManager.syncPlexAlbum();
     }
 
-    @Scheduled(cron = "0 5 0 * * ?")
+    @Scheduled(cron = "0 15 1 * * ?")
     public void checkThreadStatus() {
         movieCheckThreadStatusRunnable.run();
+    }
+
+    @Scheduled(cron = "0 30 1 * * ?")
+    public void checkMovieStatus() {
+        movieCollectionCheckMovieStatusRunnable.run();
     }
 
     @Scheduled(cron = "0 0 2 * * ?")
@@ -60,7 +68,7 @@ public class JobManager {
         sysDictTypeService.syncPlex();
     }
 
-    @Scheduled(cron = "0 0 21 ? * FRI")
+    @Scheduled(cron = "0 10 2 * * ?")
     public void syncDoubanWeekly() {
         movieManager.syncDoubanWeekly();
     }

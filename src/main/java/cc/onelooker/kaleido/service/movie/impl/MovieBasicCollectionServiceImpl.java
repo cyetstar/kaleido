@@ -11,6 +11,7 @@ import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -108,4 +109,22 @@ public class MovieBasicCollectionServiceImpl extends AbstractBaseServiceImpl<Mov
         return delete(param);
     }
 
+    @Override
+    public MovieBasicCollectionDTO findByCollectionIdAndDoubanId(Long collectionId, String doubanId) {
+        MovieBasicCollectionDTO param = new MovieBasicCollectionDTO();
+        param.setCollectionId(collectionId);
+        param.setDoubanId(doubanId);
+        return find(param);
+    }
+
+    @Override
+    @Transactional
+    public void updateStatusByMovieId(String status, Long movieId) {
+        Validate.notEmpty(status);
+        Validate.notNull(movieId);
+        MovieBasicCollectionDO param = new MovieBasicCollectionDO();
+        param.setStatus(status);
+        param.setMovieId(movieId);
+        baseMapper.updateById(param);
+    }
 }

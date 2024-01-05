@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.Map;
 
 /**
  * Created by cyetstar on 2021/1/14.
@@ -16,7 +17,7 @@ import java.text.DecimalFormat;
 @Slf4j
 public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunnable {
 
-    private long sleepTime = 0;
+    private int sleepSecond = 0;
 
     /**
      * 负责处理单条记录
@@ -32,7 +33,7 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
     }
 
     @Override
-    public void innerRun() {
+    public void innerRun(Map<String, Object> params) {
         int pageNumber = 1;
         int pageSize = 1000;
         int num = 0;
@@ -44,6 +45,9 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
             long total = pageResult.isSearchCount() ? pageResult.getTotal() : -1;
             for (T entity : pageResult.getRecords()) {
                 try {
+                    if (entity == null) {
+                        continue;
+                    }
                     updateActionState(getMessage(entity), total, num++);
                     if (isStop()) {
                         break;
@@ -63,10 +67,10 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
     }
 
     protected void updateActionState(String message, long total, int num) {
-        // 保留两位小数
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        // 保留一位小数
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
         decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
-        String percent = decimalFormat.format((float) num / total);
+        String percent = decimalFormat.format((float) num * 100 / total);
         super.updateActionState(message, Float.valueOf(percent));
     }
 
@@ -75,8 +79,8 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
     }
 
     protected void sleep() {
-        if (getSleepTime() > 0) {
-            ThreadUtil.sleep(getSleepTime() * 1000);
+        if (getSleepSecond() > 0) {
+            ThreadUtil.sleep(getSleepSecond() * 1000L);
         }
     }
 

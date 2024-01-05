@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
+import com.zjjcnt.common.util.constant.Constants;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -151,7 +152,8 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
         movieBasicActorService.deleteByMovieId((Long) id);
         movieAkaService.deleteByMovieId((Long) id);
         movieTagService.deleteByMovieId((Long) id);
-        movieBasicCollectionService.deleteByMovieId((Long) id);
+        movieBasicCollectionService.updateStatusByMovieId(Constants.NO, (Long) id);
         return super.deleteById(id);
     }
+
 }

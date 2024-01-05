@@ -32,10 +32,7 @@ public class MovieCheckThreadStatusRunnable extends AbstractEntityActionRunnable
 
     @Override
     protected PageResult<MovieThreadDTO> page(int pageNumber, int pageSize) {
-        if (pageNumber < 2) {
-            return movieThreadService.page(null, Page.of(pageNumber, pageSize, true));
-        }
-        return null;
+        return movieThreadService.page(null, Page.of(pageNumber, pageSize, true));
     }
 
     @Override

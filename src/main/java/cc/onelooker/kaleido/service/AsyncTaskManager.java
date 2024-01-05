@@ -95,7 +95,7 @@ public class AsyncTaskManager {
                         count++;
                         log.debug("【{}】{} 同步成功。", metadata.getTitle(), metadata.getRatingKey());
                     } else if (metadata.getUpdatedAt().compareTo(movieBasicDTO.getUpdatedAt()) > 0) {
-                        movieManager.syncPlexMovieById(metadata.getRatingKey());
+                        movieManager.syncPlexMovie(metadata.getRatingKey());
                         count++;
                         log.debug("【{}】{} 同步成功。", metadata.getTitle(), metadata.getRatingKey());
                     }
@@ -138,10 +138,6 @@ public class AsyncTaskManager {
                 try {
                     MovieCollectionDTO movieCollectionDTO = movieCollectionService.findById(metadata.getRatingKey());
                     if (movieCollectionDTO == null) {
-                        movieManager.syncPlexMovieCollection(metadata);
-                        count++;
-                        log.debug("【{}】{} 同步成功。", metadata.getTitle(), metadata.getRatingKey());
-                    } else if (movieCollectionDTO.getUpdatedAt() == null || metadata.getUpdatedAt().compareTo(movieCollectionDTO.getUpdatedAt()) > 0) {
                         movieManager.syncPlexMovieCollection(metadata);
                         count++;
                         log.debug("【{}】{} 同步成功。", metadata.getTitle(), metadata.getRatingKey());

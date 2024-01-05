@@ -1,16 +1,11 @@
 package cc.onelooker.kaleido.entity.movie;
 
-import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.IdType;
-
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.zjjcnt.common.core.entity.IdEntity;
-import com.zjjcnt.common.core.annotation.Crypto;
-
-import java.lang.Long;
-import java.lang.String;
+import lombok.Data;
 
 /**
  * 电影集合关联表DO
@@ -27,7 +22,7 @@ public class MovieBasicCollectionDO implements IdEntity<Long> {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -49,6 +44,12 @@ public class MovieBasicCollectionDO implements IdEntity<Long> {
     private String title;
 
     /**
+     * 原片名
+     */
+    @TableField(value = "original_title")
+    private String originalTitle;
+
+    /**
      * 首映年份
      */
     @TableField(value = "year")
@@ -66,6 +67,11 @@ public class MovieBasicCollectionDO implements IdEntity<Long> {
     @TableField(value = "thumb")
     private String thumb;
 
+    /**
+     * 收藏状态
+     */
+    @TableField(value = "status")
+    private String status;
 
     @Override
     public Long getId() {
@@ -76,4 +82,5 @@ public class MovieBasicCollectionDO implements IdEntity<Long> {
     public void setId(Long id) {
         this.id = id;
     }
+
 }

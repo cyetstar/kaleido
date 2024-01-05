@@ -1,10 +1,7 @@
 package cc.onelooker.kaleido.dto.movie;
 
-import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
-
-import java.lang.Long;
-import java.lang.String;
+import lombok.Data;
 
 /**
  * 电影集合关联表DTO
@@ -38,6 +35,11 @@ public class MovieBasicCollectionDTO implements BaseDTO<Long> {
     private String title;
 
     /**
+     * 原片名
+     */
+    private String originalTitle;
+
+    /**
      * 首映年份
      */
     private String year;
@@ -52,8 +54,12 @@ public class MovieBasicCollectionDTO implements BaseDTO<Long> {
      */
     private String thumb;
 
-    // ------ 非数据库表字段 -------
+    /**
+     * 收藏状态
+     */
+    private String status;
 
+    // ------ 非数据库表字段 -------
 
     @Override
     public Long getId() {

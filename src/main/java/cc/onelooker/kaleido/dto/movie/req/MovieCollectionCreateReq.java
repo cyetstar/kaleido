@@ -19,18 +19,6 @@ import java.lang.Integer;
 @ApiModel("电影集合请求对象")
 public class MovieCollectionCreateReq{
 
-    @ApiModelProperty("标题")
-    private String title;
-
-    @ApiModelProperty("简介")
-    private String summary;
-
-    @ApiModelProperty("海报")
-    private String thumb;
-
-    @ApiModelProperty("项目数量")
-    private Integer childCount;
-
     @ApiModelProperty("豆瓣编号")
     private String doubanId;
 
