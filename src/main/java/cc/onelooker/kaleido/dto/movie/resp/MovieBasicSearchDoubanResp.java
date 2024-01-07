@@ -2,8 +2,6 @@ package cc.onelooker.kaleido.dto.movie.resp;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * @Author cyetstar
  * @Date 2023-12-03 18:45:00
@@ -18,11 +16,7 @@ public class MovieBasicSearchDoubanResp {
 
     private String originalTitle;
 
-    private String subtype;
-
     private String year;
 
-    private List<String> genres;
-
-    private String picUrl;
+    private String poster;
 }

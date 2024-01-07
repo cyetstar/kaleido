@@ -8,10 +8,10 @@ import cc.onelooker.kaleido.enums.ActorRole;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.service.movie.*;
-import cc.onelooker.kaleido.third.douban.DoubanApiService;
-import cc.onelooker.kaleido.third.douban.Movie;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.third.tmm.Movie;
+import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
@@ -91,7 +91,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     private PlexApiService plexApiService;
 
     @Autowired
-    private DoubanApiService doubanApiService;
+    private TmmApiService tmmApiService;
 
     @Override
     protected IBaseService getService() {
@@ -200,7 +200,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("searchDouban")
     @ApiOperation(value = "查询豆瓣")
     public CommonResult<List<MovieBasicSearchDoubanResp>> searchDouban(@RequestBody MovieBasicSearchDoubanReq req) {
-        List<Movie> movieList = doubanApiService.searchMovie(req.getKeywords());
+        List<Movie> movieList = tmmApiService.searchMovie(req.getKeywords());
         List<MovieBasicSearchDoubanResp> respList = Lists.newArrayList();
         for (Movie movie : movieList) {
             respList.add(MovieBasicConvert.INSTANCE.convertToSearchDoubanResp(movie));
@@ -285,6 +285,13 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @ApiOperation(value = "检查发布收藏状态")
     public CommonResult<Boolean> checkThreadStatus() {
         taskManager.checkThreadStatus();
+        return CommonResult.success(true);
+    }
+
+    @PostMapping("matchPath")
+    @ApiOperation(value = "匹配文件信息")
+    public CommonResult<Boolean> matchPath(@RequestBody MovieBasicMatchPathReq req) {
+        movieManager.matchPath(Paths.get(req.getPath()), req.getDoubanId());
         return CommonResult.success(true);
     }
 

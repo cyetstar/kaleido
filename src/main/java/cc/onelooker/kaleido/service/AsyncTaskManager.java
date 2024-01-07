@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.service;
 
 import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
-import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
 import cc.onelooker.kaleido.dto.movie.MovieThreadDTO;
 import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.tvshow.TvshowEpisodeDTO;
@@ -120,48 +119,6 @@ public class AsyncTaskManager {
         } finally {
             Instant end = Instant.now();
             log.info("同步Plex电影资料库完毕，耗时{}分钟。", Duration.between(start, end).toMinutes());
-        }
-    }
-
-    @Async
-    public void syncPlexMovieCollection() {
-        String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
-        if (StringUtils.isBlank(libraryId)) {
-            throw new ServiceException(2005, "请设置需同步资料库信息");
-        }
-        Instant start = Instant.now();
-        try {
-            log.info("同步Plex电影合集启动。");
-            int count = 0;
-            List<Metadata> metadataList = plexApiService.listCollection(libraryId);
-            for (Metadata metadata : metadataList) {
-                try {
-                    MovieCollectionDTO movieCollectionDTO = movieCollectionService.findById(metadata.getRatingKey());
-                    if (movieCollectionDTO == null) {
-                        movieManager.syncPlexMovieCollection(metadata);
-                        count++;
-                        log.debug("【{}】{} 同步成功。", metadata.getTitle(), metadata.getRatingKey());
-                    }
-                } catch (Exception e) {
-                    log.error("【{}】{} 同步发生错误。{}", metadata.getTitle(), metadata.getRatingKey(), ExceptionUtil.getMessage(e));
-                }
-            }
-            log.info("同步Plex电影合集，更新{}条记录。", count);
-            count = 0;
-            List<MovieCollectionDTO> movieCollectionDTOList = movieCollectionService.list(null);
-            List<Long> idList = movieCollectionDTOList.stream().map(MovieCollectionDTO::getId).collect(Collectors.toList());
-            List<Long> plexIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
-            Collection<Long> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
-            if (CollectionUtils.isNotEmpty(deleteIdList)) {
-                for (Long deleteId : deleteIdList) {
-                    movieCollectionService.deleteById(deleteId);
-                    count++;
-                }
-            }
-            log.info("同步Plex电影合集，删除{}条记录。", count);
-        } finally {
-            Instant end = Instant.now();
-            log.info("同步Plex电影合集完毕，耗时{}分钟", Duration.between(start, end).toMinutes());
         }
     }
 

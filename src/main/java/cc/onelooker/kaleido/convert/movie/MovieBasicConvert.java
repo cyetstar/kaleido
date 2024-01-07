@@ -7,7 +7,7 @@ import cc.onelooker.kaleido.dto.movie.req.MovieBasicPageReq;
 import cc.onelooker.kaleido.dto.movie.req.MovieBasicUpdateReq;
 import cc.onelooker.kaleido.dto.movie.resp.*;
 import cc.onelooker.kaleido.entity.movie.MovieBasicDO;
-import cc.onelooker.kaleido.third.douban.Movie;
+import cc.onelooker.kaleido.third.tmm.Movie;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -48,10 +48,6 @@ public interface MovieBasicConvert {
 
     MovieBasicCreateResp convertToCreateResp(MovieBasicDTO dto);
 
-    @Mappings({
-            @Mapping(source = "id", target = "doubanId"),
-            @Mapping(source = "images.large", target = "picUrl")
-    })
     MovieBasicSearchDoubanResp convertToSearchDoubanResp(Movie movie);
 
     MovieBasicListByCollectionIdResp convertToListByCollectionIdResp(MovieBasicDTO dto);

@@ -61,4 +61,8 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
         movieManager.updateMovieSource(path);
     }
 
+    @Override
+    protected String getMessage(Path path) {
+        return path.getFileName().toString();
+    }
 }

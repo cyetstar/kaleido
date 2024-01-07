@@ -9,12 +9,12 @@ import cc.onelooker.kaleido.nfo.MovieNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.nfo.UniqueidNFO;
 import cc.onelooker.kaleido.third.douban.DoubanApiService;
-import cc.onelooker.kaleido.third.douban.Movie;
 import cc.onelooker.kaleido.third.douban.Subject;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.third.plex.Tag;
 import cc.onelooker.kaleido.third.tmm.Doulist;
+import cc.onelooker.kaleido.third.tmm.Movie;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.DateTimeUtil;
@@ -41,9 +41,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -165,47 +163,6 @@ public class MovieManager {
         syncActor(metadata.getRoleList(), movieBasicDTO.getId(), ActorRole.Actor);
     }
 
-    @Transactional
-    public void syncPlexMovieCollectionById(Long collectionId) {
-        Metadata metadata = plexApiService.findCollectionById(collectionId);
-        syncPlexMovieCollection(metadata);
-    }
-
-    @Transactional
-    public void syncPlexMovieCollection(Metadata metadata) {
-        Long collectionId = metadata.getRatingKey();
-        MovieCollectionDTO movieCollectionDTO = movieCollectionService.findById(collectionId);
-        if (movieCollectionDTO == null) {
-            movieCollectionDTO = new MovieCollectionDTO();
-            movieCollectionDTO.setId(metadata.getRatingKey());
-            movieCollectionDTO.setTitle(metadata.getTitle());
-            movieCollectionDTO.setSummary(metadata.getSummary());
-            movieCollectionDTO.setThumb(metadata.getThumb());
-            movieCollectionDTO.setChildCount(metadata.getChildCount());
-            movieCollectionService.insert(movieCollectionDTO);
-        } else {
-            movieCollectionDTO.setThumb(metadata.getThumb());
-            movieCollectionDTO.setChildCount(metadata.getChildCount());
-            movieCollectionService.update(movieCollectionDTO);
-        }
-        List<Metadata> metadataList = plexApiService.listMovieByCollectionId(collectionId);
-        List<MovieBasicCollectionDTO> movieBasicCollectionDTOList = movieBasicCollectionService.listByCollectionId(collectionId);
-        List<Long> movieIdList = movieBasicCollectionDTOList.stream().map(MovieBasicCollectionDTO::getMovieId).collect(Collectors.toList());
-        List<Long> metadataIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
-        Collection<Long> deleteMovieIdList = CollectionUtils.subtract(movieIdList, metadataIdList);
-        if (CollectionUtils.isNotEmpty(deleteMovieIdList)) {
-            for (Long deleteMovieId : deleteMovieIdList) {
-                movieBasicCollectionService.deleteByMovieIdAndCollectionId(deleteMovieId, collectionId);
-            }
-        }
-        Collection<Long> addMovieIdList = CollectionUtils.subtract(metadataIdList, movieIdList);
-        if (CollectionUtils.isNotEmpty(addMovieIdList)) {
-            for (Long addMovieId : addMovieIdList) {
-                movieBasicCollectionService.insertByMovieIdAndCollectionId(addMovieId, collectionId);
-            }
-        }
-    }
-
     private void syncActor(List<Tag> actorList, Long movieId, ActorRole actorRole) {
         if (actorList == null) {
             return;
@@ -309,101 +266,131 @@ public class MovieManager {
 
     @Transactional
     public void matchDouban(Long id, String doubanId) {
-        Movie doubanMovie = doubanApiService.findMovieById(doubanId);
+        Movie doubanMovie = tmmApiService.findMovie(doubanId);
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(id);
-        movieBasicDTO.setDoubanId(doubanMovie.getId());
+        movieBasicDTO.setDoubanId(doubanMovie.getDoubanId());
         movieBasicDTO.setSummary(doubanMovie.getSummary());
-        movieBasicDTO.setRating(doubanMovie.getRating().getAverage());
+        movieBasicDTO.setRating(doubanMovie.getDoubanAverage());
         movieBasicDTO.setOriginalTitle(doubanMovie.getOriginalTitle());
         movieBasicService.update(movieBasicDTO);
-        updateAkas(doubanMovie.getAka(), id);
+        updateAkas(doubanMovie.getAkas(), id);
+    }
+
+    /**
+     * 将path与doubanId关系记录在nfo文件中
+     *
+     * @param path
+     * @param doubanId
+     */
+    @Transactional
+    public void matchPath(Path path, String doubanId) {
+        Path movieDownloadPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath));
+        try {
+            MovieNFO movieNFO = new MovieNFO();
+            movieNFO.setDoubanid(doubanId);
+            if (Files.isDirectory(path)) {
+                NFOUtil.write(movieNFO, path, "movie.nfo");
+                NioFileUtils.moveDir(path, movieDownloadPath, StandardCopyOption.REPLACE_EXISTING);
+            } else {
+                String baseName = FilenameUtils.getBaseName(path.getFileName().toString());
+                Path newPath = movieDownloadPath.resolve(baseName);
+                if (!Files.exists(newPath)) {
+                    newPath.toFile().mkdir();
+                }
+                NFOUtil.write(movieNFO, newPath, "movie.nfo");
+                if (!Files.isSameFile(path, newPath)) {
+                    Files.move(path, newPath.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+        } catch (Exception e) {
+            log.error("文件夹匹配豆瓣信息发生错误", e);
+        }
     }
 
     public void updateMovieSource(Path path) {
         try {
             Path movieLibraryPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath));
             Path movieDownloadPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath));
-            String filename = path.getFileName().toString();
-            Movie movie = null;
-            if (Files.isDirectory(path) && !StringUtils.equals(path.getFileName().toString(), "Other")) {
-                Optional<Path> optionalNFOPath = Files.list(path).filter(s -> FilenameUtils.isExtension(s.getFileName().toString(), "nfo")).findFirst();
-                if (optionalNFOPath.isPresent()) {
-                    MovieNFO movieNFO = null;
-                    try {
-                        movieNFO = NFOUtil.read(path, optionalNFOPath.get().getFileName().toString());
-                    } catch (Exception e) {
-                        log.warn("无法读取nfo文件");
-                    }
-                    if (movieNFO != null) {
-                        movie = findDoubanMovie(movieNFO.getDoubanid(), movieNFO.getImdbid());
-                    } else {
-                        MovieThreadDTO movieThreadDTO = movieThreadService.findByFilename(filename);
-                        if (movieThreadDTO != null) {
-                            movie = findDoubanMovie(movieThreadDTO.getDoubanId(), movieThreadDTO.getImdb());
-                        }
-                    }
-                    if (movie == null) {
-                        return;
-                    }
-                    //删除老NFO文件
-                    Files.delete(optionalNFOPath.get());
-                    //创建规范文件夹
-                    Path folderPath = createFolderPath(movie, movieDownloadPath);
-                    //下载海报
-                    downloadPoster(movie, folderPath);
-                    //输出nfo文件
-                    movieNFO = NFOUtil.toMovieNFO(movieNFO, movie);
-                    NFOUtil.write(movieNFO, folderPath, "movie.nfo");
-                    //如果存在额外文件夹也移动
-                    Path extraPath = path.resolve("Other");
-                    if (Files.exists(extraPath)) {
-                        NioFileUtils.moveDir(extraPath, folderPath, StandardCopyOption.REPLACE_EXISTING);
-                    }
-                    //将文件夹移动到目标地址
-                    NioFileUtils.moveDir(folderPath, movieLibraryPath, StandardCopyOption.REPLACE_EXISTING);
-                } else {
-                    Files.list(path).forEach(this::updateMovieSource);
-                }
+            Movie movie;
+            boolean isDirectory = Files.isDirectory(path);
+            if (isDirectory) {
+                movie = findDoubanMovieByNFO(path);
             } else {
-                if (!KaleidoUtils.isVideoFile(filename)) {
-                    return;
-                }
-                MovieThreadDTO movieThreadDTO = movieThreadService.findByFilename(filename);
-                if (movieThreadDTO != null) {
-                    movie = findDoubanMovie(movieThreadDTO.getDoubanId(), movieThreadDTO.getImdb());
-                }
-                if (movie == null) {
-                    return;
-                }
-                movie.setImdb(movieThreadDTO.getImdb());
-                //创建规范文件夹
-                Path folderPath = createFolderPath(movie, movieDownloadPath);
-                //将主文件移动到文件夹
-                Files.move(path, folderPath.resolve(path.getFileName()));
-                //如果存在额外文件夹也移动
-                Path extraPath = path.getParent().resolve("Other");
-                if (Files.exists(extraPath)) {
-                    NioFileUtils.moveDir(extraPath, folderPath, StandardCopyOption.REPLACE_EXISTING);
-                }
-                //下载海报
-                downloadPoster(movie, folderPath);
-                //输出nfo文件
-                MovieNFO movieNFO = NFOUtil.toMovieNFO(movie);
-                NFOUtil.write(movieNFO, folderPath, "movie.nfo");
-                //将文件夹移动到目标地址
-                NioFileUtils.moveDir(folderPath, movieLibraryPath, StandardCopyOption.REPLACE_EXISTING);
+                movie = findDoubanMovieByFilename(path.getFileName().toString());
             }
+            if (movie == null) {
+                return;
+            }
+            operationFolder(movie, path, isDirectory, movieLibraryPath, movieDownloadPath);
         } catch (Exception e) {
             log.error("更新电影源发生错误", e);
         }
     }
 
+    private Movie findDoubanMovieByNFO(Path path) throws IOException {
+        Path nfoPath = Files.list(path).filter(s -> FilenameUtils.isExtension(s.getFileName().toString(), "nfo")).findFirst().orElse(null);
+        if (nfoPath != null) {
+            try {
+                MovieNFO movieNFO = NFOUtil.read(path, nfoPath.getFileName().toString());
+                return findDoubanMovie(movieNFO.getDoubanid(), movieNFO.getImdbid());
+            } catch (Exception e) {
+                log.warn("无法读取nfo文件");
+            }
+        }
+        return null;
+    }
+
+    private Movie findDoubanMovieByFilename(String filename) {
+        if (!KaleidoUtils.isVideoFile(filename)) {
+            return null;
+        }
+        MovieThreadDTO movieThreadDTO = movieThreadService.findByFilename(filename);
+        if (movieThreadDTO != null) {
+            return findDoubanMovie(movieThreadDTO.getDoubanId(), movieThreadDTO.getImdb());
+        }
+        return null;
+    }
+
+    private void operationFolder(Movie movie, Path path, boolean isDirectory, Path targetPath, Path sourcePath) throws Exception {
+        //创建规范文件夹
+        Path folderPath = createFolderPath(movie, targetPath);
+        if (isDirectory) {
+            Files.list(path).forEach(s -> {
+                try {
+                    if (Files.isDirectory(s)) {
+                        NioFileUtils.moveDir(s, folderPath, StandardCopyOption.REPLACE_EXISTING);
+                    } else {
+                        Files.move(s, folderPath.resolve(s.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            if (!path.equals(sourcePath)) {
+                NioFileUtils.deleteIfExists(path);
+            }
+        } else {
+            //将主文件移动到文件夹
+            Files.move(path, folderPath.resolve(path.getFileName()));
+            //如果存在额外文件夹也移动
+            Path extraPath = path.getParent().resolve("Other");
+            if (Files.exists(extraPath)) {
+                NioFileUtils.moveDir(extraPath, folderPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+        //下载海报
+        downloadPoster(movie, folderPath);
+        //输出nfo文件
+        MovieNFO movieNFO = NFOUtil.toMovieNFO(movie);
+        NFOUtil.write(movieNFO, folderPath, "movie.nfo");
+    }
+
     private Movie findDoubanMovie(String doubanId, String imdbId) {
         Movie movie = null;
         if (StringUtils.isNotEmpty(doubanId)) {
-            movie = doubanApiService.findMovieById(doubanId);
+            movie = tmmApiService.findMovie(doubanId);
         } else if (StringUtils.isNotEmpty(imdbId)) {
-            movie = doubanApiService.findMovieByImdbId(imdbId);
+            movie = tmmApiService.findMovie(imdbId);
         }
         return movie;
     }
@@ -418,9 +405,7 @@ public class MovieManager {
     }
 
     private void downloadPoster(Movie movie, Path folderPath) {
-        Movie.Thumb thumb = movie.getImages();
-        String large = thumb.getLarge();
-        HttpUtil.downloadFile(large, folderPath.resolve("poster.jpg").toFile());
+        HttpUtil.downloadFile(movie.getPoster(), folderPath.resolve("poster.jpg").toFile());
     }
 
     @DSTransactional
@@ -492,7 +477,7 @@ public class MovieManager {
         List<Subject> subjectList = doubanApiService.listMovieWeekly();
         List<Long> idList = Lists.newArrayList();
         for (Subject subject : subjectList) {
-            Movie movie = subject.getMovie();
+            cc.onelooker.kaleido.third.douban.Movie movie = subject.getMovie();
             Long id = Long.parseLong(movie.getId());
             idList.add(id);
             MovieDoubanWeeklyDTO movieDoubanWeeklyDTO = movieDoubanWeeklyService.findById(id);

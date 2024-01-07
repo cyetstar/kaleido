@@ -1,9 +1,10 @@
 package cc.onelooker.kaleido.nfo;
 
 import cc.onelooker.kaleido.enums.SourceType;
-import cc.onelooker.kaleido.third.douban.Movie;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.Tag;
+import cc.onelooker.kaleido.third.tmm.Actor;
+import cc.onelooker.kaleido.third.tmm.Movie;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.util.DateTimeUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -45,28 +46,30 @@ public class NFOUtil {
         movieNFO.setTitle(movie.getTitle());
         movieNFO.setOriginaltitle(movie.getOriginalTitle());
         movieNFO.setYear(movie.getYear());
-        RatingNFO ratingNFO = toRatingNFO(movie.getRating());
+        RatingNFO ratingNFO = toRatingNFO(movie);
         if (ratingNFO != null) {
             movieNFO.setRatings(Lists.newArrayList(ratingNFO));
         }
         List<UniqueidNFO> uniqueidNFOList = Lists.newArrayList();
-        UniqueidNFO uniqueidNFO = toUniqueidNFO(SourceType.douban, movie.getId());
+        UniqueidNFO uniqueidNFO = toUniqueidNFO(SourceType.douban, movie.getDoubanId());
         if (uniqueidNFO != null) {
             uniqueidNFOList.add(uniqueidNFO);
         }
-        UniqueidNFO uniqueidNFO2 = toUniqueidNFO(SourceType.imdb, movie.getImdb());
+        UniqueidNFO uniqueidNFO2 = toUniqueidNFO(SourceType.imdb, movie.getImdbId());
         if (uniqueidNFO2 != null) {
             uniqueidNFOList.add(uniqueidNFO2);
         }
         movieNFO.setUniqueids(uniqueidNFOList);
-        movieNFO.setAkas(movie.getAka());
+        movieNFO.setAkas(movie.getAkas());
         movieNFO.setPlot(movie.getSummary());
         movieNFO.setGenres(movie.getGenres());
         movieNFO.setCountries(movie.getCountries());
         if (CollectionUtils.isNotEmpty(movie.getDirectors())) {
-            movieNFO.setDirectors(movie.getDirectors().stream().map(Movie.Cast::getName).collect(Collectors.toList()));
+            movieNFO.setDirectors(movie.getDirectors().stream()
+                    .map(s -> StringUtils.defaultString(s.getCnName(), s.getEnName()))
+                    .collect(Collectors.toList()));
         }
-        movieNFO.setActors(toActorNFOs(movie.getCasts()));
+        movieNFO.setActors(toActorNFOs(movie.getActors()));
         return movieNFO;
     }
 
@@ -125,13 +128,13 @@ public class NFOUtil {
         return null;
     }
 
-    private static RatingNFO toRatingNFO(Movie.Rating rating) {
-        if (rating == null || rating.getAverage() == null) {
+    private static RatingNFO toRatingNFO(Movie movie) {
+        if (movie.getDoubanAverage() == null) {
             return null;
         }
         RatingNFO ratingNFO = new RatingNFO();
         ratingNFO.setName(SourceType.douban.name());
-        ratingNFO.setValue(String.valueOf(rating.getAverage()));
+        ratingNFO.setValue(String.valueOf(movie.getDoubanAverage()));
         return ratingNFO;
     }
 
@@ -145,15 +148,13 @@ public class NFOUtil {
         return uniqueidNFO;
     }
 
-    private static List<ActorNFO> toActorNFOs(List<Movie.Cast> castList) {
+    private static List<ActorNFO> toActorNFOs(List<Actor> actorList) {
         List<ActorNFO> actorNFOList = Lists.newArrayList();
-        if (castList != null) {
-            for (Movie.Cast cast : castList) {
+        if (actorList != null) {
+            for (Actor actor : actorList) {
                 ActorNFO actorNFO = new ActorNFO();
-                actorNFO.setName(cast.getName());
-                if (cast.getAvatars() != null) {
-                    actorNFO.setThumb(cast.getAvatars().getLarge());
-                }
+                actorNFO.setName(StringUtils.defaultString(actor.getCnName(), actor.getEnName()));
+                actorNFO.setThumb(actor.getThumb());
                 actorNFOList.add(actorNFO);
             }
         }
