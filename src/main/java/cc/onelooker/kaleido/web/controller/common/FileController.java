@@ -1,6 +1,8 @@
 package cc.onelooker.kaleido.web.controller.common;
 
+import cc.onelooker.kaleido.dto.system.req.FileCopyOrCutReq;
 import cc.onelooker.kaleido.dto.system.req.FileMoveReq;
+import cc.onelooker.kaleido.dto.system.req.FileNewDirectoryReq;
 import cc.onelooker.kaleido.dto.system.req.FileRenameReq;
 import cc.onelooker.kaleido.dto.system.resp.FileListResp;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
@@ -21,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
@@ -48,6 +51,8 @@ public class FileController {
             fileListResp.setIsDir(file.isDirectory());
             fileListResp.setLength(file.length());
             fileListResp.setLastModified(DateTimeUtils.parseTimestamp(file.lastModified()));
+            MediaType mediaType = MediaTypeFactory.getMediaType(file.getName()).orElse(MediaType.ALL);
+            fileListResp.setMediaType(mediaType.toString());
             return fileListResp;
         }).sorted((Comparator.comparing(FileListResp::getLastModified).reversed())).collect(Collectors.toList());
         return CommonResult.success(result);
@@ -70,6 +75,41 @@ public class FileController {
             NioFileUtils.renameDir(Paths.get(req.getPath()), Paths.get(req.getNewPath()));
         } else {
             Files.move(Paths.get(req.getPath()), Paths.get(req.getNewPath()));
+        }
+        return CommonResult.success(true);
+    }
+
+    @PostMapping("newDirectory")
+    public CommonResult<Boolean> newDirectory(@RequestBody FileNewDirectoryReq req) throws IOException {
+        Path path = Paths.get(req.getPath());
+        if (!Files.isDirectory(path)) {
+            return CommonResult.success(false);
+        }
+        String name = "未命名文件夹";
+        String folderName = Files.list(path).map(s -> s.getFileName().toString()).filter(s -> StringUtils.startsWith(s, name)).max(Comparator.naturalOrder()).orElse(null);
+        if (StringUtils.isNotEmpty(folderName)) {
+            String num = StringUtils.defaultIfEmpty(StringUtils.substring(folderName, 6), "0");
+            folderName = name + (Integer.parseInt(num) + 1);
+        } else {
+            folderName = name;
+        }
+        Files.createDirectory(path.resolve(folderName));
+        return CommonResult.success(true);
+    }
+
+    @PostMapping("copyOrCut")
+    public CommonResult<Boolean> copyOrCut(@RequestBody FileCopyOrCutReq req) throws IOException {
+        for (String pathStr : req.getPathList()) {
+            Path path = Paths.get(pathStr);
+            if (Files.isDirectory(path) && req.getCopy()) {
+                NioFileUtils.copyDir(path, Paths.get(req.getDestPath()));
+            } else if (Files.isDirectory(path) && !req.getCopy()) {
+                NioFileUtils.moveDir(path, Paths.get(req.getDestPath()));
+            } else if (!Files.isDirectory(path) && req.getCopy()) {
+                Files.copy(path, Paths.get(req.getDestPath()).resolve(path.getFileName()));
+            } else if (!Files.isDirectory(path) && !req.getCopy()) {
+                Files.move(path, Paths.get(req.getDestPath()).resolve(path.getFileName()));
+            }
         }
         return CommonResult.success(true);
     }

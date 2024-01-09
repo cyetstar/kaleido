@@ -470,10 +470,10 @@ public class MovieManager {
     }
 
     public void syncDoubanWeekly() {
-        LocalDate today = LocalDate.of(2023, 12, 30);
+        LocalDate today = LocalDate.now();
         DayOfWeek dayOfWeek = today.getDayOfWeek();
         int dayOfWeekValue = dayOfWeek.getValue();
-        String listingDate = DateTimeUtils.addDays("20231230", 5 - (dayOfWeekValue > 5 ? dayOfWeekValue : (7 + dayOfWeekValue)));
+        String listingDate = DateTimeUtils.addDays(5 - (dayOfWeekValue > 5 ? dayOfWeekValue : (7 + dayOfWeekValue)));
         List<Subject> subjectList = doubanApiService.listMovieWeekly();
         List<Long> idList = Lists.newArrayList();
         for (Subject subject : subjectList) {

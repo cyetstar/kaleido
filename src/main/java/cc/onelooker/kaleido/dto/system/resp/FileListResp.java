@@ -27,6 +27,8 @@ public class FileListResp {
     @StringDateTimeFormat
     private String lastModified;
 
+    private String mediaType;
+
     @JsonProperty
     public String lengthLabel() {
         if (length == null) {

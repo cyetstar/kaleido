@@ -22,7 +22,7 @@ public class NioFileUtils {
      */
     public static void copyDir(Path source, Path target, CopyOption... options) throws IOException {
         Path dest = target.resolve(source.getFileName());
-        operateDir(false, source, target, options);
+        operateDir(false, source, dest, options);
     }
 
     /**
@@ -39,8 +39,16 @@ public class NioFileUtils {
         operateDir(true, source, dest, options);
     }
 
+    /**
+     * 重命名文件夹
+     *
+     * @param source
+     * @param target
+     * @param options
+     * @throws IOException
+     */
     public static void renameDir(Path source, Path target, CopyOption... options) throws IOException {
-        operateDir(false, source, target, options);
+        operateDir(true, source, target, options);
     }
 
     /**
