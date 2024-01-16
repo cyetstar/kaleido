@@ -124,8 +124,8 @@ public class MovieBasicDO implements IdEntity<Long> {
     /**
      * IMDb编号
      */
-    @TableField(value = "imdb")
-    private String imdb;
+    @TableField(value = "imdb_id")
+    private String imdbId;
 
     /**
      * 豆瓣编号
@@ -134,10 +134,10 @@ public class MovieBasicDO implements IdEntity<Long> {
     private String doubanId;
 
     /**
-     * TheMovieDB编号
+     * TMDB编号
      */
-    @TableField(value = "tmdb")
-    private String tmdb;
+    @TableField(value = "tmdb_id")
+    private String tmdbId;
 
     /**
      * 加入时间

@@ -104,7 +104,7 @@ public class MovieBasicDTO implements BaseDTO<Long> {
     /**
      * IMDb编号
      */
-    private String imdb;
+    private String imdbId;
 
     /**
      * 豆瓣编号
@@ -112,9 +112,9 @@ public class MovieBasicDTO implements BaseDTO<Long> {
     private String doubanId;
 
     /**
-     * TheMovieDB编号
+     * TMDB编号
      */
-    private String tmdb;
+    private String tmdbId;
 
     /**
      * 加入时间

@@ -74,10 +74,13 @@ public class MovieBasicViewResp {
     private String website;
 
     @ApiModelProperty("IMDb编号")
-    private String imdb;
+    private String imdbId;
 
     @ApiModelProperty("豆瓣编号")
     private String doubanId;
+
+    @ApiModelProperty("TMDB编号")
+    private String tmdbId;
 
     @ApiModelProperty("加入时间")
     private Long addedAt;

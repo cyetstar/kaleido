@@ -78,13 +78,13 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
         query.eq(Objects.nonNull(dto.getRating()), MovieBasicDO::getRating, dto.getRating());
         query.eq(Objects.nonNull(dto.getLastViewedAt()), MovieBasicDO::getLastViewedAt, dto.getLastViewedAt());
         query.eq(Objects.nonNull(dto.getViewCount()), MovieBasicDO::getViewCount, dto.getViewCount());
-        query.eq(StringUtils.isNotEmpty(dto.getImdb()), MovieBasicDO::getImdb, dto.getImdb());
+        query.eq(StringUtils.isNotEmpty(dto.getImdbId()), MovieBasicDO::getImdbId, dto.getImdbId());
         query.eq(StringUtils.isNotEmpty(dto.getDoubanId()), MovieBasicDO::getDoubanId, dto.getDoubanId());
-        query.eq(StringUtils.isNotEmpty(dto.getTmdb()), MovieBasicDO::getTmdb, dto.getTmdb());
+        query.eq(StringUtils.isNotEmpty(dto.getTmdbId()), MovieBasicDO::getTmdbId, dto.getTmdbId());
         query.eq(Objects.nonNull(dto.getAddedAt()), MovieBasicDO::getAddedAt, dto.getAddedAt());
         query.eq(Objects.nonNull(dto.getUpdatedAt()), MovieBasicDO::getUpdatedAt, dto.getUpdatedAt());
         if (StringUtils.isNotEmpty(dto.getKeyword())) {
-            query.like(MovieBasicDO::getTitle, dto.getKeyword()).or().like(MovieBasicDO::getOriginalTitle, dto.getKeyword()).or().eq(MovieBasicDO::getDoubanId, dto.getKeyword()).or().eq(MovieBasicDO::getImdb, dto.getKeyword());
+            query.like(MovieBasicDO::getTitle, dto.getKeyword()).or().like(MovieBasicDO::getOriginalTitle, dto.getKeyword()).or().eq(MovieBasicDO::getDoubanId, dto.getKeyword()).or().eq(MovieBasicDO::getImdbId, dto.getKeyword());
         }
         query.likeRight(StringUtils.length(dto.getDecade()) > 3, MovieBasicDO::getYear, StringUtils.substring(dto.getDecade(), 0, 3));
         query.in(CollectionUtils.isNotEmpty(dto.getIdList()), MovieBasicDO::getId, dto.getIdList());
@@ -139,7 +139,7 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
     public MovieBasicDTO findByImdb(String imdb) {
         Validate.notEmpty(imdb);
         MovieBasicDTO param = new MovieBasicDTO();
-        param.setImdb(imdb);
+        param.setImdbId(imdb);
         return find(param);
     }
 

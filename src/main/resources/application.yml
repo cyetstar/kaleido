@@ -158,6 +158,7 @@ zjjcnt:
         - /tvshow/**
         - /music/**
         - /sysadmin/**
+        - /api/**
         # 静态资源
         - /
         - /*.html

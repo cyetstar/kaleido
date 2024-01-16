@@ -8,9 +8,13 @@ import lombok.Data;
  * @Description TODO
  */
 @Data
-public class MovieBasicMatchDoubanReq {
+public class MovieBasicMatchInfoReq {
 
     private Long id;
 
     private String doubanId;
+
+    private String tmdbId;
+
+    private String imdbId;
 }

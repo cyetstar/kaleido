@@ -20,8 +20,8 @@ public class TmmApiService {
 
     private String url;
 
-    private final static String API_SEARCH_MOVIE = "/movie/search?keyword={keyword}";
-    private final static String API_FIND_MOVIE = "/movie/detail?douban_id={doubanId}";
+    private final static String API_SEARCH_MOVIE = "/movie/search?keyword={keyword}&type={type}";
+    private final static String API_FIND_MOVIE = "/movie/detail?douban_id={doubanId}&imdb_id={imdbId}&tmdb_id={tmdbId}";
     private final static String API_FIND_DOULIST = "/doulist/detail?douban_id={doubanId}";
     private final static String API_LIST_DOULIST_MOVIE = "/doulist/movies?douban_id={doubanId}&start={start}";
 
@@ -36,22 +36,22 @@ public class TmmApiService {
         this.url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl, url);
     }
 
-    public List<Movie> searchMovie(String keyword) {
-        getTmmConfig();
-        JSONArray jsonArray = restTemplate.getForObject(url + API_SEARCH_MOVIE, JSONArray.class, keyword);
+    public List<Movie> searchMovie(String keyword, String type) {
+        url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl);
+        JSONArray jsonArray = restTemplate.getForObject(url + API_SEARCH_MOVIE, JSONArray.class, keyword, type);
         if (jsonArray != null) {
             return jsonArray.toJavaList(Movie.class);
         }
         return Lists.newArrayList();
     }
 
-    public Movie findMovie(String doubanId) {
-        getTmmConfig();
-        return restTemplate.getForObject(url + API_FIND_MOVIE, Movie.class, doubanId);
+    public Movie findMovie(String doubanId, String imdbId, String tmdbId) {
+        url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl);
+        return restTemplate.getForObject(url + API_FIND_MOVIE, Movie.class, doubanId, imdbId, tmdbId);
     }
 
     public Doulist findDoulist(String doubanId) {
-        getTmmConfig();
+        url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl);
         return restTemplate.getForObject(url + API_FIND_DOULIST, Doulist.class, doubanId);
     }
 

@@ -57,7 +57,7 @@ public class MovieDoubanWeeklyController extends AbstractCrudController<MovieDou
             MovieBasicDTO movieBasicDTO = movieBasicService.findByDoubanId(String.valueOf(s.getId()));
             if (movieBasicDTO != null) {
                 s.setMovieId(movieBasicDTO.getId());
-                s.setImdb(movieBasicDTO.getImdb());
+                s.setImdb(movieBasicDTO.getImdbId());
             }
         });
         return CommonResult.success(pageResult);

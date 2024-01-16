@@ -14,14 +14,12 @@ import java.util.List;
 public class Movie {
     @JsonProperty("douban_id")
     private String doubanId;
+    @JsonProperty("tmdb_id")
+    private String tmdbId;
     @JsonProperty("original_title")
     private String originalTitle;
-    @JsonProperty("douban_average")
-    private Float doubanAverage;
-    @JsonProperty("douban_top250")
-    private Integer doubanTop250;
-    @JsonProperty("douban_votes")
-    private Integer doubanVotes;
+    private Integer votes;
+    private Float average;
     private List<String> genres;
     private List<String> countries;
     private List<String> languages;
@@ -41,7 +39,10 @@ public class Movie {
     private String title;
     private String website;
     private String year;
+    @JsonProperty("certification")
     private String mpaa;
+    @JsonProperty("douban_top250")
+    private Integer doubanTop250;
 
     @Override
     public String toString() {

@@ -8,7 +8,9 @@ import lombok.Data;
  * @Description TODO
  */
 @Data
-public class MovieBasicSearchDoubanReq {
+public class MovieBasicSearchInfoReq {
 
-    private String keywords;
+    private String keyword;
+
+    private String type;
 }

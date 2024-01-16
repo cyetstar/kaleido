@@ -23,7 +23,6 @@ import cc.onelooker.kaleido.utils.NioFileUtils;
 import cn.hutool.http.HttpUtil;
 import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.google.common.collect.Lists;
-import com.zjjcnt.common.util.DateTimeUtils;
 import com.zjjcnt.common.util.constant.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -39,8 +38,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -123,35 +122,35 @@ public class MovieManager {
         if (movieBasicDTO == null) {
             movieBasicDTO = new MovieBasicDTO();
             movieBasicDTO.setId(metadata.getRatingKey());
-            movieBasicDTO.setStudio(metadata.getStudio());
             movieBasicDTO.setTitle(metadata.getTitle());
             movieBasicDTO.setTitleSort(metadata.getTitleSort());
             movieBasicDTO.setOriginalTitle(metadata.getOriginalTitle());
             movieBasicDTO.setContentRating(metadata.getContentRating());
+            movieBasicDTO.setStudio(metadata.getStudio());
             movieBasicDTO.setSummary(metadata.getSummary());
             movieBasicDTO.setRating(metadata.getRating());
-            movieBasicDTO.setLastViewedAt(metadata.getLastViewedAt());
             movieBasicDTO.setYear(metadata.getYear());
             movieBasicDTO.setThumb(metadata.getThumb());
             movieBasicDTO.setArt(metadata.getArt());
             movieBasicDTO.setDuration(metadata.getDuration());
+            movieBasicDTO.setLastViewedAt(metadata.getLastViewedAt());
             movieBasicDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
             movieBasicDTO.setAddedAt(metadata.getAddedAt());
             movieBasicDTO.setUpdatedAt(metadata.getUpdatedAt());
             movieBasicDTO = movieBasicService.insert(movieBasicDTO);
         } else {
-            movieBasicDTO.setStudio(metadata.getStudio());
             movieBasicDTO.setTitle(metadata.getTitle());
             movieBasicDTO.setTitleSort(metadata.getTitleSort());
             movieBasicDTO.setOriginalTitle(metadata.getOriginalTitle());
             movieBasicDTO.setContentRating(metadata.getContentRating());
+            movieBasicDTO.setStudio(metadata.getStudio());
             movieBasicDTO.setSummary(metadata.getSummary());
             movieBasicDTO.setRating(metadata.getRating());
-            movieBasicDTO.setLastViewedAt(metadata.getLastViewedAt());
             movieBasicDTO.setYear(metadata.getYear());
             movieBasicDTO.setThumb(metadata.getThumb());
             movieBasicDTO.setArt(metadata.getArt());
             movieBasicDTO.setDuration(metadata.getDuration());
+            movieBasicDTO.setLastViewedAt(metadata.getLastViewedAt());
             movieBasicDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
             movieBasicDTO.setUpdatedAt(metadata.getUpdatedAt());
             movieBasicService.update(movieBasicDTO);
@@ -265,15 +264,16 @@ public class MovieManager {
     }
 
     @Transactional
-    public void matchDouban(Long id, String doubanId) {
-        Movie doubanMovie = tmmApiService.findMovie(doubanId);
+    public void matchInfo(Long id, String doubanId, String imdbId, String tmdbId) {
+        Movie movie = tmmApiService.findMovie(doubanId, imdbId, tmdbId);
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(id);
-        movieBasicDTO.setDoubanId(doubanMovie.getDoubanId());
-        movieBasicDTO.setSummary(doubanMovie.getSummary());
-        movieBasicDTO.setRating(doubanMovie.getDoubanAverage());
-        movieBasicDTO.setOriginalTitle(doubanMovie.getOriginalTitle());
+        movieBasicDTO.setDoubanId(movie.getDoubanId());
+        movieBasicDTO.setSummary(movie.getSummary());
+        movieBasicDTO.setRating(movie.getAverage());
+        movieBasicDTO.setOriginalTitle(movie.getOriginalTitle());
+        movieBasicDTO.setContentRating(movie.getMpaa());
         movieBasicService.update(movieBasicDTO);
-        updateAkas(doubanMovie.getAkas(), id);
+        updateAkas(movie.getAkas(), id);
     }
 
     /**
@@ -314,25 +314,25 @@ public class MovieManager {
             Movie movie;
             boolean isDirectory = Files.isDirectory(path);
             if (isDirectory) {
-                movie = findDoubanMovieByNFO(path);
+                movie = findTmmMovieByNFO(path);
             } else {
-                movie = findDoubanMovieByFilename(path.getFileName().toString());
+                movie = findTmmMovieByFilename(path.getFileName().toString());
             }
             if (movie == null) {
                 return;
             }
             operationFolder(movie, path, isDirectory, movieLibraryPath, movieDownloadPath);
         } catch (Exception e) {
-            log.error("更新电影源发生错误", e);
+            log.error("{},更新电影源发生错误", path, e);
         }
     }
 
-    private Movie findDoubanMovieByNFO(Path path) throws IOException {
+    private Movie findTmmMovieByNFO(Path path) throws IOException {
         Path nfoPath = Files.list(path).filter(s -> FilenameUtils.isExtension(s.getFileName().toString(), "nfo")).findFirst().orElse(null);
         if (nfoPath != null) {
             try {
                 MovieNFO movieNFO = NFOUtil.read(path, nfoPath.getFileName().toString());
-                return findDoubanMovie(movieNFO.getDoubanid(), movieNFO.getImdbid());
+                return findTmmMovie(movieNFO.getDoubanid(), movieNFO.getImdbid(), movieNFO.getTmdbid());
             } catch (Exception e) {
                 log.warn("无法读取nfo文件");
             }
@@ -340,13 +340,13 @@ public class MovieManager {
         return null;
     }
 
-    private Movie findDoubanMovieByFilename(String filename) {
+    private Movie findTmmMovieByFilename(String filename) {
         if (!KaleidoUtils.isVideoFile(filename)) {
             return null;
         }
         MovieThreadDTO movieThreadDTO = movieThreadService.findByFilename(filename);
         if (movieThreadDTO != null) {
-            return findDoubanMovie(movieThreadDTO.getDoubanId(), movieThreadDTO.getImdb());
+            return findTmmMovie(movieThreadDTO.getDoubanId(), movieThreadDTO.getImdb(), null);
         }
         return null;
     }
@@ -371,7 +371,7 @@ public class MovieManager {
             }
         } else {
             //将主文件移动到文件夹
-            Files.move(path, folderPath.resolve(path.getFileName()));
+            Files.move(path, folderPath.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING);
             //如果存在额外文件夹也移动
             Path extraPath = path.getParent().resolve("Other");
             if (Files.exists(extraPath)) {
@@ -385,18 +385,12 @@ public class MovieManager {
         NFOUtil.write(movieNFO, folderPath, "movie.nfo");
     }
 
-    private Movie findDoubanMovie(String doubanId, String imdbId) {
-        Movie movie = null;
-        if (StringUtils.isNotEmpty(doubanId)) {
-            movie = tmmApiService.findMovie(doubanId);
-        } else if (StringUtils.isNotEmpty(imdbId)) {
-            movie = tmmApiService.findMovie(imdbId);
-        }
-        return movie;
+    private Movie findTmmMovie(String doubanId, String imdbId, String tmdbId) {
+        return tmmApiService.findMovie(doubanId, imdbId, tmdbId);
     }
 
     private Path createFolderPath(Movie movie, Path path) throws IOException {
-        String folderName = movie.getTitle() + " (" + movie.getYear() + ")";
+        String folderName = StringUtils.substring(movie.getYear(), 0, 3) + "0s/" + movie.getTitle() + " (" + movie.getYear() + ")";
         Path folderPath = path.resolve(folderName);
         if (Files.notExists(folderPath)) {
             Files.createDirectory(folderPath);
@@ -424,8 +418,8 @@ public class MovieManager {
             return;
         }
         Metadata metadata = plexApiService.findMovieById(movieBasicDTO.getId());
-        String filename = StringUtils.substringAfterLast(metadata.getMedia().getPart().getFile(), Constants.SLASH);
-        List<String> filenameList = movieThreadFilenameDTOList.stream().map(MovieThreadFilenameDTO::getValue).collect(Collectors.toList());
+        String filename = StringUtils.lowerCase(StringUtils.substringAfterLast(metadata.getMedia().getPart().getFile(), Constants.SLASH));
+        List<String> filenameList = movieThreadFilenameDTOList.stream().map(s -> StringUtils.lowerCase(s.getValue())).collect(Collectors.toList());
         if (filenameList.contains(filename)) {
             movieThreadDTO.setStatus(ThreadStatus.done.ordinal());
             movieThreadService.update(movieThreadDTO);
@@ -442,8 +436,8 @@ public class MovieManager {
         String tmdb = getUniqueid(movieNFO.getUniqueids(), SourceType.tmdb.name());
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(movieId);
         movieBasicDTO.setDoubanId(StringUtils.defaultIfEmpty(doubanId, movieNFO.getDoubanid()));
-        movieBasicDTO.setImdb(StringUtils.defaultIfEmpty(imdb, movieNFO.getImdbid()));
-        movieBasicDTO.setTmdb(StringUtils.defaultIfEmpty(tmdb, movieNFO.getTmdbid()));
+        movieBasicDTO.setImdbId(StringUtils.defaultIfEmpty(imdb, movieNFO.getImdbid()));
+        movieBasicDTO.setTmdbId(StringUtils.defaultIfEmpty(tmdb, movieNFO.getTmdbid()));
         movieBasicDTO.setWebsite(movieNFO.getWebsite());
         movieBasicService.update(movieBasicDTO);
         updateAkas(movieNFO.getAkas(), movieId);
@@ -455,12 +449,12 @@ public class MovieManager {
         String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
         MovieNFO movieNFO = NFOUtil.toMovieNFO(metadata);
         movieNFO.setDoubanid(dto.getDoubanId());
-        movieNFO.setImdbid(dto.getImdb());
-        movieNFO.setTmdbid(dto.getTmdb());
+        movieNFO.setImdbid(dto.getImdbId());
+        movieNFO.setTmdbid(dto.getTmdbId());
         List<UniqueidNFO> uniqueidNFOList = Lists.newArrayList();
         CollectionUtils.addIgnoreNull(uniqueidNFOList, NFOUtil.toUniqueidNFO(dto.getDoubanId(), SourceType.douban));
-        CollectionUtils.addIgnoreNull(uniqueidNFOList, NFOUtil.toUniqueidNFO(dto.getImdb(), SourceType.imdb));
-        CollectionUtils.addIgnoreNull(uniqueidNFOList, NFOUtil.toUniqueidNFO(dto.getTmdb(), SourceType.tmdb));
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, NFOUtil.toUniqueidNFO(dto.getImdbId(), SourceType.imdb));
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, NFOUtil.toUniqueidNFO(dto.getTmdbId(), SourceType.tmdb));
         movieNFO.setUniqueids(uniqueidNFOList);
         List<MovieAkaDTO> movieAkaDTOList = movieAkaService.listByMovieId(dto.getId());
         if (movieAkaDTOList != null) {
@@ -471,9 +465,10 @@ public class MovieManager {
 
     public void syncDoubanWeekly() {
         LocalDate today = LocalDate.now();
-        DayOfWeek dayOfWeek = today.getDayOfWeek();
-        int dayOfWeekValue = dayOfWeek.getValue();
-        String listingDate = DateTimeUtils.addDays(5 - (dayOfWeekValue > 5 ? dayOfWeekValue : (7 + dayOfWeekValue)));
+        int dayOfWeekValue = today.getDayOfWeek().getValue();
+        int days = (dayOfWeekValue > 5 ? dayOfWeekValue : (7 + dayOfWeekValue)) - 5;
+        LocalDate localDate = today.minusDays(days);
+        String listingDate = localDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         List<Subject> subjectList = doubanApiService.listMovieWeekly();
         List<Long> idList = Lists.newArrayList();
         for (Subject subject : subjectList) {

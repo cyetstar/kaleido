@@ -25,16 +25,16 @@ public class TmmApiServiceTest {
     @Test
     public void findMovie() {
         tmmApiService.setUrl("http://127.0.0.1:6000");
-        Movie movie = tmmApiService.findMovie("1292052");
-        Assertions.assertEquals(movie.getTitle(),"肖申克的救赎");
-        Assertions.assertEquals(movie.getImdbId(),"tt0111161");
+        Movie movie = tmmApiService.findMovie("1292052", null, null);
+        Assertions.assertEquals(movie.getTitle(), "肖申克的救赎");
+        Assertions.assertEquals(movie.getImdbId(), "tt0111161");
     }
 
     @Test
     public void findDoulist() {
         tmmApiService.setUrl("http://127.0.0.1:6000");
         Doulist doulist = tmmApiService.findDoulist("136414497");
-        Assertions.assertEquals(doulist.getTitle(),"想给妈妈看的电影");
+        Assertions.assertEquals(doulist.getTitle(), "想给妈妈看的电影");
     }
 
     @Test

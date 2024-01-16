@@ -38,11 +38,15 @@ import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 电影前端控制器
@@ -197,10 +201,10 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         return CommonResult.success(true);
     }
 
-    @PostMapping("searchDouban")
-    @ApiOperation(value = "查询豆瓣")
-    public CommonResult<List<MovieBasicSearchDoubanResp>> searchDouban(@RequestBody MovieBasicSearchDoubanReq req) {
-        List<Movie> movieList = tmmApiService.searchMovie(req.getKeywords());
+    @PostMapping("searchInfo")
+    @ApiOperation(value = "查询信息")
+    public CommonResult<List<MovieBasicSearchDoubanResp>> searchInfo(@RequestBody MovieBasicSearchInfoReq req) {
+        List<Movie> movieList = tmmApiService.searchMovie(req.getKeyword(), req.getType());
         List<MovieBasicSearchDoubanResp> respList = Lists.newArrayList();
         for (Movie movie : movieList) {
             respList.add(MovieBasicConvert.INSTANCE.convertToSearchDoubanResp(movie));
@@ -208,10 +212,10 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         return CommonResult.success(respList);
     }
 
-    @PostMapping("matchDouban")
-    @ApiOperation(value = "匹配豆瓣")
-    public CommonResult<Boolean> matchDouban(@RequestBody MovieBasicMatchDoubanReq req) {
-        movieManager.matchDouban(req.getId(), req.getDoubanId());
+    @PostMapping("matchInfo")
+    @ApiOperation(value = "匹配信息")
+    public CommonResult<Boolean> matchInfo(@RequestBody MovieBasicMatchInfoReq req) {
+        movieManager.matchInfo(req.getId(), req.getDoubanId(), req.getImdbId(), req.getTmdbId());
         return CommonResult.success(true);
     }
 
@@ -292,6 +296,43 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @ApiOperation(value = "匹配文件信息")
     public CommonResult<Boolean> matchPath(@RequestBody MovieBasicMatchPathReq req) {
         movieManager.matchPath(Paths.get(req.getPath()), req.getDoubanId());
+        return CommonResult.success(true);
+    }
+
+    @PostMapping("moveMovieFolder")
+    @ApiOperation(value = "重命名文件夹")
+    public CommonResult<Boolean> moveMovieFolder() {
+        String movieLibraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
+        Pattern pattern = Pattern.compile("\\((\\d+)\\)");
+        try (Stream<Path> paths = Files.list(Paths.get(movieLibraryPath))) {
+            List<Path> pathList = paths.collect(Collectors.toList());
+            int count = 0;
+            for (Path p : pathList) {
+                count++;
+                if (!Files.isDirectory(p)) {
+                    continue;
+                }
+                String fileName = p.getFileName().toString();
+                if (StringUtils.equalsAny(fileName, "#recycle", "2020s", "2010s", "2000s", "1990s", "1980s", "1970s", "1960s", "1950s", "1940s", "1930s", "1920s", "1910s", "1900s", "1890s")) {
+                    continue;
+                }
+                Matcher matcher = pattern.matcher(fileName);
+                if (matcher.find()) {
+                    String year = matcher.group(1);
+                    String decade = year.substring(0, 3) + "0s";
+                    Path decadePath = Paths.get(movieLibraryPath, decade);
+                    if (!Files.exists(decadePath)) {
+                        Files.createDirectory(decadePath);
+                    }
+                    NioFileUtils.moveDir(p, decadePath, StandardCopyOption.REPLACE_EXISTING);
+                }
+                if (count % 1000 == 0) {
+                    log.info("已经处理了 {} 个文件夹", count);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return CommonResult.success(true);
     }
 
