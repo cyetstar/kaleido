@@ -7,7 +7,6 @@ import cc.onelooker.kaleido.dto.tvshow.TvshowEpisodeDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.enums.ThreadStatus;
 import cc.onelooker.kaleido.service.movie.MovieBasicService;
-import cc.onelooker.kaleido.service.movie.MovieCollectionService;
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.service.movie.MovieThreadService;
 import cc.onelooker.kaleido.service.music.MusicAlbumService;
@@ -53,9 +52,6 @@ public class AsyncTaskManager {
 
     @Autowired
     private TvshowEpisodeService tvshowEpisodeService;
-
-    @Autowired
-    private MovieCollectionService movieCollectionService;
 
     @Autowired
     private MusicAlbumService musicAlbumService;
@@ -244,28 +240,6 @@ public class AsyncTaskManager {
             } else {
                 Files.move(Paths.get(path), Paths.get(targetPath), StandardCopyOption.REPLACE_EXISTING);
             }
-        }
-    }
-
-    @Async
-    public void updateMovieSource() {
-        Instant start = Instant.now();
-        try {
-            log.info("更新电影源启动。");
-            String movieDownloadPath = ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath);
-            Files.list(Paths.get(movieDownloadPath)).forEach(s -> {
-                try {
-                    movieManager.updateMovieSource(s);
-                    log.debug("【{}】更新成功。", s);
-                } catch (Exception e) {
-                    log.error("【{}】更新电影源发生错误。{}", s, ExceptionUtil.getMessage(e));
-                }
-            });
-        } catch (IOException e) {
-            log.error("更新电影源发生错误。{}", ExceptionUtil.getMessage(e));
-        } finally {
-            Instant end = Instant.now();
-            log.info("更新电影源完毕，耗时{}分钟。", Duration.between(start, end).toMinutes());
         }
     }
 

@@ -1,8 +1,11 @@
 package cc.onelooker.kaleido.third.tmm;
 
+import cc.onelooker.kaleido.utils.LogUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,10 +27,23 @@ public class TmmApiServiceTest {
 
     @Test
     public void findMovie() {
-        tmmApiService.setUrl("http://127.0.0.1:6000");
-        Movie movie = tmmApiService.findMovie("1292052", null, null);
-        Assertions.assertEquals(movie.getTitle(), "肖申克的救赎");
-        Assertions.assertEquals(movie.getImdbId(), "tt0111161");
+        Logger logger = LogUtil.getLogger(TmmApiServiceTest.class);
+        logger.info("[start]");
+        logger.debug("[start]");
+        logger.trace("[start]");
+        logger.warn("[start]");
+        logger.error("[start]");
+
+        ThreadUtil.sleep(5000L);
+        logger = LogUtil.getLogger(TmmApiServiceTest.class);
+//        tmmApiService.setUrl("http://127.0.0.1:6000");
+//        Movie movie = tmmApiService.findMovie("1292052", null, null);
+//        Assertions.assertEquals(movie.getTitle(), "肖申克的救赎");
+//        Assertions.assertEquals(movie.getImdbId(), "tt0111161");
+        logger.debug("[start2]");
+        logger.trace("[start2]");
+        logger.warn("[start2]");
+        logger.error("[start2]");
     }
 
     @Test

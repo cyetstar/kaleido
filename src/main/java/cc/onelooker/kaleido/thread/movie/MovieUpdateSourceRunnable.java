@@ -5,7 +5,9 @@ import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
 import cc.onelooker.kaleido.thread.Action;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.utils.LogUtil;
 import com.zjjcnt.common.core.domain.PageResult;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -26,6 +28,8 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     private String movieDownloadPath;
 
+    private Logger logger;
+
     public MovieUpdateSourceRunnable(MovieManager movieManager) {
         this.movieManager = movieManager;
     }
@@ -38,6 +42,7 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
     @Override
     protected void beforeRun(Map<String, Object> params) {
         movieDownloadPath = ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath);
+        logger = LogUtil.getLogger(MovieUpdateSourceRunnable.class);
     }
 
     @Override
@@ -58,7 +63,7 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     @Override
     protected void processEntity(Path path) throws Exception {
-        movieManager.updateMovieSource(path);
+        movieManager.updateMovieSource(path, logger);
     }
 
     @Override

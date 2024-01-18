@@ -48,7 +48,7 @@ public interface MovieBasicConvert {
 
     MovieBasicCreateResp convertToCreateResp(MovieBasicDTO dto);
 
-    MovieBasicSearchDoubanResp convertToSearchDoubanResp(Movie movie);
+    MovieBasicSearchInfoResp convertToSearchInfoResp(Movie movie);
 
     MovieBasicListByCollectionIdResp convertToListByCollectionIdResp(MovieBasicDTO dto);
 }

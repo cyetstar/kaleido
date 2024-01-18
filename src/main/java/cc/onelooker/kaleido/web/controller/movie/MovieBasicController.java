@@ -165,13 +165,6 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         return CommonResult.success(true);
     }
 
-    @PostMapping("updateSource")
-    @ApiOperation(value = "同步资料库")
-    public CommonResult<Boolean> updateSource() {
-        taskManager.updateMovieSource();
-        return CommonResult.success(true);
-    }
-
     @PostMapping("syncPlexById")
     @ApiOperation(value = "同步资料")
     public CommonResult<Boolean> syncPlexById(@RequestBody MovieBasicSyncPlexByIdReq req) {
@@ -203,11 +196,11 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
 
     @PostMapping("searchInfo")
     @ApiOperation(value = "查询信息")
-    public CommonResult<List<MovieBasicSearchDoubanResp>> searchInfo(@RequestBody MovieBasicSearchInfoReq req) {
+    public CommonResult<List<MovieBasicSearchInfoResp>> searchInfo(@RequestBody MovieBasicSearchInfoReq req) {
         List<Movie> movieList = tmmApiService.searchMovie(req.getKeyword(), req.getType());
-        List<MovieBasicSearchDoubanResp> respList = Lists.newArrayList();
+        List<MovieBasicSearchInfoResp> respList = Lists.newArrayList();
         for (Movie movie : movieList) {
-            respList.add(MovieBasicConvert.INSTANCE.convertToSearchDoubanResp(movie));
+            respList.add(MovieBasicConvert.INSTANCE.convertToSearchInfoResp(movie));
         }
         return CommonResult.success(respList);
     }

@@ -20,6 +20,7 @@ import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.DateTimeUtil;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
+import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.http.HttpUtil;
 import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.google.common.collect.Lists;
@@ -28,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -162,118 +164,33 @@ public class MovieManager {
         syncActor(metadata.getRoleList(), movieBasicDTO.getId(), ActorRole.Actor);
     }
 
-    private void syncActor(List<Tag> actorList, Long movieId, ActorRole actorRole) {
-        if (actorList == null) {
-            return;
-        }
-        for (Tag tag : actorList) {
-            MovieActorDTO movieActorDTO = movieActorService.findById(tag.getId());
-            if (movieActorDTO == null) {
-                movieActorDTO = new MovieActorDTO();
-                movieActorDTO.setId(tag.getId());
-                movieActorDTO.setName(tag.getTag());
-                movieActorDTO.setOriginalName(tag.getTag());
-                movieActorDTO.setThumb(tag.getThumb());
-                movieActorDTO = movieActorService.insert(movieActorDTO);
-            } else if (StringUtils.isNotEmpty(tag.getThumb())) {
-                movieActorDTO.setThumb(tag.getThumb());
-                movieActorService.update(movieActorDTO);
-            }
-            MovieBasicActorDTO movieBasicActorDTO = movieBasicActorService.findByMovieIdAndActorId(movieId, movieActorDTO.getId());
-            if (movieBasicActorDTO == null) {
-                movieBasicActorDTO = new MovieBasicActorDTO();
-                movieBasicActorDTO.setMovieId(movieId);
-                movieBasicActorDTO.setActorId(movieActorDTO.getId());
-                movieBasicActorDTO.setRole(actorRole.name());
-                movieBasicActorDTO.setPlayRole(tag.getRole());
-                movieBasicActorService.insert(movieBasicActorDTO);
-            }
-        }
-    }
-
-    private void syncCountry(List<Tag> countryList, Long movieId) {
-        if (countryList == null) {
-            return;
-        }
-        for (Tag tag : countryList) {
-            MovieCountryDTO movieCountryDTO = movieCountryService.findById(tag.getId());
-            if (movieCountryDTO == null) {
-                movieCountryDTO = movieCountryService.insert(tag.getId(), tag.getTag());
-            }
-            MovieBasicCountryDTO movieBasicCountryDTO = movieBasicCountryService.findByMovieIdAndCountryId(movieId, movieCountryDTO.getId());
-            if (movieBasicCountryDTO == null) {
-                movieBasicCountryService.insertByMovieIdAndCountryId(movieId, movieCountryDTO.getId());
-            }
-        }
-    }
-
-    private void syncGenre(List<Tag> genreList, Long movieId) {
-        if (genreList == null) {
-            return;
-        }
-        for (Tag tag : genreList) {
-            MovieGenreDTO movieGenreDTO = movieGenreService.findById(tag.getId());
-            if (movieGenreDTO == null) {
-                movieGenreDTO = movieGenreService.insert(tag.getId(), tag.getTag());
-            }
-            MovieBasicGenreDTO movieBasicGenreDTO = movieBasicGenreService.findByMovieIdAndGenreId(movieId, movieGenreDTO.getId());
-            if (movieBasicGenreDTO == null) {
-                movieBasicGenreService.insertByMovieIdAndGenreId(movieId, movieGenreDTO.getId());
-            }
-        }
-    }
-
     @Transactional
     public void readNFO(Long movieId) throws JAXBException {
         Metadata metadata = plexApiService.findMovieById(movieId);
         readNFO(metadata);
     }
 
-    private String getUniqueid(List<UniqueidNFO> uniqueids, String type) {
-        return uniqueids.stream().filter(s -> StringUtils.equals(s.getType(), type)).map(s -> s.getValue()).findFirst().orElse(null);
-    }
-
-    private void updateAkas(List<String> akas, Long movieId) {
-        if (akas == null) {
-            return;
-        }
-        for (String aka : akas) {
-            MovieAkaDTO movieAkaDTO = movieAkaService.findByTitleAndMovieId(aka, movieId);
-            if (movieAkaDTO == null) {
-                movieAkaDTO = new MovieAkaDTO();
-                movieAkaDTO.setTitle(aka);
-                movieAkaDTO.setMovieId(movieId);
-                movieAkaService.insert(movieAkaDTO);
-            }
-        }
-    }
-
-    private void updateTags(List<String> tags, Long movieId) {
-        if (tags == null) {
-            return;
-        }
-        for (String tag : tags) {
-            MovieTagDTO movieTagDTO = movieTagService.findByTagAndMovieId(tag, movieId);
-            if (movieTagDTO == null) {
-                movieTagDTO = new MovieTagDTO();
-                movieTagDTO.setTag(tag);
-                movieTagDTO.setMovieId(movieId);
-                movieTagService.insert(movieTagDTO);
-            }
-        }
-    }
-
     @Transactional
     public void matchInfo(Long id, String doubanId, String imdbId, String tmdbId) {
-        Movie movie = tmmApiService.findMovie(doubanId, imdbId, tmdbId);
-        MovieBasicDTO movieBasicDTO = movieBasicService.findById(id);
-        movieBasicDTO.setDoubanId(movie.getDoubanId());
-        movieBasicDTO.setSummary(movie.getSummary());
-        movieBasicDTO.setRating(movie.getAverage());
-        movieBasicDTO.setOriginalTitle(movie.getOriginalTitle());
-        movieBasicDTO.setContentRating(movie.getMpaa());
-        movieBasicService.update(movieBasicDTO);
-        updateAkas(movie.getAkas(), id);
+        try {
+            Movie movie = tmmApiService.findMovie(doubanId, imdbId, tmdbId);
+            Metadata metadata = plexApiService.findMovieById(id);
+            Path movieFolderPath = Paths.get(KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile()));
+            MovieNFO movieNFO = NFOUtil.toMovieNFO(movie);
+            NFOUtil.write(movieNFO, movieFolderPath, "movie.nfo");
+            plexApiService.refreshMovieById(id);
+            updateAka(movie.getAkas(), id);
+            syncPlexMovie(id);
+            //如果模版信息发生变动，则重新移动文件，而、后续由定时任务重新获取新的信息
+            MovieBasicDTO movieBasicDTO = movieBasicService.findById(id);
+            if (!StringUtils.equals(movie.getTitle(), movieBasicDTO.getTitle()) || !StringUtils.equals(movie.getYear(), movieBasicDTO.getYear())) {
+                String movieLibraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
+                Path folderPath = createFolderPath(movie, Paths.get(movieLibraryPath));
+                NioFileUtils.renameDir(movieFolderPath, folderPath);
+            }
+        } catch (Exception e) {
+            log.error("匹配电影信息发生错误：{}", ExceptionUtil.getMessage(e));
+        }
     }
 
     /**
@@ -307,10 +224,10 @@ public class MovieManager {
         }
     }
 
-    public void updateMovieSource(Path path) {
+    public void updateMovieSource(Path path, Logger logger) {
         try {
-            Path movieLibraryPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath));
-            Path movieDownloadPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath));
+            logger.info("=========== 开始更新数据文件 ==========");
+            logger.info("== 源文件信息:{}", path);
             Movie movie;
             boolean isDirectory = Files.isDirectory(path);
             if (isDirectory) {
@@ -319,87 +236,16 @@ public class MovieManager {
                 movie = findTmmMovieByFilename(path.getFileName().toString());
             }
             if (movie == null) {
+                logger.info("== 找不到电影信息");
                 return;
             }
-            operationFolder(movie, path, isDirectory, movieLibraryPath, movieDownloadPath);
+            logger.info("== 查询到电影信息:{}", movie.getTitle());
+            operationFolder(movie, path, isDirectory, logger);
         } catch (Exception e) {
-            log.error("{},更新电影源发生错误", path, e);
+            log.error("{}, 更新电影源发生错误", path, e);
+        } finally {
+            logger.info("=========== 完成更新数据文件 ==========");
         }
-    }
-
-    private Movie findTmmMovieByNFO(Path path) throws IOException {
-        Path nfoPath = Files.list(path).filter(s -> FilenameUtils.isExtension(s.getFileName().toString(), "nfo")).findFirst().orElse(null);
-        if (nfoPath != null) {
-            try {
-                MovieNFO movieNFO = NFOUtil.read(path, nfoPath.getFileName().toString());
-                return findTmmMovie(movieNFO.getDoubanid(), movieNFO.getImdbid(), movieNFO.getTmdbid());
-            } catch (Exception e) {
-                log.warn("无法读取nfo文件");
-            }
-        }
-        return null;
-    }
-
-    private Movie findTmmMovieByFilename(String filename) {
-        if (!KaleidoUtils.isVideoFile(filename)) {
-            return null;
-        }
-        MovieThreadDTO movieThreadDTO = movieThreadService.findByFilename(filename);
-        if (movieThreadDTO != null) {
-            return findTmmMovie(movieThreadDTO.getDoubanId(), movieThreadDTO.getImdb(), null);
-        }
-        return null;
-    }
-
-    private void operationFolder(Movie movie, Path path, boolean isDirectory, Path targetPath, Path sourcePath) throws Exception {
-        //创建规范文件夹
-        Path folderPath = createFolderPath(movie, targetPath);
-        if (isDirectory) {
-            Files.list(path).forEach(s -> {
-                try {
-                    if (Files.isDirectory(s)) {
-                        NioFileUtils.moveDir(s, folderPath, StandardCopyOption.REPLACE_EXISTING);
-                    } else {
-                        Files.move(s, folderPath.resolve(s.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            if (!path.equals(sourcePath)) {
-                NioFileUtils.deleteIfExists(path);
-            }
-        } else {
-            //将主文件移动到文件夹
-            Files.move(path, folderPath.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-            //如果存在额外文件夹也移动
-            Path extraPath = path.getParent().resolve("Other");
-            if (Files.exists(extraPath)) {
-                NioFileUtils.moveDir(extraPath, folderPath, StandardCopyOption.REPLACE_EXISTING);
-            }
-        }
-        //下载海报
-        downloadPoster(movie, folderPath);
-        //输出nfo文件
-        MovieNFO movieNFO = NFOUtil.toMovieNFO(movie);
-        NFOUtil.write(movieNFO, folderPath, "movie.nfo");
-    }
-
-    private Movie findTmmMovie(String doubanId, String imdbId, String tmdbId) {
-        return tmmApiService.findMovie(doubanId, imdbId, tmdbId);
-    }
-
-    private Path createFolderPath(Movie movie, Path path) throws IOException {
-        String folderName = StringUtils.substring(movie.getYear(), 0, 3) + "0s/" + movie.getTitle() + " (" + movie.getYear() + ")";
-        Path folderPath = path.resolve(folderName);
-        if (Files.notExists(folderPath)) {
-            Files.createDirectory(folderPath);
-        }
-        return folderPath;
-    }
-
-    private void downloadPoster(Movie movie, Path folderPath) {
-        HttpUtil.downloadFile(movie.getPoster(), folderPath.resolve("poster.jpg").toFile());
     }
 
     @DSTransactional
@@ -440,8 +286,8 @@ public class MovieManager {
         movieBasicDTO.setTmdbId(StringUtils.defaultIfEmpty(tmdb, movieNFO.getTmdbid()));
         movieBasicDTO.setWebsite(movieNFO.getWebsite());
         movieBasicService.update(movieBasicDTO);
-        updateAkas(movieNFO.getAkas(), movieId);
-        updateTags(movieNFO.getTags(), movieId);
+        updateAka(movieNFO.getAkas(), movieId);
+        updateTag(movieNFO.getTags(), movieId);
     }
 
     public void exportNFO(MovieBasicDTO dto) throws JAXBException {
@@ -562,6 +408,196 @@ public class MovieManager {
         }
         return movieBasicCollectionDTO;
 
+    }
+
+    private String getUniqueid(List<UniqueidNFO> uniqueids, String type) {
+        return uniqueids.stream().filter(s -> StringUtils.equals(s.getType(), type)).map(s -> s.getValue()).findFirst().orElse(null);
+    }
+
+    private void updateAka(List<String> akas, Long movieId) {
+        if (akas == null) {
+            return;
+        }
+        for (String aka : akas) {
+            MovieAkaDTO movieAkaDTO = movieAkaService.findByTitleAndMovieId(aka, movieId);
+            if (movieAkaDTO == null) {
+                movieAkaDTO = new MovieAkaDTO();
+                movieAkaDTO.setTitle(aka);
+                movieAkaDTO.setMovieId(movieId);
+                movieAkaService.insert(movieAkaDTO);
+            }
+        }
+    }
+
+    private void updateTag(List<String> tags, Long movieId) {
+        if (tags == null) {
+            return;
+        }
+        for (String tag : tags) {
+            MovieTagDTO movieTagDTO = movieTagService.findByTagAndMovieId(tag, movieId);
+            if (movieTagDTO == null) {
+                movieTagDTO = new MovieTagDTO();
+                movieTagDTO.setTag(tag);
+                movieTagDTO.setMovieId(movieId);
+                movieTagService.insert(movieTagDTO);
+            }
+        }
+    }
+
+    private Movie findTmmMovieByNFO(Path path) throws IOException {
+        Path nfoPath = Files.list(path).filter(s -> FilenameUtils.isExtension(s.getFileName().toString(), "nfo")).findFirst().orElse(null);
+        if (nfoPath != null) {
+            try {
+                MovieNFO movieNFO = NFOUtil.read(path, nfoPath.getFileName().toString());
+                return findTmmMovie(movieNFO.getDoubanid(), movieNFO.getImdbid(), movieNFO.getTmdbid());
+            } catch (Exception e) {
+                log.warn("无法读取nfo文件");
+            }
+        }
+        return null;
+    }
+
+    private Movie findTmmMovieByFilename(String filename) {
+        if (!KaleidoUtils.isVideoFile(filename)) {
+            return null;
+        }
+        MovieThreadDTO movieThreadDTO = movieThreadService.findByFilename(filename);
+        if (movieThreadDTO != null) {
+            return findTmmMovie(movieThreadDTO.getDoubanId(), movieThreadDTO.getImdb(), null);
+        }
+        return null;
+    }
+
+    private void operationFolder(Movie movie, Path path, boolean isDirectory, Logger logger) throws Exception {
+        Path movieLibraryPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath));
+        Path movieDownloadPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath));
+        Path movieTrashPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieTrashPath));
+        //创建规范文件夹
+        Path targetPath = createFolderPath(movie, movieLibraryPath);
+        Files.list(targetPath).forEach(s -> {
+            try {
+                if (KaleidoUtils.isVideoFile(s.getFileName().toString())) {
+                    Files.move(s, movieTrashPath.resolve(s.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+                    logger.info("== 移除原视频文件:{}", s.getFileName());
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        if (isDirectory) {
+            Files.list(path).forEach(s -> {
+                try {
+                    if (Files.isDirectory(s)) {
+                        NioFileUtils.moveDir(s, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                        logger.info("== 移动文件目录:{}", s.getFileName());
+                    } else {
+                        Files.move(s, targetPath.resolve(s.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+                        logger.info("== 移动文件:{}", s.getFileName());
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            if (!path.equals(movieDownloadPath)) {
+                NioFileUtils.deleteIfExists(path);
+                logger.info("== 删除源文件夹:{}", path.getFileName());
+            }
+        } else {
+            //将主文件移动到文件夹
+            Files.move(path, targetPath.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+            logger.info("== 移动文件:{}", path.getFileName());
+            //如果存在额外文件夹也移动
+            Path extraPath = path.getParent().resolve("Other");
+            if (Files.exists(extraPath)) {
+                NioFileUtils.moveDir(extraPath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                logger.info("== 移动文件目录:{}", extraPath.getFileName());
+            }
+        }
+        //下载海报
+        downloadPoster(movie, targetPath);
+        logger.info("== 下载海报");
+        //输出nfo文件
+        MovieNFO movieNFO = NFOUtil.toMovieNFO(movie);
+        NFOUtil.write(movieNFO, targetPath, "movie.nfo");
+        logger.info("== 输出nfo文件");
+    }
+
+    private Movie findTmmMovie(String doubanId, String imdbId, String tmdbId) {
+        return tmmApiService.findMovie(doubanId, imdbId, tmdbId);
+    }
+
+    private Path createFolderPath(Movie movie, Path path) throws IOException {
+        String folderName = StringUtils.substring(movie.getYear(), 0, 3) + "0s/" + movie.getTitle() + " (" + movie.getYear() + ")";
+        Path folderPath = path.resolve(folderName);
+        if (Files.notExists(folderPath)) {
+            Files.createDirectory(folderPath);
+        }
+        return folderPath;
+    }
+
+    private void downloadPoster(Movie movie, Path folderPath) {
+        HttpUtil.downloadFile(movie.getPoster(), folderPath.resolve("poster.jpg").toFile());
+    }
+
+    private void syncActor(List<Tag> actorList, Long movieId, ActorRole actorRole) {
+        if (actorList == null) {
+            return;
+        }
+        for (Tag tag : actorList) {
+            MovieActorDTO movieActorDTO = movieActorService.findById(tag.getId());
+            if (movieActorDTO == null) {
+                movieActorDTO = new MovieActorDTO();
+                movieActorDTO.setId(tag.getId());
+                movieActorDTO.setName(tag.getTag());
+                movieActorDTO.setOriginalName(tag.getTag());
+                movieActorDTO.setThumb(tag.getThumb());
+                movieActorDTO = movieActorService.insert(movieActorDTO);
+            } else if (StringUtils.isNotEmpty(tag.getThumb())) {
+                movieActorDTO.setThumb(tag.getThumb());
+                movieActorService.update(movieActorDTO);
+            }
+            MovieBasicActorDTO movieBasicActorDTO = movieBasicActorService.findByMovieIdAndActorId(movieId, movieActorDTO.getId());
+            if (movieBasicActorDTO == null) {
+                movieBasicActorDTO = new MovieBasicActorDTO();
+                movieBasicActorDTO.setMovieId(movieId);
+                movieBasicActorDTO.setActorId(movieActorDTO.getId());
+                movieBasicActorDTO.setRole(actorRole.name());
+                movieBasicActorDTO.setPlayRole(tag.getRole());
+                movieBasicActorService.insert(movieBasicActorDTO);
+            }
+        }
+    }
+
+    private void syncCountry(List<Tag> countryList, Long movieId) {
+        if (countryList == null) {
+            return;
+        }
+        for (Tag tag : countryList) {
+            MovieCountryDTO movieCountryDTO = movieCountryService.findById(tag.getId());
+            if (movieCountryDTO == null) {
+                movieCountryDTO = movieCountryService.insert(tag.getId(), tag.getTag());
+            }
+            MovieBasicCountryDTO movieBasicCountryDTO = movieBasicCountryService.findByMovieIdAndCountryId(movieId, movieCountryDTO.getId());
+            if (movieBasicCountryDTO == null) {
+                movieBasicCountryService.insertByMovieIdAndCountryId(movieId, movieCountryDTO.getId());
+            }
+        }
+    }
+
+    private void syncGenre(List<Tag> genreList, Long movieId) {
+        if (genreList == null) {
+            return;
+        }
+        for (Tag tag : genreList) {
+            MovieGenreDTO movieGenreDTO = movieGenreService.findById(tag.getId());
+            if (movieGenreDTO == null) {
+                movieGenreDTO = movieGenreService.insert(tag.getId(), tag.getTag());
+            }
+            MovieBasicGenreDTO movieBasicGenreDTO = movieBasicGenreService.findByMovieIdAndGenreId(movieId, movieGenreDTO.getId());
+            if (movieBasicGenreDTO == null) {
+                movieBasicGenreService.insertByMovieIdAndGenreId(movieId, movieGenreDTO.getId());
+            }
+        }
     }
 
 }

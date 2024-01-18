@@ -22,5 +22,5 @@ public enum ConfigKey {
     neteaseUrl,
     doubanApikey,
     tmmUrl,
-    tmdbApikey,
+    tmdbApikey, movieTrashPath,
 }
