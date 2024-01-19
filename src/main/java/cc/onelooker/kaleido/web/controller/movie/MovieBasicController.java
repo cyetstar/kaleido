@@ -34,7 +34,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -181,14 +180,14 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
 
     @PostMapping("readNFOById")
     @ApiOperation(value = "同步资料库")
-    public CommonResult<Boolean> readNFOById(@RequestBody MovieBasicReadNFOByIdReq req) throws JAXBException {
+    public CommonResult<Boolean> readNFOById(@RequestBody MovieBasicReadNFOByIdReq req) {
         movieManager.readNFO(req.getId());
         return CommonResult.success(true);
     }
 
     @PostMapping("exportNFO")
     @ApiOperation(value = "输出NFO")
-    public CommonResult<Boolean> exportNFO(@RequestBody MovieBasicWriteNFOReq req) throws JAXBException {
+    public CommonResult<Boolean> exportNFO(@RequestBody MovieBasicWriteNFOReq req) {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(req.getId());
         movieManager.exportNFO(movieBasicDTO);
         return CommonResult.success(true);
@@ -288,7 +287,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("matchPath")
     @ApiOperation(value = "匹配文件信息")
     public CommonResult<Boolean> matchPath(@RequestBody MovieBasicMatchPathReq req) {
-        movieManager.matchPath(Paths.get(req.getPath()), req.getDoubanId());
+        movieManager.matchPath(Paths.get(req.getPath()), req.getDoubanId(), req.getTmdbId(), req.getTvdbId());
         return CommonResult.success(true);
     }
 

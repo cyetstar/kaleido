@@ -13,4 +13,8 @@ public class MovieBasicMatchPathReq {
     private String path;
 
     private String doubanId;
+
+    private String tmdbId;
+
+    private String tvdbId;
 }

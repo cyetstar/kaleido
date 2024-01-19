@@ -117,6 +117,26 @@ public class MovieBasicDTO implements BaseDTO<Long> {
     private String tmdbId;
 
     /**
+     * 多视频文件
+     */
+    private String multipleFiles;
+
+    /**
+     * 无中文字幕
+     */
+    private String noSubtitle;
+
+    /**
+     * 国语配音
+     */
+    private String mandarin;
+
+    /**
+     * 低质量
+     */
+    private String lowQuality;
+
+    /**
      * 加入时间
      */
     private Long addedAt;
