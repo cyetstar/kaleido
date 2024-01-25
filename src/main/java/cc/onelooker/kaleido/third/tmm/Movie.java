@@ -43,6 +43,8 @@ public class Movie {
     private String mpaa;
     @JsonProperty("douban_top250")
     private Integer doubanTop250;
+    private String comment;
+    private Integer pos;
 
     @Override
     public String toString() {

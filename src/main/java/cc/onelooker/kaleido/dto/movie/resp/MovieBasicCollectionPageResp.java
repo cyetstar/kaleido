@@ -38,4 +38,10 @@ public class MovieBasicCollectionPageResp{
 
     @ApiModelProperty("海报")
     private String thumb;
+
+    @ApiModelProperty("评语")
+    private String comment;
+
+    @ApiModelProperty("顺序")
+    private Integer pos;
 }

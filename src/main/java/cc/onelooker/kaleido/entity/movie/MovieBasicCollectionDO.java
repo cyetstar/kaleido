@@ -68,6 +68,18 @@ public class MovieBasicCollectionDO implements IdEntity<Long> {
     private String thumb;
 
     /**
+     * 评语
+     */
+    @TableField(value = "comment")
+    private String comment;
+
+    /**
+     * 顺序
+     */
+    @TableField(value = "pos")
+    private Integer pos;
+
+    /**
      * 收藏状态
      */
     @TableField(value = "status")

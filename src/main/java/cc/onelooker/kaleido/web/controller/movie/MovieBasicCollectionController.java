@@ -42,6 +42,7 @@ public class MovieBasicCollectionController extends AbstractCrudController<Movie
     @GetMapping("page")
     @ApiOperation(value = "查询电影集合关联表")
     public CommonResult<PageResult<MovieBasicCollectionPageResp>> page(MovieBasicCollectionPageReq req, PageParam pageParam) {
+        pageParam.setOrderBy("ASC:pos");
         return super.page(req, pageParam, MovieBasicCollectionConvert.INSTANCE::convertToDTO, MovieBasicCollectionConvert.INSTANCE::convertToPageResp);
     }
 

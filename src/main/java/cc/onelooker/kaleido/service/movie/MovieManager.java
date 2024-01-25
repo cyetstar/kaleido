@@ -40,11 +40,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.FileTime;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -109,20 +107,20 @@ public class MovieManager {
     private TmmApiService tmmApiService;
 
     @Transactional
-    public void syncPlexMovie(Long movieId) {
+    public void syncMovie(Long movieId) {
         Metadata metadata = plexApiService.findMovieById(movieId);
-        syncPlexMovie(metadata);
+        syncMovie(metadata);
     }
 
     @Transactional
     public void syncPlexMovieAndReadNFO(Long movieId) {
         Metadata metadata = plexApiService.findMovieById(movieId);
-        syncPlexMovie(metadata);
+        syncMovie(metadata);
         readNFO(metadata);
     }
 
     @Transactional
-    public void syncPlexMovie(Metadata metadata) {
+    public void syncMovie(Metadata metadata) {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
         if (movieBasicDTO == null) {
             movieBasicDTO = new MovieBasicDTO();
@@ -183,7 +181,7 @@ public class MovieManager {
             NFOUtil.write(movieNFO, movieFolderPath, "movie.nfo");
             plexApiService.refreshMovieById(id);
             updateAka(movie.getAkas(), id);
-            //如果模版信息发生变动，则重新移动文件，而、后续由定时任务重新获取新的信息
+            //如果模版信息发生变动，则重新移动文件，而后续由定时任务重新获取新的信息
             MovieBasicDTO movieBasicDTO = movieBasicService.findById(id);
             if (!StringUtils.equals(movie.getTitle(), movieBasicDTO.getTitle()) || !StringUtils.equals(movie.getYear(), movieBasicDTO.getYear())) {
                 String movieLibraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
@@ -282,11 +280,6 @@ public class MovieManager {
         try {
             Long movieId = metadata.getRatingKey();
             String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
-            FileTime lastModifiedTime = Files.getLastModifiedTime(Paths.get(movieFolder, "movie.nfo"));
-            long lastModifiedTimeLong = lastModifiedTime.to(TimeUnit.SECONDS);
-            if (lastModifiedTimeLong <= metadata.getUpdatedAt()) {
-                return;
-            }
             MovieNFO movieNFO = NFOUtil.read(Paths.get(movieFolder), "movie.nfo");
             String doubanId = getUniqueid(movieNFO.getUniqueids(), SourceType.douban.name());
             String imdb = getUniqueid(movieNFO.getUniqueids(), SourceType.imdb.name());
@@ -411,6 +404,8 @@ public class MovieManager {
             movieBasicCollectionDTO.setTitle(movie.getTitle());
             movieBasicCollectionDTO.setOriginalTitle(movie.getOriginalTitle());
             movieBasicCollectionDTO.setDoubanId(movie.getDoubanId());
+            movieBasicCollectionDTO.setComment(movie.getComment());
+            movieBasicCollectionDTO.setPos(movie.getPos());
             movieBasicCollectionDTO.setStatus(Constants.NO);
             MovieBasicDTO movieBasicDTO = movieBasicService.findByDoubanId(movie.getDoubanId());
             if (movieBasicDTO != null) {
@@ -419,12 +414,14 @@ public class MovieManager {
             }
             movieBasicCollectionService.insert(movieBasicCollectionDTO);
         } else {
+            movieBasicCollectionDTO.setComment(movie.getComment());
+            movieBasicCollectionDTO.setPos(movie.getPos());
             MovieBasicDTO movieBasicDTO = movieBasicService.findByDoubanId(movie.getDoubanId());
             if (movieBasicDTO != null) {
                 movieBasicCollectionDTO.setStatus(Constants.YES);
                 movieBasicCollectionDTO.setMovieId(movieBasicDTO.getId());
-                movieBasicCollectionService.update(movieBasicCollectionDTO);
             }
+            movieBasicCollectionService.update(movieBasicCollectionDTO);
         }
         return movieBasicCollectionDTO;
 
@@ -563,6 +560,7 @@ public class MovieManager {
     }
 
     private void syncActor(List<Tag> actorList, Long movieId, ActorRole actorRole) {
+        movieBasicActorService.deleteByMovieId(movieId);
         if (actorList == null) {
             return;
         }
@@ -587,11 +585,15 @@ public class MovieManager {
                 movieBasicActorDTO.setRole(actorRole.name());
                 movieBasicActorDTO.setPlayRole(tag.getRole());
                 movieBasicActorService.insert(movieBasicActorDTO);
+            } else {
+                movieBasicActorDTO.setPlayRole(tag.getRole());
+                movieBasicActorService.update(movieBasicActorDTO);
             }
         }
     }
 
     private void syncCountry(List<Tag> countryList, Long movieId) {
+        movieBasicCountryService.deleteByMovieId(movieId);
         if (countryList == null) {
             return;
         }
@@ -608,6 +610,7 @@ public class MovieManager {
     }
 
     private void syncGenre(List<Tag> genreList, Long movieId) {
+        movieBasicGenreService.deleteByMovieId(movieId);
         if (genreList == null) {
             return;
         }
@@ -624,18 +627,12 @@ public class MovieManager {
     }
 
     @Transactional
-    public void analyze(Path path) {
+    public void analyze(Metadata metadata) {
         try {
-            MovieNFO movieNFO = NFOUtil.read(path, "movie.nfo");
-            if (movieNFO == null) {
-                throw new NullPointerException("无法读取nfo文件");
-            }
-            MovieBasicDTO movieBasicDTO = movieBasicService.findById(movieNFO.getId());
-            if (movieBasicDTO == null) {
-                throw new NullPointerException("无法获取信息");
-            }
-            Metadata metadata = plexApiService.findMovieById(movieBasicDTO.getId());
-            try (Stream<Path> stream = Files.list(path)) {
+            MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
+            metadata = plexApiService.findMovieById(metadata.getRatingKey());
+            String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
+            try (Stream<Path> stream = Files.list(Paths.get(movieFolder))) {
                 List<Path> videoPathList = stream.filter(s -> KaleidoUtils.isVideoFile(s.getFileName().toString())).collect(Collectors.toList());
                 if (CollectionUtils.size(videoPathList) > 1) {
                     movieBasicDTO.setMultipleFiles(Constants.YES);
@@ -655,13 +652,12 @@ public class MovieManager {
                     movieBasicDTO.setMandarin(Constants.NO);
                 }
                 if (streamList.stream().anyMatch(s -> s.getStreamType() == 3 && StringUtils.equals(s.getLanguageTag(), "zh"))) {
-                    movieBasicDTO.setMandarin(Constants.NO);
+                    movieBasicDTO.setNoSubtitle(Constants.NO);
                 } else {
                     movieBasicDTO.setNoSubtitle(Constants.YES);
                 }
                 movieBasicService.update(movieBasicDTO);
             }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

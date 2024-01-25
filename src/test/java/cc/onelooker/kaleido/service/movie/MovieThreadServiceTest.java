@@ -93,7 +93,7 @@ class MovieThreadServiceTest {
         } catch (Exception e) {
             log.error("【{}】下载出错, {} :{}", movieThreadDTO.getTitle(), url, ExceptionUtil.getMessage(e));
         } finally {
-            ThreadUtil.sleep(RandomUtil.randomInt(2000));
+            ThreadUtil.sleep(RandomUtil.randomInt(500));
         }
     }
 

@@ -50,16 +50,22 @@ public class SysConfigServiceImpl extends AbstractBaseServiceImpl<SysConfigMappe
     @Transactional
     public void save(List<SysConfigDTO> sysConfigDTOList) {
         for (SysConfigDTO sysConfigDTO : sysConfigDTOList) {
-            SysConfigDTO exist = findByConfigKey(sysConfigDTO.getConfigKey());
-            if (exist == null) {
-                sysConfigDTO.setIsDeleted(false);
-                insert(sysConfigDTO);
-            } else {
-                exist.setConfigValue(sysConfigDTO.getConfigValue());
-                update(exist);
-            }
-            ConfigUtils.setSysConfig(sysConfigDTO.getConfigKey(), sysConfigDTO.getConfigValue());
+            save(sysConfigDTO);
         }
+    }
+
+    @Override
+    @Transactional
+    public void save(SysConfigDTO sysConfigDTO) {
+        SysConfigDTO exist = findByConfigKey(sysConfigDTO.getConfigKey());
+        if (exist == null) {
+            sysConfigDTO.setIsDeleted(false);
+            insert(sysConfigDTO);
+        } else {
+            exist.setConfigValue(sysConfigDTO.getConfigValue());
+            update(exist);
+        }
+        ConfigUtils.setSysConfig(sysConfigDTO.getConfigKey(), sysConfigDTO.getConfigValue());
     }
 
     @Override

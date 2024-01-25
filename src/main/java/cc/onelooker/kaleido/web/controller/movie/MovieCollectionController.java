@@ -20,6 +20,7 @@ import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -86,15 +87,17 @@ public class MovieCollectionController extends AbstractCrudController<MovieColle
 
     @GetMapping("listByMovieId")
     public CommonResult<List<MovieCollectionListByMovieIdResp>> listByMovieId(Long movieId) {
-        List<MovieBasicCollectionDTO> movieBasicCollectionDTOList = movieBasicCollectionService.listMovieId(movieId);
-        List<Long> movieIdList = movieBasicCollectionDTOList.stream().map(MovieBasicCollectionDTO::getCollectionId).collect(Collectors.toList());
-        MovieCollectionDTO param = new MovieCollectionDTO();
-        param.setIdList(movieIdList);
-        List<MovieCollectionDTO> movieCollectionDTOList = movieCollectionService.list(param);
         List<MovieCollectionListByMovieIdResp> respList = Lists.newArrayList();
-        for (MovieCollectionDTO movieCollectionDTO : movieCollectionDTOList) {
-            MovieCollectionListByMovieIdResp resp = MovieCollectionConvert.INSTANCE.convertToListByMovieIdResp(movieCollectionDTO);
-            respList.add(resp);
+        List<MovieBasicCollectionDTO> movieBasicCollectionDTOList = movieBasicCollectionService.listMovieId(movieId);
+        List<Long> collectionIdList = movieBasicCollectionDTOList.stream().map(MovieBasicCollectionDTO::getCollectionId).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(collectionIdList)) {
+            MovieCollectionDTO param = new MovieCollectionDTO();
+            param.setIdList(collectionIdList);
+            List<MovieCollectionDTO> movieCollectionDTOList = movieCollectionService.list(param);
+            for (MovieCollectionDTO movieCollectionDTO : movieCollectionDTOList) {
+                MovieCollectionListByMovieIdResp resp = MovieCollectionConvert.INSTANCE.convertToListByMovieIdResp(movieCollectionDTO);
+                respList.add(resp);
+            }
         }
         return CommonResult.success(respList);
     }

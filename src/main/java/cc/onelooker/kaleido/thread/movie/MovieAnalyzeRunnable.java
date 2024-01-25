@@ -1,32 +1,41 @@
 package cc.onelooker.kaleido.thread.movie;
 
+import cc.onelooker.kaleido.dto.system.SysConfigDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.movie.MovieManager;
+import cc.onelooker.kaleido.service.system.SysConfigService;
+import cc.onelooker.kaleido.third.plex.Metadata;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
 import cc.onelooker.kaleido.thread.Action;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.PageResult;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import javax.annotation.Nullable;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Map;
 
 /**
  * Created by cyetstar on 2021/1/7.
  */
 @Component
-public class MovieAnalyzeRunnable extends AbstractEntityActionRunnable<Path> {
+public class MovieAnalyzeRunnable extends AbstractEntityActionRunnable<Metadata> {
 
     private final MovieManager movieManager;
 
-    public MovieAnalyzeRunnable(MovieManager movieManager) {
+    private final PlexApiService plexApiService;
+
+    private final SysConfigService sysConfigService;
+
+    private Long lastAnalyzeTime = 0L;
+
+    private Long maxUpdatedAt = 0L;
+
+    public MovieAnalyzeRunnable(MovieManager movieManager, PlexApiService plexApiService, SysConfigService sysConfigService) {
         this.movieManager = movieManager;
+        this.plexApiService = plexApiService;
+        this.sysConfigService = sysConfigService;
     }
 
     @Override
@@ -35,35 +44,40 @@ public class MovieAnalyzeRunnable extends AbstractEntityActionRunnable<Path> {
     }
 
     @Override
-    protected PageResult<Path> page(int pageNumber, int pageSize) {
-        try {
-            PageResult<Path> pageResult = new PageResult<>();
-            pageResult.setSearchCount(true);
-            if (pageNumber == 1) {
-                Path libraryPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath));
-                Path trashPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieTrashPath));
-                Path downloadPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath));
-                Path[] excludePaths = {libraryPath, trashPath, downloadPath};
-                try (Stream<Path> stream = Files.walk(libraryPath, 2)) {
-                    List<Path> pathList = stream.filter(s -> !ArrayUtils.contains(excludePaths, s.getParent())).
-                            collect(Collectors.toList());
-                    pageResult.setTotal((long) pathList.size());
-                    pageResult.setRecords(pathList);
-                }
-            }
-            return pageResult;
-        } catch (IOException e) {
-            return null;
+    protected void beforeRun(@Nullable Map<String, Object> params) {
+        super.beforeRun(params);
+        lastAnalyzeTime = Long.parseLong(ConfigUtils.getSysConfig(ConfigKey.lastMovieAnalyzeTime, "0"));
+    }
+
+    @Override
+    protected void afterRun(@Nullable Map<String, Object> params) {
+        super.afterRun(params);
+        SysConfigDTO sysConfigDTO = new SysConfigDTO();
+        sysConfigDTO.setConfigKey(ConfigKey.lastMovieAnalyzeTime.name());
+        sysConfigDTO.setConfigValue(String.valueOf(maxUpdatedAt));
+        sysConfigService.save(sysConfigDTO);
+    }
+
+    @Override
+    protected PageResult<Metadata> page(int pageNumber, int pageSize) {
+        PageResult<Metadata> pageResult = new PageResult<>();
+        pageResult.setSearchCount(true);
+        if (pageNumber == 1) {
+            String movieLibraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
+            List<Metadata> metadataList = plexApiService.listMovieByUpdatedAt(movieLibraryId, lastAnalyzeTime);
+            pageResult.setTotal((long) metadataList.size());
+            pageResult.setRecords(metadataList);
         }
+        return pageResult;
     }
 
     @Override
-    protected void processEntity(Path path) throws Exception {
-        movieManager.analyze(path);
+    protected void processEntity(Metadata metadata) throws Exception {
+        long lastUpdatedAt = metadata.getUpdatedAt();
+        if (lastUpdatedAt > lastAnalyzeTime) {
+            movieManager.analyze(metadata);
+        }
+        maxUpdatedAt = lastUpdatedAt > maxUpdatedAt ? lastUpdatedAt : maxUpdatedAt;
     }
 
-    @Override
-    protected String getMessage(Path path) {
-        return path.getFileName().toString();
-    }
 }

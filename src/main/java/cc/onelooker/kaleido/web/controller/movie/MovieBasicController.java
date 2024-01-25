@@ -167,7 +167,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("syncPlexById")
     @ApiOperation(value = "同步资料")
     public CommonResult<Boolean> syncPlexById(@RequestBody MovieBasicSyncPlexByIdReq req) {
-        movieManager.syncPlexMovie(req.getId());
+        movieManager.syncMovie(req.getId());
         return CommonResult.success(true);
     }
 

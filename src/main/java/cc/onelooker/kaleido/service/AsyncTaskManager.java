@@ -90,7 +90,7 @@ public class AsyncTaskManager {
                         count++;
                         log.debug("【{}】{} 同步成功。", metadata.getTitle(), metadata.getRatingKey());
                     } else if (metadata.getUpdatedAt().compareTo(movieBasicDTO.getUpdatedAt()) > 0) {
-                        movieManager.syncPlexMovie(metadata.getRatingKey());
+                        movieManager.syncMovie(metadata.getRatingKey());
                         count++;
                         log.debug("【{}】{} 同步成功。", metadata.getTitle(), metadata.getRatingKey());
                     }

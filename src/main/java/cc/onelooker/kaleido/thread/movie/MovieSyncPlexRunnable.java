@@ -84,7 +84,7 @@ public class MovieSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata
         if (movieBasicDTO == null) {
             movieManager.syncPlexMovieAndReadNFO(metadata.getRatingKey());
         } else if (metadata.getUpdatedAt().compareTo(movieBasicDTO.getUpdatedAt()) > 0) {
-            movieManager.syncPlexMovie(metadata.getRatingKey());
+            movieManager.syncMovie(metadata.getRatingKey());
         }
     }
 

@@ -29,6 +29,11 @@ public class ConfigUtils {
         redisService.setCacheObject(wrapKey(configKey), configValue);
     }
 
+    public static void setSysConfig(ConfigKey configKey, String configValue) {
+        RedisService redisService = ApplicationContextHelper.getBean(RedisService.class);
+        redisService.setCacheObject(wrapKey(configKey.name()), configValue);
+    }
+
     public static String getSysConfig(ConfigKey configKey) {
         return getSysConfig(configKey.name(), "");
     }

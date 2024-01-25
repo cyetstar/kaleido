@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.schedule;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.service.system.SysDictTypeService;
+import cc.onelooker.kaleido.thread.movie.MovieAnalyzeRunnable;
 import cc.onelooker.kaleido.thread.movie.MovieCheckThreadStatusRunnable;
 import cc.onelooker.kaleido.thread.movie.MovieCollectionCheckMovieStatusRunnable;
 import cc.onelooker.kaleido.thread.movie.MovieSyncPlexRunnable;
@@ -28,6 +29,9 @@ public class JobManager {
 
     @Autowired
     private MovieSyncPlexRunnable movieSyncPlexRunnable;
+
+    @Autowired
+    private MovieAnalyzeRunnable movieAnalyzeRunnable;
 
     @Autowired
     private AsyncTaskManager taskManager;
@@ -61,6 +65,11 @@ public class JobManager {
     @Scheduled(cron = "0 30 1 * * ?")
     public void checkMovieStatus() {
         movieCollectionCheckMovieStatusRunnable.run();
+    }
+
+    @Scheduled(cron = "0 40 1 * * ?")
+    public void analyzeMovie() {
+        movieAnalyzeRunnable.run();
     }
 
     @Scheduled(cron = "0 0 2 * * ?")

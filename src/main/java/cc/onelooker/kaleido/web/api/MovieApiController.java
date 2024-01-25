@@ -31,7 +31,8 @@ public class MovieApiController {
         MovieBasicDTO movieBasicDTO = null;
         if (StringUtils.isNotEmpty(doubanId)) {
             movieBasicDTO = movieBasicService.findByDoubanId(doubanId);
-        } else if (StringUtils.isNotEmpty(imdbId)) {
+        }
+        if (movieBasicDTO == null && StringUtils.isNotEmpty(imdbId)) {
             movieBasicDTO = movieBasicService.findByImdb(imdbId);
         }
         if (movieBasicDTO != null) {

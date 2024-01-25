@@ -15,5 +15,7 @@ public interface SysConfigService extends IBaseService<SysConfigDTO> {
 
     void save(List<SysConfigDTO> sysConfigDTOList);
 
+    void save(SysConfigDTO sysConfigDTO);
+
     SysConfigDTO findByConfigKey(String configKey);
 }

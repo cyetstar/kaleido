@@ -55,6 +55,16 @@ public class MovieBasicCollectionDTO implements BaseDTO<Long> {
     private String thumb;
 
     /**
+     * 评语
+     */
+    private String comment;
+
+    /**
+     * 顺序
+     */
+    private Integer pos;
+
+    /**
      * 收藏状态
      */
     private String status;
