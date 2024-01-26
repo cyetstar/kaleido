@@ -117,12 +117,12 @@ public class MovieBasicDTO implements BaseDTO<Long> {
     private String tmdbId;
 
     /**
-     * 多视频文件
+     * 多文件
      */
     private String multipleFiles;
 
     /**
-     * 无中文字幕
+     * 无字幕
      */
     private String noSubtitle;
 
@@ -181,6 +181,11 @@ public class MovieBasicDTO implements BaseDTO<Long> {
      * 主键队列
      */
     private List<Long> idList;
+
+    /**
+     * 演职员id
+     */
+    private Long actorId;
 
     @Override
     public Long getId() {

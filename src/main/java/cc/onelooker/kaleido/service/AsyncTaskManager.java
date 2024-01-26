@@ -86,7 +86,7 @@ public class AsyncTaskManager {
                 try {
                     MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
                     if (movieBasicDTO == null) {
-                        movieManager.syncPlexMovieAndReadNFO(metadata.getRatingKey());
+                        movieManager.syncMovieAndReadNFO(metadata.getRatingKey());
                         count++;
                         log.debug("【{}】{} 同步成功。", metadata.getTitle(), metadata.getRatingKey());
                     } else if (metadata.getUpdatedAt().compareTo(movieBasicDTO.getUpdatedAt()) > 0) {

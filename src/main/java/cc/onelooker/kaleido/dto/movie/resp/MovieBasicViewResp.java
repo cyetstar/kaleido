@@ -82,6 +82,18 @@ public class MovieBasicViewResp {
     @ApiModelProperty("TMDB编号")
     private String tmdbId;
 
+    @ApiModelProperty("多文件")
+    private String multipleFiles;
+
+    @ApiModelProperty("无字幕")
+    private String noSubtitle;
+
+    @ApiModelProperty("国语配音")
+    private String mandarin;
+
+    @ApiModelProperty("低质量")
+    private String lowQuality;
+
     @ApiModelProperty("加入时间")
     private Long addedAt;
 

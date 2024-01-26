@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
 import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
+import cc.onelooker.kaleido.dto.movie.MovieBasicActorDTO;
 import cc.onelooker.kaleido.dto.movie.MovieBasicCountryDTO;
 import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
 import cc.onelooker.kaleido.dto.movie.MovieBasicGenreDTO;
@@ -88,6 +89,10 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
         }
         query.likeRight(StringUtils.length(dto.getDecade()) > 3, MovieBasicDO::getYear, StringUtils.substring(dto.getDecade(), 0, 3));
         query.in(CollectionUtils.isNotEmpty(dto.getIdList()), MovieBasicDO::getId, dto.getIdList());
+        query.eq(StringUtils.isNotEmpty(dto.getMultipleFiles()), MovieBasicDO::getMultipleFiles, dto.getMultipleFiles());
+        query.eq(StringUtils.isNotEmpty(dto.getLowQuality()), MovieBasicDO::getLowQuality, dto.getLowQuality());
+        query.eq(StringUtils.isNotEmpty(dto.getMandarin()), MovieBasicDO::getMandarin, dto.getMandarin());
+        query.eq(StringUtils.isNotEmpty(dto.getNoSubtitle()), MovieBasicDO::getNoSubtitle, dto.getNoSubtitle());
         return query;
     }
 
@@ -100,6 +105,10 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
         if (dto != null && Objects.nonNull(dto.getCountryId())) {
             List<MovieBasicCountryDTO> movieBasicCountryDTOList = movieBasicCountryService.listByCountryId(dto.getCountryId());
             dto.setIdList(movieBasicCountryDTOList.stream().map(MovieBasicCountryDTO::getMovieId).collect(Collectors.toList()));
+        }
+        if (dto != null && Objects.nonNull(dto.getActorId())) {
+            List<MovieBasicActorDTO> movieBasicActorDTOList = movieBasicActorService.listActorId(dto.getActorId());
+            dto.setIdList(movieBasicActorDTOList.stream().map(MovieBasicActorDTO::getMovieId).collect(Collectors.toList()));
         }
         return super.page(dto, page);
     }

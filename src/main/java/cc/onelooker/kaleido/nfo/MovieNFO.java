@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.nfo;
 import lombok.Data;
 
 import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.List;
 
 @Data
@@ -19,6 +20,7 @@ public class MovieNFO {
     private Float userrating;
     private Integer top250;
     private String outline;
+    @XmlJavaTypeAdapter(value = CDataAdapter.class)
     private String plot;
     private String tagline;
     private Integer runtime;

@@ -46,14 +46,14 @@ public class MovieCollectionSyncDoubanRunnable extends AbstractEntityActionRunna
     }
 
     @Override
-    protected void beforeRun(Map<String, Object> params) {
+    protected void beforeRun(Map<String, String> params) {
         super.beforeRun(params);
         doubanIdList = Lists.newArrayList();
         movieCollectionDTO = movieManager.syncCollection(MapUtils.getLong(params, "id"));
     }
 
     @Override
-    protected PageResult<Movie> page(int pageNumber, int pageSize) {
+    protected PageResult<Movie> page(Map<String, String> params,int pageNumber, int pageSize) {
         try {
             int start = (pageNumber - 1) * 25;
             if (start > movieCollectionDTO.getChildCount()) {
@@ -71,7 +71,7 @@ public class MovieCollectionSyncDoubanRunnable extends AbstractEntityActionRunna
     }
 
     @Override
-    protected void afterRun(Map<String, Object> params) {
+    protected void afterRun(Map<String, String> params) {
         super.afterRun(params);
         List<MovieBasicCollectionDTO> movieBasicCollectionDTOList = movieBasicCollectionService.listByCollectionId(movieCollectionDTO.getId());
         for (MovieBasicCollectionDTO movieBasicCollectionDTO : movieBasicCollectionDTOList) {

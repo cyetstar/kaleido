@@ -328,4 +328,11 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         return CommonResult.success(true);
     }
 
+    @PostMapping("analyze")
+    @ApiOperation(value = "分析")
+    public CommonResult<Boolean> analyze(@RequestBody MovieBasicAnalyzeReq req) {
+        movieManager.analyze(req.getId());
+        return CommonResult.success(true);
+    }
+
 }

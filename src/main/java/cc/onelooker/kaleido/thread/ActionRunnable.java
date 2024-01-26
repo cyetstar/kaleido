@@ -9,7 +9,7 @@ public interface ActionRunnable extends Runnable {
 
     Action getAction();
 
-    void setParams(Map<String, Object> params);
+    void setParams(Map<String, String> params);
 
     void stop();
 

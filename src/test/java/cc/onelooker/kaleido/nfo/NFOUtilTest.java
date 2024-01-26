@@ -22,7 +22,7 @@ public class NFOUtilTest {
     }
 
     @Test
-    public void write() throws JAXBException {
+    public void write() throws Exception {
         MovieNFO movieNFO = new MovieNFO();
         movieNFO.setPlot("test");
         NFOUtil.write(movieNFO, Paths.get("/Users/cyetstar/Downloads"), "movie2.nfo");

@@ -14,6 +14,6 @@ public class ActionStartReq {
 
     private String action;
 
-    private Map<String, Object> params;
+    private Map<String, String> params;
 
 }

@@ -16,7 +16,6 @@ public class CDataAdapter extends XmlAdapter<String, String> {
 
     @Override
     public String marshal(String v) throws Exception {
-        return new StringBuilder("<![CDATA[").append(v).append("]]>")
-                .toString();
+        return "<![CDATA[" + v + "]]>";
     }
 }

@@ -140,13 +140,13 @@ public class MovieBasicDO implements IdEntity<Long> {
     private String tmdbId;
 
     /**
-     * 多视频文件
+     * 多文件
      */
     @TableField(value = "multiple_files")
     private String multipleFiles;
 
     /**
-     * 无中文字幕
+     * 无字幕
      */
     @TableField(value = "no_subtitle")
     private String noSubtitle;

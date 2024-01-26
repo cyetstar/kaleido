@@ -113,7 +113,7 @@ public class MovieManager {
     }
 
     @Transactional
-    public void syncPlexMovieAndReadNFO(Long movieId) {
+    public void syncMovieAndReadNFO(Long movieId) {
         Metadata metadata = plexApiService.findMovieById(movieId);
         syncMovie(metadata);
         readNFO(metadata);
@@ -627,6 +627,12 @@ public class MovieManager {
     }
 
     @Transactional
+    public void analyze(Long movieId) {
+        Metadata metadata = plexApiService.findMovieById(movieId);
+        analyze(metadata);
+    }
+
+    @Transactional
     public void analyze(Metadata metadata) {
         try {
             MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
@@ -651,7 +657,7 @@ public class MovieManager {
                 } else {
                     movieBasicDTO.setMandarin(Constants.NO);
                 }
-                if (streamList.stream().anyMatch(s -> s.getStreamType() == 3 && StringUtils.equals(s.getLanguageTag(), "zh"))) {
+                if (streamList.stream().anyMatch(s -> s.getStreamType() == 3 && (StringUtils.equals(s.getLanguageTag(), "zh") || StringUtils.containsAnyIgnoreCase(s.getTitle(), "中", "简", "chs", "cht")))) {
                     movieBasicDTO.setNoSubtitle(Constants.NO);
                 } else {
                     movieBasicDTO.setNoSubtitle(Constants.YES);

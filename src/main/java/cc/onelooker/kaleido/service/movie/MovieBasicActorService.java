@@ -15,9 +15,12 @@ public interface MovieBasicActorService extends IBaseService<MovieBasicActorDTO>
 
     List<MovieBasicActorDTO> listByMovieId(Long movieId);
 
+    List<MovieBasicActorDTO> listActorId(Long actorId);
+
     MovieBasicActorDTO findByMovieIdAndActorId(Long movieId, Long actorId);
 
     MovieBasicActorDTO insertByMovieIdAndActorIdAndRole(Long movieId, Long actorId, String role);
 
     boolean deleteByMovieId(Long movieId);
+
 }

@@ -26,19 +26,19 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
      */
     protected abstract void processEntity(T entity) throws Exception;
 
-    protected abstract PageResult<T> page(int pageNumber, int pageSize);
+    protected abstract PageResult<T> page(Map<String, String> params, int pageNumber, int pageSize);
 
     protected String getMessage(T entity) {
         return entity.toString();
     }
 
     @Override
-    public void innerRun(Map<String, Object> params) {
+    public void innerRun(Map<String, String> params) {
         int pageNumber = 1;
         int pageSize = 1000;
         int num = 0;
         while (true) {
-            PageResult<T> pageResult = page(pageNumber, pageSize);
+            PageResult<T> pageResult = page(params, pageNumber, pageSize);
             if (pageResult == null || pageResult.isEmpty()) {
                 break;
             }

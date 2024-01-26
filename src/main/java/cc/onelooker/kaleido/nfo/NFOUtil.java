@@ -14,6 +14,18 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.lang.reflect.Proxy;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -170,12 +182,37 @@ public class NFOUtil {
         return setNFO;
     }
 
-    public static void write(MovieNFO movieNFO, Path path, String filename) throws JAXBException {
-        marshaller.marshal(movieNFO, path.resolve(filename).toFile());
+    public static void write(MovieNFO movieNFO, Path path, String filename) throws Exception {
+        StringWriter writer = new StringWriter();
+        XMLStreamWriter streamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
+        XMLStreamWriter cdataStreamWriter = (XMLStreamWriter) Proxy.newProxyInstance(streamWriter.getClass().getClassLoader(), streamWriter.getClass().getInterfaces(), new CDataHandler(streamWriter));
+        marshaller.marshal(movieNFO, cdataStreamWriter);
+        String content = indentFormat(writer.toString());
+        Files.write(path.resolve(filename), content.getBytes());
     }
 
     public static MovieNFO read(Path path, String filename) throws JAXBException {
         return (MovieNFO) unmarshaller.unmarshal(path.resolve(filename).toFile());
+    }
+
+    public static String indentFormat(String xml) {
+        try {
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer = factory.newTransformer();
+            // *) 打开对齐开关
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            // *) 忽略掉xml声明头信息
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+            StringWriter formattedStringWriter = new StringWriter();
+            transformer.transform(new StreamSource(new StringReader(xml)), new StreamResult(formattedStringWriter));
+
+            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + formattedStringWriter;
+        } catch (TransformerException e) {
+        }
+        return null;
     }
 }
 

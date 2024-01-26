@@ -14,6 +14,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
+import java.util.Map;
+
 /**
  * 电影Convert
  *
@@ -30,10 +32,6 @@ public interface MovieBasicConvert {
     @InheritInverseConfiguration(name = "convert")
     MovieBasicDO convertToDO(MovieBasicDTO dto);
 
-    @Mappings({
-            @Mapping(source = "genre", target = "genreId"),
-            @Mapping(source = "country", target = "countryId")
-    })
     MovieBasicDTO convertToDTO(MovieBasicPageReq req);
 
     MovieBasicDTO convertToDTO(MovieBasicCreateReq req);
@@ -51,4 +49,9 @@ public interface MovieBasicConvert {
     MovieBasicSearchInfoResp convertToSearchInfoResp(Movie movie);
 
     MovieBasicListByCollectionIdResp convertToListByCollectionIdResp(MovieBasicDTO dto);
+
+    @Mappings({
+            @Mapping(target = "idList", ignore = true),
+    })
+    MovieBasicDTO convertToDTO(Map<String, String> params);
 }

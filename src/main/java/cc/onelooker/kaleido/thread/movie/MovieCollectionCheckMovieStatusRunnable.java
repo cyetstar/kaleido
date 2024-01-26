@@ -12,6 +12,8 @@ import com.zjjcnt.common.util.constant.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * @Author xiadawei
  * @Date 2024-01-05 14:04:00
@@ -32,7 +34,7 @@ public class MovieCollectionCheckMovieStatusRunnable extends AbstractEntityActio
     }
 
     @Override
-    protected PageResult<MovieBasicCollectionDTO> page(int pageNumber, int pageSize) {
+    protected PageResult<MovieBasicCollectionDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
         MovieBasicCollectionDTO param = new MovieBasicCollectionDTO();
         param.setStatus(Constants.NO);
         return movieBasicCollectionService.page(param, Page.of(pageNumber, pageNumber, true));

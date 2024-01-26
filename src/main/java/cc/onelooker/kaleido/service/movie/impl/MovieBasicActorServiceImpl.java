@@ -54,6 +54,14 @@ public class MovieBasicActorServiceImpl extends AbstractBaseServiceImpl<MovieBas
     }
 
     @Override
+    public List<MovieBasicActorDTO> listActorId(Long actorId) {
+        Validate.notNull(actorId);
+        MovieBasicActorDTO param = new MovieBasicActorDTO();
+        param.setActorId(actorId);
+        return list(param);
+    }
+
+    @Override
     public MovieBasicActorDTO findByMovieIdAndActorId(Long movieId, Long actorId) {
         Validate.notNull(movieId);
         Validate.notNull(actorId);

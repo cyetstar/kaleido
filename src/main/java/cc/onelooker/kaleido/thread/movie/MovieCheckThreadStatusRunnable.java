@@ -10,6 +10,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * Created by cyetstar on 2021/1/7.
  */
@@ -31,7 +33,7 @@ public class MovieCheckThreadStatusRunnable extends AbstractEntityActionRunnable
     }
 
     @Override
-    protected PageResult<MovieThreadDTO> page(int pageNumber, int pageSize) {
+    protected PageResult<MovieThreadDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
         return movieThreadService.page(null, Page.of(pageNumber, pageSize, true));
     }
 

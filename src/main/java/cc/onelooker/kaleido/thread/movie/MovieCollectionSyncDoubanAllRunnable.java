@@ -14,6 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * @Author xiadawei
  * @Date 2024-01-04 19:47:00
@@ -37,7 +39,7 @@ public class MovieCollectionSyncDoubanAllRunnable extends AbstractEntityActionRu
     }
 
     @Override
-    protected PageResult<MovieCollectionDTO> page(int pageNumber, int pageSize) {
+    protected PageResult<MovieCollectionDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
         return movieCollectionService.page(null, Page.of(pageNumber, pageSize, true));
     }
 
@@ -48,7 +50,7 @@ public class MovieCollectionSyncDoubanAllRunnable extends AbstractEntityActionRu
         if (StringUtils.compare(movieCollectionDTO.getUpdateTime(), updated) >= 0) {
             return;
         }
-        movieCollectionSyncDoubanRunnable.setParams(ImmutableMap.of("id", movieCollectionDTO.getId()));
+        movieCollectionSyncDoubanRunnable.setParams(ImmutableMap.of("id", String.valueOf(movieCollectionDTO.getId())));
         movieCollectionSyncDoubanRunnable.run();
     }
 

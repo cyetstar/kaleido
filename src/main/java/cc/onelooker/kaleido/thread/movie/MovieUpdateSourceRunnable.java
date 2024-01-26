@@ -40,13 +40,13 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
     }
 
     @Override
-    protected void beforeRun(Map<String, Object> params) {
+    protected void beforeRun(Map<String, String> params) {
         movieDownloadPath = ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath);
         logger = LogUtil.getLogger(MovieUpdateSourceRunnable.class);
     }
 
     @Override
-    protected PageResult<Path> page(int pageNumber, int pageSize) {
+    protected PageResult<Path> page(Map<String, String> params, int pageNumber, int pageSize) {
         try {
             PageResult<Path> pageResult = new PageResult<>();
             pageResult.setSearchCount(true);

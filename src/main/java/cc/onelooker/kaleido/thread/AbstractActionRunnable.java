@@ -14,7 +14,7 @@ public abstract class AbstractActionRunnable implements ActionRunnable {
 
     private volatile boolean stopFlag = false;
 
-    private Map<String, Object> params;
+    private Map<String, String> params;
 
     @Override
     public void stop() {
@@ -27,7 +27,7 @@ public abstract class AbstractActionRunnable implements ActionRunnable {
     }
 
     @Override
-    public void setParams(Map<String, Object> params) {
+    public void setParams(Map<String, String> params) {
         this.params = params;
     }
 
@@ -55,15 +55,15 @@ public abstract class AbstractActionRunnable implements ActionRunnable {
         }
     }
 
-    protected void beforeRun(@Nullable Map<String, Object> params) {
+    protected void beforeRun(@Nullable Map<String, String> params) {
     }
 
     /**
      * 内部运行
      */
-    abstract void innerRun(@Nullable Map<String, Object> params);
+    abstract void innerRun(@Nullable Map<String, String> params);
 
-    protected void afterRun(@Nullable Map<String, Object> params) {
+    protected void afterRun(@Nullable Map<String, String> params) {
     }
 
     protected void updateActionState(String message, Float percent) {

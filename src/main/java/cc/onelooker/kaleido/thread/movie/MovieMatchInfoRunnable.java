@@ -11,25 +11,26 @@ import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by cyetstar on 2021/1/7.
  */
 @Component
-public class MovieExportNFORunnable extends AbstractEntityActionRunnable<MovieBasicDTO> {
+public class MovieMatchInfoRunnable extends AbstractEntityActionRunnable<MovieBasicDTO> {
 
     private final MovieBasicService movieBasicService;
 
     private final MovieManager movieManager;
 
-    public MovieExportNFORunnable(MovieBasicService movieBasicService, MovieManager movieManager) {
+    public MovieMatchInfoRunnable(MovieBasicService movieBasicService, MovieManager movieManager) {
         this.movieBasicService = movieBasicService;
         this.movieManager = movieManager;
     }
 
     @Override
     public Action getAction() {
-        return Action.movieExportNFO;
+        return Action.movieMatchInfo;
     }
 
     @Override
@@ -40,7 +41,11 @@ public class MovieExportNFORunnable extends AbstractEntityActionRunnable<MovieBa
 
     @Override
     protected void processEntity(MovieBasicDTO dto) throws Exception {
-        movieManager.exportNFO(dto);
+        movieManager.matchInfo(dto.getId(), dto.getDoubanId(), dto.getImdbId(), dto.getTmdbId());
     }
 
+    @Override
+    public int getSleepSecond() {
+        return new Random().nextInt(5);
+    }
 }
