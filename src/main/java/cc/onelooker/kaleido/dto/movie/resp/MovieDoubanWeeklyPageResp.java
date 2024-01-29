@@ -1,11 +1,12 @@
 package cc.onelooker.kaleido.dto.movie.resp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.zjjcnt.common.core.annotation.StringDateFormat;
+import com.zjjcnt.common.util.JsonUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
+
+import java.util.Map;
 
 /**
  * 豆瓣电影口碑榜响应对象
@@ -20,6 +21,9 @@ public class MovieDoubanWeeklyPageResp {
     @ApiModelProperty("主键")
     private Long id;
 
+    @ApiModelProperty("豆瓣编号")
+    private String doubanId;
+
     @ApiModelProperty("电影名")
     private String title;
 
@@ -32,18 +36,17 @@ public class MovieDoubanWeeklyPageResp {
     @ApiModelProperty("海报")
     private String thumb;
 
-    @StringDateFormat
-    @ApiModelProperty("上榜日期")
-    private String listingDate;
-
-    @ApiModelProperty("下榜日期")
-    private String delistingDate;
-
     @ApiModelProperty("最高名次")
     private Integer top;
 
     @ApiModelProperty("备注")
     private String memo;
+
+    @ApiModelProperty("上榜情况")
+    private String listingDetail;
+
+    @ApiModelProperty("在榜状态")
+    private String status;
 
     @ApiModelProperty("电影id")
     private Long movieId;
@@ -52,11 +55,8 @@ public class MovieDoubanWeeklyPageResp {
     private String imdb;
 
     @JsonProperty
-    @StringDateFormat
-    public String getDelistingDate() {
-        if (StringUtils.equals(delistingDate, "99999999")) {
-            return null;
-        }
-        return delistingDate;
+    private Map<String, Integer> getListingDetailMap() {
+        return JsonUtils.parseMapType(this.listingDetail, Integer.class);
     }
+
 }

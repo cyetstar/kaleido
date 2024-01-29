@@ -87,4 +87,14 @@ public class MovieBasicActorServiceImpl extends AbstractBaseServiceImpl<MovieBas
         param.setMovieId(movieId);
         return delete(param);
     }
+
+    @Override
+    public boolean deleteByMovieIdAndRole(Long movieId, String role) {
+        Validate.notNull(movieId);
+        Validate.notEmpty(role);
+        MovieBasicActorDTO param = new MovieBasicActorDTO();
+        param.setMovieId(movieId);
+        param.setRole(role);
+        return delete(param);
+    }
 }

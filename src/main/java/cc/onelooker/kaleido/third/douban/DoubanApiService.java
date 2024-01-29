@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.util.constant.Constants;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -17,6 +18,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -88,10 +91,24 @@ public class DoubanApiService {
         JSONObject jsonObject = response.getBody();
 //        String text = null;
 //        try {
-//            text = FileUtils.readFileToString(new File("/Users/cyetstar/20240105.json"));
+//            text = FileUtils.readFileToString(new File("/Users/cyetstar/20231229.json"));
 //        } catch (IOException e) {
 //        }
 //        JSONObject jsonObject = JSONObject.parseObject(text);
+        if (jsonObject != null) {
+            JSONArray jsonArray = jsonObject.getJSONArray("subjects");
+            return jsonArray.toJavaList(Subject.class);
+        }
+        return Lists.newArrayList();
+    }
+
+    public List<Subject> listMovieWeeklyFromJSON(String filePath) {
+        String text = null;
+        try {
+            text = FileUtils.readFileToString(Paths.get(filePath).toFile());
+        } catch (IOException e) {
+        }
+        JSONObject jsonObject = JSONObject.parseObject(text);
         if (jsonObject != null) {
             JSONArray jsonArray = jsonObject.getJSONArray("subjects");
             return jsonArray.toJavaList(Subject.class);

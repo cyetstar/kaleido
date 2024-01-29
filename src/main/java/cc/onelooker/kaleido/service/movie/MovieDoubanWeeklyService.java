@@ -12,4 +12,5 @@ import cc.onelooker.kaleido.dto.movie.MovieDoubanWeeklyDTO;
  */
 public interface MovieDoubanWeeklyService extends IBaseService<MovieDoubanWeeklyDTO> {
 
+    MovieDoubanWeeklyDTO findByDoubanId(String doubanId);
 }

@@ -23,4 +23,6 @@ public interface MovieBasicActorService extends IBaseService<MovieBasicActorDTO>
 
     boolean deleteByMovieId(Long movieId);
 
+    boolean deleteByMovieIdAndRole(Long movieId, String role);
+
 }

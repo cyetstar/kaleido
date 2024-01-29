@@ -45,6 +45,7 @@ public class Movie {
     private Integer doubanTop250;
     private String comment;
     private Integer pos;
+    private String source;
 
     @Override
     public String toString() {

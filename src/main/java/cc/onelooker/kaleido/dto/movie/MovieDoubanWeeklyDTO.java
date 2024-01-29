@@ -1,12 +1,12 @@
 package cc.onelooker.kaleido.dto.movie;
 
-import lombok.Data;
+import com.google.common.collect.Maps;
 import com.zjjcnt.common.core.dto.BaseDTO;
+import com.zjjcnt.common.util.JsonUtils;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
-import java.lang.Long;
-import java.lang.String;
-import java.lang.Integer;
-import com.zjjcnt.common.core.annotation.StringDateFormat;
+import java.util.Map;
 
 /**
  * 豆瓣电影口碑榜DTO
@@ -23,6 +23,11 @@ public class MovieDoubanWeeklyDTO implements BaseDTO<Long> {
      * 主键
      */
     private Long id;
+
+    /**
+     * 豆瓣编号
+     */
+    private String doubanId;
 
     /**
      * 电影名
@@ -45,47 +50,24 @@ public class MovieDoubanWeeklyDTO implements BaseDTO<Long> {
     private String thumb;
 
     /**
-     * 上榜日期
-     */
-    private String listingDate;
-
-    /**
-     * 下榜日期
-     */
-    private String delistingDate;
-
-    /**
      * 最高名次
      */
     private Integer top;
 
     /**
+     * 上榜情况
+     */
+    private String listingDetail;
+
+    /**
+     * 在榜状态
+     */
+    private String status;
+
+    /**
      * 备注
      */
     private String memo;
-
-    // ------ 非数据库表字段 -------
-    /**
-    * 大于等于上榜日期
-    */
-    private String listingDateStart;
-
-    /**
-    * 小于等于上榜日期
-    */
-    private String listingDateEnd;
-
-    /**
-    * 大于等于下榜日期
-    */
-    private String delistingDateStart;
-
-    /**
-    * 小于等于下榜日期
-    */
-    private String delistingDateEnd;
-
-
 
     @Override
     public Long getId() {
@@ -96,4 +78,22 @@ public class MovieDoubanWeeklyDTO implements BaseDTO<Long> {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public void addListingDetail(String listingDate, Integer rank) {
+        Map<String, Integer> listDetailMap = getListDetailMap();
+        listDetailMap.put(listingDate, rank);
+        this.listingDetail = JsonUtils.toJsonString(listDetailMap);
+    }
+
+    public Map<String, Integer> getListDetailMap() {
+        if (StringUtils.isNotEmpty(listingDetail)) {
+            return JsonUtils.parseMapType(listingDetail, Integer.class);
+        }
+        return Maps.newTreeMap();
+    }
+
+    public Integer getBestTop() {
+        return getListDetailMap().values().stream().min(Integer::compareTo).orElse(10);
+    }
+
 }

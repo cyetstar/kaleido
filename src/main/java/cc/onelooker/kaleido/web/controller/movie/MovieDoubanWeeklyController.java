@@ -51,7 +51,7 @@ public class MovieDoubanWeeklyController extends AbstractCrudController<MovieDou
     @GetMapping("page")
     @ApiOperation(value = "查询豆瓣电影口碑榜")
     public CommonResult<PageResult<MovieDoubanWeeklyPageResp>> page(MovieDoubanWeeklyPageReq req, PageParam pageParam) {
-        pageParam.setOrderBy("DESC:delisting_date;ASC:top");
+        pageParam.setOrderBy("DESC:status;ASC:top;DESC:id");
         PageResult<MovieDoubanWeeklyPageResp> pageResult = super.doPage(req, pageParam, MovieDoubanWeeklyConvert.INSTANCE::convertToDTO, MovieDoubanWeeklyConvert.INSTANCE::convertToPageResp);
         pageResult.getRecords().stream().forEach(s -> {
             MovieBasicDTO movieBasicDTO = movieBasicService.findByDoubanId(String.valueOf(s.getId()));

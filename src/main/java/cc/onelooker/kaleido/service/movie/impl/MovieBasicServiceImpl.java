@@ -63,6 +63,9 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
     @Override
     protected Wrapper<MovieBasicDO> genQueryWrapper(MovieBasicDTO dto) {
         LambdaQueryWrapper<MovieBasicDO> query = new LambdaQueryWrapper<>();
+        if (StringUtils.isNotEmpty(dto.getKeyword())) {
+            query.and(q -> q.like(MovieBasicDO::getTitle, dto.getKeyword()).or().like(MovieBasicDO::getOriginalTitle, dto.getKeyword()).or().eq(MovieBasicDO::getDoubanId, dto.getKeyword()).or().eq(MovieBasicDO::getImdbId, dto.getKeyword()));
+        }
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), MovieBasicDO::getTitle, dto.getTitle());
         query.eq(StringUtils.isNotEmpty(dto.getOriginalTitle()), MovieBasicDO::getOriginalTitle, dto.getOriginalTitle());
         query.eq(StringUtils.isNotEmpty(dto.getTitleSort()), MovieBasicDO::getTitleSort, dto.getTitleSort());
@@ -84,9 +87,6 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
         query.eq(StringUtils.isNotEmpty(dto.getTmdbId()), MovieBasicDO::getTmdbId, dto.getTmdbId());
         query.eq(Objects.nonNull(dto.getAddedAt()), MovieBasicDO::getAddedAt, dto.getAddedAt());
         query.eq(Objects.nonNull(dto.getUpdatedAt()), MovieBasicDO::getUpdatedAt, dto.getUpdatedAt());
-        if (StringUtils.isNotEmpty(dto.getKeyword())) {
-            query.like(MovieBasicDO::getTitle, dto.getKeyword()).or().like(MovieBasicDO::getOriginalTitle, dto.getKeyword()).or().eq(MovieBasicDO::getDoubanId, dto.getKeyword()).or().eq(MovieBasicDO::getImdbId, dto.getKeyword());
-        }
         query.likeRight(StringUtils.length(dto.getDecade()) > 3, MovieBasicDO::getYear, StringUtils.substring(dto.getDecade(), 0, 3));
         query.in(CollectionUtils.isNotEmpty(dto.getIdList()), MovieBasicDO::getId, dto.getIdList());
         query.eq(StringUtils.isNotEmpty(dto.getMultipleFiles()), MovieBasicDO::getMultipleFiles, dto.getMultipleFiles());

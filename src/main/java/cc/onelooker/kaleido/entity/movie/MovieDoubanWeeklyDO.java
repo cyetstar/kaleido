@@ -1,18 +1,11 @@
 package cc.onelooker.kaleido.entity.movie;
 
-import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.IdType;
-
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.zjjcnt.common.core.entity.IdEntity;
-import com.zjjcnt.common.core.annotation.Crypto;
-
-import java.lang.Long;
-import java.lang.String;
-import java.lang.Integer;
-import com.zjjcnt.common.core.annotation.StringDateFormat;
+import lombok.Data;
 
 /**
  * 豆瓣电影口碑榜DO
@@ -29,8 +22,14 @@ public class MovieDoubanWeeklyDO implements IdEntity<Long> {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
+
+    /**
+     * 豆瓣编号
+     */
+    @TableField(value = "douban_id")
+    private String doubanId;
 
     /**
      * 电影名
@@ -57,16 +56,10 @@ public class MovieDoubanWeeklyDO implements IdEntity<Long> {
     private String thumb;
 
     /**
-     * 上榜日期
+     * 上榜情况
      */
-    @TableField(value = "listing_date")
-    private String listingDate;
-
-    /**
-     * 下榜日期
-     */
-    @TableField(value = "delisting_date")
-    private String delistingDate;
+    @TableField(value = "listing_detail")
+    private String listingDetail;
 
     /**
      * 最高名次
@@ -80,6 +73,11 @@ public class MovieDoubanWeeklyDO implements IdEntity<Long> {
     @TableField(value = "memo")
     private String memo;
 
+    /**
+     * 在榜状态
+     */
+    @TableField(value = "status")
+    private String status;
 
     @Override
     public Long getId() {

@@ -1,12 +1,13 @@
 package cc.onelooker.kaleido.service.movie;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.Assert.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @Author xiadawei
@@ -22,7 +23,13 @@ public class MovieManagerTest {
 
     @Test
     public void syncDoubanWeekly() {
-        movieManager.syncDoubanWeekly();
+        String[] filenames = new String[]{"20231215.json", "20231222.json", "20231229.json", "20240105.json",
+                "20240112.json", "20240119.json", "20240126.json"};
+        for (String filename : filenames) {
+            String baseName = FilenameUtils.getBaseName(filename);
+            LocalDate localDate = LocalDate.parse(baseName, DateTimeFormatter.ofPattern("yyyyMMdd"));
+            movieManager.syncDoubanWeekly(localDate.plusDays(1), "/Users/cyetstar/dev/douban/" + filename);
+        }
     }
 
 }

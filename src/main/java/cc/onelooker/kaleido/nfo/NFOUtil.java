@@ -58,7 +58,9 @@ public class NFOUtil {
         movieNFO.setTitle(movie.getTitle());
         movieNFO.setOriginaltitle(movie.getOriginalTitle());
         movieNFO.setYear(movie.getYear());
-        CollectionUtils.addIgnoreNull(Lists.newArrayList(), toRatingNFO(movie));
+        List<RatingNFO> ratingNFOList = Lists.newArrayList();
+        CollectionUtils.addIgnoreNull(ratingNFOList, toRatingNFO(movie));
+        movieNFO.setRatings(ratingNFOList);
         List<UniqueidNFO> uniqueidNFOList = Lists.newArrayList();
         CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.douban, movie.getDoubanId()));
         CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.imdb, movie.getImdbId()));
@@ -93,9 +95,6 @@ public class NFOUtil {
         movieNFO.setYear(metadata.getYear());
         movieNFO.setPlot(metadata.getSummary());
         movieNFO.setMpaa(metadata.getContentRating());
-        if (StringUtils.isNotEmpty(metadata.getStudio())) {
-            movieNFO.setStudios(Lists.newArrayList(metadata.getStudio()));
-        }
         if (metadata.getGenreList() != null) {
             movieNFO.setGenres(metadata.getGenreList().stream().map(Tag::getTag).collect(Collectors.toList()));
         }
@@ -105,7 +104,6 @@ public class NFOUtil {
         if (metadata.getRating() != null) {
             RatingNFO ratingNFO = new RatingNFO();
             ratingNFO.setValue(String.valueOf(metadata.getRating()));
-            ratingNFO.setName(SourceType.douban.name());
             movieNFO.setRatings(Lists.newArrayList(ratingNFO));
         }
         if (metadata.getDirectorList() != null) {
@@ -139,7 +137,6 @@ public class NFOUtil {
             return null;
         }
         RatingNFO ratingNFO = new RatingNFO();
-        ratingNFO.setName(SourceType.douban.name());
         ratingNFO.setValue(String.valueOf(movie.getAverage()));
         return ratingNFO;
     }
