@@ -2,14 +2,17 @@ package cc.onelooker.kaleido.thread.movie;
 
 import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
 import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.movie.MovieBasicService;
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
 import cc.onelooker.kaleido.thread.Action;
+import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Random;
 
@@ -23,6 +26,8 @@ public class MovieMatchInfoRunnable extends AbstractEntityActionRunnable<MovieBa
 
     private final MovieManager movieManager;
 
+    private Integer sleepSecond;
+
     public MovieMatchInfoRunnable(MovieBasicService movieBasicService, MovieManager movieManager) {
         this.movieBasicService = movieBasicService;
         this.movieManager = movieManager;
@@ -31,6 +36,12 @@ public class MovieMatchInfoRunnable extends AbstractEntityActionRunnable<MovieBa
     @Override
     public Action getAction() {
         return Action.movieMatchInfo;
+    }
+
+    @Override
+    protected void beforeRun(@Nullable Map<String, String> params) {
+        super.beforeRun(params);
+        this.sleepSecond = Integer.valueOf(ConfigUtils.getSysConfig(ConfigKey.matchInfoSleepSecond, "0"));
     }
 
     @Override
@@ -46,6 +57,6 @@ public class MovieMatchInfoRunnable extends AbstractEntityActionRunnable<MovieBa
 
     @Override
     public int getSleepSecond() {
-        return new Random().nextInt(5);
+        return new Random().nextInt(sleepSecond);
     }
 }

@@ -23,4 +23,6 @@ public enum ConfigKey {
     doubanApikey,
     tmmUrl,
     tmdbApikey, movieTrashPath, lastMovieAnalyzeTime,
+    plexRetries,
+    matchInfoSleepSecond;
 }

@@ -89,12 +89,6 @@ public class DoubanApiService {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<JSONObject> response = restTemplate.postForEntity(URL + API_LIST_MOVIE_WEEKLY, request, JSONObject.class);
         JSONObject jsonObject = response.getBody();
-//        String text = null;
-//        try {
-//            text = FileUtils.readFileToString(new File("/Users/cyetstar/20231229.json"));
-//        } catch (IOException e) {
-//        }
-//        JSONObject jsonObject = JSONObject.parseObject(text);
         if (jsonObject != null) {
             JSONArray jsonArray = jsonObject.getJSONArray("subjects");
             return jsonArray.toJavaList(Subject.class);
