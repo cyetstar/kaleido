@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 public class KaleidoUtils {
 
     private static String[] noMainVideos = new String[]{"-other", "-CD2", "-CD3", "-CD4", "-CD5", "-CD6", "Part.2"};
-    public static String[] videoExtensions = new String[]{"mkv", "mp4", "avi", "wmv", "rmvb", "ts"};
+    public static String[] videoExtensions = new String[]{"mkv", "mp4", "avi", "wmv", "rmvb", "ts", "m2ts"};
     public static String[] lowQualityExtensions = new String[]{"avi", "wmv", "rmvb", "mp4"};
 
     public static String getMovieFolder(String path) {

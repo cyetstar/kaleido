@@ -47,28 +47,25 @@ public class NioFileUtilsTest {
     @Test
     public void deleteEmptyFolder() {
         String movieLibraryPath = "/Volumes/movie";
-        try (Stream<Path> paths = Files.list(Paths.get(movieLibraryPath))) {
-            List<Path> pathList = paths.collect(Collectors.toList());
-            int count = 0;
-            for (Path p : pathList) {
-                count++;
-                if (!Files.isDirectory(p) || StringUtils.equals(p.toString(), "/Volumes/movie/#recycle")) {
-                    continue;
-                }
-                try (Stream<Path> subPaths = Files.list(p)) {
-                    if (subPaths.noneMatch(s -> KaleidoUtils.isVideoFile(s.getFileName().toString()))) {
-                        Files.deleteIfExists(p);
-                        log.info("删除空文件夹：{}", p);
+        String[] decadeArr = {"1900s", "1910s", "1920s", "1930s", "1940s", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"};
+        for (String decade : decadeArr) {
+            try (Stream<Path> paths = Files.list(Paths.get(movieLibraryPath, decade))) {
+                List<Path> pathList = paths.collect(Collectors.toList());
+                for (Path p : pathList) {
+                    if (!Files.isDirectory(p)) {
+                        continue;
                     }
-                } catch (Exception e) {
-                    log.error("删除空文件夹发生错误：{}", p);
+                    try (Stream<Path> subPaths = Files.list(p)) {
+                        if (subPaths.noneMatch(s -> KaleidoUtils.isVideoFile(s.getFileName().toString()))) {
+                            log.info("发现空文目录：{}", p);
+                        }
+                    } catch (Exception e) {
+                        log.error("发现空文目录出现错误：{}", p);
+                    }
                 }
-                if (count % 1000 == 0) {
-                    log.info("已经处理了 {} 个文件夹", count);
-                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

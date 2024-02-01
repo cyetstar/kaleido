@@ -1,10 +1,13 @@
 package cc.onelooker.kaleido.dto.music.resp;
 
 import cc.onelooker.kaleido.dto.music.MusicArtistDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -71,6 +74,10 @@ public class MusicAlbumViewResp {
     @ApiModelProperty("更新时间")
     private Long updatedAt;
 
-    //
     private List<MusicArtistDTO> musicArtistDTOList;
+
+    @JsonProperty
+    public List<String> summaryList() {
+        return Arrays.asList(StringUtils.split(summary, "\n"));
+    }
 }

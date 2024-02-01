@@ -8,6 +8,6 @@ import lombok.Data;
  * @Description TODO
  */
 @Data
-public class MusicAlbumUpdateLyricReq {
+public class MusicAlbumDownloadLyricReq {
     private Long id;
 }

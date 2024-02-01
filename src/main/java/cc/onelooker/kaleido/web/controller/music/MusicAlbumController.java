@@ -130,7 +130,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     //读取封面文件，输出字节流
     @PostMapping("updateAudioTag")
     public CommonResult<Boolean> updateAudioTag(@RequestBody MusicAlbumUpdateAudioTagReq req) {
-        int error = musicManager.updateAudioTag(req.getId());
+        int error = musicManager.readAudioTag(req.getId());
         return CommonResult.success(error == 0);
     }
 
@@ -153,7 +153,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     }
 
     @PostMapping("downloadLyric")
-    public CommonResult<Boolean> downloadLyric(@RequestBody MusicAlbumUpdateLyricReq req) {
+    public CommonResult<Boolean> downloadLyric(@RequestBody MusicAlbumDownloadLyricReq req) {
         int error = musicManager.downloadLyric(req.getId());
         return CommonResult.success(error == 0);
     }
@@ -176,6 +176,15 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
         Metadata metadata = metadataList.get(0);
         String folder = KaleidoUtils.getMusicFolder(metadata.getMedia().getPart().getFile());
         return CommonResult.success(folder);
+    }
+
+    @GetMapping("viewNetease")
+    @ApiOperation(value = "查询网易云专辑")
+    public CommonResult<MusicAlbumViewNeteaseResp> viewNetease(Long id) {
+        MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(id);
+        Album album = neteaseApiService.getAlbum(musicAlbumDTO.getNeteaseId());
+        MusicAlbumViewNeteaseResp resp = MusicAlbumConvert.INSTANCE.convertToViewNeteaseResp(album);
+        return CommonResult.success(resp);
     }
 
     @PostMapping("uploadCover")

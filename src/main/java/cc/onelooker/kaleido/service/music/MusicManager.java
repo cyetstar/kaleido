@@ -12,6 +12,7 @@ import cc.onelooker.kaleido.third.netease.Song;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
@@ -66,6 +68,12 @@ public class MusicManager {
     public void syncPlexAlbumById(String libraryPath, Long albumId) {
         Metadata metadata = plexApiService.findAlbumById(albumId);
         syncPlexAlbum(libraryPath, metadata);
+    }
+
+    @Transactional
+    public void syncPlexAlbumAndReadAudioTag(String libraryPath, Metadata metadata) {
+        syncPlexAlbum(libraryPath, metadata);
+        readAudioTag(metadata.getRatingKey());
     }
 
     @Transactional
@@ -143,7 +151,7 @@ public class MusicManager {
         return musicTrackDTOList;
     }
 
-    public int updateAudioTag(Long albumId) {
+    public int readAudioTag(Long albumId) {
         int error = 0;
         List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(albumId);
         for (int i = 0; i < musicTrackDTOList.size(); i++) {
@@ -155,7 +163,7 @@ public class MusicManager {
                 String musicLibraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
                 File file = Paths.get(musicLibraryPath, musicTrackDTO.getPath()).toFile();
                 AudioFile audioFile = AudioFileIO.read(file);
-                Map<String, String> infoMap = readTag(audioFile.getTag());
+                Map<String, String> infoMap = getTagInfo(audioFile.getTag());
 
                 musicTrackDTO.setArtists(infoMap.get("ARTIST"));
                 musicTrackDTO.setDiscIndex(Integer.valueOf(infoMap.get("DISC_NO")));
@@ -182,7 +190,7 @@ public class MusicManager {
         return error;
     }
 
-    private Map<String, String> readTag(Tag tag) {
+    private Map<String, String> getTagInfo(Tag tag) {
         Map<String, String> resultMap = Maps.newHashMap();
         if (tag instanceof FlacTag) {
             FlacTag flacTag = (FlacTag) tag;
@@ -221,19 +229,12 @@ public class MusicManager {
     public int downloadLyric(Long albumId) {
         int error = 0;
         List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(albumId);
-
-        for (int i = 0; i < musicTrackDTOList.size(); i++) {
-            MusicTrackDTO musicTrackDTO = musicTrackDTOList.get(i);
+        for (MusicTrackDTO musicTrackDTO : musicTrackDTOList) {
             if (StringUtils.isEmpty(musicTrackDTO.getPath())) {
                 continue;
             }
             try {
-                String musicLibraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
-                File file = Paths.get(musicLibraryPath, FilenameUtils.removeExtension(musicTrackDTO.getPath()) + ".lrc").toFile();
-                String lyric = neteaseApiService.getLyric(musicTrackDTO.getNeteaseId());
-                if (StringUtils.isNotEmpty(lyric)) {
-                    FileUtils.writeStringToFile(file, lyric, StandardCharsets.UTF_8);
-                }
+                downloadTrackLyric(musicTrackDTO);
             } catch (Exception e) {
                 log.error("下载歌词失败，曲目名称：{}", musicTrackDTO.getTitle());
                 error++;
@@ -255,7 +256,9 @@ public class MusicManager {
 
         List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(albumId);
         for (MusicTrackDTO musicTrackDTO : musicTrackDTOList) {
-            Song song = songs.stream().filter(s -> StringUtils.equals(musicTrackDTO.getTitle(), s.getName())).findFirst().orElse(null);
+            String title = musicTrackDTO.getTitle();
+            String simple = ZhConverterUtil.toSimple(title);
+            Song song = songs.stream().filter(s -> StringUtils.equalsAny(s.getName(), title, simple)).findFirst().orElse(null);
             if (song != null) {
                 musicTrackDTO.setNeteaseId(song.getId());
                 musicTrackService.update(musicTrackDTO);
@@ -272,4 +275,23 @@ public class MusicManager {
         }
     }
 
+    public void downloadTrackLyric(Long trackId, String neteaseId) {
+        MusicTrackDTO musicTrackDTO = musicTrackService.findById(trackId);
+        try {
+            musicTrackDTO.setNeteaseId(neteaseId);
+            musicTrackService.update(musicTrackDTO);
+            downloadTrackLyric(musicTrackDTO);
+        } catch (Exception e) {
+            log.error("下载歌词失败，曲目名称：{}", musicTrackDTO.getTitle());
+        }
+    }
+
+    private void downloadTrackLyric(MusicTrackDTO musicTrackDTO) throws IOException {
+        String musicLibraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
+        File file = Paths.get(musicLibraryPath, FilenameUtils.removeExtension(musicTrackDTO.getPath()) + ".lrc").toFile();
+        String lyric = neteaseApiService.getLyric(musicTrackDTO.getNeteaseId());
+        if (StringUtils.isNotEmpty(lyric)) {
+            FileUtils.writeStringToFile(file, lyric, StandardCharsets.UTF_8);
+        }
+    }
 }

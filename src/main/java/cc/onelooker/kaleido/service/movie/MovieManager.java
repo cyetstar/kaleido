@@ -588,7 +588,23 @@ public class MovieManager {
     }
 
     private Path createFolderPath(Movie movie, Path path) throws IOException {
-        String folderName = StringUtils.substring(movie.getYear(), 0, 3) + "0s/" + movie.getTitle() + " (" + movie.getYear() + ")";
+        String decade = movie.getDecade();
+        String title = movie.getTitle();
+        String year = movie.getYear();
+        MovieBasicDTO param = new MovieBasicDTO();
+        param.setTitle(title);
+        param.setYear(year);
+        List<MovieBasicDTO> movieBasicDTOList = movieBasicService.list(param);
+        if (movieBasicDTOList.stream().anyMatch(s -> (StringUtils.isNotEmpty(movie.getDoubanId()) && !StringUtils.equals(movie.getDoubanId(), s.getDoubanId()) || (StringUtils.isNotEmpty(movie.getImdbId()) && !StringUtils.equals(movie.getImdbId(), s.getImdbId()))))) {
+            if (CollectionUtils.isNotEmpty(movie.getAkas())) {
+                title = movie.getAkas().get(0);
+            } else {
+                title = movie.getTitle() + " (" + movieBasicDTOList.size() + ")";
+            }
+        }
+        title = StringUtils.replace(title, "?", "");
+        title = StringUtils.replace(title, "!", "");
+        String folderName = decade + "/" + title + " (" + year + ")";
         Path folderPath = path.resolve(folderName);
         if (Files.notExists(folderPath)) {
             Files.createDirectory(folderPath);

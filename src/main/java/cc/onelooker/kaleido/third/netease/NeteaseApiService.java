@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
@@ -38,7 +37,7 @@ public class NeteaseApiService {
         JSONObject jsonObject = restTemplate.getForObject(url + API_CLOUDSEARCH, JSONObject.class, keywords, "10", limit);
         JSONObject resultJsonObject = jsonObject.getJSONObject("result");
         Integer albumCount = resultJsonObject.getInteger("albumCount");
-        if (albumCount > 0) {
+        if (albumCount != null && albumCount > 0) {
             JSONArray albumJSONArray = resultJsonObject.getJSONArray("albums");
             return albumJSONArray.toJavaList(Album.class);
         }

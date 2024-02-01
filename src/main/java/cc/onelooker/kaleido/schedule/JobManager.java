@@ -7,6 +7,7 @@ import cc.onelooker.kaleido.thread.movie.MovieAnalyzeRunnable;
 import cc.onelooker.kaleido.thread.movie.MovieCheckThreadStatusRunnable;
 import cc.onelooker.kaleido.thread.movie.MovieCollectionCheckMovieStatusRunnable;
 import cc.onelooker.kaleido.thread.movie.MovieSyncPlexRunnable;
+import cc.onelooker.kaleido.thread.music.MusicSyncPlexRunnable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,6 +35,9 @@ public class JobManager {
     private MovieAnalyzeRunnable movieAnalyzeRunnable;
 
     @Autowired
+    private MusicSyncPlexRunnable musicSyncPlexRunnable;
+
+    @Autowired
     private AsyncTaskManager taskManager;
 
     @Autowired
@@ -54,7 +58,7 @@ public class JobManager {
 
     @Scheduled(cron = "0 30 3 * * ?")
     public void syncPlexMusic() {
-        taskManager.syncPlexAlbum();
+        musicSyncPlexRunnable.run();
     }
 
     @Scheduled(cron = "0 15 1 * * ?")

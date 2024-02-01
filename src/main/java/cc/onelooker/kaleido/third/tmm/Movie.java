@@ -2,6 +2,7 @@ package cc.onelooker.kaleido.third.tmm;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -50,5 +51,9 @@ public class Movie {
     @Override
     public String toString() {
         return title + " (" + year + ")";
+    }
+
+    public String getDecade() {
+        return StringUtils.substring(year, 0, 3) + "0s";
     }
 }

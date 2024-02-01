@@ -125,4 +125,9 @@ public class MusicAlbumDTO implements BaseDTO<Long> {
     public void setId(Long id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return title;
+    }
 }

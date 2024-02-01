@@ -1,8 +1,11 @@
 package cc.onelooker.kaleido.web.controller.music;
 
+import cc.onelooker.kaleido.convert.music.MusicAlbumConvert;
 import cc.onelooker.kaleido.convert.music.MusicTrackConvert;
+import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.music.MusicTrackDTO;
 import cc.onelooker.kaleido.dto.music.req.MusicTrackCreateReq;
+import cc.onelooker.kaleido.dto.music.req.MusicTrackDownloadLyricReq;
 import cc.onelooker.kaleido.dto.music.req.MusicTrackPageReq;
 import cc.onelooker.kaleido.dto.music.req.MusicTrackUpdateReq;
 import cc.onelooker.kaleido.dto.music.resp.MusicTrackCreateResp;
@@ -10,7 +13,9 @@ import cc.onelooker.kaleido.dto.music.resp.MusicTrackListByAlbumIdResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicTrackPageResp;
 import cc.onelooker.kaleido.dto.music.resp.MusicTrackViewResp;
 import cc.onelooker.kaleido.enums.ConfigKey;
+import cc.onelooker.kaleido.service.music.MusicManager;
 import cc.onelooker.kaleido.service.music.MusicTrackService;
+import cc.onelooker.kaleido.third.netease.Album;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
@@ -47,6 +52,9 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
 
     @Autowired
     private MusicTrackService musicTrackService;
+
+    @Autowired
+    private MusicManager musicManager;
 
     @Override
     protected IBaseService getService() {
@@ -97,14 +105,20 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
         return CommonResult.success(respList);
     }
 
-    @GetMapping("viewLyrics")
-    public CommonResult<List<String>> viewLyrics(Long id) throws IOException {
+    @GetMapping("viewLyric")
+    public CommonResult<List<String>> viewLyric(Long id) throws IOException {
         MusicTrackDTO musicTrackDTO = musicTrackService.findById(id);
         String musicLibraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
         File file = Paths.get(musicLibraryPath, FilenameUtils.removeExtension(musicTrackDTO.getPath()) + ".lrc").toFile();
         String content = FileUtils.readFileToString(file);
         List<String> result = Arrays.asList(StringUtils.split(content, "\n"));
         return CommonResult.success(result);
+    }
+
+    @PostMapping("downloadLyric")
+    public CommonResult<Boolean> downloadLyric(@RequestBody MusicTrackDownloadLyricReq req) {
+        musicManager.downloadTrackLyric(req.getId(), req.getNeteaseId());
+        return CommonResult.success(true);
     }
 
 }

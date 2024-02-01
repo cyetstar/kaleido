@@ -13,6 +13,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
+import java.util.Map;
+
 /**
  * 专辑Convert
  *
@@ -41,13 +43,13 @@ public interface MusicAlbumConvert {
 
     MusicAlbumCreateResp convertToCreateResp(MusicAlbumDTO dto);
 
-    @Mappings({
-            @Mapping(source = "id", target = "neteaseId"),
-            @Mapping(source = "name", target = "title"),
-            @Mapping(source = "artist.name", target = "artist"),
-    })
+    @Mappings({@Mapping(source = "id", target = "neteaseId"), @Mapping(source = "name", target = "title"), @Mapping(source = "artist.name", target = "artist"),})
     MusicAlbumSearchNeteaseResp convertToSearchNeteaseResp(Album album);
 
     MusicAlbumListByArtistIdResp convertToListByArtistIdResp(MusicAlbumDTO musicAlbumDTO);
 
+    MusicAlbumDTO convertToDTO(Map<String, String> params);
+
+    @Mappings({@Mapping(source = "id", target = "neteaseId"), @Mapping(source = "name", target = "title"), @Mapping(source = "artist.name", target = "artist"),})
+    MusicAlbumViewNeteaseResp convertToViewNeteaseResp(Album album);
 }
