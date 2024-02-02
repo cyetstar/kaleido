@@ -258,7 +258,7 @@ public class MusicManager {
         for (MusicTrackDTO musicTrackDTO : musicTrackDTOList) {
             String title = musicTrackDTO.getTitle();
             String simple = ZhConverterUtil.toSimple(title);
-            Song song = songs.stream().filter(s -> StringUtils.equalsAny(s.getName(), title, simple)).findFirst().orElse(null);
+            Song song = songs.stream().filter(s -> StringUtils.equalsAnyIgnoreCase(s.getName(), title, simple)).findFirst().orElse(null);
             if (song != null) {
                 musicTrackDTO.setNeteaseId(song.getId());
                 musicTrackService.update(musicTrackDTO);

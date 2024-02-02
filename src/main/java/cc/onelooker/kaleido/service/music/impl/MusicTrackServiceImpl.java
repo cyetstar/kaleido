@@ -59,7 +59,9 @@ public class MusicTrackServiceImpl extends AbstractBaseServiceImpl<MusicTrackMap
         Validate.notNull(albumId);
         MusicTrackDTO param = new MusicTrackDTO();
         param.setAlbumId(albumId);
-        return list(param);
+        LambdaQueryWrapper<MusicTrackDO> wrapper = (LambdaQueryWrapper<MusicTrackDO>) genQueryWrapper(param);
+        wrapper.orderByAsc(MusicTrackDO::getDiscIndex, MusicTrackDO::getTrackIndex);
+        return convertToDTO(list(wrapper));
     }
 
     @Override

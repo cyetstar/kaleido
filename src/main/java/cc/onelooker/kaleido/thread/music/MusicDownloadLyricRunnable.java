@@ -52,7 +52,7 @@ public class MusicDownloadLyricRunnable extends AbstractEntityActionRunnable<Mus
     @Override
     protected PageResult<MusicAlbumDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
         MusicAlbumDTO musicAlbumDTO = MusicAlbumConvert.INSTANCE.convertToDTO(params);
-        return musicAlbumService.page(musicAlbumDTO, Page.of(pageNumber, pageSize, false));
+        return musicAlbumService.page(musicAlbumDTO, Page.of(pageNumber, pageSize, true));
     }
 
     @Override

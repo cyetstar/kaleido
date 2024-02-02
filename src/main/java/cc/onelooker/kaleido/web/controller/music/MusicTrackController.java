@@ -1,8 +1,6 @@
 package cc.onelooker.kaleido.web.controller.music;
 
-import cc.onelooker.kaleido.convert.music.MusicAlbumConvert;
 import cc.onelooker.kaleido.convert.music.MusicTrackConvert;
-import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.music.MusicTrackDTO;
 import cc.onelooker.kaleido.dto.music.req.MusicTrackCreateReq;
 import cc.onelooker.kaleido.dto.music.req.MusicTrackDownloadLyricReq;
@@ -15,7 +13,6 @@ import cc.onelooker.kaleido.dto.music.resp.MusicTrackViewResp;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.music.MusicManager;
 import cc.onelooker.kaleido.service.music.MusicTrackService;
-import cc.onelooker.kaleido.third.netease.Album;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
@@ -35,8 +32,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 曲目前端控制器
@@ -92,7 +89,7 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
     }
 
     @GetMapping("listByAlbumId")
-    public CommonResult<List<MusicTrackListByAlbumIdResp>> listByAlbumId(Long albumId) {
+    public CommonResult<Collection<List<MusicTrackListByAlbumIdResp>>> listByAlbumId(Long albumId) {
         List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(albumId);
         String musicLibraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
         List<MusicTrackListByAlbumIdResp> respList = Lists.newArrayList();
@@ -102,7 +99,8 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
             resp.setHasLyric(file.exists() && file.length() > 0 ? Constants.YES : Constants.NO);
             respList.add(resp);
         }
-        return CommonResult.success(respList);
+        Map<Optional<Integer>, List<MusicTrackListByAlbumIdResp>> result = respList.stream().collect(Collectors.groupingBy(s -> Optional.ofNullable(s.getDiscIndex())));
+        return CommonResult.success(result.values());
     }
 
     @GetMapping("viewLyric")
