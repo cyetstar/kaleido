@@ -108,13 +108,6 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
         return super.delete(id);
     }
 
-    @PostMapping("syncPlex")
-    @ApiOperation(value = "同步资料库")
-    public CommonResult<Boolean> syncPlex() {
-        asyncTaskManager.syncPlexAlbum();
-        return CommonResult.success(true);
-    }
-
     @PostMapping("syncPlexById")
     @ApiOperation(value = "同步资料库")
     public CommonResult<Boolean> syncPlexById(@RequestBody MusicAlbumSyncPlexReq req) {
@@ -123,7 +116,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
             throw new ServiceException(2005, "请设置需要同步资料库信息");
         }
         String libraryPath = plexApiService.getLibraryPath(libraryId);
-        musicManager.syncPlexAlbumById(libraryPath, req.getId());
+        musicManager.syncPlexAlbumAndReadAudioTag(libraryPath, req.getId());
         return CommonResult.success(true);
     }
 

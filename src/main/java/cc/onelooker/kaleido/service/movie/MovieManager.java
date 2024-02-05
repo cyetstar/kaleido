@@ -178,7 +178,7 @@ public class MovieManager {
             Metadata metadata = plexApiService.findMovieById(id);
             Path movieFolderPath = Paths.get(KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile()));
             MovieNFO movieNFO = NFOUtil.toMovieNFO(movie);
-            NFOUtil.write(movieNFO, movieFolderPath, "movie.nfo");
+            NFOUtil.write(movieNFO, MovieNFO.class, movieFolderPath, "movie.nfo");
             plexApiService.refreshMovieById(id);
             updateAka(movie.getAkas(), id);
             //如果模版信息发生变动，则重新移动文件，而后续由定时任务重新获取新的信息
@@ -206,10 +206,10 @@ public class MovieManager {
         Path movieDownloadPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath));
         try {
             MovieNFO movieNFO = new MovieNFO();
-            movieNFO.setDoubanid(doubanId);
-            movieNFO.setTmdbid(tmdbId);
+            movieNFO.setDoubanId(doubanId);
+            movieNFO.setTmdbId(tmdbId);
             if (Files.isDirectory(path)) {
-                NFOUtil.write(movieNFO, path, "movie.nfo");
+                NFOUtil.write(movieNFO, MovieNFO.class, path, "movie.nfo");
                 NioFileUtils.moveDir(path, movieDownloadPath, StandardCopyOption.REPLACE_EXISTING);
             } else {
                 String baseName = FilenameUtils.getBaseName(path.getFileName().toString());
@@ -217,7 +217,7 @@ public class MovieManager {
                 if (!Files.exists(newPath)) {
                     newPath.toFile().mkdir();
                 }
-                NFOUtil.write(movieNFO, newPath, "movie.nfo");
+                NFOUtil.write(movieNFO, MovieNFO.class, newPath, "movie.nfo");
                 if (!Files.isSameFile(path, newPath)) {
                     Files.move(path, newPath.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING);
                 }
@@ -227,7 +227,7 @@ public class MovieManager {
         }
     }
 
-    public void updateMovieSource(Path path, Logger logger) {
+    public void updateSource(Path path, Logger logger) {
         try {
             logger.info("=========== 开始更新数据文件 ==========");
             logger.info("== 源文件信息:{}", path);
@@ -280,14 +280,14 @@ public class MovieManager {
         try {
             Long movieId = metadata.getRatingKey();
             String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
-            MovieNFO movieNFO = NFOUtil.read(Paths.get(movieFolder), "movie.nfo");
+            MovieNFO movieNFO = NFOUtil.read(MovieNFO.class, Paths.get(movieFolder), "movie.nfo");
             String doubanId = getUniqueid(movieNFO.getUniqueids(), SourceType.douban.name());
             String imdb = getUniqueid(movieNFO.getUniqueids(), SourceType.imdb.name());
             String tmdb = getUniqueid(movieNFO.getUniqueids(), SourceType.tmdb.name());
             MovieBasicDTO movieBasicDTO = movieBasicService.findById(movieId);
-            movieBasicDTO.setDoubanId(StringUtils.defaultIfEmpty(doubanId, movieNFO.getDoubanid()));
-            movieBasicDTO.setImdbId(StringUtils.defaultIfEmpty(imdb, movieNFO.getImdbid()));
-            movieBasicDTO.setTmdbId(StringUtils.defaultIfEmpty(tmdb, movieNFO.getTmdbid()));
+            movieBasicDTO.setDoubanId(StringUtils.defaultIfEmpty(doubanId, movieNFO.getDoubanId()));
+            movieBasicDTO.setImdbId(StringUtils.defaultIfEmpty(imdb, movieNFO.getImdbId()));
+            movieBasicDTO.setTmdbId(StringUtils.defaultIfEmpty(tmdb, movieNFO.getTmdbId()));
             movieBasicDTO.setWebsite(movieNFO.getWebsite());
             movieBasicService.update(movieBasicDTO);
             updateAka(movieNFO.getAkas(), movieId);
@@ -303,9 +303,9 @@ public class MovieManager {
             Metadata metadata = plexApiService.findMovieById(dto.getId());
             String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
             MovieNFO movieNFO = NFOUtil.toMovieNFO(metadata);
-            movieNFO.setDoubanid(dto.getDoubanId());
-            movieNFO.setImdbid(dto.getImdbId());
-            movieNFO.setTmdbid(dto.getTmdbId());
+            movieNFO.setDoubanId(dto.getDoubanId());
+            movieNFO.setImdbId(dto.getImdbId());
+            movieNFO.setTmdbId(dto.getTmdbId());
             List<UniqueidNFO> uniqueidNFOList = Lists.newArrayList();
             CollectionUtils.addIgnoreNull(uniqueidNFOList, NFOUtil.toUniqueidNFO(dto.getDoubanId(), SourceType.douban));
             CollectionUtils.addIgnoreNull(uniqueidNFOList, NFOUtil.toUniqueidNFO(dto.getImdbId(), SourceType.imdb));
@@ -315,7 +315,7 @@ public class MovieManager {
             if (movieAkaDTOList != null) {
                 movieNFO.setAkas(movieAkaDTOList.stream().map(MovieAkaDTO::getTitle).collect(Collectors.toList()));
             }
-            NFOUtil.write(movieNFO, Paths.get(movieFolder), "movie.nfo");
+            NFOUtil.write(movieNFO, MovieNFO.class, Paths.get(movieFolder), "movie.nfo");
         } catch (Exception e) {
             log.error("导出NFO发生错误:{}", ExceptionUtil.getMessage(e));
             throw new RuntimeException(e);
@@ -506,8 +506,8 @@ public class MovieManager {
         Path nfoPath = Files.list(path).filter(s -> FilenameUtils.isExtension(s.getFileName().toString(), "nfo")).findFirst().orElse(null);
         if (nfoPath != null) {
             try {
-                MovieNFO movieNFO = NFOUtil.read(path, nfoPath.getFileName().toString());
-                return findTmmMovie(movieNFO.getDoubanid(), movieNFO.getImdbid(), movieNFO.getTmdbid());
+                MovieNFO movieNFO = NFOUtil.read(MovieNFO.class, path, nfoPath.getFileName().toString());
+                return findTmmMovie(movieNFO.getDoubanId(), movieNFO.getImdbId(), movieNFO.getTmdbId());
             } catch (Exception e) {
                 log.warn("无法读取nfo文件");
             }
@@ -576,7 +576,7 @@ public class MovieManager {
         logger.info("== 下载海报");
         //输出nfo文件
         MovieNFO movieNFO = NFOUtil.toMovieNFO(movie);
-        NFOUtil.write(movieNFO, targetPath, "movie.nfo");
+        NFOUtil.write(movieNFO, MovieNFO.class, targetPath, "movie.nfo");
         logger.info("== 输出nfo文件");
     }
 

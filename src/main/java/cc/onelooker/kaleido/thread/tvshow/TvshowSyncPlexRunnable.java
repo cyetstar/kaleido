@@ -1,9 +1,9 @@
-package cc.onelooker.kaleido.thread.music;
+package cc.onelooker.kaleido.thread.tvshow;
 
-import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
+import cc.onelooker.kaleido.dto.tvshow.TvshowEpisodeDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.music.MusicAlbumService;
-import cc.onelooker.kaleido.service.music.MusicManager;
+import cc.onelooker.kaleido.service.tvshow.TvshowEpisodeService;
+import cc.onelooker.kaleido.service.tvshow.TvshowManager;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
@@ -13,58 +13,52 @@ import com.zjjcnt.common.core.domain.PageResult;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @Author xiadawei
- * @Date 2024-02-01 14:06:00
- * @Description TODO
+ * Created by cyetstar on 2021/1/7.
  */
 @Component
-public class MusicSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata> {
-
-    private final MusicAlbumService musicAlbumService;
-
-    private final MusicManager musicManager;
+public class TvshowSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata> {
 
     private final PlexApiService plexApiService;
 
-    private String libraryId;
+    private final TvshowEpisodeService tvshowEpisodeService;
 
-    private String libraryPath;
+    private final TvshowManager tvshowManager;
+
+    private String libraryId;
 
     private List<Metadata> metadataList;
 
-    public MusicSyncPlexRunnable(MusicAlbumService musicAlbumService, MusicManager musicManager, PlexApiService plexApiService) {
-        this.musicAlbumService = musicAlbumService;
-        this.musicManager = musicManager;
+    public TvshowSyncPlexRunnable(PlexApiService plexApiService, TvshowEpisodeService tvshowEpisodeService, TvshowManager tvshowManager) {
         this.plexApiService = plexApiService;
+        this.tvshowEpisodeService = tvshowEpisodeService;
+        this.tvshowManager = tvshowManager;
     }
 
     @Override
     public Action getAction() {
-        return Action.musicSyncPlex;
+        return Action.tvshowSyncPlex;
     }
 
     @Override
     protected void beforeRun(Map<String, String> params) {
-        libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMusicLibraryId);
-        libraryPath = ConfigUtils.getSysConfig(ConfigKey.plexMusicLibraryPath);
+        libraryId = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryId);
     }
 
     @Override
-    protected void afterRun(@Nullable Map<String, String> params) {
-        List<MusicAlbumDTO> musicAlbumDTOList = musicAlbumService.list(null);
-        List<Long> idList = musicAlbumDTOList.stream().map(MusicAlbumDTO::getId).collect(Collectors.toList());
+    protected void afterRun(Map<String, String> params) {
+        List<TvshowEpisodeDTO> tvshowEpisodeDTOList = tvshowEpisodeService.list(null);
+        List<Long> idList = tvshowEpisodeDTOList.stream().map(TvshowEpisodeDTO::getId).collect(Collectors.toList());
         List<Long> plexIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
         Collection<Long> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
         if (CollectionUtils.isNotEmpty(deleteIdList)) {
             for (Long deleteId : deleteIdList) {
-                musicAlbumService.deleteById(deleteId);
+                tvshowEpisodeService.deleteById(deleteId);
             }
         }
     }
@@ -74,7 +68,7 @@ public class MusicSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata
         PageResult<Metadata> pageResult = new PageResult<>();
         pageResult.setSearchCount(true);
         if (pageNumber < 2) {
-            metadataList = plexApiService.listAlbum(libraryId);
+            metadataList = plexApiService.listEpsiode(libraryId);
             pageResult.setTotal((long) metadataList.size());
             pageResult.setRecords(metadataList);
         }
@@ -83,9 +77,9 @@ public class MusicSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata
 
     @Override
     protected void processEntity(Metadata metadata) throws Exception {
-        MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(metadata.getRatingKey());
-        if (musicAlbumDTO == null || metadata.getUpdatedAt().compareTo(musicAlbumDTO.getUpdatedAt()) > 0) {
-            musicManager.syncPlexAlbumAndReadAudioTag(libraryPath, metadata.getRatingKey());
+        TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(metadata.getRatingKey());
+        if (tvshowEpisodeDTO == null || metadata.getUpdatedAt().compareTo(tvshowEpisodeDTO.getUpdatedAt()) > 0) {
+            tvshowManager.syncPlexEpisode(metadata.getRatingKey());
         }
     }
 

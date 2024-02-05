@@ -5,7 +5,7 @@ package cc.onelooker.kaleido.thread;
  */
 public enum Action {
 
-    movieUpdateSource("更新文件源"),
+    movieUpdateSource("更新电影源"),
     movieSyncPlex("同步Plex电影库"),
     movieMatchInfo("匹配信息"),
     movieReadNFO("读取NFO"),
@@ -20,7 +20,8 @@ public enum Action {
     musicReadAudioTag("读取音乐标签"),
     musicDownloadLyric("下载歌词"),
 
-    ;
+    tvshowSyncPlex("同步Plex剧集库"),
+    tvshowUpdateSource("更新剧集源");
 
     private String title;
 

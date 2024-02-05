@@ -2,7 +2,6 @@ package cc.onelooker.kaleido.service;
 
 import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
 import cc.onelooker.kaleido.dto.movie.MovieThreadDTO;
-import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.tvshow.TvshowEpisodeDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.enums.ThreadStatus;
@@ -133,11 +132,11 @@ public class AsyncTaskManager {
                 try {
                     TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(metadata.getRatingKey());
                     if (tvshowEpisodeDTO == null) {
-                        tvshowManager.syncPlexEpisodeById(metadata.getRatingKey());
+                        tvshowManager.syncPlexEpisode(metadata.getRatingKey());
                         count++;
                         log.debug("【{}】{} 同步成功。", metadata.getTitle(), metadata.getRatingKey());
                     } else if (metadata.getUpdatedAt().compareTo(tvshowEpisodeDTO.getUpdatedAt()) > 0) {
-                        tvshowManager.syncPlexEpisodeById(metadata.getRatingKey());
+                        tvshowManager.syncPlexEpisode(metadata.getRatingKey());
                         count++;
                         log.debug("【{}】{} 同步成功。", metadata.getTitle(), metadata.getRatingKey());
                     }
@@ -161,53 +160,6 @@ public class AsyncTaskManager {
         } finally {
             Instant end = Instant.now();
             log.info("同步Plex剧集资料库完毕，耗时{}分钟。", Duration.between(start, end).toMinutes());
-        }
-    }
-
-    @Async
-    public void syncPlexAlbum() {
-        String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMusicLibraryId);
-        if (StringUtils.isBlank(libraryId)) {
-            throw new ServiceException(2005, "请设置需要同步资料库信息");
-        }
-        Instant start = Instant.now();
-        try {
-            log.info("同步Plex音乐资料库启动");
-            int count = 0;
-            String libraryPath = plexApiService.getLibraryPath(libraryId);
-            List<Metadata> metadataList = plexApiService.listAlbum(libraryId);
-            for (Metadata metadata : metadataList) {
-                try {
-                    MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(metadata.getRatingKey());
-                    if (musicAlbumDTO == null) {
-                        musicManager.syncPlexAlbumById(libraryPath, metadata.getRatingKey());
-                        count++;
-                        log.debug("【{}】{} 同步成功", metadata.getTitle(), metadata.getRatingKey());
-                    } else if (metadata.getUpdatedAt().compareTo(musicAlbumDTO.getUpdatedAt()) > 0) {
-                        musicManager.syncPlexAlbumById(libraryPath, metadata.getRatingKey());
-                        count++;
-                        log.debug("【{}】{} 同步成功。", metadata.getTitle(), metadata.getRatingKey());
-                    }
-                } catch (Exception e) {
-                    log.error("【{}】{} 同步发生错误。{}", metadata.getTitle(), metadata.getRatingKey(), ExceptionUtil.getMessage(e));
-                }
-            }
-            log.info("同步Plex音乐资料库，更新{}条记录。", count);
-            count = 0;
-            List<MusicAlbumDTO> musicAlbumDTOList = musicAlbumService.list(null);
-            List<Long> idList = musicAlbumDTOList.stream().map(MusicAlbumDTO::getId).collect(Collectors.toList());
-            List<Long> plexIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
-            Collection<Long> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
-            if (CollectionUtils.isNotEmpty(deleteIdList)) {
-                for (Long deleteId : deleteIdList) {
-                    musicAlbumService.deleteById(deleteId);
-                    count++;
-                }
-            }
-            log.info("同步Plex音乐资料库，删除{}条记录。", count);
-        } finally {
-            Instant end = Instant.now();
-            log.info("同步Plex音乐资料库完毕，耗时{}分钟。", Duration.between(start, end).toMinutes());
         }
     }
 

@@ -3,8 +3,7 @@ package cc.onelooker.kaleido.nfo;
 import cc.onelooker.kaleido.enums.SourceType;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.Tag;
-import cc.onelooker.kaleido.third.tmm.Actor;
-import cc.onelooker.kaleido.third.tmm.Movie;
+import cc.onelooker.kaleido.third.tmm.*;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.util.DateTimeUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -41,25 +40,12 @@ public class NFOUtil {
 
     private static Unmarshaller unmarshaller;
 
-    static {
-        try {
-            JAXBContext context = JAXBContext.newInstance(MovieNFO.class);
-            marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, false);
-            unmarshaller = context.createUnmarshaller();
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static MovieNFO toMovieNFO(MovieNFO movieNFO, Movie movie) {
         movieNFO.setTitle(movie.getTitle());
-        movieNFO.setOriginaltitle(movie.getOriginalTitle());
+        movieNFO.setOriginalTitle(movie.getOriginalTitle());
         movieNFO.setYear(movie.getYear());
         List<RatingNFO> ratingNFOList = Lists.newArrayList();
-        CollectionUtils.addIgnoreNull(ratingNFOList, toRatingNFO(movie));
+        CollectionUtils.addIgnoreNull(ratingNFOList, toRatingNFO(movie.getAverage()));
         movieNFO.setRatings(ratingNFOList);
         List<UniqueidNFO> uniqueidNFOList = Lists.newArrayList();
         CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.douban, movie.getDoubanId()));
@@ -67,7 +53,7 @@ public class NFOUtil {
         CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.tmdb, movie.getTmdbId()));
         movieNFO.setUniqueids(uniqueidNFOList);
         movieNFO.setAkas(movie.getAkas());
-        movieNFO.setPlot(movie.getSummary());
+        movieNFO.setPlot(movie.getPlot());
         movieNFO.setGenres(movie.getGenres());
         movieNFO.setCountries(movie.getCountries());
         movieNFO.setMpaa(movie.getMpaa());
@@ -90,8 +76,8 @@ public class NFOUtil {
         MovieNFO movieNFO = new MovieNFO();
         movieNFO.setId(String.valueOf(metadata.getRatingKey()));
         movieNFO.setTitle(metadata.getTitle());
-        movieNFO.setOriginaltitle(metadata.getOriginalTitle());
-        movieNFO.setSorttitle(metadata.getTitleSort());
+        movieNFO.setOriginalTitle(metadata.getOriginalTitle());
+        movieNFO.setSortTitle(metadata.getTitleSort());
         movieNFO.setYear(metadata.getYear());
         movieNFO.setPlot(metadata.getSummary());
         movieNFO.setMpaa(metadata.getContentRating());
@@ -122,6 +108,92 @@ public class NFOUtil {
         return movieNFO;
     }
 
+    public static TvshowNFO toTvshowNFO(Tvshow tvshow) {
+        TvshowNFO tvshowNFO = new TvshowNFO();
+        tvshowNFO.setTitle(tvshow.getTitle());
+        tvshowNFO.setOriginalTitle(tvshow.getOriginalTitle());
+        tvshowNFO.setPlot(tvshow.getPlot());
+        tvshowNFO.setYear(tvshow.getYear());
+        tvshowNFO.setPremiered(tvshow.getPremiered());
+        List<RatingNFO> ratingNFOList = Lists.newArrayList();
+        CollectionUtils.addIgnoreNull(ratingNFOList, toRatingNFO(tvshow.getAverage()));
+        tvshowNFO.setRatings(ratingNFOList);
+        List<UniqueidNFO> uniqueidNFOList = Lists.newArrayList();
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.tmdb, tvshow.getTmdbId()));
+        tvshowNFO.setUniqueids(uniqueidNFOList);
+        tvshowNFO.setAkas(tvshow.getAkas());
+        tvshowNFO.setGenres(tvshow.getGenres());
+        tvshowNFO.setMpaa(tvshow.getMpaa());
+        tvshowNFO.setStudios(tvshow.getStudios());
+        return tvshowNFO;
+    }
+
+    public static SeasonNFO toSeasonNFO(Season season, Tvshow tvshow) {
+        SeasonNFO seasonNFO = new SeasonNFO();
+        seasonNFO.setTitle(season.getTitle());
+        seasonNFO.setOriginalTitle(season.getOriginalTitle());
+        seasonNFO.setPlot(season.getPlot());
+        seasonNFO.setYear(season.getYear());
+        seasonNFO.setPremiered(season.getPremiered());
+        List<RatingNFO> ratingNFOList = Lists.newArrayList();
+        CollectionUtils.addIgnoreNull(ratingNFOList, toRatingNFO(season.getAverage()));
+        seasonNFO.setRatings(ratingNFOList);
+        List<UniqueidNFO> uniqueidNFOList = Lists.newArrayList();
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.tmdb, season.getTmdbId()));
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.douban, season.getDoubanId()));
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.imdb, season.getImdbId()));
+        seasonNFO.setUniqueids(uniqueidNFOList);
+
+        if (CollectionUtils.isNotEmpty(season.getCredits())) {
+            seasonNFO.setCredits(season.getCredits().stream().map(s -> StringUtils.defaultString(s.getCnName(), s.getEnName())).collect(Collectors.toList()));
+        }
+        if (CollectionUtils.isNotEmpty(season.getDirectors())) {
+            seasonNFO.setDirectors(season.getDirectors().stream().map(s -> StringUtils.defaultString(s.getCnName(), s.getEnName())).collect(Collectors.toList()));
+        }
+        seasonNFO.setActors(toActorNFOs(season.getActors()));
+
+        seasonNFO.setAkas(tvshow.getAkas());
+        seasonNFO.setGenres(tvshow.getGenres());
+        seasonNFO.setMpaa(tvshow.getMpaa());
+        seasonNFO.setStudios(tvshow.getStudios());
+        return seasonNFO;
+    }
+
+    private static EpisodeNFO toEpisodeNFO(EpisodeNFO episodeNFO, Episode episode, Season season, Tvshow tvshow) {
+        episodeNFO.setTitle(episode.getTitle());
+        episodeNFO.setOriginaltitle(tvshow.getOriginalTitle());
+        episodeNFO.setSeasonNumber(episode.getSeasonNumber());
+        episodeNFO.setEpisodeNumber(episode.getEpisodeNumber());
+        episodeNFO.setPlot(episode.getPlot());
+        episodeNFO.setRuntime(episode.getRuntime());
+        episodeNFO.setPremiered(episode.getPremiered());
+        List<RatingNFO> ratingNFOList = Lists.newArrayList();
+        CollectionUtils.addIgnoreNull(ratingNFOList, toRatingNFO(episode.getAverage()));
+        episodeNFO.setRatings(ratingNFOList);
+        List<UniqueidNFO> uniqueidNFOList = Lists.newArrayList();
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.tmdb, episode.getTmdbId()));
+        episodeNFO.setUniqueids(uniqueidNFOList);
+        //获取season信息
+        episodeNFO.setYear(season.getYear());
+        if (CollectionUtils.isNotEmpty(season.getCredits())) {
+            episodeNFO.setCredits(season.getCredits().stream().map(s -> StringUtils.defaultString(s.getCnName(), s.getEnName())).collect(Collectors.toList()));
+        }
+        if (CollectionUtils.isNotEmpty(season.getDirectors())) {
+            episodeNFO.setDirectors(season.getDirectors().stream().map(s -> StringUtils.defaultString(s.getCnName(), s.getEnName())).collect(Collectors.toList()));
+        }
+        episodeNFO.setActors(toActorNFOs(season.getActors()));
+        //获取tvshow信息
+        episodeNFO.setMpaa(tvshow.getMpaa());
+        episodeNFO.setGenres(tvshow.getGenres());
+        episodeNFO.setStudios(tvshow.getStudios());
+        return episodeNFO;
+    }
+
+    public static EpisodeNFO toEpisodeNFO(Episode episode, Season season, Tvshow tvshow) {
+        EpisodeNFO episodeNFO = new EpisodeNFO();
+        return toEpisodeNFO(episodeNFO, episode, season, tvshow);
+    }
+
     public static UniqueidNFO toUniqueidNFO(String value, SourceType type) {
         if (StringUtils.isNotEmpty(value)) {
             UniqueidNFO uniqueidNFO = new UniqueidNFO();
@@ -132,12 +204,12 @@ public class NFOUtil {
         return null;
     }
 
-    private static RatingNFO toRatingNFO(Movie movie) {
-        if (movie.getAverage() == null) {
+    private static RatingNFO toRatingNFO(Float average) {
+        if (average == null) {
             return null;
         }
         RatingNFO ratingNFO = new RatingNFO();
-        ratingNFO.setValue(String.valueOf(movie.getAverage()));
+        ratingNFO.setValue(String.valueOf(average));
         return ratingNFO;
     }
 
@@ -179,17 +251,30 @@ public class NFOUtil {
         return setNFO;
     }
 
-    public static void write(MovieNFO movieNFO, Path path, String filename) throws Exception {
+    public static <T> void write(T object, Class<T> clazz, Path path, String filename) throws Exception {
         StringWriter writer = new StringWriter();
         XMLStreamWriter streamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
         XMLStreamWriter cdataStreamWriter = (XMLStreamWriter) Proxy.newProxyInstance(streamWriter.getClass().getClassLoader(), streamWriter.getClass().getInterfaces(), new CDataHandler(streamWriter));
-        marshaller.marshal(movieNFO, cdataStreamWriter);
+        JAXBContext context = JAXBContext.newInstance(clazz);
+        marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+        marshaller.setProperty(Marshaller.JAXB_FRAGMENT, false);
+        marshaller.marshal(object, cdataStreamWriter);
         String content = indentFormat(writer.toString());
         Files.write(path.resolve(filename), content.getBytes());
     }
 
-    public static MovieNFO read(Path path, String filename) throws JAXBException {
-        return (MovieNFO) unmarshaller.unmarshal(path.resolve(filename).toFile());
+    public static <T> T read(Class<T> clazz, Path path, String filename) throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(clazz);
+        unmarshaller = context.createUnmarshaller();
+        return clazz.cast(unmarshaller.unmarshal(path.resolve(filename).toFile()));
+    }
+
+    public static <T> T read(Class<T> clazz, Path filePath) throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(clazz);
+        unmarshaller = context.createUnmarshaller();
+        return clazz.cast(unmarshaller.unmarshal(filePath.toFile()));
     }
 
     public static String indentFormat(String xml) {
@@ -211,6 +296,7 @@ public class NFOUtil {
         }
         return null;
     }
+
 }
 
 

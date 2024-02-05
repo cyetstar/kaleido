@@ -1,21 +1,27 @@
 package cc.onelooker.kaleido.web.controller.tvshow;
 
 import cc.onelooker.kaleido.convert.tvshow.TvshowShowConvert;
+import cc.onelooker.kaleido.dto.movie.req.MovieBasicDownloadPosterReq;
 import cc.onelooker.kaleido.dto.tvshow.TvshowActorDTO;
 import cc.onelooker.kaleido.dto.tvshow.TvshowShowDTO;
 import cc.onelooker.kaleido.dto.tvshow.TvshowShowGenreDTO;
-import cc.onelooker.kaleido.dto.tvshow.req.TvshowShowCreateReq;
-import cc.onelooker.kaleido.dto.tvshow.req.TvshowShowPageReq;
-import cc.onelooker.kaleido.dto.tvshow.req.TvshowShowUpdateReq;
+import cc.onelooker.kaleido.dto.tvshow.req.*;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowCreateResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowPageResp;
+import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowSearchInfoResp;
 import cc.onelooker.kaleido.dto.tvshow.resp.TvshowShowViewResp;
 import cc.onelooker.kaleido.enums.ActorRole;
 import cc.onelooker.kaleido.service.tvshow.TvshowActorService;
 import cc.onelooker.kaleido.service.tvshow.TvshowManager;
 import cc.onelooker.kaleido.service.tvshow.TvshowShowGenreService;
 import cc.onelooker.kaleido.service.tvshow.TvshowShowService;
+import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.third.tmm.Movie;
+import cc.onelooker.kaleido.third.tmm.TmmApiService;
+import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cn.hutool.http.HttpUtil;
+import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
@@ -28,6 +34,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +67,9 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
 
     @Autowired
     private PlexApiService plexApiService;
+
+    @Autowired
+    private TmmApiService tmmApiService;
 
     @Override
     protected IBaseService getService() {
@@ -97,6 +109,34 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @ApiOperation(value = "删除剧集")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
+    }
+
+    @PostMapping("searchInfo")
+    @ApiOperation(value = "查询信息")
+    public CommonResult<List<TvshowShowSearchInfoResp>> searchInfo(@RequestBody TvshowShowSearchInfoReq req) {
+        List<Movie> movieList = tmmApiService.searchMovie(req.getKeyword(), req.getType());
+        List<TvshowShowSearchInfoResp> respList = Lists.newArrayList();
+        for (Movie movie : movieList) {
+            respList.add(TvshowShowConvert.INSTANCE.convertToSearchInfoResp(movie));
+        }
+        return CommonResult.success(respList);
+    }
+
+    @PostMapping("downloadPoster")
+    public CommonResult<Boolean> downloadPoster(@RequestBody MovieBasicDownloadPosterReq req) {
+        Metadata metadata = plexApiService.findMovieById(req.getId());
+        String folder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
+        File file = Paths.get(folder, "poster.jpg").toFile();
+        HttpUtil.downloadFile(req.getUrl(), file);
+        return CommonResult.success(true);
+    }
+
+    @PostMapping("matchPath")
+    @ApiOperation(value = "匹配文件信息")
+    public CommonResult<Boolean> matchPath(@RequestBody TvshowShowMatchPathReq req) {
+        List<Path> pathList = req.getPaths().stream().map(Paths::get).collect(Collectors.toList());
+        tvshowManager.matchPath(pathList, req.getDoubanId());
+        return CommonResult.success(true);
     }
 
 }

@@ -1,13 +1,11 @@
-package cc.onelooker.kaleido.thread.movie;
+package cc.onelooker.kaleido.thread.tvshow;
 
 import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.movie.MovieManager;
+import cc.onelooker.kaleido.service.tvshow.TvshowManager;
 import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
 import cc.onelooker.kaleido.thread.Action;
 import cc.onelooker.kaleido.utils.ConfigUtils;
-import cc.onelooker.kaleido.utils.LogUtil;
 import com.zjjcnt.common.core.domain.PageResult;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -22,27 +20,24 @@ import java.util.stream.Collectors;
  * Created by cyetstar on 2021/1/7.
  */
 @Component
-public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path> {
+public class TvshowUpdateSourceRunnable extends AbstractEntityActionRunnable<Path> {
 
-    private final MovieManager movieManager;
+    private final TvshowManager tvshowManager;
 
     private String downloadPath;
 
-    private Logger logger;
-
-    public MovieUpdateSourceRunnable(MovieManager movieManager) {
-        this.movieManager = movieManager;
+    public TvshowUpdateSourceRunnable(TvshowManager tvshowManager) {
+        this.tvshowManager = tvshowManager;
     }
 
     @Override
     public Action getAction() {
-        return Action.movieUpdateSource;
+        return Action.tvshowUpdateSource;
     }
 
     @Override
     protected void beforeRun(Map<String, String> params) {
-        downloadPath = ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath);
-        logger = LogUtil.getLogger(MovieUpdateSourceRunnable.class);
+        downloadPath = ConfigUtils.getSysConfig(ConfigKey.tvshowDownloadPath);
     }
 
     @Override
@@ -63,7 +58,7 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     @Override
     protected void processEntity(Path path) throws Exception {
-        movieManager.updateSource(path, logger);
+        tvshowManager.updateSource(path);
     }
 
     @Override

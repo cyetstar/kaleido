@@ -6,7 +6,7 @@ import org.junit.Test;
 import javax.xml.bind.JAXBException;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @Author xiadawei
@@ -17,14 +17,14 @@ public class NFOUtilTest {
 
     @Test
     public void read() throws JAXBException {
-        MovieNFO movieNFO = NFOUtil.read(Paths.get("/Users/cyetstar/Downloads"), "movie.nfo");
-        assertTrue(StringUtils.isNotEmpty(movieNFO.getDoubanid()));
+        MovieNFO movieNFO = NFOUtil.read(MovieNFO.class, Paths.get("/Users/cyetstar/Downloads"), "movie.nfo");
+        assertTrue(StringUtils.isNotEmpty(movieNFO.getDoubanId()));
     }
 
     @Test
     public void write() throws Exception {
         MovieNFO movieNFO = new MovieNFO();
         movieNFO.setPlot("test");
-        NFOUtil.write(movieNFO, Paths.get("/Users/cyetstar/Downloads"), "movie2.nfo");
+        NFOUtil.write(movieNFO, MovieNFO.class, Paths.get("/Users/cyetstar/Downloads"), "movie2.nfo");
     }
 }

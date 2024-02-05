@@ -94,7 +94,7 @@ public class TvshowEpisodeController extends AbstractCrudController<TvshowEpisod
     @PostMapping("syncPlexById")
     @ApiOperation(value = "同步资料库")
     public CommonResult<Boolean> syncPlexById(@RequestBody TvshowEpisodeSyncPlexByIdReq req) {
-        tvshowManager.syncPlexEpisodeById(req.getId());
+        tvshowManager.syncPlexEpisode(req.getId());
         return CommonResult.success(true);
     }
 

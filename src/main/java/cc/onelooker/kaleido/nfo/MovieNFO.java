@@ -12,8 +12,10 @@ import java.util.List;
 public class MovieNFO {
 
     private String title;
-    private String originaltitle;
-    private String sorttitle;
+    @XmlElement(name = "originaltitle")
+    private String originalTitle;
+    @XmlElement(name = "sorttitle")
+    private String sortTitle;
     @XmlElementWrapper
     @XmlElement(name = "rating")
     private List<RatingNFO> ratings;
@@ -66,26 +68,18 @@ public class MovieNFO {
     @XmlElement(name = "producer")
     private List<ActorNFO> producers;
     private Boolean watched;
-    // tmm meta data
-    private String tmdbid;
-    private String tmdbCollectionId;
     private String source;
     private String edition;
-    @XmlElement(name = "original_filename")
-    private String originalFilename;
-    @XmlElement(name = "user_note")
-    private String userNote;
-    // avdc meta data
-    private String num;
-    // custom meta data
     private String website;
     @XmlElement(name = "language")
     private List<String> languages;
     @XmlElement(name = "aka")
     private List<String> akas;
-
-    //movie robot
-    private String imdbid;
-    private String doubanid;
+    @XmlElement(name = "tmdbid")
+    private String tmdbId;
+    @XmlElement(name = "imdbid")
+    private String imdbId;
+    @XmlElement(name = "doubanid")
+    private String doubanId;
 
 }

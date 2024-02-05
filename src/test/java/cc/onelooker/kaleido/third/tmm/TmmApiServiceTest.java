@@ -48,14 +48,12 @@ public class TmmApiServiceTest {
 
     @Test
     public void findDoulist() {
-        tmmApiService.setUrl("http://127.0.0.1:6000");
         Doulist doulist = tmmApiService.findDoulist("136414497");
         Assertions.assertEquals(doulist.getTitle(), "想给妈妈看的电影");
     }
 
     @Test
     public void listDoulistMovie() {
-        tmmApiService.setUrl("http://127.0.0.1:6000");
         List<Movie> movieList = tmmApiService.listDoulistMovie("136414497", 0);
         Assertions.assertNotNull(movieList.get(0).getTitle());
     }

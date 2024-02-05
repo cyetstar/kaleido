@@ -65,19 +65,13 @@ public class MusicManager {
     private NeteaseApiService neteaseApiService;
 
     @Transactional
-    public void syncPlexAlbumById(String libraryPath, Long albumId) {
+    public void syncPlexAlbumAndReadAudioTag(String libraryPath, Long albumId) {
         Metadata metadata = plexApiService.findAlbumById(albumId);
-        syncPlexAlbum(libraryPath, metadata);
-    }
-
-    @Transactional
-    public void syncPlexAlbumAndReadAudioTag(String libraryPath, Metadata metadata) {
         syncPlexAlbum(libraryPath, metadata);
         readAudioTag(metadata.getRatingKey());
     }
 
-    @Transactional
-    public void syncPlexAlbum(String libraryPath, Metadata metadata) {
+    private void syncPlexAlbum(String libraryPath, Metadata metadata) {
         MusicArtistDTO musicArtistDTO = syncPlexArtist(metadata.getParentRatingKey());
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(metadata.getRatingKey());
         if (musicAlbumDTO == null) {

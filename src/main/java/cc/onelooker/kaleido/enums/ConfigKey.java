@@ -24,5 +24,5 @@ public enum ConfigKey {
     tmmUrl,
     tmdbApikey, movieTrashPath, lastMovieAnalyzeTime,
     plexRetries,
-    matchInfoSleepSecond, downloadLyricSleepSecond;
+    matchInfoSleepSecond, downloadLyricSleepSecond, tvshowDownloadPath, tvshowLibraryPath, tvshowTrashPath;
 }
