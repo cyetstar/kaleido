@@ -40,6 +40,7 @@ public class MusicArtistServiceImpl extends AbstractBaseServiceImpl<MusicArtistM
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), MusicArtistDO::getTitle, dto.getTitle());
         query.eq(StringUtils.isNotEmpty(dto.getTitleSort()), MusicArtistDO::getTitleSort, dto.getTitleSort());
         query.eq(StringUtils.isNotEmpty(dto.getArea()), MusicArtistDO::getArea, dto.getArea());
+        query.like(StringUtils.isNotEmpty(dto.getKeyword()), MusicArtistDO::getTitle, dto.getKeyword());
         return query;
     }
 

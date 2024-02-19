@@ -5,6 +5,7 @@ import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author xiadawei
@@ -36,7 +37,14 @@ public class Season {
     private List<Episode> episodes;
     private String poster;
 
-    public String getSeasonNumberStr(){
-       return StringUtils.leftPad(String.valueOf(seasonNumber), 2, "0");
+    public String getSeasonNumberStr() {
+        return StringUtils.leftPad(String.valueOf(seasonNumber), 2, "0");
+    }
+
+    public Episode getEpisode(Integer episodeNumber) {
+        if (episodes == null) {
+            return null;
+        }
+        return episodes.stream().filter(s -> Objects.equals(s.getEpisodeNumber(), episodeNumber)).findFirst().orElse(null);
     }
 }

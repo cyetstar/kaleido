@@ -180,7 +180,6 @@ public class MovieManager {
             MovieNFO movieNFO = NFOUtil.toMovieNFO(movie);
             NFOUtil.write(movieNFO, MovieNFO.class, movieFolderPath, "movie.nfo");
             plexApiService.refreshMovieById(id);
-            updateAka(movie.getAkas(), id);
             //如果模版信息发生变动，则重新移动文件，而后续由定时任务重新获取新的信息
             MovieBasicDTO movieBasicDTO = movieBasicService.findById(id);
             if (!StringUtils.equals(movie.getTitle(), movieBasicDTO.getTitle()) || !StringUtils.equals(movie.getYear(), movieBasicDTO.getYear())) {
@@ -281,9 +280,9 @@ public class MovieManager {
             Long movieId = metadata.getRatingKey();
             String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
             MovieNFO movieNFO = NFOUtil.read(MovieNFO.class, Paths.get(movieFolder), "movie.nfo");
-            String doubanId = getUniqueid(movieNFO.getUniqueids(), SourceType.douban.name());
-            String imdb = getUniqueid(movieNFO.getUniqueids(), SourceType.imdb.name());
-            String tmdb = getUniqueid(movieNFO.getUniqueids(), SourceType.tmdb.name());
+            String doubanId = NFOUtil.getUniqueid(movieNFO.getUniqueids(), SourceType.douban.name());
+            String imdb = NFOUtil.getUniqueid(movieNFO.getUniqueids(), SourceType.imdb.name());
+            String tmdb = NFOUtil.getUniqueid(movieNFO.getUniqueids(), SourceType.tmdb.name());
             MovieBasicDTO movieBasicDTO = movieBasicService.findById(movieId);
             movieBasicDTO.setDoubanId(StringUtils.defaultIfEmpty(doubanId, movieNFO.getDoubanId()));
             movieBasicDTO.setImdbId(StringUtils.defaultIfEmpty(imdb, movieNFO.getImdbId()));
@@ -466,10 +465,6 @@ public class MovieManager {
         }
         return movieBasicCollectionDTO;
 
-    }
-
-    private String getUniqueid(List<UniqueidNFO> uniqueids, String type) {
-        return uniqueids.stream().filter(s -> StringUtils.equals(s.getType(), type)).map(s -> s.getValue()).findFirst().orElse(null);
     }
 
     private void updateAka(List<String> akas, Long movieId) {

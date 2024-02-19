@@ -27,4 +27,5 @@ public class NFOUtilTest {
         movieNFO.setPlot("test");
         NFOUtil.write(movieNFO, MovieNFO.class, Paths.get("/Users/cyetstar/Downloads"), "movie2.nfo");
     }
+
 }

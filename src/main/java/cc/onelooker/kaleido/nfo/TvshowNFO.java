@@ -31,12 +31,19 @@ public class TvshowNFO {
     private List<UniqueidNFO> uniqueids;
     @XmlElement(name = "genre")
     private List<String> genres;
-    @XmlElement(name = "tag")
-    private List<String> tags;
-    @XmlElement(name = "studio")
-    private List<String> studios;
+    @XmlElement(name = "country")
+    private List<String> countries;
+    private List<String> credits;
+    @XmlElement(name = "director")
+    private List<String> directors;
+    @XmlElement(name = "actor")
+    private List<ActorNFO> actors;
     @XmlElement(name = "aka")
     private List<String> akas;
+    @XmlElement(name = "studio")
+    private List<String> studios;
+    @XmlElement(name = "tag")
+    private List<String> tags;
     @XmlElement(name = "doubanid")
     private String doubanId;
     @XmlElement(name = "imdbid")

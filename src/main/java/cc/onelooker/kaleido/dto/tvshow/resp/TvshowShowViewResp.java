@@ -53,6 +53,15 @@ public class TvshowShowViewResp {
     @ApiModelProperty("季数")
     private Integer totalSeasons;
 
+    @ApiModelProperty("IMDb编号")
+    private String imdbId;
+
+    @ApiModelProperty("豆瓣编号")
+    private String doubanId;
+
+    @ApiModelProperty("TMDB编号")
+    private String tmdbId;
+
     @ApiModelProperty("加入时间")
     private Long addedAt;
 

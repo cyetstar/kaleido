@@ -66,6 +66,8 @@ public class MusicArtistDTO implements BaseDTO<Long> {
 
     // ------ 非数据库表字段 -------
 
+    private String keyword;
+
     @Override
     public Long getId() {
         return this.id;

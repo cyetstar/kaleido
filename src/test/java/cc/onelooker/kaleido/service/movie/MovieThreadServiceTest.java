@@ -42,6 +42,9 @@ class MovieThreadServiceTest {
     @Autowired
     private RestTemplate restTemplate;
 
+    private Pattern pattern = Pattern.compile("filename=\"(.+?)\"");
+
+
     @Test
     void downloadTorrent() {
         System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
@@ -69,7 +72,6 @@ class MovieThreadServiceTest {
         downloadTorrent(link, movieThreadDTO);
     }
 
-    private Pattern pattern = Pattern.compile("filename=\"(.+?)\"");
 
     private void downloadTorrent(String url, MovieThreadDTO movieThreadDTO) {
         try {

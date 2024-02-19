@@ -15,6 +15,8 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
@@ -38,5 +40,6 @@ public class KaleidoUtilsTest {
 //        MovieNFO movieNFO = NFOUtil.read(Paths.get(decodePath), "movie.nfo");
 //        Assertions.assertNotNull(movieNFO);
     }
+
 
 }

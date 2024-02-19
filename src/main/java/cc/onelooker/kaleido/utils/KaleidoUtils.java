@@ -1,7 +1,9 @@
 package cc.onelooker.kaleido.utils;
 
 import cc.onelooker.kaleido.enums.ConfigKey;
+import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -16,20 +18,37 @@ public class KaleidoUtils {
     public static String[] lowQualityExtensions = new String[]{"avi", "wmv", "rmvb", "mp4"};
 
     public static String getMovieFolder(String path) {
-        String plexMovieLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryPath);
-        String movieLibraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
-        path = StringUtils.replace(path, plexMovieLibraryPath, movieLibraryPath);
+        String plexLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryPath);
+        String libraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
+        path = StringUtils.replace(path, plexLibraryPath, libraryPath);
         return path.substring(0, path.lastIndexOf("/"));
     }
 
+    public static String getTvshowFolder(String path) {
+        String plexLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryPath);
+        String libraryPath = ConfigUtils.getSysConfig(ConfigKey.tvshowLibraryPath);
+        return StringUtils.replace(path, plexLibraryPath, libraryPath);
+    }
+
     public static String getMusicFolder(String path) {
-        String plexMovieLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexMusicLibraryPath);
-        String movieLibraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
-        path = StringUtils.replace(path, plexMovieLibraryPath, movieLibraryPath);
+        String plexLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexMusicLibraryPath);
+        String libraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
+        path = StringUtils.replace(path, plexLibraryPath, libraryPath);
         return path.substring(0, path.lastIndexOf("/"));
     }
 
     public static boolean isVideoFile(String filename) {
         return FilenameUtils.isExtension(filename, videoExtensions);
+    }
+
+    public static String getSimpleName(String name){
+        if (StringUtils.isEmpty(name)) {
+            return name;
+        }
+        String simpleName = RegExUtils.removePattern(name, "'|’");
+        simpleName = RegExUtils.removePattern(simpleName, "\\(.+\\)");
+        simpleName = StringUtils.trim(simpleName);
+        simpleName = ZhConverterUtil.toSimple(simpleName);
+        return simpleName;
     }
 }

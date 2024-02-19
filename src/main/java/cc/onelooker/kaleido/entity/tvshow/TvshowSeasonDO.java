@@ -62,6 +62,24 @@ public class TvshowSeasonDO implements IdEntity<Long> {
     private String art;
 
     /**
+     * IMDb编号
+     */
+    @TableField(value = "imdb_id")
+    private String imdbId;
+
+    /**
+     * 豆瓣编号
+     */
+    @TableField(value = "douban_id")
+    private String doubanId;
+
+    /**
+     * TMDB编号
+     */
+    @TableField(value = "tmdb_id")
+    private String tmdbId;
+
+    /**
      * 加入时间
      */
     @TableField(value = "added_at")

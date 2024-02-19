@@ -18,4 +18,6 @@ public interface TvshowShowActorService extends IBaseService<TvshowShowActorDTO>
     TvshowShowActorDTO insert(Long showId, Long actorId, String role);
 
     List<TvshowShowActorDTO> listByShowId(Long showId);
+
+    void deleteByShowIdAndRole(Long showId, String role);
 }

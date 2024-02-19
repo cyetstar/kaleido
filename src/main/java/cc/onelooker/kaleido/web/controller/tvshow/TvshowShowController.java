@@ -139,4 +139,25 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
         return CommonResult.success(true);
     }
 
+    @PostMapping("matchInfo")
+    @ApiOperation(value = "匹配信息")
+    public CommonResult<Boolean> matchInfo(@RequestBody TvshowShowMatchInfoReq req) {
+        tvshowManager.matchInfo(req.getId(), req.getDoubanId(), req.getImdbId(), req.getTmdbId());
+        return CommonResult.success(true);
+    }
+
+    @PostMapping("syncPlex")
+    @ApiOperation(value = "同步资料")
+    public CommonResult<Boolean> syncPlex(@RequestBody TvshowShowSyncPlexReq req) {
+        tvshowManager.syncPlex(req.getId());
+        return CommonResult.success(true);
+    }
+
+    @PostMapping("readNFO")
+    @ApiOperation(value = "读取NFO")
+    public CommonResult<Boolean> readNFO(@RequestBody TvshowShowReadNFOReq req) throws Exception {
+        tvshowManager.readNFO(req.getId());
+        return CommonResult.success(true);
+    }
+
 }

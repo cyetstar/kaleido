@@ -62,6 +62,14 @@ public class TvshowShowGenreServiceImpl extends AbstractBaseServiceImpl<TvshowSh
     }
 
     @Override
+    public void deleteByShowId(Long showId) {
+        Validate.notNull(showId);
+        TvshowShowGenreDTO param = new TvshowShowGenreDTO();
+        param.setShowId(showId);
+        delete(param);
+    }
+
+    @Override
     public List<TvshowShowGenreDTO> listByShowId(Long showId) {
         Validate.notNull(showId);
         TvshowShowGenreDTO param = new TvshowShowGenreDTO();

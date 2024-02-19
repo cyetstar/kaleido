@@ -50,6 +50,21 @@ public class TvshowSeasonDTO implements BaseDTO<Long> {
     private String art;
 
     /**
+     * IMDb编号
+     */
+    private String imdbId;
+
+    /**
+     * 豆瓣编号
+     */
+    private String doubanId;
+
+    /**
+     * TMDB编号
+     */
+    private String tmdbId;
+
+    /**
      * 加入时间
      */
     private Long addedAt;

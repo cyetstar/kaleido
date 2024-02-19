@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.dto.music;
 
+import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
@@ -89,5 +90,9 @@ public class MusicTrackDTO implements BaseDTO<Long> {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getSimpleTitle() {
+        return KaleidoUtils.getSimpleName(title);
     }
 }

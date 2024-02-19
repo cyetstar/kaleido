@@ -119,12 +119,21 @@ public class NFOUtil {
         CollectionUtils.addIgnoreNull(ratingNFOList, toRatingNFO(tvshow.getAverage()));
         tvshowNFO.setRatings(ratingNFOList);
         List<UniqueidNFO> uniqueidNFOList = Lists.newArrayList();
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.douban, tvshow.getDoubanId()));
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.imdb, tvshow.getImdbId()));
         CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.tmdb, tvshow.getTmdbId()));
         tvshowNFO.setUniqueids(uniqueidNFOList);
         tvshowNFO.setAkas(tvshow.getAkas());
         tvshowNFO.setGenres(tvshow.getGenres());
         tvshowNFO.setMpaa(tvshow.getMpaa());
         tvshowNFO.setStudios(tvshow.getStudios());
+        if (CollectionUtils.isNotEmpty(tvshow.getDirectors())) {
+            tvshowNFO.setDirectors(tvshow.getDirectors().stream().map(s -> StringUtils.defaultString(s.getCnName(), s.getEnName())).collect(Collectors.toList()));
+        }
+        if (CollectionUtils.isNotEmpty(tvshow.getWriters())) {
+            tvshowNFO.setCredits(tvshow.getWriters().stream().map(s -> StringUtils.defaultString(s.getCnName(), s.getEnName())).collect(Collectors.toList()));
+        }
+        tvshowNFO.setActors(toActorNFOs(tvshow.getActors()));
         return tvshowNFO;
     }
 
@@ -132,6 +141,7 @@ public class NFOUtil {
         SeasonNFO seasonNFO = new SeasonNFO();
         seasonNFO.setTitle(season.getTitle());
         seasonNFO.setOriginalTitle(season.getOriginalTitle());
+        seasonNFO.setSeasonNumber(season.getSeasonNumber());
         seasonNFO.setPlot(season.getPlot());
         seasonNFO.setYear(season.getYear());
         seasonNFO.setPremiered(season.getPremiered());
@@ -139,11 +149,10 @@ public class NFOUtil {
         CollectionUtils.addIgnoreNull(ratingNFOList, toRatingNFO(season.getAverage()));
         seasonNFO.setRatings(ratingNFOList);
         List<UniqueidNFO> uniqueidNFOList = Lists.newArrayList();
-        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.tmdb, season.getTmdbId()));
         CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.douban, season.getDoubanId()));
         CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.imdb, season.getImdbId()));
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.tmdb, season.getTmdbId()));
         seasonNFO.setUniqueids(uniqueidNFOList);
-
         if (CollectionUtils.isNotEmpty(season.getCredits())) {
             seasonNFO.setCredits(season.getCredits().stream().map(s -> StringUtils.defaultString(s.getCnName(), s.getEnName())).collect(Collectors.toList()));
         }
@@ -151,7 +160,6 @@ public class NFOUtil {
             seasonNFO.setDirectors(season.getDirectors().stream().map(s -> StringUtils.defaultString(s.getCnName(), s.getEnName())).collect(Collectors.toList()));
         }
         seasonNFO.setActors(toActorNFOs(season.getActors()));
-
         seasonNFO.setAkas(tvshow.getAkas());
         seasonNFO.setGenres(tvshow.getGenres());
         seasonNFO.setMpaa(tvshow.getMpaa());
@@ -295,6 +303,13 @@ public class NFOUtil {
         } catch (TransformerException e) {
         }
         return null;
+    }
+
+    public static String getUniqueid(List<UniqueidNFO> uniqueids, String type) {
+        if (CollectionUtils.isEmpty(uniqueids)) {
+            return null;
+        }
+        return uniqueids.stream().filter(s -> StringUtils.equals(s.getType(), type)).map(s -> s.getValue()).findFirst().orElse(null);
     }
 
 }

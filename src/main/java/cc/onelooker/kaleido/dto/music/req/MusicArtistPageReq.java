@@ -32,13 +32,7 @@ public class MusicArtistPageReq {
     @ApiModelProperty("排序名称")
     private String titleSort;
 
-    @ApiModelProperty("封面图")
-    private String thumb;
-
-    @ApiModelProperty("加入时间")
-    private Long addedAt;
-
-    @ApiModelProperty("更新时间")
-    private Long updatedAt;
+    @ApiModelProperty("关键词")
+    private String keyword;
 
 }

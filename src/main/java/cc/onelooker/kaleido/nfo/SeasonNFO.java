@@ -24,6 +24,8 @@ public class SeasonNFO {
     @XmlElementWrapper
     @XmlElement(name = "rating")
     private List<RatingNFO> ratings;
+    @XmlElement(name = "season")
+    private Integer seasonNumber;
     @XmlJavaTypeAdapter(value = CDataAdapter.class)
     private String plot;
     private String mpaa;
@@ -44,6 +46,8 @@ public class SeasonNFO {
     private List<String> akas;
     @XmlElement(name = "studio")
     private List<String> studios;
+    @XmlElement(name = "tag")
+    private List<String> tags;
     @XmlElement(name = "tmdbid")
     private String tmdbId;
     @XmlElement(name = "imdbid")

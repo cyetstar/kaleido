@@ -64,9 +64,15 @@ public class Metadata {
     private List<Tag> writerList;
     @JsonProperty("Media")
     private List<Media> mediaList;
+    @JsonProperty("Location")
+    private List<Location> locationList;
 
     public Media getMedia() {
         return CollectionUtils.get(mediaList, 0);
+    }
+
+    public Location getLocation() {
+        return CollectionUtils.get(locationList, 0);
     }
 
     @Override

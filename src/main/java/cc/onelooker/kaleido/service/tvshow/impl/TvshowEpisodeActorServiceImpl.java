@@ -11,6 +11,7 @@ import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -61,5 +62,16 @@ public class TvshowEpisodeActorServiceImpl extends AbstractBaseServiceImpl<Tvsho
         tvshowEpisodeActorDTO.setActorId(actorId);
         tvshowEpisodeActorDTO.setRole(role);
         return insert(tvshowEpisodeActorDTO);
+    }
+
+    @Override
+    @Transactional
+    public void deleteByEpisodeIdAndRole(Long episodeId, String role) {
+        Validate.notNull(episodeId);
+        Validate.notEmpty(role);
+        TvshowEpisodeActorDTO param = new TvshowEpisodeActorDTO();
+        param.setEpisodeId(episodeId);
+        param.setRole(role);
+        delete(param);
     }
 }

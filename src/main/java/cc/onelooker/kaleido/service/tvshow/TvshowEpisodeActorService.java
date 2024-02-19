@@ -15,4 +15,5 @@ public interface TvshowEpisodeActorService extends IBaseService<TvshowEpisodeAct
 
     TvshowEpisodeActorDTO insert(Long episodeId, Long actorId, String role);
 
+    void deleteByEpisodeIdAndRole(Long episodeId, String role);
 }

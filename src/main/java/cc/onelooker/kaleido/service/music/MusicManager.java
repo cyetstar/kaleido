@@ -250,9 +250,7 @@ public class MusicManager {
 
         List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(albumId);
         for (MusicTrackDTO musicTrackDTO : musicTrackDTOList) {
-            String title = musicTrackDTO.getTitle();
-            String simple = ZhConverterUtil.toSimple(title);
-            Song song = songs.stream().filter(s -> StringUtils.equalsAnyIgnoreCase(s.getName(), title, simple)).findFirst().orElse(null);
+            Song song = songs.stream().filter(s -> StringUtils.equalsAnyIgnoreCase(s.getSimpleName(), musicTrackDTO.getTitle(), musicTrackDTO.getSimpleTitle())).findFirst().orElse(null);
             if (song != null) {
                 musicTrackDTO.setNeteaseId(song.getId());
                 musicTrackService.update(musicTrackDTO);
@@ -268,6 +266,7 @@ public class MusicManager {
             }
         }
     }
+
 
     public void downloadTrackLyric(Long trackId, String neteaseId) {
         MusicTrackDTO musicTrackDTO = musicTrackService.findById(trackId);

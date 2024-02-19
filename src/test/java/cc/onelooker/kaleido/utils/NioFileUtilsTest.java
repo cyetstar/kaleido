@@ -2,21 +2,34 @@ package cc.onelooker.kaleido.utils;
 
 import cc.onelooker.kaleido.dto.movie.MovieThreadDTO;
 import cc.onelooker.kaleido.dto.movie.MovieThreadFilenameDTO;
+import cc.onelooker.kaleido.dto.movie.PTThreadDTO;
 import cc.onelooker.kaleido.enums.ThreadStatus;
 import cc.onelooker.kaleido.service.movie.MovieThreadFilenameService;
 import cc.onelooker.kaleido.service.movie.MovieThreadService;
+import cc.onelooker.kaleido.service.movie.PTThreadService;
+import cn.hutool.core.exceptions.ExceptionUtil;
+import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.URLUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,6 +56,14 @@ public class NioFileUtilsTest {
 
     @Autowired
     private MovieThreadService movieThreadService;
+
+    @Autowired
+    private PTThreadService ptThreadService;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    private Pattern pattern = Pattern.compile("filename=\"(.+?)\"");
 
     @Test
     public void deleteEmptyFolder() {
@@ -278,6 +299,44 @@ public class NioFileUtilsTest {
         } else if (KaleidoUtils.isVideoFile(path.getFileName().toString())) {
             pathList.add(path);
 
+        }
+    }
+
+    @org.junit.jupiter.api.Test
+    public void downloadTorrent() {
+        System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
+        PTThreadDTO param = new PTThreadDTO();
+        param.setTitle("iNT-TLF");
+        List<PTThreadDTO> ptThreadDTOList = ptThreadService.list(param);
+        for (PTThreadDTO ptThreadDTO : ptThreadDTOList) {
+            String link = "https://pt.eastgame.org/download.php?id=" + ptThreadDTO.getId();
+            downloadTorrent(link, ptThreadDTO.getTitle());
+        }
+    }
+
+    private void downloadTorrent(String url, String title) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.COOKIE, "c_secure_uid=Mjk2OTQ%3D; c_secure_pass=158ee141f59b0c48b3311bcc198f7f55; c_secure_ssl=eWVhaA%3D%3D; c_secure_tracker_ssl=eWVhaA%3D%3D; c_secure_login=bm9wZQ%3D%3D; OUTFOX_SEARCH_USER_ID_NCOO=147191347.17357275; __utmz=160627708.1706756768.105.22.utmcsr=192.168.3.100:8000|utmccn=(referral)|utmcmd=referral|utmcct=/; __utma=160627708.7976078.1693316768.1707215490.1707490535.114; __utmc=160627708; __utmb=160627708.6.10.1707490535");
+            headers.add(HttpHeaders.REFERER, "https://pt.eastgame.org");
+            headers.add(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+            headers.add(HttpHeaders.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
+            RequestEntity<byte[]> requestEntity = new RequestEntity<>(headers, HttpMethod.GET, URI.create(url));
+            ResponseEntity<byte[]> responseEntity = restTemplate.exchange(requestEntity, byte[].class);
+            HttpHeaders responseEntityHeaders = responseEntity.getHeaders();
+            String contentDisposition = responseEntityHeaders.getFirst("Content-Disposition");
+            //attachment; filename=%5BTLF%5D.%E7%BD%97%E5%AF%86%E6%AC%A7%E4%B8%8E%E6%9C%B1%E4%B8%BD%E5%8F%B6%E5%90%8E%E7%8E%B0%E4%BB%A3%E6%BF%80%E6%83%85%E7%89%88.Romeo%2BJuliet.1996.BD.2Audio.MiniSD-TLF.mkv.torrent
+            String decodeContentDisposition = URLUtil.decode(contentDisposition);
+            Matcher matcher = pattern.matcher(decodeContentDisposition);
+            String fileName = title + ".torrent";
+            if (matcher.find()) {
+                fileName = matcher.group(1);
+            }
+            FileUtils.writeByteArrayToFile(Paths.get("/Users/cyetstar/Downloads/eastgame", fileName).toFile(), responseEntity.getBody());
+        } catch (Exception e) {
+            log.error("【{}】下载出错, {} :{}", title, url, ExceptionUtil.getMessage(e));
+        } finally {
+            ThreadUtil.sleep(RandomUtil.randomInt(500));
         }
     }
 

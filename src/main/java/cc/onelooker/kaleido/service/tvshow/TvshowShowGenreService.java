@@ -20,4 +20,6 @@ public interface TvshowShowGenreService extends IBaseService<TvshowShowGenreDTO>
     List<TvshowShowGenreDTO> listByGenreId(Long genreId);
 
     TvshowShowGenreDTO insert(Long showId, Long genreId);
+
+    void deleteByShowId(Long showId);
 }

@@ -50,6 +50,8 @@ public class PlexApiService {
     private final static String API_COLLECTION_CHILDREN = "/library/collections/{collectionId}/children?X-Plex-Token={plexToken}";
 
     private final static String API_METADATA = "/library/metadata/{metadataId}?X-Plex-Token={plexToken}";
+    private final static String API_METADATA_CHILDREN = "/library/metadata/{metadataId}/children?X-Plex-Token={plexToken}";
+    private final static String API_METADATA_REFRESH = "/library/metadata/{metadataId}/refresh?force=1&X-Plex-Token={plexToken}";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -275,6 +277,28 @@ public class PlexApiService {
     public void deleteMetadata(Long metadataId) {
         doRequest(() -> {
             restTemplate.delete(plexUrl + API_METADATA, metadataId, plexToken);
+            return true;
+        });
+    }
+
+    public List<Metadata> listMetadataChildren(Long metadataId) {
+        return doRequest(() -> {
+            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_METADATA_CHILDREN, PlexResult.class, metadataId, plexToken);
+            return plexResult.getMediaContainer().getMetadataList();
+        });
+    }
+
+    public Metadata findMetadata(Long metadataId) {
+        return doRequest(() -> {
+            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_METADATA, PlexResult.class, metadataId, plexToken);
+            MediaContainer mediaContainer = plexResult.getMediaContainer();
+            return mediaContainer.getMetadata();
+        });
+    }
+
+    public void refreshMetadata(Long metadataId) {
+         doRequest(() -> {
+            restTemplate.put(plexUrl + API_METADATA_REFRESH, String.class, metadataId, plexToken);
             return true;
         });
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author xiadawei
@@ -36,10 +37,17 @@ public class Tvshow {
     private String mpaa;
     private String premiered;
     private List<String> studios;
-    private Season season;
+    private List<Season> seasons;
 
     @Override
     public String toString() {
         return title + " (" + year + ")";
+    }
+
+    public Season getSeason(Integer seasonNumber) {
+        if (seasons == null) {
+            return null;
+        }
+        return seasons.stream().filter(s -> Objects.equals(s.getSeasonNumber(), seasonNumber)).findFirst().orElse(null);
     }
 }

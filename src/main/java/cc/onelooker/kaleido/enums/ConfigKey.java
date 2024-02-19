@@ -9,20 +9,32 @@ public enum ConfigKey {
 
     movieLibraryPath,
     movieExcludePath,
+    movieTrashPath,
+
+    tvshowDownloadPath,
+    tvshowLibraryPath,
+    tvshowTrashPath,
+
     movieDownloadPath,
     musicLibraryPath,
     musicExcludePath,
+
     plexUrl,
     plexToken,
+    plexRetries,
     plexMovieLibraryId,
     plexMovieLibraryPath,
+    plexTvshowLibraryId,
+    plexTvshowLibraryPath,
     plexMusicLibraryId,
     plexMusicLibraryPath,
-    plexTvshowLibraryId,
+
     neteaseUrl,
-    doubanApikey,
     tmmUrl,
-    tmdbApikey, movieTrashPath, lastMovieAnalyzeTime,
-    plexRetries,
-    matchInfoSleepSecond, downloadLyricSleepSecond, tvshowDownloadPath, tvshowLibraryPath, tvshowTrashPath;
+    doubanApikey,
+    tmdbApikey,
+
+    lastMovieAnalyzeTime,
+    matchInfoSleepSecond,
+    downloadLyricSleepSecond;
 }
