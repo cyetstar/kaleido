@@ -8,8 +8,9 @@ import cc.onelooker.kaleido.dto.system.req.SysConfigUpdateReq;
 import cc.onelooker.kaleido.dto.system.resp.SysConfigCreateResp;
 import cc.onelooker.kaleido.dto.system.resp.SysConfigPageResp;
 import cc.onelooker.kaleido.dto.system.resp.SysConfigViewResp;
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.system.SysConfigService;
-import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -44,7 +45,7 @@ public class SysConfigController extends AbstractCrudController<SysConfigDTO> {
     private SysConfigService sysConfigService;
 
     @Autowired
-    private PlexApiService plexApiService;
+    private TmmApiService tmmApiService;
 
     @Override
     protected IBaseService getService() {
@@ -61,6 +62,10 @@ public class SysConfigController extends AbstractCrudController<SysConfigDTO> {
             sysConfigDTO.setConfigValue(MapUtils.getString(req, key));
             sysConfigDTOList.add(sysConfigDTO);
         }
+        sysConfigDTOList.stream().filter(s -> StringUtils.isNotEmpty(s.getConfigValue())
+                && ConfigKey.doubanCookie.name().equals(s.getConfigKey())).findFirst().ifPresent(s -> {
+            tmmApiService.setDoubanCookie(s.getConfigValue());
+        });
         sysConfigService.save(sysConfigDTOList);
         return CommonResult.success(true);
     }

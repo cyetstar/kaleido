@@ -6,7 +6,12 @@ import com.alibaba.fastjson2.JSONArray;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -24,6 +29,7 @@ public class TmmApiService {
     private final static String API_FIND_DOULIST = "/doulist/detail?douban_id={doubanId}";
     private final static String API_LIST_DOULIST_MOVIE = "/doulist/movies?douban_id={doubanId}&start={start}";
     private final static String API_FIND_TVSHOW = "/tvshow/detail?douban_id={doubanId}&imdb_id={imdbId}&tmdb_id={tmdbId}";
+    private final static String API_DOUBAN_COOKIE = "/douban/cookie";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -65,5 +71,15 @@ public class TmmApiService {
         }
         String url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl);
         return restTemplate.getForObject(url + API_FIND_TVSHOW, Tvshow.class, doubanId, imdbId, tmdbId);
+    }
+
+    public void setDoubanCookie(String cookie) {
+        String url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl);
+        HttpHeaders headers = new HttpHeaders();
+        MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+        map.add("cookie", cookie);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, Object>> param = new HttpEntity<>(map, headers);
+        restTemplate.postForEntity(url + API_DOUBAN_COOKIE, param, String.class);
     }
 }

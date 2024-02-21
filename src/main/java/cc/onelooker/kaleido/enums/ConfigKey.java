@@ -32,6 +32,7 @@ public enum ConfigKey {
     neteaseUrl,
     tmmUrl,
     doubanApikey,
+    doubanCookie,
     tmdbApikey,
 
     lastMovieAnalyzeTime,

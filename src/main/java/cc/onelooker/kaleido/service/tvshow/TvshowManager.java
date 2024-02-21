@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -278,9 +279,12 @@ public class TvshowManager {
 
     private Tvshow findTvshowByNFO(Path path) throws Exception {
         Stream<Path> stream = Files.list(path);
-        Path nfoPath = stream.filter(s -> FilenameUtils.isExtension(s.getFileName().toString(), "nfo")).findFirst().orElse(null);
+        Path nfoPath = stream.filter(s -> StringUtils.equals(s.getFileName().toString(), "season.nfo")).findFirst().orElse(null);
         if (nfoPath != null) {
             SeasonNFO seasonNFO = NFOUtil.read(SeasonNFO.class, nfoPath);
+            seasonNFO.setDoubanId(ObjectUtils.defaultIfNull(seasonNFO.getDoubanId(), NFOUtil.getUniqueid(seasonNFO.getUniqueids(), SourceType.douban.name())));
+            seasonNFO.setImdbId(ObjectUtils.defaultIfNull(seasonNFO.getImdbId(), NFOUtil.getUniqueid(seasonNFO.getUniqueids(), SourceType.imdb.name())));
+            seasonNFO.setTmdbId(ObjectUtils.defaultIfNull(seasonNFO.getTmdbId(), NFOUtil.getUniqueid(seasonNFO.getUniqueids(), SourceType.tmdb.name())));
             return tmmApiService.findTvshow(seasonNFO.getDoubanId(), seasonNFO.getImdbId(), seasonNFO.getTmdbId());
         }
         return null;
@@ -295,11 +299,11 @@ public class TvshowManager {
             try {
                 File file = s.toFile();
                 String fileName = file.getName();
-                if (!KaleidoUtils.isVideoFile(fileName)) {
-                    log.info("== 非视频文件保持不动: {}", fileName);
+                if (file.isDirectory() && StringUtils.equals(fileName, "Specials")) {
+                    NioFileUtils.moveDir(s, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                    log.info("== 移动特别季文件夹: {}", fileName);
                     return;
                 }
-
                 Map<String, Integer> numberResult = getSeasonEpisodeNumber(fileName);
                 Integer seasonNumber = MapUtils.getInteger(numberResult, "seasonNumber", 1);
                 Integer episodeNumber = MapUtils.getInteger(numberResult, "episodeNumber");
@@ -309,18 +313,12 @@ public class TvshowManager {
                 }
                 //创建规范文件夹
                 Path seasonPath = createSeasonPath(targetPath, seasonNumber);
-                if (file.isDirectory() && StringUtils.equals(fileName, "Other")) {
-                    //直接移动文件夹
-                    NioFileUtils.moveDir(s, seasonPath, StandardCopyOption.REPLACE_EXISTING);
-                    log.info("== 移动文件目录:{}", fileName);
+                if (!KaleidoUtils.isVideoFile(fileName)) {
+                    Files.move(s, seasonPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                    log.info("== 移动其他文件: {}", fileName);
                     return;
                 }
-                //删除已经存在的剧集视频文件
-                deleteExistEpisodeVideoFile(seasonPath, seasonNumber, episodeNumber);
-                //移动视频文件
                 Path videoPath = seasonPath.resolve(fileName);
-                Files.move(s, videoPath, StandardCopyOption.REPLACE_EXISTING);
-                log.info("== 移动视频文件: {}", fileName);
                 Episode episode = findEpisode(tvshow, seasonNumber, episodeNumber);
                 if (episode != null) {
                     //下载episode图片
@@ -337,6 +335,11 @@ public class TvshowManager {
                     exportSeasonNFO(tvshow.getSeason(seasonNumber), tvshow, seasonPath);
                     seasonContext.put(seasonNumber, true);
                 }
+                //如果当前文件为视频文件，则删除已经存在的剧集视频文件
+                deleteExistEpisodeVideoFile(seasonPath, seasonNumber, episodeNumber);
+                //移动视频文件
+                Files.move(s, videoPath, StandardCopyOption.REPLACE_EXISTING);
+                log.info("== 移动视频文件: {}", fileName);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -430,9 +433,11 @@ public class TvshowManager {
             try {
                 String fileName = s.getFileName().toString();
                 Map<String, Integer> numberResult = getSeasonEpisodeNumber(fileName);
-                if (seasonNumber != null && Objects.equals(seasonNumber, numberResult.getOrDefault("seasonNumber", -1)) && Objects.equals(episodeNumber, numberResult.getOrDefault("episodeNumber", -1))) {
+                if (KaleidoUtils.isVideoFile(fileName) && seasonNumber != null
+                        && Objects.equals(seasonNumber, numberResult.getOrDefault("seasonNumber", -1))
+                        && Objects.equals(episodeNumber, numberResult.getOrDefault("episodeNumber", -1))) {
                     Files.move(s, trashPath.resolve(s.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-                    log.info("== 移除原剧集视频文件: {}", fileName);
+                    log.info("== 删除原剧集视频文件: {}", fileName);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
