@@ -79,6 +79,7 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @GetMapping("page")
     @ApiOperation(value = "查询剧集")
     public CommonResult<PageResult<TvshowShowPageResp>> page(TvshowShowPageReq req, PageParam pageParam) {
+        pageParam.setOrderBy("DESC:id");
         return super.page(req, pageParam, TvshowShowConvert.INSTANCE::convertToDTO, TvshowShowConvert.INSTANCE::convertToPageResp);
     }
 
@@ -149,15 +150,23 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @PostMapping("syncPlex")
     @ApiOperation(value = "同步资料")
     public CommonResult<Boolean> syncPlex(@RequestBody TvshowShowSyncPlexReq req) {
-        tvshowManager.syncPlex(req.getId());
+        tvshowManager.syncPlexShow(req.getId());
         return CommonResult.success(true);
     }
 
     @PostMapping("readNFO")
     @ApiOperation(value = "读取NFO")
     public CommonResult<Boolean> readNFO(@RequestBody TvshowShowReadNFOReq req) throws Exception {
-        tvshowManager.readNFO(req.getId());
+        tvshowManager.readShowNFO(req.getId());
         return CommonResult.success(true);
+    }
+
+    @GetMapping("viewPath")
+    @ApiOperation(value = "获取目录")
+    public CommonResult<String> viewPath(Long id) {
+        Metadata metadata = plexApiService.findMetadata(id);
+        Path folderPath = Paths.get(KaleidoUtils.getTvshowFolder(metadata.getLocation().getPath()));
+        return CommonResult.success(folderPath.toString());
     }
 
 }

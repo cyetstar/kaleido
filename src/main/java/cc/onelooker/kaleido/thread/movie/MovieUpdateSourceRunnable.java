@@ -28,8 +28,6 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     private String downloadPath;
 
-    private Logger logger;
-
     public MovieUpdateSourceRunnable(MovieManager movieManager) {
         this.movieManager = movieManager;
     }
@@ -42,7 +40,6 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
     @Override
     protected void beforeRun(Map<String, String> params) {
         downloadPath = ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath);
-        logger = LogUtil.getLogger(MovieUpdateSourceRunnable.class);
     }
 
     @Override
@@ -63,7 +60,7 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     @Override
     protected void processEntity(Path path) throws Exception {
-        movieManager.updateSource(path, logger);
+        movieManager.updateSource(path);
     }
 
     @Override

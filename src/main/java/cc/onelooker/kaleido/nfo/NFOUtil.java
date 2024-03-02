@@ -312,6 +312,13 @@ public class NFOUtil {
         return uniqueids.stream().filter(s -> StringUtils.equals(s.getType(), type)).map(s -> s.getValue()).findFirst().orElse(null);
     }
 
+    public static Float getRating(List<RatingNFO> ratings, String type) {
+        if (CollectionUtils.isEmpty(ratings)) {
+            return null;
+        }
+        return ratings.stream().filter(s -> StringUtils.equals(s.getName(), type)).findFirst().map(s -> Float.valueOf(s.getValue())).orElse(null);
+    }
+
 }
 
 

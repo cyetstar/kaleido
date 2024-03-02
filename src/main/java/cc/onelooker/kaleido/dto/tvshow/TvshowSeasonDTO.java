@@ -30,6 +30,11 @@ public class TvshowSeasonDTO implements BaseDTO<Long> {
     private String title;
 
     /**
+     * 原标题
+     */
+    private String originalTitle;
+
+    /**
      * 简介
      */
     private String summary;
@@ -38,6 +43,21 @@ public class TvshowSeasonDTO implements BaseDTO<Long> {
      * 季号
      */
     private Integer seasonIndex;
+
+    /**
+     * 首播年份
+     */
+    private String year;
+
+    /**
+     * 首播日期
+     */
+    private String originallyAvailableAt;
+
+    /**
+     * 评分
+     */
+    private Float rating;
 
     /**
      * 海报

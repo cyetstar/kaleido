@@ -38,6 +38,12 @@ public class TvshowSeasonDO implements IdEntity<Long> {
     private String title;
 
     /**
+     * 原标题
+     */
+    @TableField(value = "original_title")
+    private String originalTitle;
+
+    /**
      * 简介
      */
     @TableField(value = "summary")
@@ -48,6 +54,24 @@ public class TvshowSeasonDO implements IdEntity<Long> {
      */
     @TableField(value = "season_index")
     private Integer seasonIndex;
+
+    /**
+     * 首播年份
+     */
+    @TableField(value = "year")
+    private String year;
+
+    /**
+     * 首播日期
+     */
+    @TableField(value = "originally_available_at")
+    private String originallyAvailableAt;
+
+    /**
+     * 评分
+     */
+    @TableField(value = "rating")
+    private Float rating;
 
     /**
      * 海报

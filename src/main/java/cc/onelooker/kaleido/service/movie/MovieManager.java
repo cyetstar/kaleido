@@ -226,10 +226,10 @@ public class MovieManager {
         }
     }
 
-    public void updateSource(Path path, Logger logger) {
+    public void updateSource(Path path) {
         try {
-            logger.info("=========== 开始更新数据文件 ==========");
-            logger.info("== 源文件信息:{}", path);
+            log.info("=========== 开始更新数据文件 ==========");
+            log.info("== 源文件信息:{}", path);
             Movie movie;
             boolean isDirectory = Files.isDirectory(path);
             if (isDirectory) {
@@ -238,15 +238,15 @@ public class MovieManager {
                 movie = findTmmMovieByFilename(path.getFileName().toString());
             }
             if (movie == null) {
-                logger.info("== 找不到电影信息");
+                log.info("== 找不到电影信息");
                 return;
             }
-            logger.info("== 查询到电影信息:{}", movie.getTitle());
-            operationFolder(movie, path, isDirectory, logger);
+            log.info("== 查询到电影信息:{}", movie.getTitle());
+            operationFolder(movie, path, isDirectory);
         } catch (Exception e) {
             log.error("{}, 更新电影源发生错误", path, e);
         } finally {
-            logger.info("=========== 完成更新数据文件 ==========");
+            log.info("=========== 完成更新数据文件 ==========");
         }
     }
 
@@ -521,7 +521,7 @@ public class MovieManager {
         return null;
     }
 
-    private void operationFolder(Movie movie, Path path, boolean isDirectory, Logger logger) throws Exception {
+    private void operationFolder(Movie movie, Path path, boolean isDirectory) throws Exception {
         Path movieLibraryPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath));
         Path movieDownloadPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath));
         Path movieTrashPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieTrashPath));
@@ -531,7 +531,7 @@ public class MovieManager {
             try {
                 if (KaleidoUtils.isVideoFile(s.getFileName().toString())) {
                     Files.move(s, movieTrashPath.resolve(s.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-                    logger.info("== 移除原视频文件:{}", s.getFileName());
+                    log.info("== 移除原视频文件:{}", s.getFileName());
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -542,10 +542,10 @@ public class MovieManager {
                 try {
                     if (Files.isDirectory(s)) {
                         NioFileUtils.moveDir(s, targetPath, StandardCopyOption.REPLACE_EXISTING);
-                        logger.info("== 移动文件目录:{}", s.getFileName());
+                        log.info("== 移动文件目录:{}", s.getFileName());
                     } else {
                         Files.move(s, targetPath.resolve(s.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-                        logger.info("== 移动文件:{}", s.getFileName());
+                        log.info("== 移动文件:{}", s.getFileName());
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -553,26 +553,26 @@ public class MovieManager {
             });
             if (!path.equals(movieDownloadPath)) {
                 NioFileUtils.deleteIfExists(path);
-                logger.info("== 删除源文件夹:{}", path.getFileName());
+                log.info("== 删除源文件夹:{}", path.getFileName());
             }
         } else {
             //将主文件移动到文件夹
             Files.move(path, targetPath.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-            logger.info("== 移动文件:{}", path.getFileName());
+            log.info("== 移动文件:{}", path.getFileName());
             //如果存在额外文件夹也移动
             Path extraPath = path.getParent().resolve("Other");
             if (Files.exists(extraPath)) {
                 NioFileUtils.moveDir(extraPath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-                logger.info("== 移动文件目录:{}", extraPath.getFileName());
+                log.info("== 移动文件目录:{}", extraPath.getFileName());
             }
         }
         //下载海报
         downloadPoster(movie, targetPath);
-        logger.info("== 下载海报");
+        log.info("== 下载海报");
         //输出nfo文件
         MovieNFO movieNFO = NFOUtil.toMovieNFO(movie);
         NFOUtil.write(movieNFO, MovieNFO.class, targetPath, "movie.nfo");
-        logger.info("== 输出nfo文件");
+        log.info("== 输出nfo文件");
     }
 
     private Movie findTmmMovie(String doubanId, String imdbId, String tmdbId) {

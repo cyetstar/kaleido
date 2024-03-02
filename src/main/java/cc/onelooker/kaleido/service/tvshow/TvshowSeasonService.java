@@ -3,6 +3,8 @@ package cc.onelooker.kaleido.service.tvshow;
 import cc.onelooker.kaleido.dto.tvshow.TvshowSeasonDTO;
 import com.zjjcnt.common.core.service.IBaseService;
 
+import java.util.List;
+
 /**
  * 单季Service
  *
@@ -11,4 +13,5 @@ import com.zjjcnt.common.core.service.IBaseService;
  */
 public interface TvshowSeasonService extends IBaseService<TvshowSeasonDTO> {
 
+    List<TvshowSeasonDTO> listByShowId(Long showId);
 }

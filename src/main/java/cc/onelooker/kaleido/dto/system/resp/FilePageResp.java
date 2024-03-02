@@ -14,7 +14,7 @@ import java.math.RoundingMode;
  * @Description TODO
  */
 @Data
-public class FileListResp {
+public class FilePageResp {
 
     private String name;
 

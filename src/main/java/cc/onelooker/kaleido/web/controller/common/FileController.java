@@ -1,13 +1,12 @@
 package cc.onelooker.kaleido.web.controller.common;
 
-import cc.onelooker.kaleido.dto.system.req.FileCopyOrCutReq;
-import cc.onelooker.kaleido.dto.system.req.FileMoveReq;
-import cc.onelooker.kaleido.dto.system.req.FileNewDirectoryReq;
-import cc.onelooker.kaleido.dto.system.req.FileRenameReq;
-import cc.onelooker.kaleido.dto.system.resp.FileListResp;
+import cc.onelooker.kaleido.dto.system.req.*;
+import cc.onelooker.kaleido.dto.system.resp.FilePageResp;
 import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.utils.NioFileUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
+import com.zjjcnt.common.core.domain.PageParam;
+import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FileUtils;
@@ -41,20 +40,41 @@ public class FileController {
     @Autowired
     private AsyncTaskManager asyncTaskManager;
 
-    @GetMapping("list")
-    public CommonResult<List<FileListResp>> list(String path) throws IOException {
-        List<FileListResp> result = Files.list(Paths.get(path)).map(s -> {
-            FileListResp fileListResp = new FileListResp();
+    @GetMapping("page")
+    public CommonResult<PageResult<FilePageResp>> page(FilePageReq req, PageParam pageParam) throws IOException {
+        List<FilePageResp> records = Files.list(Paths.get(req.getPath())).map(s -> {
+            FilePageResp filePageResp = new FilePageResp();
             File file = s.toFile();
-            fileListResp.setName(file.getName());
-            fileListResp.setPath(s.toString());
-            fileListResp.setIsDir(file.isDirectory());
-            fileListResp.setLength(file.length());
-            fileListResp.setLastModified(DateTimeUtils.parseTimestamp(file.lastModified()));
+            filePageResp.setName(file.getName());
+            filePageResp.setPath(s.toString());
+            filePageResp.setIsDir(file.isDirectory());
+            filePageResp.setLength(file.length());
+            filePageResp.setLastModified(DateTimeUtils.parseTimestamp(file.lastModified()));
             MediaType mediaType = MediaTypeFactory.getMediaType(file.getName()).orElse(MediaType.ALL);
-            fileListResp.setMediaType(mediaType.toString());
-            return fileListResp;
-        }).sorted((Comparator.comparing(FileListResp::getLastModified).reversed())).collect(Collectors.toList());
+            filePageResp.setMediaType(mediaType.toString());
+            return filePageResp;
+        }).collect(Collectors.toList());
+        String orderBy = pageParam.getOrderBy();
+        if (StringUtils.isNotEmpty(orderBy)) {
+            String[] values = StringUtils.split(orderBy, ":");
+            String field = values[0];
+            String direction = values[1];
+            Comparator<FilePageResp> comparing = null;
+            if (StringUtils.equals(field, "name")) {
+                comparing = Comparator.comparing(FilePageResp::getName);
+            } else if (StringUtils.equals(field, "lastModified")) {
+                comparing = Comparator.comparing(FilePageResp::getLastModified);
+            } else if (StringUtils.equals(field, "length")) {
+                comparing = Comparator.comparing(FilePageResp::getLength);
+            }
+            if (StringUtils.equals(direction, "DESC")) {
+                comparing = comparing.reversed();
+            }
+            if (comparing != null) {
+                records = records.stream().sorted(comparing).collect(Collectors.toList());
+            }
+        }
+        PageResult<FilePageResp> result = PageResult.convert(pageParam.toPage(), records);
         return CommonResult.success(result);
     }
 
