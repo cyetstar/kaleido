@@ -247,6 +247,9 @@ public class TvshowManager {
     @Transactional
     public void readSeasonNFO(Long seasonId) throws Exception {
         TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(seasonId);
+        if (tvshowSeasonDTO.getSeasonIndex() == 0) {
+            return;
+        }
         Metadata metadata = plexApiService.findMetadata(tvshowSeasonDTO.getShowId());
         Path folderPath = Paths.get(KaleidoUtils.getTvshowFolder(metadata.getLocation().getPath()));
         Path seasonPath = folderPath.resolve("Season " + StringUtils.leftPad(String.valueOf(tvshowSeasonDTO.getSeasonIndex()), 2, "0"));
