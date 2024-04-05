@@ -11,8 +11,8 @@ import lombok.Data;
 public class ComicSeriesSearchInfoResp {
 
     private String bgmId;
-    private String title;
-    private String originalTitle;
+    private String series;
+    private String originalSeries;
     private String summary;
     private String cover;
 }

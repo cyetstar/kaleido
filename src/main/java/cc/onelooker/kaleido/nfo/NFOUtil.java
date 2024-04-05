@@ -47,23 +47,26 @@ public class NFOUtil {
     }
 
     private static ComicInfoNFO toComicInfoNFO(ComicInfoNFO comicInfoNFO, Comic comic) {
-        comicInfoNFO.setSeries(comic.getTitle());
+        comicInfoNFO.setSeries(comic.getSeries());
         comicInfoNFO.setCount(comic.getVolumeCount());
-        String writer = comic.getAuthors().stream().filter(s -> s.getRole().equals("原作")).findFirst().map(Author::getName).orElse(null);
-        String penciller = comic.getAuthors().stream().filter(s -> StringUtils.containsAny(s.getRole(), "作画", "作者")).findFirst().map(Author::getName).orElse(null);
         if (StringUtils.isNotEmpty(comic.getYear())) {
             comicInfoNFO.setYear(Integer.valueOf(comic.getYear()));
         }
         comicInfoNFO.setSummary(comic.getSummary());
-        comicInfoNFO.setWriter(StringUtils.defaultIfEmpty(writer, penciller));
+        String writer = comic.getAuthors().stream().filter(s -> s.getRole().equals("作者")).findFirst().map(Author::getName).orElse(null);
+        if (StringUtils.isEmpty(writer)) {
+            writer = comic.getAuthors().stream().filter(s -> s.getRole().equals("原作")).findFirst().map(Author::getName).orElse(null);
+        }
+        String penciller = comic.getAuthors().stream().filter(s -> StringUtils.containsAny(s.getRole(), "作画")).findFirst().map(Author::getName).orElse(null);
+        comicInfoNFO.setWriter(writer);
         comicInfoNFO.setPenciller(penciller);
         comicInfoNFO.setPublishers(comic.getPublishers());
         comicInfoNFO.setCommunityRating(comic.getAverage());
-        comicInfoNFO.setOriginalSeries(comic.getOriginalTitle());
+        comicInfoNFO.setOriginalSeries(comic.getOriginalSeries());
         comicInfoNFO.setTags(StringUtils.join(comic.getTags(), Constants.COMMA));
         comicInfoNFO.setWeb("https://bgm.tv/subject/" + comic.getBgmId());
         comicInfoNFO.setAkas(comic.getAkas());
-        if (comic.getTags().stream().anyMatch(s -> StringUtils.equalsAny(s, "完结", "全一卷"))) {
+        if (comic.getTags().stream().anyMatch(s -> StringUtils.equalsAny(s, "完结", "已完结", "全一卷"))) {
             comicInfoNFO.setSeriesStatus("ENDED");
         } else {
             comicInfoNFO.setSeriesStatus("ONGOING");
@@ -299,7 +302,6 @@ public class NFOUtil {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, false);
-        marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.w3.org/2001/XMLSchema");
         marshaller.marshal(object, cdataStreamWriter);
         String content = indentFormat(writer.toString());
         Files.write(path.resolve(filename), content.getBytes());

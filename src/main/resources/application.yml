@@ -155,6 +155,7 @@ zjjcnt:
         - /movie/**
         - /tvshow/**
         - /music/**
+        - /comic/**
         - /sysadmin/**
         - /image/**
         - /api/**

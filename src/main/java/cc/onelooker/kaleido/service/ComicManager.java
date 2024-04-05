@@ -149,12 +149,12 @@ public class ComicManager {
                 log.info("== 忽略找不到匹配信息的文件:{}", path);
                 return;
             }
-            log.info("== 找到匹配信息:{}", comic.getTitle());
+            log.info("== 找到匹配信息:({}){}", comic.getBgmId(), comic.getSeries());
             Files.list(path).forEach(s -> convertBook(s, comic));
             NioFileUtils.deleteIfExists(path);
             log.info("== 删除源文件夹:{}", path.getFileName());
             pathInfoService.deleteByPath(path.toString());
-            log.info("== 清除文件夹信息记录:{}", path.toString());
+            log.info("== 清除文件夹信息记录:{}", path);
         } catch (Exception e) {
             log.error("更新源发生错误:{}", ExceptionUtil.getMessage(e));
         } finally {
@@ -197,21 +197,21 @@ public class ComicManager {
             log.info("== 移动图片文件:{}", folderPath);
 
             ComicInfoNFO comicInfoNFO = NFOUtil.toComicInfoNFO(comic);
-            List<Comic> volumes = comic.getVolumes();
+            List<Comic.Volume> volumes = comic.getVolumes();
             Integer number = getVolumeNumber(path.getFileName().toString());
             if (number != null) {
                 comicInfoNFO.setTitle("卷" + number);
                 comicInfoNFO.setNumber(String.valueOf(number));
             }
             if (number != null && number <= volumes.size()) {
-                Comic volume = volumes.get(number);
+                Comic.Volume volume = volumes.get(number);
                 if (volume != null) {
                     comicInfoNFO.setTitle(volume.getTitle());
                     comicInfoNFO.setNumber(String.valueOf(number));
                 }
             }
             if (StringUtils.isEmpty(comicInfoNFO.getTitle())) {
-                comicInfoNFO.setTitle(comic.getTitle());
+                comicInfoNFO.setTitle(comic.getSeries());
             }
             NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, folderPath, "ComicInfo.xml");
             log.info("== 输出ComicInfo.xml");

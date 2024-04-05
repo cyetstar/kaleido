@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.third.tmm;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.alibaba.fastjson2.JSONArray;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -29,7 +30,7 @@ public class TmmApiService {
     private final static String API_FIND_DOULIST = "/doulist/detail?douban_id={doubanId}";
     private final static String API_LIST_DOULIST_MOVIE = "/doulist/movies?douban_id={doubanId}&start={start}";
     private final static String API_FIND_TVSHOW = "/tvshow/detail?douban_id={doubanId}&imdb_id={imdbId}&tmdb_id={tmdbId}";
-    private final static String API_SERACH_COMIC = "/comic/search?keyword={keyword}";
+    private final static String API_SERACH_COMIC = "/comic/search?keyword={keyword}&ver={ver}";
     private final static String API_FIND_COMIC = "/comic/detail?bgm_id={bgmId}";
     private final static String API_DOUBAN_COOKIE = "/douban/cookie";
 
@@ -69,10 +70,10 @@ public class TmmApiService {
         return restTemplate.getForObject(url + API_FIND_TVSHOW, Tvshow.class, doubanId, imdbId, tmdbId);
     }
 
-    public List<Comic> searchComic(String keyword) {
+    public List<Comic> searchComic(String keyword, String ver) {
         String url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl);
-        JSONArray jsonArray = restTemplate.getForObject(url + API_SERACH_COMIC, JSONArray.class, keyword);
-        return Objects.requireNonNull(jsonArray).toJavaList(Comic.class);
+        JSONArray jsonArray = restTemplate.getForObject(url + API_SERACH_COMIC, JSONArray.class, keyword, ver);
+        return jsonArray != null ? jsonArray.toJavaList(Comic.class) : Lists.newArrayList();
     }
 
     public Comic findComic(String bgmId) {
