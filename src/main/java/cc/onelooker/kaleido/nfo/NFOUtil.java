@@ -47,7 +47,7 @@ public class NFOUtil {
     }
 
     private static ComicInfoNFO toComicInfoNFO(ComicInfoNFO comicInfoNFO, Comic comic) {
-        comicInfoNFO.setSeries(comic.getSeries());
+        comicInfoNFO.setSeries(StringUtils.defaultIfEmpty(comic.getSeries(), comic.getOriginalSeries()));
         comicInfoNFO.setCount(comic.getVolumeCount());
         if (StringUtils.isNotEmpty(comic.getYear())) {
             comicInfoNFO.setYear(Integer.valueOf(comic.getYear()));

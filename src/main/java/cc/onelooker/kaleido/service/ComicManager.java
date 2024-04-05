@@ -79,7 +79,7 @@ public class ComicManager {
     @Autowired
     private TmmApiService tmmApiService;
 
-    private Pattern pattern = Pattern.compile("Vol\\.(\\d+)");
+    private Pattern pattern = Pattern.compile("[V|v]ol[.|_](\\d+)");
 
     @Transactional
     public void syncBook(Book book) {
@@ -123,7 +123,13 @@ public class ComicManager {
                     path.toFile().mkdir();
                 }
             }
-            pathInfoService.insert(path.toString(), bgmId);
+            PathInfoDTO pathInfoDTO = pathInfoService.findByPath(path.toString());
+            if (pathInfoDTO == null) {
+                pathInfoService.insert(path.toString(), bgmId);
+            } else {
+                pathInfoDTO.setBgmId(bgmId);
+                pathInfoService.update(pathInfoDTO);
+            }
         } catch (Exception e) {
             log.error("文件夹匹配信息发生错误", e);
         }
@@ -151,10 +157,12 @@ public class ComicManager {
             }
             log.info("== 找到匹配信息:({}){}", comic.getBgmId(), comic.getSeries());
             Files.list(path).forEach(s -> convertBook(s, comic));
-            NioFileUtils.deleteIfExists(path);
-            log.info("== 删除源文件夹:{}", path.getFileName());
-            pathInfoService.deleteByPath(path.toString());
-            log.info("== 清除文件夹信息记录:{}", path);
+            if (Files.list(path).count() == 0) {
+                NioFileUtils.deleteIfExists(path);
+                log.info("== 删除源文件夹:{}", path.getFileName());
+                pathInfoService.deleteByPath(path.toString());
+                log.info("== 清除文件夹信息记录:{}", path);
+            }
         } catch (Exception e) {
             log.error("更新源发生错误:{}", ExceptionUtil.getMessage(e));
         } finally {
@@ -204,7 +212,7 @@ public class ComicManager {
                 comicInfoNFO.setNumber(String.valueOf(number));
             }
             if (number != null && number <= volumes.size()) {
-                Comic.Volume volume = volumes.get(number);
+                Comic.Volume volume = volumes.get(number - 1);
                 if (volume != null) {
                     comicInfoNFO.setTitle(volume.getTitle());
                     comicInfoNFO.setNumber(String.valueOf(number));
@@ -214,7 +222,7 @@ public class ComicManager {
                 comicInfoNFO.setTitle(comic.getSeries());
             }
             NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, folderPath, "ComicInfo.xml");
-            log.info("== 输出ComicInfo.xml");
+            log.info("== 输出ComicInfo.xml:{}", folderPath);
             String libraryPath = ConfigUtils.getSysConfig(ConfigKey.comicLibraryPath);
             Path targetPath = Paths.get(libraryPath, KaleidoUtils.genComicFolder(comicInfoNFO), baseName + ".zip");
             ZipUtil.zip(folderPath.toString(), targetPath.toString());

@@ -50,6 +50,16 @@ public class TempTest {
     }
 
     @Test
+    public void getVolumeNumber() {
+        Pattern pattern = Pattern.compile("[V|v]ol[.|_](\\d+)");
+        Matcher matcher = pattern.matcher("[Comic][17青春遁走][古谷實][HK]vol_03.zip");
+        if (matcher.find()) {
+            System.out.println(matcher.group(0));
+            System.out.println(Integer.parseInt(matcher.group(1)));
+        }
+    }
+
+    @Test
     public void compressZip() throws IOException {
         Path path = Paths.get("/Users/cyetstar/dev/kaleido/zip");
         Archiver archiver = CompressUtil.createArchiver(CharsetUtil.CHARSET_UTF_8, ArchiveStreamFactory.ZIP, path.resolveSibling("压缩.cbz").toFile());
