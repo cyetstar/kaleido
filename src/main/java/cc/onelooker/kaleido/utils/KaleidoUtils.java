@@ -1,10 +1,14 @@
 package cc.onelooker.kaleido.utils;
 
 import cc.onelooker.kaleido.enums.ConfigKey;
+import cc.onelooker.kaleido.nfo.ComicInfoNFO;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * @Author cyetstar
@@ -41,7 +45,7 @@ public class KaleidoUtils {
         return FilenameUtils.isExtension(filename, videoExtensions);
     }
 
-    public static String getSimpleName(String name){
+    public static String getSimpleName(String name) {
         if (StringUtils.isEmpty(name)) {
             return name;
         }
@@ -50,5 +54,40 @@ public class KaleidoUtils {
         simpleName = StringUtils.trim(simpleName);
         simpleName = ZhConverterUtil.toSimple(simpleName);
         return simpleName;
+    }
+
+    public static String getFormatSize(Long size) {
+        if (size == null) {
+            return StringUtils.EMPTY;
+        }
+        double kiloByte = (double) size / 1024;
+        if (kiloByte < 1) {
+            return "0KB";
+        }
+        //计算kiloByte
+        double megaByte = kiloByte / 1024;
+        if (megaByte < 1) {
+            BigDecimal result1 = new BigDecimal(Double.toString(kiloByte));
+            return result1.setScale(2, RoundingMode.HALF_UP).toPlainString() + "KB";
+        }
+        //计算megaByte
+        double gigaByte = megaByte / 1024;
+        if (gigaByte < 1) {
+            BigDecimal result2 = new BigDecimal(Double.toString(megaByte));
+            return result2.setScale(2, RoundingMode.HALF_UP).toPlainString() + "MB";
+        }
+        //计算gigaByte
+        double teraBytes = gigaByte / 1024;
+        if (teraBytes < 1) {
+            BigDecimal result3 = new BigDecimal(Double.toString(gigaByte));
+            return result3.setScale(2, RoundingMode.HALF_UP).toPlainString() + "GB";
+        }
+        //计算TB
+        BigDecimal result4 = new BigDecimal(teraBytes);
+        return result4.setScale(2, RoundingMode.HALF_UP).toPlainString() + "TB";
+    }
+
+    public static String genComicFolder(ComicInfoNFO comicInfoNFO) {
+        return String.format("%S [%S]", comicInfoNFO.getSeries(), comicInfoNFO.getAuthors());
     }
 }

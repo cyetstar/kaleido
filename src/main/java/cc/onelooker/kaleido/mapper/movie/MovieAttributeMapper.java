@@ -1,9 +1,8 @@
 package cc.onelooker.kaleido.mapper.movie;
 
-import org.apache.ibatis.annotations.Mapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import cc.onelooker.kaleido.entity.movie.MovieAttributeDO;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 电影属性值Mapper接口

@@ -5,9 +5,7 @@ import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
 import cc.onelooker.kaleido.thread.Action;
 import cc.onelooker.kaleido.utils.ConfigUtils;
-import cc.onelooker.kaleido.utils.LogUtil;
 import com.zjjcnt.common.core.domain.PageResult;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;

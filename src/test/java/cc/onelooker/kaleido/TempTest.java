@@ -1,8 +1,20 @@
 package cc.onelooker.kaleido;
 
+import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.ZipUtil;
+import cn.hutool.extra.compress.CompressUtil;
+import cn.hutool.extra.compress.archiver.Archiver;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.lang3.RegExUtils;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +47,24 @@ public class TempTest {
             System.out.println(matcher.group(2));
             System.out.println(matcher.group(3));
         }
+    }
+
+    @Test
+    public void compressZip() throws IOException {
+        Path path = Paths.get("/Users/cyetstar/dev/kaleido/zip");
+        Archiver archiver = CompressUtil.createArchiver(CharsetUtil.CHARSET_UTF_8, ArchiveStreamFactory.ZIP, path.resolveSibling("压缩.cbz").toFile());
+        Files.list(path).forEach(s -> {
+            archiver.add(s.toFile());
+        });
+        archiver.close();
+
+    }
+
+    @Test
+    public void compressZip2() throws IOException {
+        Path path = Paths.get("/Users/cyetstar/dev/kaleido/zip");
+        ZipUtil.zip(path.toFile());
+
     }
 
 }

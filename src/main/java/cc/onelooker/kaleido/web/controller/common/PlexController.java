@@ -2,12 +2,9 @@ package cc.onelooker.kaleido.web.controller.common;
 
 import cc.onelooker.kaleido.dto.system.req.PlexGetLibrariesReq;
 import cc.onelooker.kaleido.dto.system.resp.PlexGetLibrariesResp;
-import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.third.plex.Directory;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

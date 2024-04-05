@@ -1,12 +1,8 @@
 package cc.onelooker.kaleido.dto.movie.req;
 
-import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.lang.Long;
-import java.lang.String;
-import java.lang.Integer;
+import lombok.Data;
 
 /**
  * 电影集合请求对象

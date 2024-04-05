@@ -2,9 +2,6 @@ server:
   port: 8080
   servlet:
     context-path: /
-  tomcat:
-    remoteip:
-      remote-ip-header: 'x-forwarded-for'
 
 spring:
   profiles:
@@ -79,7 +76,7 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: AUTO
-  mapper-locations: classpath*:mapper/*/*.xml
+  mapper-locations: classpath*:mapper/**/*.xml
 
 
 # Swagger配置
@@ -159,6 +156,7 @@ zjjcnt:
         - /tvshow/**
         - /music/**
         - /sysadmin/**
+        - /image/**
         - /api/**
         # 静态资源
         - /

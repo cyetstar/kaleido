@@ -21,7 +21,10 @@ public enum Action {
     musicDownloadLyric("下载歌词"),
 
     tvshowSyncPlex("同步Plex剧集库"),
-    tvshowUpdateSource("更新剧集源");
+    tvshowUpdateSource("更新剧集源"),
+
+    comicSync("漫画同步"),
+    comicUpdateSource("漫画更新源");
 
     private String title;
 

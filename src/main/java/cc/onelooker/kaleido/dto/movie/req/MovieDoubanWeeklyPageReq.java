@@ -1,13 +1,9 @@
 package cc.onelooker.kaleido.dto.movie.req;
 
-import lombok.Data;
+import com.zjjcnt.common.core.annotation.StringDateFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.lang.Long;
-import java.lang.String;
-import java.lang.Integer;
-import com.zjjcnt.common.core.annotation.StringDateFormat;
+import lombok.Data;
 
 /**
  * 豆瓣电影口碑榜请求对象

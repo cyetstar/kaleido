@@ -3,7 +3,6 @@ package cc.onelooker.kaleido.third.tmm;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.alibaba.fastjson2.JSONArray;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -15,6 +14,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author xiadawei
@@ -29,6 +29,8 @@ public class TmmApiService {
     private final static String API_FIND_DOULIST = "/doulist/detail?douban_id={doubanId}";
     private final static String API_LIST_DOULIST_MOVIE = "/doulist/movies?douban_id={doubanId}&start={start}";
     private final static String API_FIND_TVSHOW = "/tvshow/detail?douban_id={doubanId}&imdb_id={imdbId}&tmdb_id={tmdbId}";
+    private final static String API_SERACH_COMIC = "/comic/search?keyword={keyword}";
+    private final static String API_FIND_COMIC = "/comic/detail?bgm_id={bgmId}";
     private final static String API_DOUBAN_COOKIE = "/douban/cookie";
 
     @Autowired
@@ -37,10 +39,7 @@ public class TmmApiService {
     public List<Movie> searchMovie(String keyword, String type) {
         String url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl);
         JSONArray jsonArray = restTemplate.getForObject(url + API_SEARCH_MOVIE, JSONArray.class, keyword, type);
-        if (jsonArray != null) {
-            return jsonArray.toJavaList(Movie.class);
-        }
-        return Lists.newArrayList();
+        return Objects.requireNonNull(jsonArray).toJavaList(Movie.class);
     }
 
     public Movie findMovie(String doubanId, String imdbId, String tmdbId) {
@@ -59,10 +58,7 @@ public class TmmApiService {
     public List<Movie> listDoulistMovie(String doubanId, Integer start) {
         String url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl);
         JSONArray jsonArray = restTemplate.getForObject(url + API_LIST_DOULIST_MOVIE, JSONArray.class, doubanId, start);
-        if (jsonArray != null) {
-            return jsonArray.toJavaList(Movie.class);
-        }
-        return Lists.newArrayList();
+        return Objects.requireNonNull(jsonArray).toJavaList(Movie.class);
     }
 
     public Tvshow findTvshow(String doubanId, String imdbId, String tmdbId) {
@@ -71,6 +67,17 @@ public class TmmApiService {
         }
         String url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl);
         return restTemplate.getForObject(url + API_FIND_TVSHOW, Tvshow.class, doubanId, imdbId, tmdbId);
+    }
+
+    public List<Comic> searchComic(String keyword) {
+        String url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl);
+        JSONArray jsonArray = restTemplate.getForObject(url + API_SERACH_COMIC, JSONArray.class, keyword);
+        return Objects.requireNonNull(jsonArray).toJavaList(Comic.class);
+    }
+
+    public Comic findComic(String bgmId) {
+        String url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl);
+        return restTemplate.getForObject(url + API_FIND_COMIC, Comic.class, bgmId);
     }
 
     public void setDoubanCookie(String cookie) {

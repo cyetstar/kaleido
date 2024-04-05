@@ -28,4 +28,11 @@ public class NFOUtilTest {
         NFOUtil.write(movieNFO, MovieNFO.class, Paths.get("/Users/cyetstar/Downloads"), "movie2.nfo");
     }
 
+    @Test
+    public void writeComicInfo() throws Exception {
+        ComicInfoNFO comicInfoNFO = new ComicInfoNFO();
+        comicInfoNFO.setTitle("test");
+        NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, Paths.get("/Users/cyetstar/Downloads"), "ComicInfo2.xml");
+    }
+
 }

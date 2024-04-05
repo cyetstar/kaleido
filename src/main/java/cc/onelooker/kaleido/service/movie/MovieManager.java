@@ -30,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -202,17 +201,17 @@ public class MovieManager {
      */
     @Transactional
     public void matchPath(Path path, String doubanId, String tmdbId, String tvdbId) {
-        Path movieDownloadPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath));
+        Path downloadPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath));
         try {
             MovieNFO movieNFO = new MovieNFO();
             movieNFO.setDoubanId(doubanId);
             movieNFO.setTmdbId(tmdbId);
             if (Files.isDirectory(path)) {
                 NFOUtil.write(movieNFO, MovieNFO.class, path, "movie.nfo");
-                NioFileUtils.moveDir(path, movieDownloadPath, StandardCopyOption.REPLACE_EXISTING);
+                NioFileUtils.moveDir(path, downloadPath, StandardCopyOption.REPLACE_EXISTING);
             } else {
                 String baseName = FilenameUtils.getBaseName(path.getFileName().toString());
-                Path newPath = movieDownloadPath.resolve(baseName);
+                Path newPath = downloadPath.resolve(baseName);
                 if (!Files.exists(newPath)) {
                     newPath.toFile().mkdir();
                 }
@@ -222,7 +221,7 @@ public class MovieManager {
                 }
             }
         } catch (Exception e) {
-            log.error("文件夹匹配豆瓣信息发生错误", e);
+            log.error("文件夹匹配信息发生错误", e);
         }
     }
 

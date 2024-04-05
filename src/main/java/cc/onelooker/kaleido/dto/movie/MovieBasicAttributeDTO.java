@@ -1,9 +1,7 @@
 package cc.onelooker.kaleido.dto.movie;
 
-import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
-
-import java.lang.Long;
+import lombok.Data;
 
 /**
  * 电影属性值关联表DTO

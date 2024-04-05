@@ -1,9 +1,8 @@
 package cc.onelooker.kaleido.mapper.movie;
 
-import org.apache.ibatis.annotations.Mapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import cc.onelooker.kaleido.entity.movie.MovieDoubanWeeklyDO;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 豆瓣电影口碑榜Mapper接口

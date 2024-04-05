@@ -1,10 +1,8 @@
 package cc.onelooker.kaleido.dto.movie.resp;
 
-import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.lang.Long;
+import lombok.Data;
 
 /**
  * 电影属性值关联表响应对象

@@ -12,7 +12,6 @@ import cc.onelooker.kaleido.third.netease.Song;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
-import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;

@@ -10,6 +10,7 @@ import com.zjjcnt.common.core.jackson.BigNumberSerializer;
 import com.zjjcnt.common.core.jackson.ExJacksonAnnotationIntrospector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
+import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.server.ConfigurableWebServerFactory;
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
@@ -110,6 +111,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
             ErrorPage errorPage404 = new ErrorPage(HttpStatus.NOT_FOUND, "/index.html");
             factory.addErrorPages(errorPage404);
         });
+    }
+
+    @Bean
+    public TomcatConnectorCustomizer tomcatConnectorCustomizer() {
+        return connector -> connector.setProperty("relaxedQueryChars", "[]{}");
     }
 
 }

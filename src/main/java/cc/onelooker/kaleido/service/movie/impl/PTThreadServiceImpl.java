@@ -2,7 +2,6 @@ package cc.onelooker.kaleido.service.movie.impl;
 
 import cc.onelooker.kaleido.convert.movie.PTThreadConvert;
 import cc.onelooker.kaleido.dto.movie.PTThreadDTO;
-import cc.onelooker.kaleido.entity.movie.MovieThreadDO;
 import cc.onelooker.kaleido.entity.movie.PTThreadDO;
 import cc.onelooker.kaleido.mapper.movie.PTThreadMapper;
 import cc.onelooker.kaleido.service.movie.PTThreadService;
@@ -11,8 +10,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 /**
  * 电影发布记录ServiceImpl

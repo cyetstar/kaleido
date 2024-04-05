@@ -1,6 +1,5 @@
 package cc.onelooker.kaleido.convert.tvshow;
 
-import cc.onelooker.kaleido.dto.movie.resp.MovieBasicSearchInfoResp;
 import cc.onelooker.kaleido.dto.tvshow.TvshowActorDTO;
 import cc.onelooker.kaleido.dto.tvshow.TvshowShowDTO;
 import cc.onelooker.kaleido.dto.tvshow.req.TvshowShowCreateReq;

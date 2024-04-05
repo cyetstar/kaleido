@@ -37,5 +37,12 @@ public enum ConfigKey {
 
     lastMovieAnalyzeTime,
     matchInfoSleepSecond,
-    downloadLyricSleepSecond;
+    downloadLyricSleepSecond,
+
+    comicLibraryPath,
+    comicTrashPath,
+    comicDownloadPath,
+    komgaUrl,
+    komgaUsername,
+    komgaPassword;
 }

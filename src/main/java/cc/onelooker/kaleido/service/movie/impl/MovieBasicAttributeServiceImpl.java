@@ -1,19 +1,16 @@
 package cc.onelooker.kaleido.service.movie.impl;
 
-import org.springframework.stereotype.Service;
+import cc.onelooker.kaleido.convert.movie.MovieBasicAttributeConvert;
+import cc.onelooker.kaleido.dto.movie.MovieBasicAttributeDTO;
+import cc.onelooker.kaleido.entity.movie.MovieBasicAttributeDO;
+import cc.onelooker.kaleido.mapper.movie.MovieBasicAttributeMapper;
+import cc.onelooker.kaleido.service.movie.MovieBasicAttributeService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import cc.onelooker.kaleido.service.movie.MovieBasicAttributeService;
-import cc.onelooker.kaleido.entity.movie.MovieBasicAttributeDO;
-import cc.onelooker.kaleido.dto.movie.MovieBasicAttributeDTO;
-import cc.onelooker.kaleido.convert.movie.MovieBasicAttributeConvert;
-import cc.onelooker.kaleido.mapper.movie.MovieBasicAttributeMapper;
+import org.springframework.stereotype.Service;
 
-import com.zjjcnt.common.core.utils.ColumnUtils;
-import org.apache.commons.lang3.StringUtils;
-import java.util.*;
+import java.util.Objects;
 
 /**
  * 电影属性值关联表ServiceImpl
