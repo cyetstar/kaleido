@@ -191,7 +191,7 @@ public class ComicManager {
         try {
             String fileName = path.getFileName().toString();
             String extension = FilenameUtils.getExtension(fileName);
-            if (!StringUtils.equalsIgnoreCase(extension, "zip")) {
+            if (!StringUtils.equalsAnyIgnoreCase(extension, "zip", "cbz")) {
                 log.info("== 忽略非压缩:{}", fileName);
                 return;
             }
