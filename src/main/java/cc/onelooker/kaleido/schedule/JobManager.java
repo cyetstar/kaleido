@@ -2,6 +2,7 @@ package cc.onelooker.kaleido.schedule;
 
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.service.system.SysDictTypeService;
+import cc.onelooker.kaleido.thread.ComicSyncRunnable;
 import cc.onelooker.kaleido.thread.movie.MovieAnalyzeRunnable;
 import cc.onelooker.kaleido.thread.movie.MovieCheckThreadStatusRunnable;
 import cc.onelooker.kaleido.thread.movie.MovieCollectionCheckMovieStatusRunnable;
@@ -39,6 +40,9 @@ public class JobManager {
 
     @Autowired
     private TvshowSyncPlexRunnable tvshowSyncPlexRunnable;
+
+    @Autowired
+    private ComicSyncRunnable comicSyncRunnable;
 
     @Autowired
     private MovieManager movieManager;
@@ -87,5 +91,10 @@ public class JobManager {
     @Scheduled(cron = "0 10 2 * * ?")
     public void syncDoubanWeekly() {
         movieManager.syncDoubanWeekly();
+    }
+
+    @Scheduled(cron = "0 0 2 30 * ?")
+    public void syncComic() {
+        comicSyncRunnable.run();
     }
 }

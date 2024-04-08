@@ -232,6 +232,7 @@ public class ComicManager {
             Files.delete(path);
             log.info("== 删除原文件:{}", path);
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("== 转换压缩文件失败:{}", ExceptionUtil.getMessage(e));
         }
     }

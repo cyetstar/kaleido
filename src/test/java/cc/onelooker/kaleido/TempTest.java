@@ -74,7 +74,12 @@ public class TempTest {
     public void compressZip2() throws IOException {
         Path path = Paths.get("/Users/cyetstar/dev/kaleido/zip");
         ZipUtil.zip(path.toFile());
+    }
 
+    @Test
+    public void fileCount() throws IOException {
+        Path path = Paths.get("/Volumes/comic/download/20世紀少年 [浦澤直樹]");
+        System.out.println(Files.list(path).count());
     }
 
 }
