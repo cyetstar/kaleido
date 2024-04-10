@@ -83,7 +83,7 @@ public class JobManager {
         movieAnalyzeRunnable.run();
     }
 
-    @Scheduled(cron = "0 0 2 * * ?")
+    @Scheduled(cron = "0 45 2 * * ?")
     public void syncDict() {
         sysDictTypeService.syncPlex();
     }
@@ -93,7 +93,7 @@ public class JobManager {
         movieManager.syncDoubanWeekly();
     }
 
-    @Scheduled(cron = "0 0 2 30 * ?")
+    @Scheduled(cron = "0 30 2 * * ?")
     public void syncComic() {
         comicSyncRunnable.run();
     }

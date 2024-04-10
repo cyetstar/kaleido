@@ -198,7 +198,7 @@ public class ComicManager {
             String baseName = FilenameUtils.getBaseName(fileName);
             Path folderPath = path.getParent().resolve(baseName);
             Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), path.toFile());
-            extractor.extract(folderPath.toFile());
+            extractor.extract(folderPath.toFile(), archiveEntry -> StringUtils.equalsAnyIgnoreCase(FilenameUtils.getExtension(archiveEntry.getName()), "jpg", "png", "xml"));
             extractor.close();
             log.info("== 解压文件:{}", folderPath);
             moveBookImage(folderPath, folderPath);

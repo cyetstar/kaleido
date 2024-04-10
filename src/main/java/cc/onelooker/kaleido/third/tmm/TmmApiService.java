@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.third.tmm;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.alibaba.fastjson2.JSONArray;
+import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,7 @@ public class TmmApiService {
     }
 
     public List<Comic> searchComic(String keyword, String ver) {
+        keyword = ZhConverterUtil.toSimple(keyword);
         String url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl);
         JSONArray jsonArray = restTemplate.getForObject(url + API_SERACH_COMIC, JSONArray.class, keyword, ver);
         return jsonArray != null ? jsonArray.toJavaList(Comic.class) : Lists.newArrayList();
