@@ -109,6 +109,8 @@ public class ComicInfoNFO {
     private String tags;
     @XmlElement(name = "Aka")
     private List<String> akas;
+    @XmlElement(name = "SeriesBgmId")
+    private String seriesBgmId;
     @XmlElement(name = "SeriesStatus")
     private String seriesStatus;
 

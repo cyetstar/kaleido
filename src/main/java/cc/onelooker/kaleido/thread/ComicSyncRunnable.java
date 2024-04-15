@@ -42,7 +42,7 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
     protected void processEntity(Book book) throws Exception {
         ComicBookDTO comicBookDTO = comicBookService.findById(book.getId());
         if (comicBookDTO == null || book.getUpdatedAt().compareTo(comicBookDTO.getUpdatedAt()) > 0) {
-            comicManager.syncBook(book);
+            comicManager.sync(book);
         }
     }
 

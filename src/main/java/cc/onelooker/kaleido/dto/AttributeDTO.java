@@ -3,6 +3,9 @@ package cc.onelooker.kaleido.dto;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * 属性DTO
  *
@@ -30,6 +33,8 @@ public class AttributeDTO implements BaseDTO<String> {
     private String type;
 
     // ------ 非数据库表字段 -------
+
+    private List<String> idList;
 
 
     @Override

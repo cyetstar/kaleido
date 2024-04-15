@@ -8,6 +8,7 @@ import cc.onelooker.kaleido.service.SubjectAttributeService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ public class SubjectAttributeServiceImpl extends AbstractBaseServiceImpl<Subject
         LambdaQueryWrapper<SubjectAttributeDO> query = new LambdaQueryWrapper<>();
         query.eq(StringUtils.isNotEmpty(dto.getAttributeId()), SubjectAttributeDO::getAttributeId, dto.getAttributeId());
         query.eq(StringUtils.isNotEmpty(dto.getSubjectId()), SubjectAttributeDO::getSubjectId, dto.getSubjectId());
+        query.in(CollectionUtils.isNotEmpty(dto.getSubjectIdList()), SubjectAttributeDO::getSubjectId, dto.getSubjectIdList());
         return query;
     }
 

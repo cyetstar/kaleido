@@ -8,6 +8,7 @@ import cc.onelooker.kaleido.service.comic.ComicBookAuthorService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class ComicBookAuthorServiceImpl extends AbstractBaseServiceImpl<ComicBoo
         query.eq(StringUtils.isNotEmpty(dto.getBookId()), ComicBookAuthorDO::getBookId, dto.getBookId());
         query.eq(StringUtils.isNotEmpty(dto.getAuthorId()), ComicBookAuthorDO::getAuthorId, dto.getAuthorId());
         query.eq(StringUtils.isNotEmpty(dto.getRole()), ComicBookAuthorDO::getRole, dto.getRole());
+        query.in(CollectionUtils.isNotEmpty(dto.getBookIdList()), ComicBookAuthorDO::getBookId, dto.getBookIdList());
         return query;
     }
 

@@ -18,4 +18,6 @@ public interface AttributeService extends IBaseService<AttributeDTO> {
     AttributeDTO insert(String value, String type);
 
     List<AttributeDTO> listBySubjectId(String subjectId);
+
+    List<AttributeDTO> listBySubjectIdList(List<String> subjectIdList);
 }

@@ -3,6 +3,8 @@ package cc.onelooker.kaleido.dto;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 属性DTO
  *
@@ -35,6 +37,8 @@ public class SubjectAttributeDTO implements BaseDTO<String> {
     private String subjectType;
 
     // ------ 非数据库表字段 -------
+
+    private List<String> subjectIdList;
 
     @Override
     public String getId() {

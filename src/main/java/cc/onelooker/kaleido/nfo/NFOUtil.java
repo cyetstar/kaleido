@@ -4,6 +4,7 @@ import cc.onelooker.kaleido.enums.SourceType;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.Tag;
 import cc.onelooker.kaleido.third.tmm.*;
+import cn.hutool.core.exceptions.ExceptionUtil;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.util.DateTimeUtils;
 import com.zjjcnt.common.util.constant.Constants;
@@ -11,7 +12,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLOutputFactory;
@@ -22,9 +22,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Proxy;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -57,15 +59,15 @@ public class NFOUtil {
         if (StringUtils.isEmpty(writer)) {
             writer = comic.getAuthors().stream().filter(s -> s.getRole().equals("原作")).findFirst().map(Author::getName).orElse(null);
         }
-        String penciller = comic.getAuthors().stream().filter(s -> StringUtils.containsAny(s.getRole(), "作画")).findFirst().map(Author::getName).orElse(null);
+        String penciller = comic.getAuthors().stream().filter(s -> StringUtils.equals(s.getRole(), "作画")).findFirst().map(Author::getName).orElse(null);
         comicInfoNFO.setWriter(writer);
         comicInfoNFO.setPenciller(penciller);
         comicInfoNFO.setPublishers(comic.getPublishers());
         comicInfoNFO.setCommunityRating(comic.getAverage());
         comicInfoNFO.setOriginalSeries(comic.getOriginalSeries());
         comicInfoNFO.setTags(StringUtils.join(comic.getTags(), Constants.COMMA));
-        comicInfoNFO.setWeb("https://bgm.tv/subject/" + comic.getBgmId());
         comicInfoNFO.setAkas(comic.getAkas());
+        comicInfoNFO.setSeriesBgmId(comic.getBgmId());
         if (comic.getTags().stream().anyMatch(s -> StringUtils.equalsAny(s, "完结", "已完结", "全一卷"))) {
             comicInfoNFO.setSeriesStatus("ENDED");
         } else {
@@ -293,30 +295,51 @@ public class NFOUtil {
         return setNFO;
     }
 
-    public static <T> void write(T object, Class<T> clazz, Path path, String filename) throws Exception {
-        StringWriter writer = new StringWriter();
-        XMLStreamWriter streamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
-        XMLStreamWriter cdataStreamWriter = (XMLStreamWriter) Proxy.newProxyInstance(streamWriter.getClass().getClassLoader(), streamWriter.getClass().getInterfaces(), new CDataHandler(streamWriter));
-        JAXBContext context = JAXBContext.newInstance(clazz);
-        marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-        marshaller.setProperty(Marshaller.JAXB_FRAGMENT, false);
-        marshaller.marshal(object, cdataStreamWriter);
-        String content = indentFormat(writer.toString());
-        Files.write(path.resolve(filename), content.getBytes());
+    public static <T> void write(T object, Class<T> clazz, Path path, String filename) {
+        try {
+            StringWriter writer = new StringWriter();
+            XMLStreamWriter streamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
+            XMLStreamWriter cdataStreamWriter = (XMLStreamWriter) Proxy.newProxyInstance(streamWriter.getClass().getClassLoader(), streamWriter.getClass().getInterfaces(), new CDataHandler(streamWriter));
+            JAXBContext context = JAXBContext.newInstance(clazz);
+            marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, false);
+            marshaller.marshal(object, cdataStreamWriter);
+            String content = indentFormat(writer.toString());
+            Files.write(path.resolve(filename), content.getBytes());
+        } catch (Exception e) {
+            throw ExceptionUtil.wrapRuntime(e);
+        }
     }
 
-    public static <T> T read(Class<T> clazz, Path path, String filename) throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(clazz);
-        unmarshaller = context.createUnmarshaller();
-        return clazz.cast(unmarshaller.unmarshal(path.resolve(filename).toFile()));
+    public static <T> T read(Class<T> clazz, Path path, String filename) {
+        return read(clazz, path.resolve(filename));
     }
 
-    public static <T> T read(Class<T> clazz, Path filePath) throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(clazz);
-        unmarshaller = context.createUnmarshaller();
-        return clazz.cast(unmarshaller.unmarshal(filePath.toFile()));
+    public static <T> T read(Class<T> clazz, Path filePath) {
+        try {
+            JAXBContext context = JAXBContext.newInstance(clazz);
+            unmarshaller = context.createUnmarshaller();
+
+            return clazz.cast(unmarshaller.unmarshal(new InputStreamReader(Files.newInputStream(filePath.toFile().toPath()), StandardCharsets.UTF_8)));
+//            File file = filePath.toFile();
+//            BOMInputStream bis = BOMInputStream.builder().setInputStream(Files.newInputStream(file.toPath()))
+//                    .setInclude(false)
+//                    .setByteOrderMarks(ByteOrderMark.UTF_8, ByteOrderMark.UTF_16LE, ByteOrderMark.UTF_16BE)
+//                    .get();
+//            String charset = "UTF-8";
+//            // 若检测到bom，则使用bom对应的编码
+//            if (bis.hasBOM()) {
+//                charset = bis.getBOMCharsetName();
+//            }
+//            try (InputStreamReader reader = new InputStreamReader(bis, charset)) {
+//                return clazz.cast(unmarshaller.unmarshal(reader));
+//            }
+        } catch (Exception e) {
+            ExceptionUtil.wrapAndThrow(e);
+        }
+        return null;
     }
 
     public static String indentFormat(String xml) {
@@ -335,8 +358,8 @@ public class NFOUtil {
 
             return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + formattedStringWriter;
         } catch (TransformerException e) {
+            throw ExceptionUtil.wrapRuntime(e);
         }
-        return null;
     }
 
     public static String getUniqueid(List<UniqueidNFO> uniqueids, String type) {

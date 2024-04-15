@@ -1,5 +1,7 @@
 package cc.onelooker.kaleido;
 
+import cc.onelooker.kaleido.nfo.ComicInfoNFO;
+import cc.onelooker.kaleido.nfo.NFOUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.ZipUtil;
 import cn.hutool.extra.compress.CompressUtil;
@@ -19,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @Author xiadawei
@@ -99,6 +102,19 @@ public class TempTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void containsAnyIgnoreCase() {
+        String title = "作者";
+        boolean result = StringUtils.containsAny(title, "原作");
+        assertTrue(result);
+    }
+
+    @Test
+    public void readComicInfo() {
+        Path path = Paths.get("/Users/cyetstar/dev/kaleido/ComicInfo.xml");
+        ComicInfoNFO comicInfoNFO = NFOUtil.read(ComicInfoNFO.class, path);
     }
 
 }

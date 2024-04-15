@@ -5,11 +5,13 @@ import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.zjjcnt.common.core.domain.PageResult;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -22,7 +24,10 @@ public class KomgaApiService {
 
     private final static String API_SERIES = "/api/v1/series/{seriesId}";
     private final static String API_SERIES_THUMBNAIL = "/api/v1/series/{seriesId}/thumbnail";
+    private final static String API_SERIES_BOOKS = "/api/v1/series/{seriesId}/books";
     private final static String API_BOOKS = "/api/v1/books?page={pageNumber}&size={pageSize}";
+    private final static String API_BOOKS_PAGES = "/api/v1/books/{bookId}/pages";
+    private final static String API_BOOKS_PAGES_NUMBER = "/api/v1/books/{bookId}/pages/{number}";
     private final static String API_BOOKS_THUMBNAIL = "/api/v1/books/{bookId}/thumbnail";
 
     @Autowired
@@ -48,6 +53,20 @@ public class KomgaApiService {
         return response.getBody();
     }
 
+    public List<Book> listBookBySeries(String seriesId) {
+        String url = ConfigUtils.getSysConfig(ConfigKey.komgaUrl, "http://192.168.3.100:25600");
+        ResponseEntity<JSONObject> response = restTemplate.exchange(url + API_SERIES_BOOKS, HttpMethod.GET, new HttpEntity<>(getHeaders()), JSONObject.class, seriesId);
+        JSONObject jsonObject = response.getBody();
+        JSONArray content = Objects.requireNonNull(jsonObject).getJSONArray("content");
+        return content.toJavaList(Book.class);
+    }
+
+    public byte[] findBookPage(String bookId, Integer number) {
+        String url = ConfigUtils.getSysConfig(ConfigKey.komgaUrl, "http://192.168.3.100:25600");
+        ResponseEntity<byte[]> response = restTemplate.exchange(url + API_BOOKS_PAGES_NUMBER, HttpMethod.GET, new HttpEntity<>(getHeaders()), byte[].class, bookId, number);
+        return response.getBody();
+    }
+
     public byte[] findBookThumbnail(String bookId) {
         String url = ConfigUtils.getSysConfig(ConfigKey.komgaUrl, "http://192.168.3.100:25600");
         ResponseEntity<byte[]> response = restTemplate.exchange(url + API_BOOKS_THUMBNAIL, HttpMethod.GET, new HttpEntity<>(getHeaders()), byte[].class, bookId);
@@ -58,6 +77,16 @@ public class KomgaApiService {
         String url = ConfigUtils.getSysConfig(ConfigKey.komgaUrl, "http://192.168.3.100:25600");
         ResponseEntity<byte[]> response = restTemplate.exchange(url + API_SERIES_THUMBNAIL, HttpMethod.GET, new HttpEntity<>(getHeaders()), byte[].class, seriesId);
         return response.getBody();
+    }
+
+    public List<Page> listPageByBook(String bookId) {
+        String url = ConfigUtils.getSysConfig(ConfigKey.komgaUrl, "http://192.168.3.100:25600");
+        ResponseEntity<JSONArray> response = restTemplate.exchange(url + API_BOOKS_PAGES, HttpMethod.GET, new HttpEntity<>(getHeaders()), JSONArray.class, bookId);
+        JSONArray jsonArray = response.getBody();
+        if (jsonArray != null) {
+            return jsonArray.toJavaList(Page.class);
+        }
+        return Lists.newArrayList();
     }
 
     private HttpHeaders getHeaders() {

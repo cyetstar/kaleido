@@ -41,6 +41,11 @@ public class KaleidoUtils {
         return path.substring(0, path.lastIndexOf("/"));
     }
 
+    public static String getComicFolder(String path) {
+        String libraryPath = ConfigUtils.getSysConfig(ConfigKey.comicLibraryPath);
+        return StringUtils.replace(path, "/comic", libraryPath);
+    }
+
     public static boolean isVideoFile(String filename) {
         return FilenameUtils.isExtension(filename, videoExtensions);
     }

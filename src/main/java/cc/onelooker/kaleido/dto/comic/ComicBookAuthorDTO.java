@@ -3,6 +3,8 @@ package cc.onelooker.kaleido.dto.comic;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 漫画书籍作者关联表DTO
  *
@@ -35,6 +37,7 @@ public class ComicBookAuthorDTO implements BaseDTO<String> {
     private String role;
 
     // ------ 非数据库表字段 -------
+    private List<String> bookIdList;
 
 
     @Override

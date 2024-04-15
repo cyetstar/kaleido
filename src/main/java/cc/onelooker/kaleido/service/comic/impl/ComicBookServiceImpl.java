@@ -11,6 +11,7 @@ import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -49,5 +50,12 @@ public class ComicBookServiceImpl extends AbstractBaseServiceImpl<ComicBookMappe
     @Override
     public ComicBookDO convertToDO(ComicBookDTO comicBookDTO) {
         return convert.convertToDO(comicBookDTO);
+    }
+
+    @Override
+    public List<ComicBookDTO> listBySeriesId(String seriesId) {
+        ComicBookDTO param = new ComicBookDTO();
+        param.setSeriesId(seriesId);
+        return list(param);
     }
 }

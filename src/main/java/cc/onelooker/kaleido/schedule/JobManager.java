@@ -65,6 +65,11 @@ public class JobManager {
         musicSyncPlexRunnable.run();
     }
 
+    @Scheduled(cron = "0 30 2 * * ?")
+    public void syncComic() {
+        comicSyncRunnable.run();
+    }
+
     @Scheduled(cron = "0 15 1 * * ?")
     public void checkThreadStatus() {
         movieCheckThreadStatusRunnable.run();
@@ -93,8 +98,5 @@ public class JobManager {
         movieManager.syncDoubanWeekly();
     }
 
-    @Scheduled(cron = "0 30 2 * * ?")
-    public void syncComic() {
-        comicSyncRunnable.run();
-    }
+
 }

@@ -1,5 +1,7 @@
 package cc.onelooker.kaleido.third.tmm;
 
+import cc.onelooker.kaleido.nfo.ComicInfoNFO;
+import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.utils.LogUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -56,6 +59,13 @@ public class TmmApiServiceTest {
     public void listDoulistMovie() {
         List<Movie> movieList = tmmApiService.listDoulistMovie("136414497", 0);
         Assertions.assertNotNull(movieList.get(0).getTitle());
+    }
+
+    @Test
+    public void findComic() throws Exception {
+        Comic comic = tmmApiService.findComic("98021");
+        ComicInfoNFO comicInfoNFO = NFOUtil.toComicInfoNFO(comic);
+        NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, Paths.get("/Users/cyetstar/dev/kaleido"), "ComicInfo.xml");
     }
 
 }

@@ -6,9 +6,11 @@ import cc.onelooker.kaleido.dto.comic.req.ComicBookCreateReq;
 import cc.onelooker.kaleido.dto.comic.req.ComicBookPageReq;
 import cc.onelooker.kaleido.dto.comic.req.ComicBookUpdateReq;
 import cc.onelooker.kaleido.dto.comic.resp.ComicBookCreateResp;
+import cc.onelooker.kaleido.dto.comic.resp.ComicBookListPageResp;
 import cc.onelooker.kaleido.dto.comic.resp.ComicBookPageResp;
 import cc.onelooker.kaleido.dto.comic.resp.ComicBookViewResp;
 import cc.onelooker.kaleido.entity.comic.ComicBookDO;
+import cc.onelooker.kaleido.third.komga.Page;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -42,4 +44,6 @@ public interface ComicBookConvert {
     ComicBookCreateResp convertToCreateResp(ComicBookDTO dto);
 
     ComicBookViewResp.Author convertToViewResp(ComicAuthorDTO comicAuthorDTO);
+
+    ComicBookListPageResp convertToListPageResp(Page page);
 }

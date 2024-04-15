@@ -3,6 +3,8 @@ package cc.onelooker.kaleido.service.comic;
 import cc.onelooker.kaleido.dto.comic.ComicBookDTO;
 import com.zjjcnt.common.core.service.IBaseService;
 
+import java.util.List;
+
 /**
  * 漫画书籍Service
  *
@@ -11,4 +13,5 @@ import com.zjjcnt.common.core.service.IBaseService;
  */
 public interface ComicBookService extends IBaseService<ComicBookDTO> {
 
+    List<ComicBookDTO> listBySeriesId(String seriesId);
 }
