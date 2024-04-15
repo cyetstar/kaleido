@@ -109,12 +109,12 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
         ComicBookDTO comicBookDTO = comicBookService.findById(req.getId());
         Path path = Paths.get(KaleidoUtils.getComicFolder(comicBookDTO.getPath()));
         String fileName = FilenameUtils.getBaseName(path.getFileName().toString());
-//        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//        Thumbnails.of(req.getFile().getInputStream()).width(400).keepAspectRatio(true).toOutputStream(bos);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        Thumbnails.of(req.getFile().getInputStream()).width(300).keepAspectRatio(true).outputFormat("jpg").toOutputStream(bos);
         if (comicBookDTO.getBookNumber() == 1) {
-            Files.write(path.resolveSibling("cover.jpg"), req.getFile().getBytes());
+            Files.write(path.resolveSibling("cover.jpg"), bos.toByteArray());
         }
-        Files.write(path.getParent().resolve(fileName + ".jpg"), req.getFile().getBytes());
+        Files.write(path.getParent().resolve(fileName + ".jpg"), bos.toByteArray());
         return CommonResult.success(true);
     }
 }
