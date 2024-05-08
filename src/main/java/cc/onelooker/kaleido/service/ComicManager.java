@@ -27,6 +27,7 @@ import cn.hutool.extra.compress.CompressUtil;
 import cn.hutool.extra.compress.extractor.Extractor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,7 +148,7 @@ public class ComicManager {
             }
             log.info("== 找到匹配信息:({}){}", comic.getBgmId(), comic.getSeries());
             Files.list(path).forEach(s -> convertBook(s, comic));
-            if (Files.list(path).count() == 0) {
+            if (FileUtils.isEmptyDirectory(path.toFile())) {
                 NioFileUtils.deleteIfExists(path);
                 log.info("== 删除源文件夹:{}", path.getFileName());
                 pathInfoService.deleteByPath(path.toString());
@@ -184,40 +185,59 @@ public class ComicManager {
         syncAlternateTitle(comicInfoNFO.getAkas(), seriesId);
     }
 
-    private void moveBookImage(Path folderPath, Path tagetPath) throws IOException {
-        Files.list(folderPath).forEach(s -> {
-            try {
-                if (Files.isDirectory(s)) {
-                    moveBookImage(s, tagetPath);
-                    Files.delete(s);
-                }
-                if (tagetPath.equals(s.getParent())) {
-                    return;
-                }
-                Files.move(s, tagetPath.resolve(s.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                log.error("移动图片文件发生错误:{}", ExceptionUtil.getMessage(e));
+    public void unzipBook(Path path, Path folderPath) {
+        Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), path.toFile());
+        extractor.extract(folderPath.toFile(), archiveEntry -> StringUtils.equalsAnyIgnoreCase(FilenameUtils.getExtension(archiveEntry.getName()), "jpg", "jpeg", "png", "xml"));
+        extractor.close();
+        log.info("== 解压文件:{}", folderPath);
+        moveBookImage(folderPath, folderPath);
+        log.info("== 移动图片文件:{}", folderPath);
+    }
+
+    private void moveBookImage(Path folderPath, Path tagetPath) {
+        try {
+            if (Files.list(folderPath).filter(Files::isDirectory).count() == 1) {
+                Files.list(folderPath).forEach(s -> moveBookImage(s, tagetPath));
+            } else {
+                Files.list(folderPath).forEach(s -> {
+                    try {
+                        if (Files.isDirectory(s)) {
+                            NioFileUtils.renameDir(s, tagetPath.resolve(s.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+                        } else if (StringUtils.equalsAnyIgnoreCase(s.getFileName().toString(), " thumbs.db", ".DS_Store")) {
+                            Files.delete(s);
+                        } else {
+                            Files.move(s, tagetPath.resolve(s.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+                        }
+                    } catch (IOException e) {
+                        log.info("移动图片文件发生错误:{}", ExceptionUtil.getMessage(e));
+                    }
+                });
             }
-        });
+            if (FileUtils.isEmptyDirectory(folderPath.toFile())) {
+                NioFileUtils.deleteIfExists(folderPath);
+            }
+        } catch (IOException e) {
+            throw ExceptionUtil.wrapRuntime(e);
+        }
     }
 
     private void convertBook(Path path, Comic comic) {
         try {
             String fileName = path.getFileName().toString();
             String extension = FilenameUtils.getExtension(fileName);
-            if (!StringUtils.equalsAnyIgnoreCase(extension, "zip", "cbz")) {
+            String libraryPath = ConfigUtils.getSysConfig(ConfigKey.comicLibraryPath);
+            if (StringUtils.equalsAnyIgnoreCase(extension, "jpg", "jpeg", "png")) {
+                log.info("== 移动图片文件:{}", fileName);
+                Path targetPath = Paths.get(libraryPath, KaleidoUtils.genComicFolder(comic), fileName);
+                Files.move(path, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                return;
+            } else if (!StringUtils.equalsAnyIgnoreCase(extension, "zip", "cbz")) {
                 log.info("== 忽略非压缩:{}", fileName);
                 return;
             }
             String baseName = FilenameUtils.getBaseName(fileName);
             Path folderPath = path.getParent().resolve(baseName);
-            Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), path.toFile());
-            extractor.extract(folderPath.toFile(), archiveEntry -> StringUtils.equalsAnyIgnoreCase(FilenameUtils.getExtension(archiveEntry.getName()), "jpg", "jpeg", "png", "xml"));
-            extractor.close();
-            log.info("== 解压文件:{}", folderPath);
-            moveBookImage(folderPath, folderPath);
-            log.info("== 移动图片文件:{}", folderPath);
-
+            unzipBook(path, folderPath);
             ComicInfoNFO comicInfoNFO = NFOUtil.toComicInfoNFO(comic);
             List<Comic.Volume> volumes = comic.getVolumes();
             Integer number = getVolumeNumber(path.getFileName().toString());
@@ -238,7 +258,6 @@ public class ComicManager {
             }
             NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, folderPath, "ComicInfo.xml");
             log.info("== 输出ComicInfo.xml:{}", folderPath);
-            String libraryPath = ConfigUtils.getSysConfig(ConfigKey.comicLibraryPath);
             Path targetPath = Paths.get(libraryPath, KaleidoUtils.genComicFolder(comicInfoNFO), baseName + ".zip");
             ZipUtil.zip(folderPath.toString(), targetPath.toString());
             log.info("== 输出目标文件:{}", targetPath);
@@ -247,8 +266,7 @@ public class ComicManager {
             Files.delete(path);
             log.info("== 删除原文件:{}", path);
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("== 转换压缩文件失败:{}", ExceptionUtil.getMessage(e));
+            log.info("== 转换压缩文件失败:{}", ExceptionUtil.getMessage(e));
         }
     }
 

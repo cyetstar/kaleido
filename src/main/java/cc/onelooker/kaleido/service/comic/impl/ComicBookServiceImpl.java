@@ -5,12 +5,16 @@ import cc.onelooker.kaleido.dto.comic.ComicBookDTO;
 import cc.onelooker.kaleido.entity.comic.ComicBookDO;
 import cc.onelooker.kaleido.mapper.comic.ComicBookMapper;
 import cc.onelooker.kaleido.service.comic.ComicBookService;
+import cc.onelooker.kaleido.service.comic.ComicSeriesService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,6 +28,9 @@ import java.util.Objects;
 public class ComicBookServiceImpl extends AbstractBaseServiceImpl<ComicBookMapper, ComicBookDO, ComicBookDTO> implements ComicBookService {
 
     ComicBookConvert convert = ComicBookConvert.INSTANCE;
+
+    @Autowired
+    private ComicSeriesService comicSeriesService;
 
     @Override
     protected Wrapper<ComicBookDO> genQueryWrapper(ComicBookDTO dto) {
@@ -57,5 +64,19 @@ public class ComicBookServiceImpl extends AbstractBaseServiceImpl<ComicBookMappe
         ComicBookDTO param = new ComicBookDTO();
         param.setSeriesId(seriesId);
         return list(param);
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteById(Serializable id) {
+        ComicBookDTO comicBookDTO = findById(id);
+        boolean result = super.deleteById(id);
+        ComicBookDTO param = new ComicBookDTO();
+        param.setSeriesId(comicBookDTO.getSeriesId());
+        long count = count(param);
+        if (count == 0) {
+            comicSeriesService.deleteById(comicBookDTO.getSeriesId());
+        }
+        return result;
     }
 }

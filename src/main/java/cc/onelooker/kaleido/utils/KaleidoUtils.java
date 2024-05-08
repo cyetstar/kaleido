@@ -2,6 +2,7 @@ package cc.onelooker.kaleido.utils;
 
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.nfo.ComicInfoNFO;
+import cc.onelooker.kaleido.third.tmm.Comic;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RegExUtils;
@@ -93,6 +94,15 @@ public class KaleidoUtils {
     }
 
     public static String genComicFolder(ComicInfoNFO comicInfoNFO) {
-        return String.format("%S [%S]", comicInfoNFO.getSeries(), comicInfoNFO.getAuthors());
+        String folder = String.format("%S [%S]", comicInfoNFO.getSeries(), comicInfoNFO.getAuthors());
+        folder = folder.replaceAll("[\\\\/:*?\"<>|]", "_");
+        return folder;
     }
+
+    public static String genComicFolder(Comic comic) {
+        String folder = String.format("%S [%S]", comic.getSeries(), comic.getAuthors());
+        folder = folder.replaceAll("[\\\\/:*?\"<>|]", "_");
+        return folder;
+    }
+
 }

@@ -62,11 +62,11 @@ public class SysConfigController extends AbstractCrudController<SysConfigDTO> {
             sysConfigDTO.setConfigValue(MapUtils.getString(req, key));
             sysConfigDTOList.add(sysConfigDTO);
         }
+        sysConfigService.save(sysConfigDTOList);
         sysConfigDTOList.stream().filter(s -> StringUtils.isNotEmpty(s.getConfigValue())
                 && ConfigKey.doubanCookie.name().equals(s.getConfigKey())).findFirst().ifPresent(s -> {
             tmmApiService.setDoubanCookie(s.getConfigValue());
         });
-        sysConfigService.save(sysConfigDTOList);
         return CommonResult.success(true);
     }
 

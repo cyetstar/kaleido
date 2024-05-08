@@ -44,29 +44,24 @@ public class ImageController {
     @GetMapping("/cover")
     public HttpEntity<byte[]> cover(String id, String type) throws IOException {
         byte[] content = null;
+        Path coverPath = null;
         if (StringUtils.equals(type, "book")) {
             ComicBookDTO comicBookDTO = comicBookService.findById(id);
             Path path = Paths.get(KaleidoUtils.getComicFolder(comicBookDTO.getPath()));
             String fileName = FilenameUtils.getBaseName(path.getFileName().toString());
-            Path coverPath = path.getParent().resolve(fileName + ".jpg");
-            if (Files.exists(coverPath)) {
-                content = Files.readAllBytes(coverPath);
-            } else {
-                content = komgaApiService.findBookThumbnail(id);
-            }
+            coverPath = path.getParent().resolve(fileName + ".jpg");
         } else {
             ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(id);
             Path path = Paths.get(KaleidoUtils.getComicFolder(comicSeriesDTO.getPath()));
-            if (Files.exists(path.resolve("cover.jpg"))) {
-                content = Files.readAllBytes(path.resolve("cover.jpg"));
-            } else {
-                content = komgaApiService.findSeriesThumbnail(id);
-            }
+            coverPath = path.resolve("cover.jpg");
+        }
+        if (Files.exists(coverPath)) {
+            content = Files.readAllBytes(coverPath);
         }
         if (content == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS)).body(content);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).eTag(String.valueOf(Files.getLastModifiedTime(coverPath).toMillis())).body(content);
     }
 
     @GetMapping("/page")

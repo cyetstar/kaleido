@@ -2,6 +2,8 @@ package cc.onelooker.kaleido.service;
 
 import cn.hutool.core.util.ZipUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,5 +31,19 @@ public class ComicManagerTest {
         Path path = Paths.get("/Users/cyetstar/dev/kaleido/Vol.1.zip");
         ZipUtil.unzip(path.toFile(), Paths.get("/Users/cyetstar/dev/kaleido/Vol.1").toFile());
 //        comicManager.compressZip(path);
+    }
+
+    @Test
+    public void unzip() throws IOException {
+        Path zipPath = Paths.get("/Users/cyetstar/dev/kaleido/Vol.01.zip");
+        String fileName = zipPath.getFileName().toString();
+        String extension = FilenameUtils.getExtension(fileName);
+        if (!StringUtils.equalsAnyIgnoreCase(extension, "zip", "cbz")) {
+            log.info("== 忽略非压缩:{}", fileName);
+            return;
+        }
+        String baseName = FilenameUtils.getBaseName(fileName);
+        Path folderPath = zipPath.getParent().resolve(baseName);
+        comicManager.unzipBook(zipPath, folderPath);
     }
 }
