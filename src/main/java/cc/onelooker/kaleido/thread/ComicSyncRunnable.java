@@ -7,6 +7,7 @@ import cc.onelooker.kaleido.third.komga.Book;
 import cc.onelooker.kaleido.third.komga.KomgaApiService;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -26,7 +27,7 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
 
     private final ComicBookService comicBookService;
 
-    private List<Book> bookList;
+    private final List<String> bookIdList = Lists.newArrayList();
 
     public ComicSyncRunnable(KomgaApiService komgaApiService, ComicManager comicManager, ComicBookService comicBookService) {
         this.komgaApiService = komgaApiService;
@@ -42,7 +43,7 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
     @Override
     protected PageResult<Book> page(Map<String, String> params, int pageNumber, int pageSize) {
         PageResult<Book> bookPageResult = komgaApiService.pageBook(pageNumber - 1, pageSize);
-        bookList = bookPageResult.getRecords();
+        bookIdList.addAll(bookPageResult.getRecords().stream().map(Book::getId).collect(Collectors.toList()));
         return bookPageResult;
     }
 
@@ -58,7 +59,6 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
     protected void afterRun(Map<String, String> params) {
         List<ComicBookDTO> comicBookDTOList = comicBookService.list(null);
         List<String> idList = comicBookDTOList.stream().map(ComicBookDTO::getId).collect(Collectors.toList());
-        List<String> bookIdList = bookList.stream().map(Book::getId).collect(Collectors.toList());
         Collection<String> deleteIdList = CollectionUtils.subtract(idList, bookIdList);
         if (CollectionUtils.isNotEmpty(deleteIdList)) {
             for (String deleteId : deleteIdList) {

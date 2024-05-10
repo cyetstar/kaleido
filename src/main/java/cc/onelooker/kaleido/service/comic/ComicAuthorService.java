@@ -20,4 +20,6 @@ public interface ComicAuthorService extends IBaseService<ComicAuthorDTO> {
     List<ComicAuthorDTO> listByBookId(String bookId);
 
     List<ComicAuthorDTO> listByBookIdList(List<String> bookIdList);
+
+    List<ComicAuthorDTO> listByKeyword(String keyword);
 }

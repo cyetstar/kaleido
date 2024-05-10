@@ -30,6 +30,8 @@ public class ComicAuthorDTO implements BaseDTO<String> {
 
     private List<String> idList;
 
+    private String keyword;
+
 
     @Override
     public String getId() {

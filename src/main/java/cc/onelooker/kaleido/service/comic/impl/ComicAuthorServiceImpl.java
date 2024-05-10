@@ -40,6 +40,7 @@ public class ComicAuthorServiceImpl extends AbstractBaseServiceImpl<ComicAuthorM
         LambdaQueryWrapper<ComicAuthorDO> query = new LambdaQueryWrapper<>();
         query.eq(StringUtils.isNotEmpty(dto.getName()), ComicAuthorDO::getName, dto.getName());
         query.in(CollectionUtils.isNotEmpty(dto.getIdList()), ComicAuthorDO::getId, dto.getIdList());
+        query.like(StringUtils.isNotEmpty(dto.getKeyword()), ComicAuthorDO::getName, dto.getKeyword());
         return query;
     }
 
@@ -86,5 +87,12 @@ public class ComicAuthorServiceImpl extends AbstractBaseServiceImpl<ComicAuthorM
         ComicAuthorDTO param2 = new ComicAuthorDTO();
         param2.setIdList(Lists.newArrayList(authorIdSet.iterator()));
         return list(param2);
+    }
+
+    @Override
+    public List<ComicAuthorDTO> listByKeyword(String keyword) {
+        ComicAuthorDTO param = new ComicAuthorDTO();
+        param.setKeyword(keyword);
+        return list(param);
     }
 }

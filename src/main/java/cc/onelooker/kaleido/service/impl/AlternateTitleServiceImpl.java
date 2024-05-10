@@ -58,4 +58,12 @@ public class AlternateTitleServiceImpl extends AbstractBaseServiceImpl<Alternate
         param.setSubjectId(subjectId);
         return list(param);
     }
+
+    @Override
+    public List<AlternateTitleDTO> listByTitleAndSubjectType(String title, String subjectType) {
+        AlternateTitleDTO param = new AlternateTitleDTO();
+        param.setTitle(title);
+        param.setSubjectType(subjectType);
+        return list(param);
+    }
 }

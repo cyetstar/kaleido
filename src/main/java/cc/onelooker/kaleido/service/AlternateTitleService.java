@@ -16,4 +16,6 @@ public interface AlternateTitleService extends IBaseService<AlternateTitleDTO> {
     void deleteBySubjectId(String subjectId);
 
     List<AlternateTitleDTO> listBySubjectId(String subjectId);
+
+    List<AlternateTitleDTO> listByTitleAndSubjectType(String title, String subjectType);
 }

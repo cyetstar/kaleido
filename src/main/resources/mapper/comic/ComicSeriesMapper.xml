@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.onelooker.kaleido.mapper.comic.ComicSeriesMapper">
+
+    <select id="listByAuthorId" resultType="cc.onelooker.kaleido.dto.comic.ComicSeriesDTO">
+        select distinct t1.*
+          from comic_series t1
+    inner join comic_book t2 on t1.id = t2.series_id
+    inner join comic_book_author t3 on t2.id = t3.book_id
+         where t3.author_id = #{authorId}
+    </select>
 </mapper>
