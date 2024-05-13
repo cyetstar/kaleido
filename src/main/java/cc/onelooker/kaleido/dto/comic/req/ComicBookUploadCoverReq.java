@@ -13,5 +13,5 @@ public class ComicBookUploadCoverReq {
 
     private String id;
 
-    private MultipartFile file;
+    private String data;
 }

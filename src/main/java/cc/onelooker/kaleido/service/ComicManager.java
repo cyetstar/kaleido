@@ -223,13 +223,14 @@ public class ComicManager {
 
     private void convertBook(Path path, Comic comic) {
         try {
+            ComicInfoNFO comicInfoNFO = NFOUtil.toComicInfoNFO(comic);
             String fileName = path.getFileName().toString();
             String extension = FilenameUtils.getExtension(fileName);
             String libraryPath = ConfigUtils.getSysConfig(ConfigKey.comicLibraryPath);
+            Path targetFolder = Paths.get(libraryPath, KaleidoUtils.genComicFolder(comicInfoNFO));
             if (StringUtils.equalsAnyIgnoreCase(extension, "jpg", "jpeg", "png")) {
                 log.info("== 移动图片文件:{}", fileName);
-                Path targetPath = Paths.get(libraryPath, KaleidoUtils.genComicFolder(comic), fileName);
-                Files.move(path, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                Files.move(path, targetFolder.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
                 return;
             } else if (!StringUtils.equalsAnyIgnoreCase(extension, "zip", "cbz")) {
                 log.info("== 忽略非压缩:{}", fileName);
@@ -238,7 +239,7 @@ public class ComicManager {
             String baseName = FilenameUtils.getBaseName(fileName);
             Path folderPath = path.getParent().resolve(baseName);
             unzipBook(path, folderPath);
-            ComicInfoNFO comicInfoNFO = NFOUtil.toComicInfoNFO(comic);
+
             List<Comic.Volume> volumes = comic.getVolumes();
             Integer number = getVolumeNumber(path.getFileName().toString());
             if (number != null) {
@@ -258,7 +259,7 @@ public class ComicManager {
             }
             NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, folderPath, "ComicInfo.xml");
             log.info("== 输出ComicInfo.xml:{}", folderPath);
-            Path targetPath = Paths.get(libraryPath, KaleidoUtils.genComicFolder(comicInfoNFO), baseName + ".zip");
+            Path targetPath = targetFolder.resolve(baseName + ".zip");
             ZipUtil.zip(folderPath.toString(), targetPath.toString());
             log.info("== 输出目标文件:{}", targetPath);
             NioFileUtils.deleteIfExists(folderPath);

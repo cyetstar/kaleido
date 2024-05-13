@@ -24,7 +24,8 @@ public enum Action {
     tvshowUpdateSource("更新剧集源"),
 
     comicSync("漫画同步"),
-    comicUpdateSource("漫画更新源");
+    comicUpdateSource("漫画更新源"),
+    comicReadComicInfo("读取ComicInfo");
 
     private String title;
 

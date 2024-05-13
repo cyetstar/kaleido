@@ -28,7 +28,7 @@ public class AlternateTitleServiceImpl extends AbstractBaseServiceImpl<Alternate
     @Override
     protected Wrapper<AlternateTitleDO> genQueryWrapper(AlternateTitleDTO dto) {
         LambdaQueryWrapper<AlternateTitleDO> query = new LambdaQueryWrapper<>();
-        query.eq(StringUtils.isNotEmpty(dto.getTitle()), AlternateTitleDO::getTitle, dto.getTitle());
+        query.like(StringUtils.isNotEmpty(dto.getTitle()), AlternateTitleDO::getTitle, dto.getTitle());
         query.eq(StringUtils.isNotEmpty(dto.getSubjectId()), AlternateTitleDO::getSubjectId, dto.getSubjectId());
         query.eq(StringUtils.isNotEmpty(dto.getSubjectType()), AlternateTitleDO::getSubjectType, dto.getSubjectType());
         return query;

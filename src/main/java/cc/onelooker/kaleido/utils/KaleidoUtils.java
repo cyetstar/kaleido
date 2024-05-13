@@ -99,10 +99,10 @@ public class KaleidoUtils {
         return folder;
     }
 
-    public static String genComicFolder(Comic comic) {
-        String folder = String.format("%S [%S]", comic.getSeries(), comic.getAuthors());
-        folder = folder.replaceAll("[\\\\/:*?\"<>|]", "_");
-        return folder;
-    }
+//    public static String genComicFolder(Comic comic) {
+//        String folder = String.format("%S [%S]", comic.getSeries(), comic.getAuthors());
+//        folder = folder.replaceAll("[\\\\/:*?\"<>|]", "_");
+//        return folder;
+//    }
 
 }

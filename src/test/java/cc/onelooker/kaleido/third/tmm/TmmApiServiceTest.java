@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -63,9 +62,12 @@ public class TmmApiServiceTest {
 
     @Test
     public void findComic() throws Exception {
-        Comic comic = tmmApiService.findComic("98021");
+        Comic comic = tmmApiService.findComic("565");
+        String folder = String.format("%S [%S]", comic.getSeries(), comic.getAuthors());
+        System.out.println(folder);
         ComicInfoNFO comicInfoNFO = NFOUtil.toComicInfoNFO(comic);
-        NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, Paths.get("/Users/cyetstar/dev/kaleido"), "ComicInfo.xml");
+        folder = String.format("%S [%S]", comicInfoNFO.getSeries(), comicInfoNFO.getAuthors());
+        System.out.println(folder);
     }
 
 }

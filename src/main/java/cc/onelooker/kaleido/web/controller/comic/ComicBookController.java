@@ -16,6 +16,7 @@ import cc.onelooker.kaleido.service.comic.ComicBookService;
 import cc.onelooker.kaleido.third.komga.KomgaApiService;
 import cc.onelooker.kaleido.third.komga.Page;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cn.hutool.core.codec.Base64;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
@@ -23,12 +24,11 @@ import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -105,16 +105,15 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
 
     @PostMapping("uploadCover")
     @ApiOperation(value = "上传封面")
-    public CommonResult<Boolean> uploadCover(ComicBookUploadCoverReq req) throws IOException {
+    public CommonResult<Boolean> uploadCover(@RequestBody ComicBookUploadCoverReq req) throws IOException {
         ComicBookDTO comicBookDTO = comicBookService.findById(req.getId());
         Path path = Paths.get(KaleidoUtils.getComicFolder(comicBookDTO.getPath()));
         String fileName = FilenameUtils.getBaseName(path.getFileName().toString());
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        Thumbnails.of(req.getFile().getInputStream()).width(300).keepAspectRatio(true).outputFormat("jpg").toOutputStream(bos);
-        if (comicBookDTO.getBookNumber() == 1) {
-            Files.write(path.resolveSibling("cover.jpg"), bos.toByteArray());
+        byte[] data = Base64.decode(RegExUtils.removeFirst(req.getData(), "data:image/.+;base64,"));
+        if (comicBookDTO.getBookNumber() == null || comicBookDTO.getBookNumber() == 1) {
+            Files.write(path.resolveSibling("cover.jpg"), data);
         }
-        Files.write(path.getParent().resolve(fileName + ".jpg"), bos.toByteArray());
+        Files.write(path.getParent().resolve(fileName + ".jpg"), data);
         return CommonResult.success(true);
     }
 }
