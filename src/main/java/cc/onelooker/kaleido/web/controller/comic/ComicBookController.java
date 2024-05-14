@@ -110,7 +110,7 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
         Path path = Paths.get(KaleidoUtils.getComicFolder(comicBookDTO.getPath()));
         String fileName = FilenameUtils.getBaseName(path.getFileName().toString());
         byte[] data = Base64.decode(RegExUtils.removeFirst(req.getData(), "data:image/.+;base64,"));
-        if (comicBookDTO.getBookNumber() == null || comicBookDTO.getBookNumber() == 1) {
+        if (comicBookDTO.getBookNumber() == null || comicBookDTO.getBookNumber() <= 1) {
             Files.write(path.resolveSibling("cover.jpg"), data);
         }
         Files.write(path.getParent().resolve(fileName + ".jpg"), data);
