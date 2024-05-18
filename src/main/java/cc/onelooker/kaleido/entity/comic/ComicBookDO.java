@@ -50,6 +50,12 @@ public class ComicBookDO implements IdEntity<String> {
     private Integer bookNumber;
 
     /**
+     * 排序号
+     */
+    @TableField(value = "sort_number")
+    private Integer sortNumber;
+
+    /**
      * 页数
      */
     @TableField(value = "page_count")

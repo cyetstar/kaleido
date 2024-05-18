@@ -25,6 +25,7 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.ZipUtil;
 import cn.hutool.extra.compress.CompressUtil;
 import cn.hutool.extra.compress.extractor.Extractor;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -98,9 +99,14 @@ public class ComicManager {
         Series series = komgaApiService.findSeries(seriesId);
         syncSeries(series);
         List<Book> bookList = komgaApiService.listBookBySeries(seriesId);
+        List<String> bookIdList = Lists.newArrayList();
         for (Book book : bookList) {
             syncBook(book);
+            bookIdList.add(book.getId());
         }
+        List<ComicBookDTO> comicBookDTOList = comicBookService.listBySeriesId(seriesId);
+        List<String> idList = comicBookDTOList.stream().map(ComicBookDTO::getId).collect(Collectors.toList());
+        CollectionUtils.subtract(idList, bookIdList).forEach(deleteId -> comicBookService.deleteById(deleteId));
     }
 
     @Transactional
@@ -293,6 +299,7 @@ public class ComicManager {
         comicBookDTO.setTitle(metadata.getTitle());
         comicBookDTO.setSummary(metadata.getSummary());
         comicBookDTO.setBookNumber(metadata.getNumber());
+        comicBookDTO.setSortNumber(metadata.getNumberSort());
         comicBookDTO.setPageCount(media.getPagesCount());
         comicBookDTO.setPath(book.getUrl());
         comicBookDTO.setBgmId(getBgmId(metadata.getLinks()));
@@ -334,7 +341,7 @@ public class ComicManager {
         } else {
             comicSeriesService.update(comicSeriesDTO);
         }
-        syncAlternateTitle(metadata.getAlternateTitles().stream().map(AlternateTitle::getTitle).collect(Collectors.toList()), comicSeriesDTO.getId());
+//        syncAlternateTitle(metadata.getAlternateTitles().stream().map(AlternateTitle::getTitle).collect(Collectors.toList()), comicSeriesDTO.getId());
         syncAttribute(metadata.getTags(), comicSeriesDTO.getId(), AttributeType.ComicTag);
     }
 

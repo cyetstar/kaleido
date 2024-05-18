@@ -60,7 +60,7 @@ public class Book {
         private Boolean summaryLock;
         private Integer number;
         private Boolean numberLock;
-        private Float numberSort;
+        private Integer numberSort;
         private Boolean numberSortLock;
         private String releaseDate;
         private Boolean releaseDateLock;

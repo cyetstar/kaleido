@@ -40,6 +40,11 @@ public class ComicBookDTO implements BaseDTO<String> {
     private Integer bookNumber;
 
     /**
+     * 排序号
+     */
+    private Integer sortNumber;
+
+    /**
      * 页数
      */
     private Integer pageCount;
