@@ -24,7 +24,7 @@ public class KomgaApiService {
 
     private final static String API_SERIES = "/api/v1/series/{seriesId}";
     private final static String API_SERIES_THUMBNAIL = "/api/v1/series/{seriesId}/thumbnail";
-    private final static String API_SERIES_BOOKS = "/api/v1/series/{seriesId}/books";
+    private final static String API_SERIES_BOOKS = "/api/v1/series/{seriesId}/books?size=10000";
     private final static String API_BOOKS = "/api/v1/books?page={pageNumber}&size={pageSize}";
     private final static String API_BOOKS_PAGES = "/api/v1/books/{bookId}/pages";
     private final static String API_BOOKS_PAGES_NUMBER = "/api/v1/books/{bookId}/pages/{number}";
