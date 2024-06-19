@@ -1,7 +1,10 @@
 package cc.onelooker.kaleido.service;
 
 import cc.onelooker.kaleido.dto.SubjectAttributeDTO;
+import cc.onelooker.kaleido.enums.AttributeType;
 import com.zjjcnt.common.core.service.IBaseService;
+
+import java.util.List;
 
 /**
  * 项目属性Service
@@ -11,8 +14,9 @@ import com.zjjcnt.common.core.service.IBaseService;
  */
 public interface SubjectAttributeService extends IBaseService<SubjectAttributeDTO> {
 
-    void deleteBySubjectIdAndAttributeType(String subject, String attributeType);
+    void deleteBySubjectIdAndAttributeType(String subject, AttributeType type);
 
     void insert(String subjectId, String attributeId);
 
+    List<SubjectAttributeDTO> listBySubjectIdAndAttributeType(String subjectId, AttributeType type);
 }

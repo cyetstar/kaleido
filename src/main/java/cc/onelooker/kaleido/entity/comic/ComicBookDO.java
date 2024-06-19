@@ -38,10 +38,10 @@ public class ComicBookDO implements IdEntity<String> {
     private String title;
 
     /**
-     * 简介
+     * 原标题
      */
-    @TableField(value = "summary")
-    private String summary;
+    @TableField(value = "original_title")
+    private String originalTitle;
 
     /**
      * 卷号
@@ -68,12 +68,6 @@ public class ComicBookDO implements IdEntity<String> {
     private String path;
 
     /**
-     * 封面
-     */
-    @TableField(value = "cover")
-    private String cover;
-
-    /**
      * 文件大小
      */
     @TableField(value = "file_size")
@@ -86,6 +80,18 @@ public class ComicBookDO implements IdEntity<String> {
     private String bgmId;
 
     /**
+     * 封面页码
+     */
+    @TableField(value = "cover_page_number")
+    private Integer coverPageNumber;
+
+    /**
+     * 封面裁切数据
+     */
+    @TableField(value = "cover_box_data")
+    private String coverBoxData;
+
+    /**
      * 加入时间
      */
     @TableField(value = "added_at")
@@ -96,7 +102,6 @@ public class ComicBookDO implements IdEntity<String> {
      */
     @TableField(value = "updated_at")
     private Long updatedAt;
-
 
     @Override
     public String getId() {

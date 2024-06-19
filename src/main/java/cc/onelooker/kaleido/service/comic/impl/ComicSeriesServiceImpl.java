@@ -2,12 +2,17 @@ package cc.onelooker.kaleido.service.comic.impl;
 
 import cc.onelooker.kaleido.convert.comic.ComicSeriesConvert;
 import cc.onelooker.kaleido.dto.AlternateTitleDTO;
+import cc.onelooker.kaleido.dto.AttributeDTO;
 import cc.onelooker.kaleido.dto.comic.ComicAuthorDTO;
 import cc.onelooker.kaleido.dto.comic.ComicSeriesDTO;
 import cc.onelooker.kaleido.entity.comic.ComicSeriesDO;
+import cc.onelooker.kaleido.enums.AttributeType;
 import cc.onelooker.kaleido.mapper.comic.ComicSeriesMapper;
 import cc.onelooker.kaleido.service.AlternateTitleService;
+import cc.onelooker.kaleido.service.AttributeService;
+import cc.onelooker.kaleido.service.SubjectAttributeService;
 import cc.onelooker.kaleido.service.comic.ComicAuthorService;
+import cc.onelooker.kaleido.service.comic.ComicSeriesAuthorService;
 import cc.onelooker.kaleido.service.comic.ComicSeriesService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -17,6 +22,7 @@ import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +43,16 @@ public class ComicSeriesServiceImpl extends AbstractBaseServiceImpl<ComicSeriesM
     private AlternateTitleService alternateTitleService;
 
     @Autowired
+    private ComicSeriesAuthorService comicSeriesAuthorService;
+
+    @Autowired
     private ComicAuthorService comicAuthorService;
+
+    @Autowired
+    private AttributeService attributeService;
+
+    @Autowired
+    private SubjectAttributeService subjectAttributeService;
 
     @Override
     protected Wrapper<ComicSeriesDO> genQueryWrapper(ComicSeriesDTO dto) {
@@ -49,7 +64,6 @@ public class ComicSeriesServiceImpl extends AbstractBaseServiceImpl<ComicSeriesM
         query.eq(Objects.nonNull(dto.getRating()), ComicSeriesDO::getRating, dto.getRating());
         query.eq(StringUtils.isNotEmpty(dto.getStatus()), ComicSeriesDO::getStatus, dto.getStatus());
         query.eq(StringUtils.isNotEmpty(dto.getPath()), ComicSeriesDO::getPath, dto.getPath());
-        query.eq(StringUtils.isNotEmpty(dto.getCover()), ComicSeriesDO::getCover, dto.getCover());
         query.eq(StringUtils.isNotEmpty(dto.getBgmId()), ComicSeriesDO::getBgmId, dto.getBgmId());
         if (StringUtils.isNotEmpty(dto.getKeyword())) {
             List<String> idList = Lists.newArrayList();
@@ -93,5 +107,51 @@ public class ComicSeriesServiceImpl extends AbstractBaseServiceImpl<ComicSeriesM
     @Override
     public List<ComicSeriesDTO> listByAuthorId(String authorId) {
         return baseMapper.listByAuthorId(authorId);
+    }
+
+    @Override
+    @Transactional
+    public boolean update(ComicSeriesDTO dto) {
+        List<String> alternateTitleList = dto.getAlternateTitleList();
+        if (alternateTitleList != null) {
+            alternateTitleService.deleteBySubjectId(dto.getId());
+            alternateTitleList.forEach(s -> {
+                AlternateTitleDTO alternateTitleDTO = new AlternateTitleDTO();
+                alternateTitleDTO.setSubjectId(dto.getId());
+                alternateTitleDTO.setSubjectType("comic_series");
+                alternateTitleDTO.setTitle(s);
+                alternateTitleService.insert(alternateTitleDTO);
+            });
+        }
+        if (dto.getWriterName() != null) {
+            comicSeriesAuthorService.deleteBySeriesIdAndRole(dto.getId(), "writer");
+            saveComicAuthor(dto.getId(), dto.getWriterName(), "writer");
+        }
+        if (dto.getPencillerName() != null) {
+            comicSeriesAuthorService.deleteBySeriesIdAndRole(dto.getId(), "penciller");
+            saveComicAuthor(dto.getId(), dto.getPencillerName(), "penciller");
+        }
+        List<String> tagList = dto.getTagList();
+        if (tagList != null) {
+            subjectAttributeService.deleteBySubjectIdAndAttributeType(dto.getId(), AttributeType.ComicTag);
+            tagList.forEach(s -> {
+                AttributeDTO attributeDTO = attributeService.findByValueAndType(s, AttributeType.ComicTag);
+                if (attributeDTO == null) {
+                    attributeDTO = attributeService.insert(s, AttributeType.ComicTag);
+                }
+                subjectAttributeService.insert(dto.getId(), attributeDTO.getId());
+            });
+        }
+        return super.update(dto);
+    }
+
+    private void saveComicAuthor(String seriesId, String name, String role) {
+        if (StringUtils.isNotEmpty(name)) {
+            ComicAuthorDTO comicAuthorDTO = comicAuthorService.findByName(name);
+            if (comicAuthorDTO == null) {
+                comicAuthorDTO = comicAuthorService.insert(name);
+            }
+            comicSeriesAuthorService.insert(seriesId, comicAuthorDTO.getId(), role);
+        }
     }
 }

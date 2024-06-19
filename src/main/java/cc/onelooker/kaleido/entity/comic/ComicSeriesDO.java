@@ -7,8 +7,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.zjjcnt.common.core.entity.IdEntity;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 /**
  * 漫画系列DO
  *
@@ -32,6 +30,18 @@ public class ComicSeriesDO implements IdEntity<String> {
      */
     @TableField(value = "title")
     private String title;
+
+    /**
+     * 原标题
+     */
+    @TableField(value = "original_title")
+    private String originalTitle;
+
+    /**
+     * 年份
+     */
+    @TableField(value = "year")
+    private String year;
 
     /**
      * 简介
@@ -70,12 +80,6 @@ public class ComicSeriesDO implements IdEntity<String> {
     private String path;
 
     /**
-     * 封面
-     */
-    @TableField(value = "cover")
-    private String cover;
-
-    /**
      * 番组计划编号
      */
     @TableField(value = "bgm_id")
@@ -92,7 +96,6 @@ public class ComicSeriesDO implements IdEntity<String> {
      */
     @TableField(value = "updated_at")
     private Long updatedAt;
-
 
     @Override
     public String getId() {

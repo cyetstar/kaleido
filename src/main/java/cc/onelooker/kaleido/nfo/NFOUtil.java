@@ -1,5 +1,7 @@
 package cc.onelooker.kaleido.nfo;
 
+import cc.onelooker.kaleido.dto.comic.ComicBookDTO;
+import cc.onelooker.kaleido.dto.comic.ComicSeriesDTO;
 import cc.onelooker.kaleido.enums.SourceType;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.Tag;
@@ -48,12 +50,30 @@ public class NFOUtil {
         return toComicInfoNFO(comicInfoNFO, comic);
     }
 
+    public static ComicInfoNFO toComicInfoNFO(ComicSeriesDTO comicSeriesDTO, ComicBookDTO comicBookDTO) {
+        ComicInfoNFO comicInfoNFO = new ComicInfoNFO();
+        comicInfoNFO.setSeries(comicSeriesDTO.getTitle());
+        comicInfoNFO.setOriginalSeries(comicSeriesDTO.getOriginalTitle());
+        comicInfoNFO.setCount(comicSeriesDTO.getBookCount());
+        comicInfoNFO.setYear(comicSeriesDTO.getYear());
+        comicInfoNFO.setSummary(comicSeriesDTO.getSummary());
+        comicInfoNFO.setWriter(comicSeriesDTO.getWriterName());
+        comicInfoNFO.setPenciller(comicSeriesDTO.getPencillerName());
+        comicInfoNFO.setPublishers(Lists.newArrayList(comicSeriesDTO.getPublisher()));
+        comicInfoNFO.setCommunityRating(String.valueOf(comicSeriesDTO.getRating()));
+        comicInfoNFO.setTags(StringUtils.join(comicSeriesDTO.getTagList(), Constants.COMMA));
+        comicInfoNFO.setAkas(comicSeriesDTO.getAlternateTitleList());
+        comicInfoNFO.setSeriesBgmId(comicSeriesDTO.getBgmId());
+        comicInfoNFO.setSeriesStatus(comicSeriesDTO.getStatus());
+        comicInfoNFO.setNumber(String.valueOf(comicBookDTO.getBookNumber()));
+        comicInfoNFO.setWeb("https://bgm.tv/subject/" + comicBookDTO.getBgmId());
+        return comicInfoNFO;
+    }
+
     private static ComicInfoNFO toComicInfoNFO(ComicInfoNFO comicInfoNFO, Comic comic) {
         comicInfoNFO.setSeries(StringUtils.defaultIfEmpty(comic.getSeries(), comic.getOriginalSeries()));
         comicInfoNFO.setCount(comic.getVolumeCount());
-        if (StringUtils.isNotEmpty(comic.getYear())) {
-            comicInfoNFO.setYear(Integer.valueOf(comic.getYear()));
-        }
+        comicInfoNFO.setYear(comic.getYear());
         comicInfoNFO.setSummary(comic.getSummary());
         String writer = comic.getAuthors().stream().filter(s -> s.getRole().equals("作者")).findFirst().map(Author::getName).orElse(null);
         if (StringUtils.isEmpty(writer)) {

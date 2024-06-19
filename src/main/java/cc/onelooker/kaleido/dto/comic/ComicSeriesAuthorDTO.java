@@ -6,14 +6,14 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 漫画书籍作者关联表DTO
+ * 漫画系列作者关联表DTO
  *
  * @author cyetstar
  * @date 2024-03-12 17:47:50
- * @see cc.onelooker.kaleido.entity.comic.ComicBookAuthorDO
+ * @see cc.onelooker.kaleido.entity.comic.ComicSeriesAuthorDO
  */
 @Data
-public class ComicBookAuthorDTO implements BaseDTO<String> {
+public class ComicSeriesAuthorDTO implements BaseDTO<String> {
     private static final long serialVersionUID = 1255074799779143362L;
 
     /**
@@ -24,7 +24,7 @@ public class ComicBookAuthorDTO implements BaseDTO<String> {
     /**
      * 书籍id
      */
-    private String bookId;
+    private String seriesId;
 
     /**
      * 作者id
@@ -37,8 +37,7 @@ public class ComicBookAuthorDTO implements BaseDTO<String> {
     private String role;
 
     // ------ 非数据库表字段 -------
-    private List<String> bookIdList;
-
+    private List<String> seriesIdList;
 
     @Override
     public String getId() {

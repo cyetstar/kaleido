@@ -30,9 +30,9 @@ public class ComicBookDTO implements BaseDTO<String> {
     private String title;
 
     /**
-     * 简介
+     * 原标题
      */
-    private String summary;
+    private String originalTitle;
 
     /**
      * 卷号
@@ -55,11 +55,6 @@ public class ComicBookDTO implements BaseDTO<String> {
     private String path;
 
     /**
-     * 封面
-     */
-    private String cover;
-
-    /**
      * 文件大小
      */
     private Long fileSize;
@@ -68,6 +63,16 @@ public class ComicBookDTO implements BaseDTO<String> {
      * 番组计划编号
      */
     private String bgmId;
+
+    /**
+     * 封面页码
+     */
+    private Integer coverPageNumber;
+
+    /**
+     * 封面裁切数据
+     */
+    private String coverBoxData;
 
     /**
      * 加入时间
@@ -80,7 +85,6 @@ public class ComicBookDTO implements BaseDTO<String> {
     private Long updatedAt;
 
     // ------ 非数据库表字段 -------
-
 
     @Override
     public String getId() {

@@ -4,7 +4,7 @@ import cc.onelooker.kaleido.convert.comic.ComicSeriesConvert;
 import cc.onelooker.kaleido.dto.AlternateTitleDTO;
 import cc.onelooker.kaleido.dto.AttributeDTO;
 import cc.onelooker.kaleido.dto.comic.ComicAuthorDTO;
-import cc.onelooker.kaleido.dto.comic.ComicBookDTO;
+import cc.onelooker.kaleido.dto.comic.ComicSeriesAuthorDTO;
 import cc.onelooker.kaleido.dto.comic.ComicSeriesDTO;
 import cc.onelooker.kaleido.dto.comic.req.*;
 import cc.onelooker.kaleido.dto.comic.resp.ComicSeriesCreateResp;
@@ -13,14 +13,15 @@ import cc.onelooker.kaleido.dto.comic.resp.ComicSeriesSearchInfoResp;
 import cc.onelooker.kaleido.dto.comic.resp.ComicSeriesViewResp;
 import cc.onelooker.kaleido.dto.req.ComicSeriesReadComicInfoReq;
 import cc.onelooker.kaleido.dto.req.ComicSeriesSyncReq;
+import cc.onelooker.kaleido.dto.req.ComicSeriesWriteComicInfoReq;
 import cc.onelooker.kaleido.enums.AttributeType;
 import cc.onelooker.kaleido.service.AlternateTitleService;
 import cc.onelooker.kaleido.service.AttributeService;
 import cc.onelooker.kaleido.service.ComicManager;
 import cc.onelooker.kaleido.service.comic.ComicAuthorService;
 import cc.onelooker.kaleido.service.comic.ComicBookService;
+import cc.onelooker.kaleido.service.comic.ComicSeriesAuthorService;
 import cc.onelooker.kaleido.service.comic.ComicSeriesService;
-import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.tmm.Comic;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
@@ -32,7 +33,6 @@ import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -67,6 +67,9 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     private ComicAuthorService comicAuthorService;
 
     @Autowired
+    private ComicSeriesAuthorService comicSeriesAuthorService;
+
+    @Autowired
     private ComicBookService comicBookService;
 
     @Autowired
@@ -91,18 +94,21 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     public CommonResult<ComicSeriesViewResp> view(String id) {
         ComicSeriesViewResp resp = super.doView(id, ComicSeriesConvert.INSTANCE::convertToViewResp);
         List<AlternateTitleDTO> alternateTitleDTOList = alternateTitleService.listBySubjectId(id);
+        List<AttributeDTO> attributeDTOList = attributeService.listBySubjectId(id);
+        List<ComicSeriesAuthorDTO> comicSeriesAuthorDTOList = comicSeriesAuthorService.listBySeriesId(id);
+        comicSeriesAuthorDTOList.forEach(s -> {
+            ComicAuthorDTO comicAuthorDTO = comicAuthorService.findById(s.getAuthorId());
+            ComicSeriesViewResp.Author author = ComicSeriesConvert.INSTANCE.convertToViewResp(comicAuthorDTO);
+            if (StringUtils.equals(s.getRole(), "writer")) {
+                resp.setWriter(author);
+            } else {
+                resp.setPenciller(author);
+            }
+        });
         List<String> alternateTitleList = alternateTitleDTOList.stream().map(AlternateTitleDTO::getTitle).collect(Collectors.toList());
         resp.setAlternateTitleList(alternateTitleList);
-        List<ComicBookDTO> comicBookDTOList = comicBookService.listBySeriesId(id);
-        List<String> bookIdList = comicBookDTOList.stream().map(ComicBookDTO::getId).collect(Collectors.toList());
-        List<AttributeDTO> attributeDTOList = attributeService.listBySubjectIdList(bookIdList);
         Map<String, List<AttributeDTO>> attributeMap = attributeDTOList.stream().collect(Collectors.groupingBy(AttributeDTO::getType));
-        resp.setTagList(attributeMap.getOrDefault(AttributeType.ComicTag.name(), Lists.newArrayList()).stream().map(ComicSeriesConvert.INSTANCE::convertToViewResp).collect(Collectors.toList()));
-        List<ComicAuthorDTO> comicAuthorDTOList = comicAuthorService.listByBookIdList(bookIdList);
-        resp.setAuthorList(comicAuthorDTOList.stream().map(ComicSeriesConvert.INSTANCE::convertToViewResp).collect(Collectors.toList()));
-        if (StringUtils.isEmpty(resp.getSummary()) && CollectionUtils.isNotEmpty(comicBookDTOList)) {
-            resp.setSummary(comicBookDTOList.get(0).getSummary());
-        }
+        resp.setTagList(attributeMap.getOrDefault(AttributeType.ComicTag.name(), Lists.newArrayList()).stream().map(AttributeDTO::getValue).collect(Collectors.toList()));
         return CommonResult.success(resp);
     }
 
@@ -150,6 +156,13 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     @ApiOperation(value = "读取ComicInfo")
     public CommonResult<Boolean> readComicInfo(@RequestBody ComicSeriesReadComicInfoReq req) {
         comicManager.readComicInfo(req.getId());
+        return CommonResult.success(true);
+    }
+
+    @PostMapping("writeComicInfo")
+    @ApiOperation(value = "读取ComicInfo")
+    public CommonResult<Boolean> writeComicInfo(@RequestBody ComicSeriesWriteComicInfoReq req) {
+        comicManager.writeComicInfo(req.getId());
         return CommonResult.success(true);
     }
 

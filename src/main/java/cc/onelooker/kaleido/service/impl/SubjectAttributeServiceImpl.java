@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.service.impl;
 import cc.onelooker.kaleido.convert.SubjectAttributeConvert;
 import cc.onelooker.kaleido.dto.SubjectAttributeDTO;
 import cc.onelooker.kaleido.entity.SubjectAttributeDO;
+import cc.onelooker.kaleido.enums.AttributeType;
 import cc.onelooker.kaleido.mapper.SubjectAttributeMapper;
 import cc.onelooker.kaleido.service.SubjectAttributeService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -47,8 +48,8 @@ public class SubjectAttributeServiceImpl extends AbstractBaseServiceImpl<Subject
 
     @Override
     @Transactional
-    public void deleteBySubjectIdAndAttributeType(String subject, String attributeType) {
-        baseMapper.deleteBySubjectIdAndAttributeType(subject, attributeType);
+    public void deleteBySubjectIdAndAttributeType(String subjectId, AttributeType type) {
+        baseMapper.deleteBySubjectIdAndAttributeType(subjectId, type.name());
     }
 
     @Override
@@ -58,6 +59,12 @@ public class SubjectAttributeServiceImpl extends AbstractBaseServiceImpl<Subject
         dto.setSubjectId(subjectId);
         dto.setAttributeId(attributeId);
         insert(dto);
+    }
+
+    @Override
+    public List<SubjectAttributeDTO> listBySubjectIdAndAttributeType(String subjectId, AttributeType type) {
+        List<SubjectAttributeDO> subjectAttributeDOList = baseMapper.listBySubjectIdAndAttributeType(subjectId, type.name());
+        return convertToDTO(subjectAttributeDOList);
     }
 
 }

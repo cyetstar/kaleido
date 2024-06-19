@@ -8,15 +8,15 @@ import com.zjjcnt.common.core.entity.IdEntity;
 import lombok.Data;
 
 /**
- * 漫画书籍作者关联表DO
+ * 漫画系列作者关联表DO
  *
  * @author cyetstar
  * @date 2024-03-12 17:47:50
- * @see cc.onelooker.kaleido.dto.comic.ComicBookAuthorDTO
+ * @see cc.onelooker.kaleido.dto.comic.ComicSeriesAuthorDTO
  */
 @Data
-@TableName("comic_book_author")
-public class ComicBookAuthorDO implements IdEntity<String> {
+@TableName("comic_series_author")
+public class ComicSeriesAuthorDO implements IdEntity<String> {
     private static final long serialVersionUID = -1336017431200799384L;
 
     /**
@@ -26,10 +26,10 @@ public class ComicBookAuthorDO implements IdEntity<String> {
     private String id;
 
     /**
-     * 书籍id
+     * 系列id
      */
-    @TableField(value = "book_id")
-    private String bookId;
+    @TableField(value = "series_id")
+    private String seriesId;
 
     /**
      * 作者id
@@ -42,7 +42,6 @@ public class ComicBookAuthorDO implements IdEntity<String> {
      */
     @TableField(value = "role")
     private String role;
-
 
     @Override
     public String getId() {

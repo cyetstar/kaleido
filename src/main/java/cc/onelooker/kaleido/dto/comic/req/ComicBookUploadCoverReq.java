@@ -1,7 +1,7 @@
 package cc.onelooker.kaleido.dto.comic.req;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @Author xiadawei
@@ -11,7 +11,15 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class ComicBookUploadCoverReq {
 
+    @ApiModelProperty("主键")
     private String id;
 
+    @ApiModelProperty("base64数据")
     private String data;
+
+    @ApiModelProperty("封面页码")
+    private Integer coverPageNumber;
+
+    @ApiModelProperty("封面裁切数据")
+    private String coverBoxData;
 }

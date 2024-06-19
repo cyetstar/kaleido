@@ -1,8 +1,10 @@
 package cc.onelooker.kaleido.dto.comic.resp;
 
+import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
@@ -22,6 +24,9 @@ public class ComicSeriesViewResp {
     @ApiModelProperty("标题")
     private String title;
 
+    @ApiModelProperty("原标题")
+    private String originalTitle;
+
     @ApiModelProperty("简介")
     private String summary;
 
@@ -40,35 +45,31 @@ public class ComicSeriesViewResp {
     @ApiModelProperty("路径")
     private String path;
 
-    @ApiModelProperty("封面")
-    private String cover;
-
     @ApiModelProperty("番组计划编号")
     private String bgmId;
 
-    @ApiModelProperty("加入时间")
-    private Long addedAt;
+    @ApiModelProperty("作者")
+    private Author writer;
 
-    @ApiModelProperty("更新时间")
-    private Long updatedAt;
+    @ApiModelProperty("作画")
+    public Author penciller;
 
     @ApiModelProperty("别名")
     private List<String> alternateTitleList;
 
     @ApiModelProperty("标签")
-    private List<Attribute> tagList;
+    private List<String> tagList;
 
-    @ApiModelProperty("作者")
-    private List<Author> authorList;
-
-    @Data
-    public static class Attribute {
-        private String id;
-        private String value;
+    public List<Author> getAuthorList() {
+        List<Author> authorList = Lists.newArrayList();
+        CollectionUtils.addIgnoreNull(authorList, writer);
+        CollectionUtils.addIgnoreNull(authorList, penciller);
+        return authorList;
     }
 
     @Data
     public static class Author {
+        private String id;
         private String name;
     }
 }

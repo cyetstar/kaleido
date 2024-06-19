@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 属性Mapper接口
  *
@@ -15,4 +17,6 @@ import org.apache.ibatis.annotations.Param;
 public interface SubjectAttributeMapper extends BaseMapper<SubjectAttributeDO> {
 
     void deleteBySubjectIdAndAttributeType(@Param("subjectId") String subjectId, @Param("attributeType") String attributeType);
+
+    List<SubjectAttributeDO> listBySubjectIdAndAttributeType(@Param("subjectId") String subjectId, @Param("attributeType") String attributeType);
 }

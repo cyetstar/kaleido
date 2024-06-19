@@ -1,22 +1,19 @@
-package cc.onelooker.kaleido.dto.comic.resp;
+package cc.onelooker.kaleido.dto.comic.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 漫画书籍作者关联表响应对象
+ * 漫画书籍作者关联表请求对象
  *
  * @author cyetstar
  * @date 2024-03-12 17:47:50
  *
  */
 @Data
-@ApiModel("漫画书籍作者关联表响应对象")
-public class ComicBookAuthorPageResp{
-
-    @ApiModelProperty("主键")
-    private String id;
+@ApiModel("漫画系列作者关联表请求对象")
+public class ComicSeriesAuthorPageReq{
 
     @ApiModelProperty("书籍id")
     private String bookId;
@@ -26,4 +23,5 @@ public class ComicBookAuthorPageResp{
 
     @ApiModelProperty("角色")
     private String role;
+
 }

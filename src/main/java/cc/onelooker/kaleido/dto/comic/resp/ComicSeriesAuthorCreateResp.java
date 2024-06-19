@@ -12,8 +12,8 @@ import lombok.Data;
  *
  */
 @Data
-@ApiModel("漫画书籍作者关联表响应对象")
-public class ComicBookAuthorCreateResp{
+@ApiModel("漫画系列作者关联表响应对象")
+public class ComicSeriesAuthorCreateResp{
 
     @ApiModelProperty("主键")
     private String id;

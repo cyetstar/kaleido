@@ -1,22 +1,22 @@
 package cc.onelooker.kaleido.web.controller.comic;
 
 import cc.onelooker.kaleido.convert.comic.ComicBookConvert;
-import cc.onelooker.kaleido.dto.comic.ComicAuthorDTO;
 import cc.onelooker.kaleido.dto.comic.ComicBookDTO;
-import cc.onelooker.kaleido.dto.comic.req.ComicBookCreateReq;
-import cc.onelooker.kaleido.dto.comic.req.ComicBookPageReq;
-import cc.onelooker.kaleido.dto.comic.req.ComicBookUpdateReq;
-import cc.onelooker.kaleido.dto.comic.req.ComicBookUploadCoverReq;
+import cc.onelooker.kaleido.dto.comic.req.*;
 import cc.onelooker.kaleido.dto.comic.resp.ComicBookCreateResp;
 import cc.onelooker.kaleido.dto.comic.resp.ComicBookListPageResp;
 import cc.onelooker.kaleido.dto.comic.resp.ComicBookPageResp;
 import cc.onelooker.kaleido.dto.comic.resp.ComicBookViewResp;
-import cc.onelooker.kaleido.service.comic.ComicAuthorService;
+import cc.onelooker.kaleido.dto.req.ComicBookWriteComicInfoReq;
+import cc.onelooker.kaleido.service.ComicManager;
 import cc.onelooker.kaleido.service.comic.ComicBookService;
 import cc.onelooker.kaleido.third.komga.KomgaApiService;
 import cc.onelooker.kaleido.third.komga.Page;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cn.hutool.core.codec.Base64;
+import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.extra.compress.CompressUtil;
+import cn.hutool.extra.compress.extractor.Extractor;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
@@ -26,7 +26,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RegExUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -52,10 +56,10 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
     private ComicBookService comicBookService;
 
     @Autowired
-    private ComicAuthorService comicAuthorService;
+    private KomgaApiService komgaApiService;
 
     @Autowired
-    private KomgaApiService komgaApiService;
+    private ComicManager comicManager;
 
     @Override
     protected IBaseService getService() {
@@ -72,8 +76,6 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
     @ApiOperation(value = "查看漫画书籍详情")
     public CommonResult<ComicBookViewResp> view(String id) {
         ComicBookViewResp resp = super.doView(id, ComicBookConvert.INSTANCE::convertToViewResp);
-        List<ComicAuthorDTO> comicAuthorDTOList = comicAuthorService.listByBookId(id);
-        resp.setAuthorList(comicAuthorDTOList.stream().map(ComicBookConvert.INSTANCE::convertToViewResp).collect(Collectors.toList()));
         return CommonResult.success(resp);
     }
 
@@ -107,6 +109,9 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
     @ApiOperation(value = "上传封面")
     public CommonResult<Boolean> uploadCover(@RequestBody ComicBookUploadCoverReq req) throws IOException {
         ComicBookDTO comicBookDTO = comicBookService.findById(req.getId());
+        comicBookDTO.setCoverPageNumber(req.getCoverPageNumber());
+        comicBookDTO.setCoverBoxData(req.getCoverBoxData());
+        comicBookService.update(comicBookDTO);
         Path path = Paths.get(KaleidoUtils.getComicFolder(comicBookDTO.getPath()));
         String fileName = FilenameUtils.getBaseName(path.getFileName().toString());
         byte[] data = Base64.decode(RegExUtils.removeFirst(req.getData(), "data:image/.+;base64,"));
@@ -114,6 +119,27 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
             Files.write(path.resolveSibling("cover.jpg"), data);
         }
         Files.write(path.getParent().resolve(fileName + ".jpg"), data);
+        return CommonResult.success(true);
+    }
+
+    @GetMapping("openComicInfo")
+    @ApiOperation(value = "打开ComicInfo")
+    public HttpEntity<byte[]> openComicInfo(ComicBookOpenComicInfoReq req) throws IOException {
+        ComicBookDTO comicBookDTO = comicBookService.findById(req.getId());
+        Path path = Paths.get(KaleidoUtils.getComicFolder(comicBookDTO.getPath()));
+        Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), path.toFile());
+        Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), "kaleido");
+        extractor.extract(tempPath.toFile(), f -> StringUtils.equals(f.getName(), "ComicInfo.xml"));
+        extractor.close();
+        byte[] data = Files.readAllBytes(tempPath.resolve("ComicInfo.xml"));
+        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=ComicInfo.xml").contentType(MediaType.TEXT_XML).body(data);
+    }
+
+    @PostMapping("writeComicInfo")
+    @ApiOperation(value = "读取ComicInfo")
+    public CommonResult<Boolean> writeComicInfo(@RequestBody ComicBookWriteComicInfoReq req) {
+        ComicBookDTO comicBookDTO = comicBookService.findById(req.getId());
+        comicManager.writeComicInfo(comicBookDTO);
         return CommonResult.success(true);
     }
 }

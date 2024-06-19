@@ -12,8 +12,11 @@ import lombok.Data;
  *
  */
 @Data
-@ApiModel("漫画书籍作者关联表请求对象")
-public class ComicBookAuthorPageReq{
+@ApiModel("漫画系列作者关联表请求对象")
+public class ComicSeriesAuthorUpdateReq{
+
+    @ApiModelProperty("主键")
+    private String id;
 
     @ApiModelProperty("书籍id")
     private String bookId;

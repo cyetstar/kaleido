@@ -2,24 +2,20 @@ package cc.onelooker.kaleido.service.comic.impl;
 
 import cc.onelooker.kaleido.convert.comic.ComicAuthorConvert;
 import cc.onelooker.kaleido.dto.comic.ComicAuthorDTO;
-import cc.onelooker.kaleido.dto.comic.ComicBookAuthorDTO;
 import cc.onelooker.kaleido.entity.comic.ComicAuthorDO;
 import cc.onelooker.kaleido.mapper.comic.ComicAuthorMapper;
 import cc.onelooker.kaleido.service.comic.ComicAuthorService;
-import cc.onelooker.kaleido.service.comic.ComicBookAuthorService;
+import cc.onelooker.kaleido.service.comic.ComicSeriesAuthorService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 漫画作者ServiceImpl
@@ -33,7 +29,7 @@ public class ComicAuthorServiceImpl extends AbstractBaseServiceImpl<ComicAuthorM
     ComicAuthorConvert convert = ComicAuthorConvert.INSTANCE;
 
     @Autowired
-    private ComicBookAuthorService comicBookAuthorService;
+    private ComicSeriesAuthorService comicSeriesAuthorService;
 
     @Override
     protected Wrapper<ComicAuthorDO> genQueryWrapper(ComicAuthorDTO dto) {
@@ -70,29 +66,15 @@ public class ComicAuthorServiceImpl extends AbstractBaseServiceImpl<ComicAuthorM
     }
 
     @Override
-    public List<ComicAuthorDTO> listByBookId(String bookId) {
-        List<ComicAuthorDO> comicAuthorDOList = baseMapper.listByBookId(bookId);
-        return convertToDTO(comicAuthorDOList);
-    }
-
-    @Override
-    public List<ComicAuthorDTO> listByBookIdList(List<String> bookIdList) {
-        ComicBookAuthorDTO param = new ComicBookAuthorDTO();
-        param.setBookIdList(bookIdList);
-        List<ComicBookAuthorDTO> comicBookAuthorDTOList = comicBookAuthorService.list(param);
-        Set<String> authorIdSet = comicBookAuthorDTOList.stream().map(ComicBookAuthorDTO::getAuthorId).collect(Collectors.toSet());
-        if (CollectionUtils.isEmpty(authorIdSet)) {
-            return Lists.newArrayList();
-        }
-        ComicAuthorDTO param2 = new ComicAuthorDTO();
-        param2.setIdList(Lists.newArrayList(authorIdSet.iterator()));
-        return list(param2);
-    }
-
-    @Override
     public List<ComicAuthorDTO> listByKeyword(String keyword) {
         ComicAuthorDTO param = new ComicAuthorDTO();
         param.setKeyword(keyword);
         return list(param);
+    }
+
+    @Override
+    public List<ComicAuthorDTO> listBySeriesId(String seriesId) {
+        List<ComicAuthorDO> comicAuthorDOList = baseMapper.listBySeriesId(seriesId);
+        return convertToDTO(comicAuthorDOList);
     }
 }

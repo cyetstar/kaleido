@@ -3,7 +3,7 @@ package cc.onelooker.kaleido.dto.comic;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 漫画系列DTO
@@ -25,6 +25,16 @@ public class ComicSeriesDTO implements BaseDTO<String> {
      * 标题
      */
     private String title;
+
+    /**
+     * 原标题
+     */
+    private String originalTitle;
+
+    /**
+     * 年份
+     */
+    private String year;
 
     /**
      * 简介
@@ -57,11 +67,6 @@ public class ComicSeriesDTO implements BaseDTO<String> {
     private String path;
 
     /**
-     * 封面
-     */
-    private String cover;
-
-    /**
      * 番组计划编号
      */
     private String bgmId;
@@ -79,6 +84,13 @@ public class ComicSeriesDTO implements BaseDTO<String> {
     // ------ 非数据库表字段 -------
     private String keyword;
 
+    private String writerName;
+
+    private String pencillerName;
+
+    private List<String> tagList;
+
+    private List<String> alternateTitleList;
 
     @Override
     public String getId() {

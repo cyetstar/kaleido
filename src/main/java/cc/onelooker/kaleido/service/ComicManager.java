@@ -3,16 +3,18 @@ package cc.onelooker.kaleido.service;
 import cc.onelooker.kaleido.dto.AlternateTitleDTO;
 import cc.onelooker.kaleido.dto.AttributeDTO;
 import cc.onelooker.kaleido.dto.PathInfoDTO;
+import cc.onelooker.kaleido.dto.SubjectAttributeDTO;
 import cc.onelooker.kaleido.dto.comic.ComicAuthorDTO;
 import cc.onelooker.kaleido.dto.comic.ComicBookDTO;
+import cc.onelooker.kaleido.dto.comic.ComicSeriesAuthorDTO;
 import cc.onelooker.kaleido.dto.comic.ComicSeriesDTO;
 import cc.onelooker.kaleido.enums.AttributeType;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.nfo.ComicInfoNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.service.comic.ComicAuthorService;
-import cc.onelooker.kaleido.service.comic.ComicBookAuthorService;
 import cc.onelooker.kaleido.service.comic.ComicBookService;
+import cc.onelooker.kaleido.service.comic.ComicSeriesAuthorService;
 import cc.onelooker.kaleido.service.comic.ComicSeriesService;
 import cc.onelooker.kaleido.third.komga.*;
 import cc.onelooker.kaleido.third.tmm.Comic;
@@ -41,7 +43,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -68,7 +70,7 @@ public class ComicManager {
     private ComicAuthorService comicAuthorService;
 
     @Autowired
-    private ComicBookAuthorService comicBookAuthorService;
+    private ComicSeriesAuthorService comicSeriesAuthorService;
 
     @Autowired
     private AlternateTitleService alternateTitleService;
@@ -91,7 +93,10 @@ public class ComicManager {
     public void sync(Book book) {
         syncBook(book);
         Series series = komgaApiService.findSeries(book.getSeriesId());
-        syncSeries(series);
+        ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(series.getId());
+        if (comicSeriesDTO == null || series.getUpdatedAt().compareTo(comicSeriesDTO.getUpdatedAt()) > 0) {
+            syncSeries(series);
+        }
     }
 
     @Transactional
@@ -182,13 +187,81 @@ public class ComicManager {
         extractor.extract(tempPath.toFile(), f -> StringUtils.equals(f.getName(), "ComicInfo.xml"));
         extractor.close();
         ComicInfoNFO comicInfoNFO = NFOUtil.read(ComicInfoNFO.class, tempPath, "ComicInfo.xml");
-        Objects.requireNonNull(comicInfoNFO);
+        if (comicInfoNFO == null) {
+            return;
+        }
         ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(seriesId);
-        comicSeriesDTO.setStatus(comicInfoNFO.getSeriesStatus());
-        comicSeriesDTO.setBgmId(comicInfoNFO.getSeriesBgmId());
-        comicSeriesDTO.setRating(Float.parseFloat(comicInfoNFO.getCommunityRating()));
+        comicSeriesDTO.setYear(StringUtils.defaultString(comicSeriesDTO.getYear(), comicInfoNFO.getYear()));
+        comicSeriesDTO.setStatus(StringUtils.defaultString(comicSeriesDTO.getStatus(), comicSeriesDTO.getStatus()));
+        comicSeriesDTO.setBgmId(StringUtils.defaultString(comicSeriesDTO.getBgmId(), comicInfoNFO.getSeriesBgmId()));
+        if (comicSeriesDTO.getRating() == null) {
+            comicSeriesDTO.setRating(Float.parseFloat(comicInfoNFO.getCommunityRating()));
+        }
         comicSeriesService.update(comicSeriesDTO);
         syncAlternateTitle(comicInfoNFO.getAkas(), seriesId);
+    }
+
+    @Transactional
+    public void writeComicInfo(String seriesId) {
+        ComicSeriesDTO comicSeriesDTO = findSeriesById(seriesId);
+        String libraryPath = ConfigUtils.getSysConfig(ConfigKey.comicLibraryPath);
+        List<ComicBookDTO> comicBookDTOList = comicBookService.listBySeriesId(seriesId);
+        comicBookDTOList.forEach(s -> {
+            String baseName = FilenameUtils.getBaseName(s.getPath());
+            Path zipPath = Paths.get(libraryPath, StringUtils.removeStart(s.getPath(), "/comic"));
+            Path folderPath = zipPath.getParent().resolve(baseName);
+            unzip(zipPath, folderPath);
+            ComicInfoNFO comicInfoNFO = NFOUtil.toComicInfoNFO(comicSeriesDTO, s);
+            NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, folderPath, "ComicInfo.xml");
+            zip(folderPath, zipPath);
+        });
+    }
+
+    @Transactional
+    public void writeComicInfo(ComicBookDTO comicBookDTO) {
+        String libraryPath = ConfigUtils.getSysConfig(ConfigKey.comicLibraryPath);
+        String baseName = FilenameUtils.getBaseName(comicBookDTO.getPath());
+        Path zipPath = Paths.get(libraryPath, StringUtils.removeStart(comicBookDTO.getPath(), "/comic"));
+        Path folderPath = zipPath.getParent().resolve(baseName);
+        unzip(zipPath, folderPath);
+        ComicSeriesDTO comicSeriesDTO = findSeriesById(comicBookDTO.getSeriesId());
+        ComicInfoNFO comicInfoNFO = NFOUtil.toComicInfoNFO(comicSeriesDTO, comicBookDTO);
+        NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, folderPath, "ComicInfo.xml");
+        zip(folderPath, zipPath);
+    }
+
+    private ComicSeriesDTO findSeriesById(String seriesId) {
+        ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(seriesId);
+        comicSeriesAuthorService.listBySeriesId(seriesId).forEach(s -> {
+            ComicAuthorDTO comicAuthorDTO = comicAuthorService.findById(s.getAuthorId());
+            if (StringUtils.equals(s.getRole(), "writer")) {
+                comicSeriesDTO.setWriterName(comicAuthorDTO.getName());
+            } else {
+                comicSeriesDTO.setPencillerName(comicAuthorDTO.getName());
+            }
+        });
+        List<AlternateTitleDTO> alternateTitleDTOList = alternateTitleService.listBySubjectId(seriesId);
+        List<AttributeDTO> attributeDTOList = attributeService.listBySubjectId(seriesId);
+        List<String> alternateTitleList = alternateTitleDTOList.stream().map(AlternateTitleDTO::getTitle).collect(Collectors.toList());
+        comicSeriesDTO.setAlternateTitleList(alternateTitleList);
+        Map<String, List<AttributeDTO>> attributeMap = attributeDTOList.stream().collect(Collectors.groupingBy(AttributeDTO::getType));
+        comicSeriesDTO.setTagList(attributeMap.getOrDefault(AttributeType.ComicTag.name(), Lists.newArrayList()).stream().map(AttributeDTO::getValue).collect(Collectors.toList()));
+        return comicSeriesDTO;
+    }
+
+    private void unzip(Path zipPath, Path folderPath) {
+        Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), zipPath.toFile());
+        extractor.extract(folderPath.toFile(), archiveEntry -> StringUtils.equalsAnyIgnoreCase(FilenameUtils.getExtension(archiveEntry.getName()), "jpg", "jpeg", "png", "xml"));
+        extractor.close();
+    }
+
+    private void zip(Path folderPath, Path zipPath) {
+        try {
+            ZipUtil.zip(folderPath.toString(), zipPath.toString());
+            NioFileUtils.deleteIfExists(folderPath);
+        } catch (IOException e) {
+            ExceptionUtil.wrapAndThrow(e);
+        }
     }
 
     public void unzipBook(Path path, Path folderPath) {
@@ -297,7 +370,6 @@ public class ComicManager {
         comicBookDTO.setId(book.getId());
         comicBookDTO.setSeriesId(book.getSeriesId());
         comicBookDTO.setTitle(metadata.getTitle());
-        comicBookDTO.setSummary(metadata.getSummary());
         comicBookDTO.setBookNumber(metadata.getNumber());
         comicBookDTO.setSortNumber(metadata.getNumberSort());
         comicBookDTO.setPageCount(media.getPagesCount());
@@ -311,8 +383,6 @@ public class ComicManager {
         } else {
             comicBookService.update(comicBookDTO);
         }
-        syncAuthor(metadata.getAuthors(), comicBookDTO);
-        syncAttribute(metadata.getTags(), comicBookDTO.getId(), AttributeType.ComicTag);
     }
 
     private void syncSeries(Series series) {
@@ -326,14 +396,15 @@ public class ComicManager {
             isNew = true;
         }
         Series.Metadata metadata = series.getMetadata();
+        Series.BooksMetadata booksMetadata = series.getBooksMetadata();
         comicSeriesDTO.setId(series.getId());
-        comicSeriesDTO.setTitle(metadata.getTitle());
-        comicSeriesDTO.setSummary(metadata.getSummary());
+        comicSeriesDTO.setTitle(StringUtils.defaultIfEmpty(comicSeriesDTO.getTitle(), metadata.getTitle()));
+        comicSeriesDTO.setSummary(StringUtils.defaultIfEmpty(comicSeriesDTO.getSummary(), booksMetadata.getSummary()));
         comicSeriesDTO.setBookCount(metadata.getTotalBookCount());
-        comicSeriesDTO.setBgmId(getBgmId(metadata.getLinks()));
-        comicSeriesDTO.setPublisher(metadata.getPublisher());
+        comicSeriesDTO.setBgmId(StringUtils.defaultIfEmpty(comicSeriesDTO.getBgmId(), getBgmId(metadata.getLinks())));
+        comicSeriesDTO.setPublisher(StringUtils.defaultIfEmpty(comicSeriesDTO.getPublisher(), metadata.getPublisher()));
         comicSeriesDTO.setPath(series.getUrl());
-        comicSeriesDTO.setStatus(metadata.getStatus());
+        comicSeriesDTO.setStatus(StringUtils.defaultIfEmpty(comicSeriesDTO.getStatus(), metadata.getStatus()));
         comicSeriesDTO.setAddedAt(series.getAddedAt());
         comicSeriesDTO.setUpdatedAt(series.getUpdatedAt());
         if (isNew) {
@@ -341,12 +412,16 @@ public class ComicManager {
         } else {
             comicSeriesService.update(comicSeriesDTO);
         }
-//        syncAlternateTitle(metadata.getAlternateTitles().stream().map(AlternateTitle::getTitle).collect(Collectors.toList()), comicSeriesDTO.getId());
-        syncAttribute(metadata.getTags(), comicSeriesDTO.getId(), AttributeType.ComicTag);
+
+        syncAuthor(booksMetadata.getAuthors(), comicSeriesDTO);
+        syncAttribute(booksMetadata.getTags(), comicSeriesDTO.getId(), AttributeType.ComicTag);
     }
 
-    private void syncAuthor(List<Author> authors, ComicBookDTO comicBookDTO) {
-        comicBookAuthorService.deleteByBookId(comicBookDTO.getId());
+    private void syncAuthor(List<Author> authors, ComicSeriesDTO comicSeriesDTO) {
+        List<ComicSeriesAuthorDTO> comicSeriesAuthorDTOList = comicSeriesAuthorService.listBySeriesId(comicSeriesDTO.getId());
+        if (CollectionUtils.isNotEmpty(comicSeriesAuthorDTOList)) {
+            return;
+        }
         if (authors == null) {
             return;
         }
@@ -355,12 +430,15 @@ public class ComicManager {
             if (comicAuthorDTO == null) {
                 comicAuthorDTO = comicAuthorService.insert(author.getName());
             }
-            comicBookAuthorService.insert(comicBookDTO.getId(), comicAuthorDTO.getId(), author.getRole());
+            comicSeriesAuthorService.insert(comicSeriesDTO.getId(), comicAuthorDTO.getId(), author.getRole());
         }
     }
 
     private void syncAlternateTitle(List<String> alternateTitles, String subjectId) {
-        alternateTitleService.deleteBySubjectId(subjectId);
+        List<AlternateTitleDTO> alternateTitleDTOList = alternateTitleService.listBySubjectId(subjectId);
+        if (CollectionUtils.isNotEmpty(alternateTitleDTOList)) {
+            return;
+        }
         if (alternateTitles == null) {
             return;
         }
@@ -374,11 +452,17 @@ public class ComicManager {
     }
 
     private void syncAttribute(List<String> attributes, String subjectId, AttributeType type) {
-        subjectAttributeService.deleteBySubjectIdAndAttributeType(subjectId, type.name());
+        List<SubjectAttributeDTO> subjectAttributeDTOList = subjectAttributeService.listBySubjectIdAndAttributeType(subjectId, type);
+        if (CollectionUtils.isNotEmpty(subjectAttributeDTOList)) {
+            return;
+        }
+        if (attributes == null) {
+            return;
+        }
         for (String value : attributes) {
-            AttributeDTO attributeDTO = attributeService.findByValueAndType(value, type.name());
+            AttributeDTO attributeDTO = attributeService.findByValueAndType(value, type);
             if (attributeDTO == null) {
-                attributeDTO = attributeService.insert(value, type.name());
+                attributeDTO = attributeService.insert(value, type);
             }
             subjectAttributeService.insert(subjectId, attributeDTO.getId());
         }

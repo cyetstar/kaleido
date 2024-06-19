@@ -37,11 +37,10 @@ public class ComicBookServiceImpl extends AbstractBaseServiceImpl<ComicBookMappe
         LambdaQueryWrapper<ComicBookDO> query = new LambdaQueryWrapper<>();
         query.eq(StringUtils.isNotEmpty(dto.getSeriesId()), ComicBookDO::getSeriesId, dto.getSeriesId());
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), ComicBookDO::getTitle, dto.getTitle());
-        query.eq(Objects.nonNull(dto.getSummary()), ComicBookDO::getSummary, dto.getSummary());
+        query.eq(StringUtils.isNotEmpty(dto.getOriginalTitle()), ComicBookDO::getOriginalTitle, dto.getOriginalTitle());
         query.eq(Objects.nonNull(dto.getBookNumber()), ComicBookDO::getBookNumber, dto.getBookNumber());
         query.eq(Objects.nonNull(dto.getPageCount()), ComicBookDO::getPageCount, dto.getPageCount());
         query.eq(StringUtils.isNotEmpty(dto.getPath()), ComicBookDO::getPath, dto.getPath());
-        query.eq(StringUtils.isNotEmpty(dto.getCover()), ComicBookDO::getCover, dto.getCover());
         query.eq(Objects.nonNull(dto.getFileSize()), ComicBookDO::getFileSize, dto.getFileSize());
         query.eq(StringUtils.isNotEmpty(dto.getBgmId()), ComicBookDO::getBgmId, dto.getBgmId());
         query.eq(Objects.nonNull(dto.getAddedAt()), ComicBookDO::getAddedAt, dto.getAddedAt());

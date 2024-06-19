@@ -44,11 +44,11 @@ public class ComicInfoNFO {
     @XmlElement(name = "Notes")
     private String notes;
     @XmlElement(name = "Year")
-    private Integer year;
+    private String year;
     @XmlElement(name = "Month")
-    private Integer month;
+    private String month;
     @XmlElement(name = "Day")
-    private Integer day;
+    private String day;
     @XmlElement(name = "Writer")
     private String writer;
     @XmlElement(name = "Penciller")

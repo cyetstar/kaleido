@@ -16,7 +16,5 @@ import java.util.List;
 @Mapper
 public interface ComicAuthorMapper extends BaseMapper<ComicAuthorDO> {
 
-    List<ComicAuthorDO> listByBookId(@Param("bookId") String bookId);
-
     List<ComicAuthorDO> listBySeriesId(@Param("seriesId") String seriesId);
 }

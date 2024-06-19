@@ -67,7 +67,7 @@ public class ImageController {
     @GetMapping("/page")
     public HttpEntity<byte[]> page(String id, Integer number) {
         byte[] content = komgaApiService.findBookPage(id, number);
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS)).body(content);
+        return ResponseEntity.ok().lastModified(System.currentTimeMillis()).contentType(MediaType.IMAGE_JPEG).cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS)).body(content);
     }
 
 }

@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 漫画系列请求对象
  *
@@ -20,6 +22,9 @@ public class ComicSeriesUpdateReq {
     @ApiModelProperty("标题")
     private String title;
 
+    @ApiModelProperty("原标题")
+    private String originalTitle;
+
     @ApiModelProperty("简介")
     private String summary;
 
@@ -35,19 +40,19 @@ public class ComicSeriesUpdateReq {
     @ApiModelProperty("状态")
     private String status;
 
-    @ApiModelProperty("路径")
-    private String path;
-
-    @ApiModelProperty("封面")
-    private String cover;
-
     @ApiModelProperty("番组计划编号")
     private String bgmId;
 
-    @ApiModelProperty("加入时间")
-    private Long addedAt;
+    @ApiModelProperty("作者")
+    private String writerName;
 
-    @ApiModelProperty("更新时间")
-    private Long updatedAt;
+    @ApiModelProperty("作画")
+    private String pencillerName;
+
+    @ApiModelProperty("标签")
+    private List<String> tagList;
+
+    @ApiModelProperty("别名")
+    private List<String> alternateTitleList;
 
 }

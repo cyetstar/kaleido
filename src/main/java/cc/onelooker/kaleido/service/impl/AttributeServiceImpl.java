@@ -4,6 +4,7 @@ import cc.onelooker.kaleido.convert.AttributeConvert;
 import cc.onelooker.kaleido.dto.AttributeDTO;
 import cc.onelooker.kaleido.dto.SubjectAttributeDTO;
 import cc.onelooker.kaleido.entity.AttributeDO;
+import cc.onelooker.kaleido.enums.AttributeType;
 import cc.onelooker.kaleido.mapper.AttributeMapper;
 import cc.onelooker.kaleido.service.AttributeService;
 import cc.onelooker.kaleido.service.SubjectAttributeService;
@@ -55,19 +56,19 @@ public class AttributeServiceImpl extends AbstractBaseServiceImpl<AttributeMappe
     }
 
     @Override
-    public AttributeDTO findByValueAndType(String value, String type) {
+    public AttributeDTO findByValueAndType(String value, AttributeType type) {
         AttributeDTO param = new AttributeDTO();
         param.setValue(value);
-        param.setType(type);
+        param.setType(type.name());
         return find(param);
     }
 
     @Override
     @Transactional
-    public AttributeDTO insert(String value, String type) {
+    public AttributeDTO insert(String value, AttributeType type) {
         AttributeDTO attributeDTO = new AttributeDTO();
         attributeDTO.setValue(value);
-        attributeDTO.setType(type);
+        attributeDTO.setType(type.name());
         return insert(attributeDTO);
     }
 

@@ -18,4 +18,7 @@ public class ComicAuthorPageReq{
     @ApiModelProperty("姓名")
     private String name;
 
+    @ApiModelProperty("关键字")
+    private String keyword;
+
 }
