@@ -1,7 +1,5 @@
 package cc.onelooker.kaleido.third.tmm;
 
-import cc.onelooker.kaleido.nfo.ComicInfoNFO;
-import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.utils.LogUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -64,9 +62,6 @@ public class TmmApiServiceTest {
     public void findComic() throws Exception {
         Comic comic = tmmApiService.findComic("565");
         String folder = String.format("%S [%S]", comic.getSeries(), comic.getAuthors());
-        System.out.println(folder);
-        ComicInfoNFO comicInfoNFO = NFOUtil.toComicInfoNFO(comic);
-        folder = String.format("%S [%S]", comicInfoNFO.getSeries(), comicInfoNFO.getAuthors());
         System.out.println(folder);
     }
 

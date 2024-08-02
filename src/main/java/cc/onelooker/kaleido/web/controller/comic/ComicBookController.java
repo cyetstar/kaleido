@@ -12,6 +12,7 @@ import cc.onelooker.kaleido.service.ComicManager;
 import cc.onelooker.kaleido.service.comic.ComicBookService;
 import cc.onelooker.kaleido.third.komga.KomgaApiService;
 import cc.onelooker.kaleido.third.komga.Page;
+import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.CharsetUtil;
@@ -112,11 +113,11 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
         comicBookDTO.setCoverPageNumber(req.getCoverPageNumber());
         comicBookDTO.setCoverBoxData(req.getCoverBoxData());
         comicBookService.update(comicBookDTO);
-        Path path = Paths.get(KaleidoUtils.getComicFolder(comicBookDTO.getPath()));
+        Path path = KaleidoUtils.getComicPath(comicBookDTO.getPath());
         String fileName = FilenameUtils.getBaseName(path.getFileName().toString());
         byte[] data = Base64.decode(RegExUtils.removeFirst(req.getData(), "data:image/.+;base64,"));
         if (comicBookDTO.getBookNumber() == null || comicBookDTO.getBookNumber() <= 1) {
-            Files.write(path.resolveSibling("cover.jpg"), data);
+            Files.write(path.resolveSibling(KaleidoConstants.COMIC_COVER), data);
         }
         Files.write(path.getParent().resolve(fileName + ".jpg"), data);
         return CommonResult.success(true);
@@ -126,13 +127,13 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
     @ApiOperation(value = "打开ComicInfo")
     public HttpEntity<byte[]> openComicInfo(ComicBookOpenComicInfoReq req) throws IOException {
         ComicBookDTO comicBookDTO = comicBookService.findById(req.getId());
-        Path path = Paths.get(KaleidoUtils.getComicFolder(comicBookDTO.getPath()));
+        Path path = KaleidoUtils.getComicPath(comicBookDTO.getPath());
         Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), path.toFile());
         Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), "kaleido");
-        extractor.extract(tempPath.toFile(), f -> StringUtils.equals(f.getName(), "ComicInfo.xml"));
+        extractor.extract(tempPath.toFile(), f -> StringUtils.equals(f.getName(), KaleidoConstants.COMIC_INFO));
         extractor.close();
-        byte[] data = Files.readAllBytes(tempPath.resolve("ComicInfo.xml"));
-        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=ComicInfo.xml").contentType(MediaType.TEXT_XML).body(data);
+        byte[] data = Files.readAllBytes(tempPath.resolve(KaleidoConstants.COMIC_INFO));
+        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + KaleidoConstants.COMIC_INFO).contentType(MediaType.TEXT_XML).body(data);
     }
 
     @PostMapping("writeComicInfo")

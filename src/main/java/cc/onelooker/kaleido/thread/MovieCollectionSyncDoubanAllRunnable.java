@@ -1,11 +1,9 @@
-package cc.onelooker.kaleido.thread.movie;
+package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
 import cc.onelooker.kaleido.service.movie.MovieCollectionService;
 import cc.onelooker.kaleido.third.tmm.Doulist;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
-import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
-import cc.onelooker.kaleido.thread.Action;
 import cc.onelooker.kaleido.utils.DateTimeUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.ImmutableMap;
@@ -44,7 +42,7 @@ public class MovieCollectionSyncDoubanAllRunnable extends AbstractEntityActionRu
     }
 
     @Override
-    protected void processEntity(MovieCollectionDTO movieCollectionDTO) throws Exception {
+    protected void processEntity(Map<String, String> params, MovieCollectionDTO movieCollectionDTO) throws Exception {
         Doulist doulist = tmmApiService.findDoulist(movieCollectionDTO.getDoubanId());
         String updated = DateTimeUtil.formatDateTime(doulist.getUpdated());
         if (StringUtils.compare(movieCollectionDTO.getUpdateTime(), updated) >= 0) {

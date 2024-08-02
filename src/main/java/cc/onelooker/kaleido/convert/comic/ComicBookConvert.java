@@ -15,6 +15,8 @@ import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.Map;
+
 /**
  * 漫画书籍Convert
  *
@@ -46,4 +48,6 @@ public interface ComicBookConvert {
     ComicBookViewResp.Author convertToViewResp(ComicAuthorDTO comicAuthorDTO);
 
     ComicBookListPageResp convertToListPageResp(Page page);
+
+    ComicBookDTO convertToDTO(Map<String, String> params);
 }

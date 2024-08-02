@@ -84,7 +84,7 @@ public class TvshowManager {
     @Autowired
     private TmmApiService tmmApiService;
 
-    private Pattern pattern = Pattern.compile("([sS]_?(\\d+))?[eE][pP]?_?(\\d+)");
+    private Pattern pattern = Pattern.compile("(S_?(\\d+))?EP?_?(\\d+)");
 
     @Transactional
     public void syncPlexEpisode(Long episodeId) {
@@ -134,7 +134,7 @@ public class TvshowManager {
             for (Metadata child : children) {
                 syncPlexShowSeason(child.getRatingKey());
             }
-            Path folderPath = Paths.get(KaleidoUtils.getTvshowFolder(metadata.getLocation().getPath()));
+            Path folderPath = Paths.get(KaleidoUtils.getTvshowPath(metadata.getLocation().getPath()));
             readShowNFO(folderPath, tvshowShowDTO);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -221,7 +221,7 @@ public class TvshowManager {
     @Transactional
     public void readShowNFO(Long showId) throws Exception {
         Metadata metadata = plexApiService.findMetadata(showId);
-        Path folderPath = Paths.get(KaleidoUtils.getTvshowFolder(metadata.getLocation().getPath()));
+        Path folderPath = Paths.get(KaleidoUtils.getTvshowPath(metadata.getLocation().getPath()));
         TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(showId);
         readShowNFO(folderPath, tvshowShowDTO);
         List<TvshowSeasonDTO> tvshowSeasonDTOList = tvshowSeasonService.listByShowId(showId);
@@ -251,7 +251,7 @@ public class TvshowManager {
             return;
         }
         Metadata metadata = plexApiService.findMetadata(tvshowSeasonDTO.getShowId());
-        Path folderPath = Paths.get(KaleidoUtils.getTvshowFolder(metadata.getLocation().getPath()));
+        Path folderPath = Paths.get(KaleidoUtils.getTvshowPath(metadata.getLocation().getPath()));
         Path seasonPath = folderPath.resolve("Season " + StringUtils.leftPad(String.valueOf(tvshowSeasonDTO.getSeasonIndex()), 2, "0"));
         readSeasonNFO(seasonPath, tvshowSeasonDTO);
     }
@@ -681,7 +681,7 @@ public class TvshowManager {
         try {
             Tvshow tvshow = tmmApiService.findTvshow(doubanId, imdbId, tmdbId);
             Metadata metadata = plexApiService.findMetadata(id);
-            Path folderPath = Paths.get(KaleidoUtils.getTvshowFolder(metadata.getLocation().getPath()));
+            Path folderPath = Paths.get(KaleidoUtils.getTvshowPath(metadata.getLocation().getPath()));
             Files.list(folderPath).forEach(s -> {
                 String directoryName = s.getFileName().toString();
                 if (!StringUtils.startsWith(directoryName, "Season")) {

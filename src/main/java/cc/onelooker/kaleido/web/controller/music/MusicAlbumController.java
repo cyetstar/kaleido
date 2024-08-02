@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -167,8 +168,8 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     public CommonResult<String> viewPath(Long id) {
         List<Metadata> metadataList = plexApiService.listTrackByAlbumId(id);
         Metadata metadata = metadataList.get(0);
-        String folder = KaleidoUtils.getMusicFolder(metadata.getMedia().getPart().getFile());
-        return CommonResult.success(folder);
+        Path filePath = KaleidoUtils.getMusicPath(metadata.getMedia().getPart().getFile());
+        return CommonResult.success(filePath.getParent().toString());
     }
 
     @GetMapping("viewNetease")
@@ -192,8 +193,8 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     public CommonResult<Boolean> downloadCover(@RequestBody MusicAlbumDownloadCoverReq req) {
         List<Metadata> metadataList = plexApiService.listTrackByAlbumId(req.getId());
         Metadata metadata = metadataList.get(0);
-        String folder = KaleidoUtils.getMusicFolder(metadata.getMedia().getPart().getFile());
-        File file = Paths.get(folder, "cover.jpg").toFile();
+        Path filePath = KaleidoUtils.getMusicPath(metadata.getMedia().getPart().getFile());
+        File file = filePath.resolveSibling("cover.jpg").toFile();
         HttpUtil.downloadFile(req.getUrl(), file);
         return CommonResult.success(true);
     }

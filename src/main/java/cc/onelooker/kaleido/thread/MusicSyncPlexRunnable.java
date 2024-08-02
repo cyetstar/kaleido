@@ -1,4 +1,4 @@
-package cc.onelooker.kaleido.thread.music;
+package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
@@ -6,8 +6,6 @@ import cc.onelooker.kaleido.service.music.MusicAlbumService;
 import cc.onelooker.kaleido.service.music.MusicManager;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
-import cc.onelooker.kaleido.thread.Action;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.apache.commons.collections4.CollectionUtils;
@@ -82,7 +80,7 @@ public class MusicSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata
     }
 
     @Override
-    protected void processEntity(Metadata metadata) throws Exception {
+    protected void processEntity(Map<String, String> params, Metadata metadata) throws Exception {
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(metadata.getRatingKey());
         if (musicAlbumDTO == null || metadata.getUpdatedAt().compareTo(musicAlbumDTO.getUpdatedAt()) > 0) {
             musicManager.syncPlexAlbumAndReadAudioTag(libraryPath, metadata.getRatingKey());

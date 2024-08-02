@@ -1,9 +1,7 @@
-package cc.onelooker.kaleido.thread.movie;
+package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.movie.MovieManager;
-import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
-import cc.onelooker.kaleido.thread.Action;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
@@ -57,7 +55,7 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
     }
 
     @Override
-    protected void processEntity(Path path) throws Exception {
+    protected void processEntity(Map<String, String> params, Path path) throws Exception {
         movieManager.updateSource(path);
     }
 

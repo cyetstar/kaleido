@@ -24,7 +24,7 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
      *
      * @param entity
      */
-    protected abstract void processEntity(T entity) throws Exception;
+    protected abstract void processEntity(Map<String, String> params, T entity) throws Exception;
 
     protected abstract PageResult<T> page(Map<String, String> params, int pageNumber, int pageSize);
 
@@ -52,9 +52,9 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
                     if (isStop()) {
                         break;
                     }
-                    processEntity(entity);
+                    processEntity(params, entity);
                 } catch (Exception e) {
-                    processError(entity, e);
+                    processError(params, entity, e);
                 } finally {
                     sleep();
                 }
@@ -74,7 +74,7 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
         super.updateActionState(message, Float.valueOf(percent));
     }
 
-    protected void processError(T entity, Exception e) {
+    protected void processError(Map<String, String> params, T entity, Exception e) {
         log.error("【{}】>>> {} 执行发生错误，{}", getAction(), getMessage(entity), ExceptionUtil.getMessage(e));
     }
 

@@ -46,8 +46,8 @@ public class PlexApiServiceTest {
         List<String> plexPathList = Lists.newArrayList();
         for (Metadata metadata : metadataList) {
             Metadata meta = plexApiService.findMovieById(metadata.getRatingKey());
-            String movieFolder = KaleidoUtils.getMovieFolder(meta.getMedia().getPart().getFile());
-            plexPathList.add(FilenameUtils.getBaseName(movieFolder));
+            Path filePath = KaleidoUtils.getMoviePath(meta.getMedia().getPart().getFile());
+            plexPathList.add(FilenameUtils.getBaseName(filePath.getParent().toString()));
         }
         Collection<String> subtractList = CollectionUtils.subtract(pathList, plexPathList);
         for (String subtractPath : subtractList) {

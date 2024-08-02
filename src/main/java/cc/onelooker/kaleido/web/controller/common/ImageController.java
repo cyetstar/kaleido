@@ -47,12 +47,12 @@ public class ImageController {
         Path coverPath = null;
         if (StringUtils.equals(type, "book")) {
             ComicBookDTO comicBookDTO = comicBookService.findById(id);
-            Path path = Paths.get(KaleidoUtils.getComicFolder(comicBookDTO.getPath()));
+            Path path = KaleidoUtils.getComicPath(comicBookDTO.getPath());
             String fileName = FilenameUtils.getBaseName(path.getFileName().toString());
-            coverPath = path.getParent().resolve(fileName + ".jpg");
+            coverPath = path.resolveSibling(fileName + ".jpg");
         } else {
             ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(id);
-            Path path = Paths.get(KaleidoUtils.getComicFolder(comicSeriesDTO.getPath()));
+            Path path = KaleidoUtils.getComicPath(comicSeriesDTO.getPath());
             coverPath = path.resolve("cover.jpg");
         }
         if (Files.exists(coverPath)) {

@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.service.comic;
 
 import cc.onelooker.kaleido.dto.comic.ComicSeriesAuthorDTO;
+import cc.onelooker.kaleido.enums.AuthorRole;
 import com.zjjcnt.common.core.service.IBaseService;
 
 import java.util.List;
@@ -13,11 +14,13 @@ import java.util.List;
  */
 public interface ComicSeriesAuthorService extends IBaseService<ComicSeriesAuthorDTO> {
 
-    void insert(String seriesId, String authorId, String role);
+    void insert(String seriesId, String authorId, AuthorRole role);
 
     void deleteBySeriesId(String seriesId);
 
-    void deleteBySeriesIdAndRole(String seriesId, String role);
+    void deleteBySeriesIdAndRole(String seriesId, AuthorRole role);
 
     List<ComicSeriesAuthorDTO> listBySeriesId(String seriesId);
+
+    List<ComicSeriesAuthorDTO> listByAuthorId(String authorId);
 }

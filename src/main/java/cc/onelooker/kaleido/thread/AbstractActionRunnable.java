@@ -47,6 +47,7 @@ public abstract class AbstractActionRunnable implements ActionRunnable {
             }
             ActionContext.finish(getAction());
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("【{}】执行发生错误，{}", getAction(), ExceptionUtil.getMessage(e));
         } finally {
             ActionContext.clear(getAction());
@@ -64,6 +65,10 @@ public abstract class AbstractActionRunnable implements ActionRunnable {
     abstract void innerRun(@Nullable Map<String, String> params);
 
     protected void afterRun(@Nullable Map<String, String> params) {
+    }
+
+    public boolean isNeedRun() {
+        return true;
     }
 
     protected void updateActionState(String message, Float percent) {

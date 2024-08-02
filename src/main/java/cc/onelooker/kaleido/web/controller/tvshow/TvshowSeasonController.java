@@ -100,7 +100,7 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
     public CommonResult<String> viewPath(Long id) {
         TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(id);
         Metadata metadata = plexApiService.findMetadata(tvshowSeasonDTO.getShowId());
-        Path folderPath = Paths.get(KaleidoUtils.getTvshowFolder(metadata.getLocation().getPath()));
+        Path folderPath = Paths.get(KaleidoUtils.getTvshowPath(metadata.getLocation().getPath()));
         Path seasonPath = folderPath.resolve("Season " + StringUtils.leftPad(String.valueOf(tvshowSeasonDTO.getSeasonIndex()), 2, '0'));
         return CommonResult.success(seasonPath.toString());
     }

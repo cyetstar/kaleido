@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.service.comic.impl;
 import cc.onelooker.kaleido.convert.comic.ComicSeriesAuthorConvert;
 import cc.onelooker.kaleido.dto.comic.ComicSeriesAuthorDTO;
 import cc.onelooker.kaleido.entity.comic.ComicSeriesAuthorDO;
+import cc.onelooker.kaleido.enums.AuthorRole;
 import cc.onelooker.kaleido.mapper.comic.ComicSeriesAuthorMapper;
 import cc.onelooker.kaleido.service.comic.ComicSeriesAuthorService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -58,28 +59,37 @@ public class ComicSeriesAuthorServiceImpl extends AbstractBaseServiceImpl<ComicS
 
     @Override
     @Transactional
-    public void deleteBySeriesIdAndRole(String seriesId, String role) {
+    public void deleteBySeriesIdAndRole(String seriesId, AuthorRole role) {
         Validate.notEmpty(seriesId);
         ComicSeriesAuthorDTO param = new ComicSeriesAuthorDTO();
         param.setSeriesId(seriesId);
-        param.setRole(role);
+        param.setRole(role.name());
         delete(param);
     }
 
     @Override
     @Transactional
-    public void insert(String seriesId, String authorId, String role) {
+    public void insert(String seriesId, String authorId, AuthorRole role) {
         ComicSeriesAuthorDTO dto = new ComicSeriesAuthorDTO();
         dto.setSeriesId(seriesId);
         dto.setAuthorId(authorId);
-        dto.setRole(role);
+        dto.setRole(role.name());
         insert(dto);
     }
 
     @Override
     public List<ComicSeriesAuthorDTO> listBySeriesId(String seriesId) {
+        Validate.notEmpty(seriesId);
         ComicSeriesAuthorDTO param = new ComicSeriesAuthorDTO();
         param.setSeriesId(seriesId);
+        return list(param);
+    }
+
+    @Override
+    public List<ComicSeriesAuthorDTO> listByAuthorId(String authorId) {
+        Validate.notEmpty(authorId);
+        ComicSeriesAuthorDTO param = new ComicSeriesAuthorDTO();
+        param.setAuthorId(authorId);
         return list(param);
     }
 }

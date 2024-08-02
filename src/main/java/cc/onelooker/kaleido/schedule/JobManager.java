@@ -3,12 +3,13 @@ package cc.onelooker.kaleido.schedule;
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.service.system.SysDictTypeService;
 import cc.onelooker.kaleido.thread.ComicSyncRunnable;
-import cc.onelooker.kaleido.thread.movie.MovieAnalyzeRunnable;
-import cc.onelooker.kaleido.thread.movie.MovieCheckThreadStatusRunnable;
-import cc.onelooker.kaleido.thread.movie.MovieCollectionCheckMovieStatusRunnable;
-import cc.onelooker.kaleido.thread.movie.MovieSyncPlexRunnable;
-import cc.onelooker.kaleido.thread.music.MusicSyncPlexRunnable;
-import cc.onelooker.kaleido.thread.tvshow.TvshowSyncPlexRunnable;
+import cc.onelooker.kaleido.thread.ComicWriteComicInfoRunnable;
+import cc.onelooker.kaleido.thread.MovieAnalyzeRunnable;
+import cc.onelooker.kaleido.thread.MovieCheckThreadStatusRunnable;
+import cc.onelooker.kaleido.thread.MovieCollectionCheckMovieStatusRunnable;
+import cc.onelooker.kaleido.thread.MovieSyncPlexRunnable;
+import cc.onelooker.kaleido.thread.MusicSyncPlexRunnable;
+import cc.onelooker.kaleido.thread.TvshowSyncPlexRunnable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -49,6 +50,9 @@ public class JobManager {
 
     @Autowired
     private SysDictTypeService sysDictTypeService;
+
+    @Autowired
+    private ComicWriteComicInfoRunnable comicWriteComicInfoRunnable;
 
     @Scheduled(cron = "0 0 2 * * ?")
     public void syncPlexMovie() {
@@ -98,5 +102,11 @@ public class JobManager {
         movieManager.syncDoubanWeekly();
     }
 
+    @Scheduled(cron = "0 * * * * ?")
+    public void executeTask() {
+        if (comicWriteComicInfoRunnable.isNeedRun()) {
+            comicWriteComicInfoRunnable.run();
+        }
+    }
 
 }

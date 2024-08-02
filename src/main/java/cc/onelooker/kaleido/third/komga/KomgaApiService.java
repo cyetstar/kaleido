@@ -22,6 +22,7 @@ import java.util.Objects;
 @Component
 public class KomgaApiService {
 
+    private final static String API_LIBRARIES = "/api/v1/libraries";
     private final static String API_SERIES = "/api/v1/series/{seriesId}";
     private final static String API_SERIES_THUMBNAIL = "/api/v1/series/{seriesId}/thumbnail";
     private final static String API_SERIES_BOOKS = "/api/v1/series/{seriesId}/books?size=10000";
@@ -85,6 +86,16 @@ public class KomgaApiService {
         JSONArray jsonArray = response.getBody();
         if (jsonArray != null) {
             return jsonArray.toJavaList(Page.class);
+        }
+        return Lists.newArrayList();
+    }
+
+    public List<Library> listLibrary() {
+        String url = ConfigUtils.getSysConfig(ConfigKey.komgaUrl, "http://192.168.3.100:25600");
+        ResponseEntity<JSONArray> response = restTemplate.exchange(url + API_LIBRARIES, HttpMethod.GET, new HttpEntity<>(getHeaders()), JSONArray.class);
+        JSONArray jsonArray = response.getBody();
+        if (jsonArray != null) {
+            return jsonArray.toJavaList(Library.class);
         }
         return Lists.newArrayList();
     }

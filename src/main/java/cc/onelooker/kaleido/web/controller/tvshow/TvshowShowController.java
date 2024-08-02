@@ -126,8 +126,8 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @PostMapping("downloadPoster")
     public CommonResult<Boolean> downloadPoster(@RequestBody MovieBasicDownloadPosterReq req) {
         Metadata metadata = plexApiService.findMovieById(req.getId());
-        String folder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
-        File file = Paths.get(folder, "poster.jpg").toFile();
+        Path filePath = KaleidoUtils.getMoviePath(metadata.getMedia().getPart().getFile());
+        File file = filePath.resolveSibling("poster.jpg").toFile();
         HttpUtil.downloadFile(req.getUrl(), file);
         return CommonResult.success(true);
     }
@@ -165,7 +165,7 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @ApiOperation(value = "获取目录")
     public CommonResult<String> viewPath(Long id) {
         Metadata metadata = plexApiService.findMetadata(id);
-        Path folderPath = Paths.get(KaleidoUtils.getTvshowFolder(metadata.getLocation().getPath()));
+        Path folderPath = Paths.get(KaleidoUtils.getTvshowPath(metadata.getLocation().getPath()));
         return CommonResult.success(folderPath.toString());
     }
 

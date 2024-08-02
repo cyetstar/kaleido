@@ -1,11 +1,9 @@
-package cc.onelooker.kaleido.thread.movie;
+package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.dto.movie.MovieThreadDTO;
 import cc.onelooker.kaleido.enums.ThreadStatus;
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.service.movie.MovieThreadService;
-import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
-import cc.onelooker.kaleido.thread.Action;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
@@ -38,7 +36,7 @@ public class MovieCheckThreadStatusRunnable extends AbstractEntityActionRunnable
     }
 
     @Override
-    protected void processEntity(MovieThreadDTO dto) throws Exception {
+    protected void processEntity(Map<String, String> params, MovieThreadDTO dto) throws Exception {
         if (dto.getStatus() == ThreadStatus.todo.ordinal()) {
             movieManager.checkThreadStatus(dto);
         }

@@ -4,16 +4,25 @@ import cc.onelooker.kaleido.convert.comic.ComicSeriesConvert;
 import cc.onelooker.kaleido.dto.AlternateTitleDTO;
 import cc.onelooker.kaleido.dto.AttributeDTO;
 import cc.onelooker.kaleido.dto.comic.ComicAuthorDTO;
+import cc.onelooker.kaleido.dto.comic.ComicBookDTO;
+import cc.onelooker.kaleido.dto.comic.ComicSeriesAuthorDTO;
 import cc.onelooker.kaleido.dto.comic.ComicSeriesDTO;
 import cc.onelooker.kaleido.entity.comic.ComicSeriesDO;
 import cc.onelooker.kaleido.enums.AttributeType;
+import cc.onelooker.kaleido.enums.AuthorRole;
+import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.mapper.comic.ComicSeriesMapper;
 import cc.onelooker.kaleido.service.AlternateTitleService;
 import cc.onelooker.kaleido.service.AttributeService;
 import cc.onelooker.kaleido.service.SubjectAttributeService;
+import cc.onelooker.kaleido.service.TaskService;
 import cc.onelooker.kaleido.service.comic.ComicAuthorService;
+import cc.onelooker.kaleido.service.comic.ComicBookService;
 import cc.onelooker.kaleido.service.comic.ComicSeriesAuthorService;
 import cc.onelooker.kaleido.service.comic.ComicSeriesService;
+import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.NioFileUtils;
+import cn.hutool.core.exceptions.ExceptionUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
@@ -24,6 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -49,10 +60,16 @@ public class ComicSeriesServiceImpl extends AbstractBaseServiceImpl<ComicSeriesM
     private ComicAuthorService comicAuthorService;
 
     @Autowired
+    private ComicBookService comicBookService;
+
+    @Autowired
     private AttributeService attributeService;
 
     @Autowired
     private SubjectAttributeService subjectAttributeService;
+
+    @Autowired
+    private TaskService taskService;
 
     @Override
     protected Wrapper<ComicSeriesDO> genQueryWrapper(ComicSeriesDTO dto) {
@@ -85,13 +102,13 @@ public class ComicSeriesServiceImpl extends AbstractBaseServiceImpl<ComicSeriesM
 
     private List<String> listSeriesIdByAuthor(String author) {
         List<ComicAuthorDTO> comicAuthorDTOList = comicAuthorService.listByKeyword(author);
-        List<ComicSeriesDTO> comicSeriesDTOList = Lists.newArrayList();
+        List<ComicSeriesAuthorDTO> comicSeriesAuthorDTOList = Lists.newArrayList();
         if (CollectionUtils.isNotEmpty(comicAuthorDTOList)) {
             for (ComicAuthorDTO comicAuthorDTO : comicAuthorDTOList) {
-                comicSeriesDTOList.addAll(listByAuthorId(comicAuthorDTO.getId()));
+                comicSeriesAuthorDTOList.addAll(comicSeriesAuthorService.listByAuthorId(comicAuthorDTO.getId()));
             }
         }
-        return comicSeriesDTOList.stream().map(ComicSeriesDTO::getId).collect(Collectors.toList());
+        return comicSeriesAuthorDTOList.stream().map(ComicSeriesAuthorDTO::getSeriesId).collect(Collectors.toList());
     }
 
     @Override
@@ -111,41 +128,58 @@ public class ComicSeriesServiceImpl extends AbstractBaseServiceImpl<ComicSeriesM
 
     @Override
     @Transactional
-    public boolean update(ComicSeriesDTO dto) {
-        List<String> alternateTitleList = dto.getAlternateTitleList();
-        if (alternateTitleList != null) {
-            alternateTitleService.deleteBySubjectId(dto.getId());
-            alternateTitleList.forEach(s -> {
-                AlternateTitleDTO alternateTitleDTO = new AlternateTitleDTO();
-                alternateTitleDTO.setSubjectId(dto.getId());
-                alternateTitleDTO.setSubjectType("comic_series");
-                alternateTitleDTO.setTitle(s);
-                alternateTitleService.insert(alternateTitleDTO);
+    public void save(ComicSeriesDTO dto) {
+        ComicSeriesDTO oldDto = findById(dto.getId());
+        alternateTitleService.deleteBySubjectId(dto.getId());
+        dto.getAlternateTitleList().forEach(s -> {
+            AlternateTitleDTO alternateTitleDTO = new AlternateTitleDTO();
+            alternateTitleDTO.setSubjectId(dto.getId());
+            alternateTitleDTO.setSubjectType("comic_series");
+            alternateTitleDTO.setTitle(s);
+            alternateTitleService.insert(alternateTitleDTO);
+        });
+        comicSeriesAuthorService.deleteBySeriesIdAndRole(dto.getId(), AuthorRole.writer);
+        saveComicAuthor(dto.getId(), dto.getWriterName(), AuthorRole.writer);
+        comicSeriesAuthorService.deleteBySeriesIdAndRole(dto.getId(), AuthorRole.penciller);
+        saveComicAuthor(dto.getId(), dto.getPencillerName(), AuthorRole.penciller);
+        subjectAttributeService.deleteBySubjectIdAndAttributeType(dto.getId(), AttributeType.ComicTag);
+        dto.getTagList().forEach(s -> {
+            AttributeDTO attributeDTO = attributeService.findByValueAndType(s, AttributeType.ComicTag);
+            if (attributeDTO == null) {
+                attributeDTO = attributeService.insert(s, AttributeType.ComicTag);
+            }
+            subjectAttributeService.insert(dto.getId(), attributeDTO.getId());
+        });
+        List<ComicBookDTO> comicBookDTOList = comicBookService.listBySeriesId(dto.getId());
+
+        String newFolder = KaleidoUtils.genComicFolder(dto.getTitle(), dto.getWriterName(), dto.getPencillerName());
+        if (StringUtils.endsWith(oldDto.getPath(), newFolder)) {
+            update(dto);
+        } else {
+            Path oldPath = KaleidoUtils.getComicPath(oldDto.getPath());
+            Path newPath = oldPath.resolveSibling(newFolder);
+            try {
+                NioFileUtils.renameDir(oldPath, newPath);
+            } catch (IOException e) {
+                ExceptionUtil.wrapAndThrow(e);
+            }
+            //更新为新路径
+            String path = KaleidoUtils.inverseComicPath(newPath.toString()).toString();
+            dto.setPath(path);
+            update(dto);
+
+            //更新书籍路径
+            comicBookDTOList.forEach(s -> {
+                s.setPath(StringUtils.replaceOnce(s.getPath(), oldDto.getPath(), dto.getPath()));
+                comicBookService.update(s);
             });
         }
-        if (dto.getWriterName() != null) {
-            comicSeriesAuthorService.deleteBySeriesIdAndRole(dto.getId(), "writer");
-            saveComicAuthor(dto.getId(), dto.getWriterName(), "writer");
-        }
-        if (dto.getPencillerName() != null) {
-            comicSeriesAuthorService.deleteBySeriesIdAndRole(dto.getId(), "penciller");
-            saveComicAuthor(dto.getId(), dto.getPencillerName(), "penciller");
-        }
-        List<String> tagList = dto.getTagList();
-        if (tagList != null) {
-            subjectAttributeService.deleteBySubjectIdAndAttributeType(dto.getId(), AttributeType.ComicTag);
-            tagList.forEach(s -> {
-                AttributeDTO attributeDTO = attributeService.findByValueAndType(s, AttributeType.ComicTag);
-                if (attributeDTO == null) {
-                    attributeDTO = attributeService.insert(s, AttributeType.ComicTag);
-                }
-                subjectAttributeService.insert(dto.getId(), attributeDTO.getId());
-            });
-        }
-        return super.update(dto);
+
+        //生成重写ComicInfo任务
+        comicBookDTOList.forEach(s -> taskService.newTask(s.getId(), "ComicBook", TaskType.writeComicInfo));
     }
 
-    private void saveComicAuthor(String seriesId, String name, String role) {
+    private void saveComicAuthor(String seriesId, String name, AuthorRole role) {
         if (StringUtils.isNotEmpty(name)) {
             ComicAuthorDTO comicAuthorDTO = comicAuthorService.findByName(name);
             if (comicAuthorDTO == null) {

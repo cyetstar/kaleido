@@ -11,7 +11,6 @@ import cc.onelooker.kaleido.dto.comic.resp.ComicSeriesCreateResp;
 import cc.onelooker.kaleido.dto.comic.resp.ComicSeriesPageResp;
 import cc.onelooker.kaleido.dto.comic.resp.ComicSeriesSearchInfoResp;
 import cc.onelooker.kaleido.dto.comic.resp.ComicSeriesViewResp;
-import cc.onelooker.kaleido.dto.req.ComicSeriesReadComicInfoReq;
 import cc.onelooker.kaleido.dto.req.ComicSeriesSyncReq;
 import cc.onelooker.kaleido.dto.req.ComicSeriesWriteComicInfoReq;
 import cc.onelooker.kaleido.enums.AttributeType;
@@ -37,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
@@ -121,7 +121,9 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     @PostMapping("update")
     @ApiOperation(value = "编辑漫画系列")
     public CommonResult<Boolean> update(@RequestBody ComicSeriesUpdateReq req) {
-        return super.update(req, ComicSeriesConvert.INSTANCE::convertToDTO);
+        ComicSeriesDTO comicSeriesDTO = ComicSeriesConvert.INSTANCE.convertToDTO(req);
+        comicSeriesService.save(comicSeriesDTO);
+        return CommonResult.success(true);
     }
 
     @DeleteMapping(value = "delete")
@@ -152,15 +154,8 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
         return CommonResult.success(true);
     }
 
-    @PostMapping("readComicInfo")
-    @ApiOperation(value = "读取ComicInfo")
-    public CommonResult<Boolean> readComicInfo(@RequestBody ComicSeriesReadComicInfoReq req) {
-        comicManager.readComicInfo(req.getId());
-        return CommonResult.success(true);
-    }
-
     @PostMapping("writeComicInfo")
-    @ApiOperation(value = "读取ComicInfo")
+    @ApiOperation(value = "写入ComicInfo")
     public CommonResult<Boolean> writeComicInfo(@RequestBody ComicSeriesWriteComicInfoReq req) {
         comicManager.writeComicInfo(req.getId());
         return CommonResult.success(true);
@@ -170,8 +165,8 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     @ApiOperation(value = "获取目录")
     public CommonResult<String> viewPath(String id) {
         ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(id);
-        String folder = KaleidoUtils.getComicFolder(comicSeriesDTO.getPath());
-        return CommonResult.success(folder);
+        Path path = KaleidoUtils.getComicPath(comicSeriesDTO.getPath());
+        return CommonResult.success(path.toString());
     }
 
 }

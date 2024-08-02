@@ -175,16 +175,16 @@ public class MovieManager {
         try {
             Movie movie = tmmApiService.findMovie(doubanId, imdbId, tmdbId);
             Metadata metadata = plexApiService.findMovieById(id);
-            Path movieFolderPath = Paths.get(KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile()));
+            Path filePath = KaleidoUtils.getMoviePath(metadata.getMedia().getPart().getFile());
             MovieNFO movieNFO = NFOUtil.toMovieNFO(movie);
-            NFOUtil.write(movieNFO, MovieNFO.class, movieFolderPath, "movie.nfo");
+            NFOUtil.write(movieNFO, MovieNFO.class, filePath.getParent(), "movie.nfo");
             plexApiService.refreshMovieById(id);
             //如果模版信息发生变动，则重新移动文件，而后续由定时任务重新获取新的信息
             MovieBasicDTO movieBasicDTO = movieBasicService.findById(id);
             if (!StringUtils.equals(movie.getTitle(), movieBasicDTO.getTitle()) || !StringUtils.equals(movie.getYear(), movieBasicDTO.getYear())) {
                 String movieLibraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
                 Path folderPath = createFolderPath(movie, Paths.get(movieLibraryPath));
-                NioFileUtils.renameDir(movieFolderPath, folderPath);
+                NioFileUtils.renameDir(filePath.getParent(), folderPath);
             }
         } catch (Exception e) {
             log.error("匹配电影信息发生错误：{}", ExceptionUtil.getMessage(e));
@@ -277,8 +277,8 @@ public class MovieManager {
     public void readNFO(Metadata metadata) {
         try {
             Long movieId = metadata.getRatingKey();
-            String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
-            MovieNFO movieNFO = NFOUtil.read(MovieNFO.class, Paths.get(movieFolder), "movie.nfo");
+            Path filePath = KaleidoUtils.getMoviePath(metadata.getMedia().getPart().getFile());
+            MovieNFO movieNFO = NFOUtil.read(MovieNFO.class, filePath.getParent(), "movie.nfo");
             String doubanId = NFOUtil.getUniqueid(movieNFO.getUniqueids(), SourceType.douban.name());
             String imdb = NFOUtil.getUniqueid(movieNFO.getUniqueids(), SourceType.imdb.name());
             String tmdb = NFOUtil.getUniqueid(movieNFO.getUniqueids(), SourceType.tmdb.name());
@@ -299,7 +299,7 @@ public class MovieManager {
     public void exportNFO(MovieBasicDTO dto) {
         try {
             Metadata metadata = plexApiService.findMovieById(dto.getId());
-            String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
+            Path filePath = KaleidoUtils.getMoviePath(metadata.getMedia().getPart().getFile());
             MovieNFO movieNFO = NFOUtil.toMovieNFO(metadata);
             movieNFO.setDoubanId(dto.getDoubanId());
             movieNFO.setImdbId(dto.getImdbId());
@@ -313,7 +313,7 @@ public class MovieManager {
             if (movieAkaDTOList != null) {
                 movieNFO.setAkas(movieAkaDTOList.stream().map(MovieAkaDTO::getTitle).collect(Collectors.toList()));
             }
-            NFOUtil.write(movieNFO, MovieNFO.class, Paths.get(movieFolder), "movie.nfo");
+            NFOUtil.write(movieNFO, MovieNFO.class, filePath.getParent(), "movie.nfo");
         } catch (Exception e) {
             log.error("导出NFO发生错误:{}", ExceptionUtil.getMessage(e));
             throw new RuntimeException(e);
@@ -688,8 +688,8 @@ public class MovieManager {
         try {
             MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
             metadata = plexApiService.findMovieById(metadata.getRatingKey());
-            String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
-            try (Stream<Path> stream = Files.list(Paths.get(movieFolder))) {
+            Path filePath = KaleidoUtils.getMoviePath(metadata.getMedia().getPart().getFile());
+            try (Stream<Path> stream = Files.list(filePath.getParent())) {
                 List<Path> videoPathList = stream.filter(s -> KaleidoUtils.isVideoFile(s.getFileName().toString())).collect(Collectors.toList());
                 if (CollectionUtils.size(videoPathList) > 1) {
                     movieBasicDTO.setMultipleFiles(Constants.YES);

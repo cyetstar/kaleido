@@ -7,6 +7,9 @@ package cc.onelooker.kaleido.utils;
  */
 public class KaleidoConstants {
 
+    public static final String COMIC_INFO = "ComicInfo.xml";
+    public static final String COMIC_COVER = "cover.jpg";
+
     public static final String SFJG_WIN = "1";
     public static final String SFJG_LOSS = "0";
 
@@ -63,4 +66,8 @@ public class KaleidoConstants {
     public static final String BSLX_IMDB = "imdb";
     public static final String BSLX_DOUBAN = "douban";
     public static final String BSLX_TMDB = "tmdb";
+
+    public static final String TASK_STATUS_TODO = "0";
+    public static final String TASK_STATUS_DONE = "1";
+    public static final String TASK_STATUS_ERROR = "4";
 }

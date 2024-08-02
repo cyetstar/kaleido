@@ -1,12 +1,10 @@
-package cc.onelooker.kaleido.thread.movie;
+package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
 import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.movie.MovieBasicService;
 import cc.onelooker.kaleido.service.movie.MovieManager;
-import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
-import cc.onelooker.kaleido.thread.Action;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
@@ -51,7 +49,7 @@ public class MovieMatchInfoRunnable extends AbstractEntityActionRunnable<MovieBa
     }
 
     @Override
-    protected void processEntity(MovieBasicDTO dto) throws Exception {
+    protected void processEntity(Map<String, String> params, MovieBasicDTO dto) throws Exception {
         movieManager.matchInfo(dto.getId(), dto.getDoubanId(), dto.getImdbId(), dto.getTmdbId());
     }
 

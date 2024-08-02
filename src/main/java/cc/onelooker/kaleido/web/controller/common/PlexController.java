@@ -1,13 +1,11 @@
 package cc.onelooker.kaleido.web.controller.common;
 
-import cc.onelooker.kaleido.dto.system.req.PlexGetLibrariesReq;
-import cc.onelooker.kaleido.dto.system.resp.PlexGetLibrariesResp;
+import cc.onelooker.kaleido.dto.system.resp.PlexListLibraryResp;
 import cc.onelooker.kaleido.third.plex.Directory;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import com.zjjcnt.common.core.domain.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,11 +24,11 @@ public class PlexController {
     @Autowired
     private PlexApiService plexApiService;
 
-    @PostMapping("getLibraries")
-    public CommonResult<List<PlexGetLibrariesResp>> getLibraries(@RequestBody PlexGetLibrariesReq req) {
+    @PostMapping("listLibrary")
+    public CommonResult<List<PlexListLibraryResp>> listLibrary() {
         List<Directory> libraries = plexApiService.listLibrary();
-        List<PlexGetLibrariesResp> result = libraries.stream().map(s -> {
-            PlexGetLibrariesResp plexGetLibrariesResp = new PlexGetLibrariesResp();
+        List<PlexListLibraryResp> result = libraries.stream().map(s -> {
+            PlexListLibraryResp plexGetLibrariesResp = new PlexListLibraryResp();
             plexGetLibrariesResp.setKey(s.getKey());
             plexGetLibrariesResp.setName(s.getTitle());
             plexGetLibrariesResp.setType(s.getType());

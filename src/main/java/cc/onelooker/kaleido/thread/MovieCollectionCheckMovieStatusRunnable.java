@@ -1,11 +1,9 @@
-package cc.onelooker.kaleido.thread.movie;
+package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.dto.movie.MovieBasicCollectionDTO;
 import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
 import cc.onelooker.kaleido.service.movie.MovieBasicCollectionService;
 import cc.onelooker.kaleido.service.movie.MovieBasicService;
-import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
-import cc.onelooker.kaleido.thread.Action;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.util.constant.Constants;
@@ -41,7 +39,7 @@ public class MovieCollectionCheckMovieStatusRunnable extends AbstractEntityActio
     }
 
     @Override
-    protected void processEntity(MovieBasicCollectionDTO dto) throws Exception {
+    protected void processEntity(Map<String, String> params, MovieBasicCollectionDTO dto) throws Exception {
         MovieBasicDTO movieBasicDTO = movieBasicService.findByDoubanId(dto.getDoubanId());
         if (movieBasicDTO != null) {
             dto.setMovieId(movieBasicDTO.getId());

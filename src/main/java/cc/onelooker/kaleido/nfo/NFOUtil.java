@@ -52,6 +52,9 @@ public class NFOUtil {
 
     public static ComicInfoNFO toComicInfoNFO(ComicSeriesDTO comicSeriesDTO, ComicBookDTO comicBookDTO) {
         ComicInfoNFO comicInfoNFO = new ComicInfoNFO();
+        comicInfoNFO.setTitle(comicBookDTO.getTitle());
+        comicInfoNFO.setNumber(String.valueOf(comicBookDTO.getBookNumber()));
+        comicInfoNFO.setWeb("https://bgm.tv/subject/" + comicBookDTO.getBgmId());
         comicInfoNFO.setSeries(comicSeriesDTO.getTitle());
         comicInfoNFO.setOriginalSeries(comicSeriesDTO.getOriginalTitle());
         comicInfoNFO.setCount(comicSeriesDTO.getBookCount());
@@ -65,8 +68,6 @@ public class NFOUtil {
         comicInfoNFO.setAkas(comicSeriesDTO.getAlternateTitleList());
         comicInfoNFO.setSeriesBgmId(comicSeriesDTO.getBgmId());
         comicInfoNFO.setSeriesStatus(comicSeriesDTO.getStatus());
-        comicInfoNFO.setNumber(String.valueOf(comicBookDTO.getBookNumber()));
-        comicInfoNFO.setWeb("https://bgm.tv/subject/" + comicBookDTO.getBgmId());
         return comicInfoNFO;
     }
 

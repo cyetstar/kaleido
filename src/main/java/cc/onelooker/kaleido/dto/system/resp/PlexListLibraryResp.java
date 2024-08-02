@@ -8,7 +8,7 @@ import lombok.Data;
  * @Description TODO
  */
 @Data
-public class PlexGetLibrariesResp {
+public class PlexListLibraryResp {
 
     private String key;
     private String name;

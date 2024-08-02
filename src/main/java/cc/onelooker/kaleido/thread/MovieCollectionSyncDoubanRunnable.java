@@ -1,4 +1,4 @@
-package cc.onelooker.kaleido.thread.movie;
+package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.dto.movie.MovieBasicCollectionDTO;
 import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
@@ -6,8 +6,6 @@ import cc.onelooker.kaleido.service.movie.MovieBasicCollectionService;
 import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.third.tmm.Movie;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
-import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
-import cc.onelooker.kaleido.thread.Action;
 import cn.hutool.core.thread.ThreadUtil;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.PageResult;
@@ -53,7 +51,7 @@ public class MovieCollectionSyncDoubanRunnable extends AbstractEntityActionRunna
     }
 
     @Override
-    protected PageResult<Movie> page(Map<String, String> params,int pageNumber, int pageSize) {
+    protected PageResult<Movie> page(Map<String, String> params, int pageNumber, int pageSize) {
         try {
             int start = (pageNumber - 1) * 25;
             if (start > movieCollectionDTO.getChildCount()) {
@@ -83,7 +81,7 @@ public class MovieCollectionSyncDoubanRunnable extends AbstractEntityActionRunna
     }
 
     @Override
-    protected void processEntity(Movie movie) throws Exception {
+    protected void processEntity(Map<String, String> params, Movie movie) throws Exception {
         doubanIdList.add(movie.getDoubanId());
         movieManager.syncCollectionMovie(movieCollectionDTO.getId(), movie);
     }

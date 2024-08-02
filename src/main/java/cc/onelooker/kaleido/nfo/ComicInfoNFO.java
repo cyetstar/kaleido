@@ -1,9 +1,6 @@
 package cc.onelooker.kaleido.nfo;
 
-import com.google.common.collect.Sets;
 import lombok.Data;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -11,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 
 /**
  * @Author xiadawei
@@ -114,10 +111,16 @@ public class ComicInfoNFO {
     @XmlElement(name = "SeriesStatus")
     private String seriesStatus;
 
-    public String getAuthors() {
-        Set<String> authors = Sets.newLinkedHashSet();
-        CollectionUtils.addIgnoreNull(authors, StringUtils.defaultIfEmpty(writer, null));
-        CollectionUtils.addIgnoreNull(authors, StringUtils.defaultIfEmpty(penciller, null));
-        return StringUtils.join(authors, "×");
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ComicInfoNFO that = (ComicInfoNFO) o;
+        return Objects.equals(title, that.title) && Objects.equals(series, that.series) && Objects.equals(number, that.number) && Objects.equals(count, that.count) && Objects.equals(volume, that.volume) && Objects.equals(alternateSeries, that.alternateSeries) && Objects.equals(alternateNumber, that.alternateNumber) && Objects.equals(alternateCount, that.alternateCount) && Objects.equals(summary, that.summary) && Objects.equals(notes, that.notes) && Objects.equals(year, that.year) && Objects.equals(month, that.month) && Objects.equals(day, that.day) && Objects.equals(writer, that.writer) && Objects.equals(penciller, that.penciller) && Objects.equals(inker, that.inker) && Objects.equals(colorist, that.colorist) && Objects.equals(letterer, that.letterer) && Objects.equals(coverArtist, that.coverArtist) && Objects.equals(editor, that.editor) && Objects.equals(publishers, that.publishers) && Objects.equals(imprint, that.imprint) && Objects.equals(genre, that.genre) && Objects.equals(web, that.web) && Objects.equals(pageCount, that.pageCount) && Objects.equals(languageISO, that.languageISO) && Objects.equals(format, that.format) && Objects.equals(blackAndWhite, that.blackAndWhite) && Objects.equals(manga, that.manga) && Objects.equals(characters, that.characters) && Objects.equals(teams, that.teams) && Objects.equals(locations, that.locations) && Objects.equals(scanInformation, that.scanInformation) && Objects.equals(storyArc, that.storyArc) && Objects.equals(seriesGroup, that.seriesGroup) && Objects.equals(ageRating, that.ageRating) && Objects.equals(pages, that.pages) && Objects.equals(communityRating, that.communityRating) && Objects.equals(mainCharacterOrTeam, that.mainCharacterOrTeam) && Objects.equals(review, that.review) && Objects.equals(originalSeries, that.originalSeries) && Objects.equals(tags, that.tags) && Objects.equals(akas, that.akas) && Objects.equals(seriesBgmId, that.seriesBgmId) && Objects.equals(seriesStatus, that.seriesStatus);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, series, number, count, volume, alternateSeries, alternateNumber, alternateCount, summary, notes, year, month, day, writer, penciller, inker, colorist, letterer, coverArtist, editor, publishers, imprint, genre, web, pageCount, languageISO, format, blackAndWhite, manga, characters, teams, locations, scanInformation, storyArc, seriesGroup, ageRating, pages, communityRating, mainCharacterOrTeam, review, originalSeries, tags, akas, seriesBgmId, seriesStatus);
     }
 }

@@ -22,9 +22,8 @@ import java.util.stream.Collectors;
 @Component
 public class ComicUpdateSourceRunnable extends AbstractEntityActionRunnable<Path> {
 
-    private String downloadPath;
-
     private final ComicManager comicManager;
+    private String downloadPath;
 
     public ComicUpdateSourceRunnable(ComicManager comicManager) {
         this.comicManager = comicManager;
@@ -57,7 +56,7 @@ public class ComicUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
     }
 
     @Override
-    protected void processEntity(Path path) throws Exception {
+    protected void processEntity(Map<String, String> params, Path path) throws Exception {
         comicManager.updateSource(path);
     }
 

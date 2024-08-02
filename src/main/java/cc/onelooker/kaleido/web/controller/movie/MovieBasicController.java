@@ -215,8 +215,8 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @ApiOperation(value = "查看NFO")
     public HttpEntity<byte[]> viewNFO(Long id) throws IOException {
         Metadata metadata = plexApiService.findMovieById(id);
-        String movieFolder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
-        File file = Paths.get(movieFolder, "movie.nfo").toFile();
+        Path filePath = KaleidoUtils.getMoviePath(metadata.getMedia().getPart().getFile());
+        File file = filePath.resolveSibling("movie.nfo").toFile();
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(FileUtils.readFileToByteArray(file));
     }
 
@@ -238,8 +238,8 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @ApiOperation(value = "获取目录")
     public CommonResult<String> viewPath(Long id) {
         Metadata metadata = plexApiService.findMovieById(id);
-        String folder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
-        return CommonResult.success(folder);
+        Path filePath = KaleidoUtils.getMoviePath(metadata.getMedia().getPart().getFile());
+        return CommonResult.success(filePath.getParent().toString());
     }
 
     @PostMapping("uploadPoster")
@@ -253,8 +253,8 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("downloadPoster")
     public CommonResult<Boolean> downloadPoster(@RequestBody MovieBasicDownloadPosterReq req) {
         Metadata metadata = plexApiService.findMovieById(req.getId());
-        String folder = KaleidoUtils.getMovieFolder(metadata.getMedia().getPart().getFile());
-        File file = Paths.get(folder, "poster.jpg").toFile();
+        Path filePath = KaleidoUtils.getMoviePath(metadata.getMedia().getPart().getFile());
+        File file = filePath.resolveSibling("poster.jpg").toFile();
         HttpUtil.downloadFile(req.getUrl(), file);
         return CommonResult.success(true);
     }

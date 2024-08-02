@@ -46,8 +46,8 @@ public class TempTest {
 
     @Test
     public void getSeasonEpisodeNumber() {
-        Pattern pattern = Pattern.compile("([sS]_?(\\d+))?[eE][pP]?_?(\\d+)");
-        Matcher matcher = pattern.matcher("[不毛地带].[TVBT]Fumo.Chitai_EP15_ChineseSubbed.rmvb");
+        Pattern pattern = Pattern.compile("(S_?(\\d+))?EP?_?(\\d+)");
+        Matcher matcher = pattern.matcher("Sense8.S01E01.2015.1080p.WEB-DL.x265.10bit.AC3￡cXcY@FRDS.");
         if (matcher.find()) {
             System.out.println(matcher.group(0));
             System.out.println(matcher.group(1));

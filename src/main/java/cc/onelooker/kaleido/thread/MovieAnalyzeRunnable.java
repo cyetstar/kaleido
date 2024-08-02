@@ -1,4 +1,4 @@
-package cc.onelooker.kaleido.thread.movie;
+package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
 import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
@@ -9,8 +9,6 @@ import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.service.system.SysConfigService;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
-import cc.onelooker.kaleido.thread.Action;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.apache.commons.collections4.CollectionUtils;
@@ -90,7 +88,7 @@ public class MovieAnalyzeRunnable extends AbstractEntityActionRunnable<Metadata>
     }
 
     @Override
-    protected void processEntity(Metadata metadata) throws Exception {
+    protected void processEntity(Map<String, String> params, Metadata metadata) throws Exception {
         if (CollectionUtils.isNotEmpty(idList) && idList.contains(metadata.getRatingKey())) {
             movieManager.analyze(metadata);
         } else {

@@ -25,7 +25,8 @@ public enum Action {
 
     comicSync("漫画同步"),
     comicUpdateSource("漫画更新源"),
-    comicReadComicInfo("读取ComicInfo");
+    comicReadComicInfo("读取ComicInfo"),
+    comicWriteComicInfo("写入ComicInfo");
 
     private String title;
 

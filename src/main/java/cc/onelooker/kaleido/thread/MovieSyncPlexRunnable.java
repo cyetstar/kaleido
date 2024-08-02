@@ -1,13 +1,11 @@
-package cc.onelooker.kaleido.thread.tvshow;
+package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.dto.tvshow.TvshowEpisodeDTO;
+import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.tvshow.TvshowEpisodeService;
-import cc.onelooker.kaleido.service.tvshow.TvshowManager;
+import cc.onelooker.kaleido.service.movie.MovieBasicService;
+import cc.onelooker.kaleido.service.movie.MovieManager;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.thread.AbstractEntityActionRunnable;
-import cc.onelooker.kaleido.thread.Action;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.apache.commons.collections4.CollectionUtils;
@@ -22,43 +20,46 @@ import java.util.stream.Collectors;
  * Created by cyetstar on 2021/1/7.
  */
 @Component
-public class TvshowSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata> {
+public class MovieSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata> {
 
     private final PlexApiService plexApiService;
 
-    private final TvshowEpisodeService tvshowEpisodeService;
+    private final MovieBasicService movieBasicService;
 
-    private final TvshowManager tvshowManager;
+    private final MovieManager movieManager;
 
     private String libraryId;
 
     private List<Metadata> metadataList;
 
-    public TvshowSyncPlexRunnable(PlexApiService plexApiService, TvshowEpisodeService tvshowEpisodeService, TvshowManager tvshowManager) {
+    public MovieSyncPlexRunnable(PlexApiService plexApiService, MovieBasicService movieBasicService, MovieManager movieManager) {
         this.plexApiService = plexApiService;
-        this.tvshowEpisodeService = tvshowEpisodeService;
-        this.tvshowManager = tvshowManager;
+        this.movieBasicService = movieBasicService;
+        this.movieManager = movieManager;
     }
 
     @Override
     public Action getAction() {
-        return Action.tvshowSyncPlex;
+        return Action.movieSyncPlex;
     }
 
     @Override
     protected void beforeRun(Map<String, String> params) {
-        libraryId = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryId);
+        libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
     }
 
     @Override
     protected void afterRun(Map<String, String> params) {
-        List<TvshowEpisodeDTO> tvshowEpisodeDTOList = tvshowEpisodeService.list(null);
-        List<Long> idList = tvshowEpisodeDTOList.stream().map(TvshowEpisodeDTO::getId).collect(Collectors.toList());
+        List<MovieBasicDTO> movieBasicDTOList = movieBasicService.list(null);
+        List<Long> idList = movieBasicDTOList.stream().map(MovieBasicDTO::getId).collect(Collectors.toList());
         List<Long> plexIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
         Collection<Long> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
         if (CollectionUtils.isNotEmpty(deleteIdList)) {
             for (Long deleteId : deleteIdList) {
-                tvshowEpisodeService.deleteById(deleteId);
+                if (isStop()) {
+                    break;
+                }
+                movieBasicService.deleteById(deleteId);
             }
         }
     }
@@ -68,7 +69,7 @@ public class TvshowSyncPlexRunnable extends AbstractEntityActionRunnable<Metadat
         PageResult<Metadata> pageResult = new PageResult<>();
         pageResult.setSearchCount(true);
         if (pageNumber < 2) {
-            metadataList = plexApiService.listEpsiode(libraryId);
+            metadataList = plexApiService.listMovie(libraryId);
             pageResult.setTotal((long) metadataList.size());
             pageResult.setRecords(metadataList);
         }
@@ -76,10 +77,10 @@ public class TvshowSyncPlexRunnable extends AbstractEntityActionRunnable<Metadat
     }
 
     @Override
-    protected void processEntity(Metadata metadata) throws Exception {
-        TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(metadata.getRatingKey());
-        if (tvshowEpisodeDTO == null || metadata.getUpdatedAt().compareTo(tvshowEpisodeDTO.getUpdatedAt()) > 0) {
-            tvshowManager.syncPlexEpisode(metadata.getRatingKey());
+    protected void processEntity(Map<String, String> params, Metadata metadata) throws Exception {
+        MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
+        if (movieBasicDTO == null || metadata.getUpdatedAt().compareTo(movieBasicDTO.getUpdatedAt()) > 0) {
+            movieManager.syncMovieAndReadNFO(metadata.getRatingKey());
         }
     }
 
