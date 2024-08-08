@@ -33,7 +33,6 @@ public class TaskServiceImpl extends AbstractBaseServiceImpl<TaskMapper, TaskDO,
         query.eq(StringUtils.isNotEmpty(dto.getSubjectId()), TaskDO::getSubjectId, dto.getSubjectId());
         query.eq(StringUtils.isNotEmpty(dto.getSubjectType()), TaskDO::getSubjectType, dto.getSubjectType());
         query.eq(StringUtils.isNotEmpty(dto.getTaskType()), TaskDO::getTaskType, dto.getTaskType());
-        query.eq(Objects.nonNull(dto.getAddedAt()), TaskDO::getAddedAt, dto.getAddedAt());
         query.eq(StringUtils.isNotEmpty(dto.getTaskStatus()), TaskDO::getTaskStatus, dto.getTaskStatus());
         return query;
     }
@@ -55,6 +54,7 @@ public class TaskServiceImpl extends AbstractBaseServiceImpl<TaskMapper, TaskDO,
         taskDTO.setSubjectId(subjectId);
         taskDTO.setSubjectType(subjectType);
         taskDTO.setTaskType(taskType.name());
+        taskDTO.setTaskStatus(KaleidoConstants.TASK_STATUS_TODO);
         TaskDTO existTaskDTO = find(taskDTO);
         if (Objects.nonNull(existTaskDTO)) {
             return;

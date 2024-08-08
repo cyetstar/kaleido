@@ -128,11 +128,11 @@ public class ComicManager {
         String pencillerName = authors.stream().filter(s -> StringUtils.equals(s.getRole(), "penciller")).findFirst().map(Author::getName).orElse(null);
         String comicFolder = KaleidoUtils.genComicFolder(book.getSeriesTitle(), writerName, pencillerName);
         String fullPath = FilenameUtils.getFullPath(book.getUrl());
-        String baseName = FilenameUtils.getBaseName(book.getUrl());
+        String name = FilenameUtils.getName(book.getUrl());
         if (StringUtils.endsWith(fullPath, comicFolder)) {
             return book.getUrl();
         }
-        Path path = Paths.get(ConfigUtils.getSysConfig(ConfigKey.komgaComicLibraryPath), comicFolder, baseName);
+        Path path = Paths.get(ConfigUtils.getSysConfig(ConfigKey.komgaComicLibraryPath), comicFolder, name);
         try {
             Path oldPath = KaleidoUtils.getComicPath(book.getUrl());
             Path newPath = KaleidoUtils.getComicPath(path.toString());
@@ -213,11 +213,11 @@ public class ComicManager {
 
     @Transactional
     public void matchPath(Path path, String bgmId) {
-        Path downloadPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.comicDownloadPath));
+        Path importPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.comicImportPath));
         try {
             if (!Files.isDirectory(path)) {
                 String baseName = FilenameUtils.getBaseName(path.getFileName().toString());
-                path = downloadPath.resolve(baseName);
+                path = importPath.resolve(baseName);
                 if (!Files.exists(path)) {
                     path.toFile().mkdir();
                 }
@@ -250,18 +250,31 @@ public class ComicManager {
                 return;
             }
             Comic comic = tmmApiService.findComic(pathInfoDTO.getBgmId());
-            if (comic == null) {
-                log.info("== 忽略找不到匹配信息的文件:{}", path);
-                return;
+            if (comic != null) {
+                log.info("== 找到匹配信息:({}){}", comic.getBgmId(), comic.getSeries());
+                Files.list(path).forEach(s -> convertBook(s, comic));
+            } else {
+                log.info("== 未找到匹配信息，直接移动文件");
+                Path targetFolder = KaleidoUtils.getComicPath(path.getFileName().toString());
+                Files.list(path).forEach(s -> {
+                    try {
+                        String fileName = s.getFileName().toString();
+                        String extension = FilenameUtils.getExtension(fileName);
+                        if (StringUtils.equalsAnyIgnoreCase(extension, "jpg", "jpeg", "png", "zip", "cbz")) {
+                            Files.move(path, targetFolder.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                        }
+                    } catch (Exception e) {
+                        log.error("更新源发生错误:{}", ExceptionUtil.getMessage(e));
+                    }
+                });
+
             }
-            log.info("== 找到匹配信息:({}){}", comic.getBgmId(), comic.getSeries());
-            Files.list(path).forEach(s -> convertBook(s, comic));
             if (FileUtils.isEmptyDirectory(path.toFile())) {
                 NioFileUtils.deleteIfExists(path);
                 log.info("== 删除源文件夹:{}", path.getFileName());
-                pathInfoService.deleteByPath(path.toString());
-                log.info("== 清除文件夹信息记录:{}", path);
             }
+            pathInfoService.deleteByPath(path.toString());
+            log.info("== 清除文件夹信息记录:{}", path);
         } catch (Exception e) {
             log.error("更新源发生错误:{}", ExceptionUtil.getMessage(e));
         } finally {
@@ -315,7 +328,7 @@ public class ComicManager {
     public void writeComicInfo(ComicBookDTO comicBookDTO) {
         String baseName = FilenameUtils.getBaseName(comicBookDTO.getPath());
         Path zipPath = KaleidoUtils.getComicPath(comicBookDTO.getPath());
-        Path folderPath = zipPath.resolveSibling(baseName + ".zip");
+        Path folderPath = zipPath.resolveSibling(baseName);
         unzip(zipPath, folderPath);
         ComicSeriesDTO comicSeriesDTO = findSeriesById(comicBookDTO.getSeriesId());
         ComicInfoNFO comicInfoNFO = NFOUtil.toComicInfoNFO(comicSeriesDTO, comicBookDTO);
@@ -411,12 +424,12 @@ public class ComicManager {
             Path folderPath = path.getParent().resolve(baseName);
             unzipBook(path, folderPath);
 
-            List<Comic.Volume> volumes = comic.getVolumes();
             Integer number = getVolumeNumber(path.getFileName().toString());
             if (number != null) {
                 comicInfoNFO.setTitle("卷" + number);
                 comicInfoNFO.setNumber(String.valueOf(number));
             }
+            List<Comic.Volume> volumes = comic.getVolumes();
             if (number != null && number <= volumes.size()) {
                 Comic.Volume volume = volumes.get(number - 1);
                 if (volume != null) {

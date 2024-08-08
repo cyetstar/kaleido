@@ -3,7 +3,9 @@ package cc.onelooker.kaleido.service.comic.impl;
 import cc.onelooker.kaleido.convert.comic.ComicBookConvert;
 import cc.onelooker.kaleido.dto.comic.ComicBookDTO;
 import cc.onelooker.kaleido.entity.comic.ComicBookDO;
+import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.mapper.comic.ComicBookMapper;
+import cc.onelooker.kaleido.service.TaskService;
 import cc.onelooker.kaleido.service.comic.ComicBookService;
 import cc.onelooker.kaleido.service.comic.ComicSeriesService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -31,6 +33,9 @@ public class ComicBookServiceImpl extends AbstractBaseServiceImpl<ComicBookMappe
 
     @Autowired
     private ComicSeriesService comicSeriesService;
+
+    @Autowired
+    private TaskService taskService;
 
     @Override
     protected Wrapper<ComicBookDO> genQueryWrapper(ComicBookDTO dto) {
@@ -77,5 +82,13 @@ public class ComicBookServiceImpl extends AbstractBaseServiceImpl<ComicBookMappe
             comicSeriesService.deleteById(comicBookDTO.getSeriesId());
         }
         return result;
+    }
+
+    @Override
+    @Transactional
+    public void save(ComicBookDTO dto) {
+        update(dto);
+        //生成重写ComicInfo任务
+        taskService.newTask(dto.getId(), "ComicBook", TaskType.writeComicInfo);
     }
 }

@@ -89,7 +89,9 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
     @PostMapping("update")
     @ApiOperation(value = "编辑漫画书籍")
     public CommonResult<Boolean> update(@RequestBody ComicBookUpdateReq req) {
-        return super.update(req, ComicBookConvert.INSTANCE::convertToDTO);
+        ComicBookDTO comicBookDTO = ComicBookConvert.INSTANCE.convertToDTO(req);
+        comicBookService.save(comicBookDTO);
+        return CommonResult.success(true);
     }
 
     @DeleteMapping(value = "delete")

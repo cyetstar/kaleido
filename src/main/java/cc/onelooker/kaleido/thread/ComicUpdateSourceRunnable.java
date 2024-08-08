@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class ComicUpdateSourceRunnable extends AbstractEntityActionRunnable<Path> {
 
     private final ComicManager comicManager;
-    private String downloadPath;
+    private String importPath;
 
     public ComicUpdateSourceRunnable(ComicManager comicManager) {
         this.comicManager = comicManager;
@@ -36,7 +36,7 @@ public class ComicUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     @Override
     protected void beforeRun(Map<String, String> params) {
-        downloadPath = ConfigUtils.getSysConfig(ConfigKey.comicDownloadPath);
+        importPath = ConfigUtils.getSysConfig(ConfigKey.comicImportPath);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ComicUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
             PageResult<Path> pageResult = new PageResult<>();
             pageResult.setSearchCount(true);
             if (pageNumber == 1) {
-                List<Path> pathList = Files.list(Paths.get(downloadPath)).collect(Collectors.toList());
+                List<Path> pathList = Files.list(Paths.get(importPath)).collect(Collectors.toList());
                 pageResult.setTotal((long) pathList.size());
                 pageResult.setRecords(pathList);
             }
