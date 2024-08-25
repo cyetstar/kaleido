@@ -1,10 +1,12 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
-import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
+import cc.onelooker.kaleido.convert.MovieBasicConvert;
+import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.movie.MovieBasicService;
-import cc.onelooker.kaleido.service.movie.MovieManager;
+import cc.onelooker.kaleido.service.MovieBasicService;
+import cc.onelooker.kaleido.service.MovieManager;
+import cc.onelooker.kaleido.third.tmm.Movie;
+import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
@@ -24,11 +26,14 @@ public class MovieMatchInfoRunnable extends AbstractEntityActionRunnable<MovieBa
 
     private final MovieManager movieManager;
 
+    private final TmmApiService tmmApiService;
+
     private Integer sleepSecond;
 
-    public MovieMatchInfoRunnable(MovieBasicService movieBasicService, MovieManager movieManager) {
+    public MovieMatchInfoRunnable(MovieBasicService movieBasicService, MovieManager movieManager, TmmApiService tmmApiService) {
         this.movieBasicService = movieBasicService;
         this.movieManager = movieManager;
+        this.tmmApiService = tmmApiService;
     }
 
     @Override
@@ -50,7 +55,8 @@ public class MovieMatchInfoRunnable extends AbstractEntityActionRunnable<MovieBa
 
     @Override
     protected void processEntity(Map<String, String> params, MovieBasicDTO dto) throws Exception {
-        movieManager.matchInfo(dto.getId(), dto.getDoubanId(), dto.getImdbId(), dto.getTmdbId());
+        Movie movie = tmmApiService.findMovie(dto.getDoubanId(), dto.getImdbId(), dto.getTmdbId());
+        movieManager.matchMovie(dto.getId(), movie);
     }
 
     @Override

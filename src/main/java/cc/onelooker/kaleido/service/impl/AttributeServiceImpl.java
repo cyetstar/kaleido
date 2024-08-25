@@ -14,6 +14,7 @@ import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +57,24 @@ public class AttributeServiceImpl extends AbstractBaseServiceImpl<AttributeMappe
     }
 
     @Override
+    @Transactional
+    public AttributeDTO insert(String value, AttributeType type) {
+        AttributeDTO attributeDTO = new AttributeDTO();
+        attributeDTO.setValue(value);
+        attributeDTO.setType(type.name());
+        return insert(attributeDTO);
+    }
+
+    @Override
+    @Transactional
+    public AttributeDTO insert(String id, String value, AttributeType type) {
+        AttributeDTO attributeDTO = new AttributeDTO();
+        attributeDTO.setValue(value);
+        attributeDTO.setType(type.name());
+        return insert(attributeDTO);
+    }
+
+    @Override
     public AttributeDTO findByValueAndType(String value, AttributeType type) {
         AttributeDTO param = new AttributeDTO();
         param.setValue(value);
@@ -64,12 +83,11 @@ public class AttributeServiceImpl extends AbstractBaseServiceImpl<AttributeMappe
     }
 
     @Override
-    @Transactional
-    public AttributeDTO insert(String value, AttributeType type) {
-        AttributeDTO attributeDTO = new AttributeDTO();
-        attributeDTO.setValue(value);
-        attributeDTO.setType(type.name());
-        return insert(attributeDTO);
+    public List<AttributeDTO> listByType(AttributeType type) {
+        Validate.notNull(type);
+        AttributeDTO param = new AttributeDTO();
+        param.setType(type.name());
+        return list(param);
     }
 
     @Override
@@ -91,4 +109,5 @@ public class AttributeServiceImpl extends AbstractBaseServiceImpl<AttributeMappe
         param2.setIdList(Lists.newArrayList(attributeIdSet.iterator()));
         return list(param2);
     }
+
 }

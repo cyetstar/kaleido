@@ -7,17 +7,21 @@ package cc.onelooker.kaleido.enums;
  */
 public enum ConfigKey {
 
-    movieLibraryPath, movieExcludePath, movieTrashPath,
+    movieLibraryPath,
 
-    tvshowDownloadPath, tvshowLibraryPath, tvshowTrashPath,
+    tvshowLibraryPath,
 
-    movieDownloadPath, musicLibraryPath, musicExcludePath,
+    musicLibraryPath,
 
-    plexUrl, plexToken, plexRetries, plexMovieLibraryId, plexMovieLibraryPath, plexTvshowLibraryId, plexTvshowLibraryPath, plexMusicLibraryId, plexMusicLibraryPath,
+    comicLibraryPath,
+
+    plexUrl, plexToken, plexRetries, plexMovieLibraryId, plexMovieLibraryPath,
+
+    plexTvshowLibraryId, plexTvshowLibraryPath, plexMusicLibraryId, plexMusicLibraryPath,
 
     neteaseUrl, tmmUrl, doubanApikey, doubanCookie, tmdbApikey,
 
     lastMovieAnalyzeTime, matchInfoSleepSecond, downloadLyricSleepSecond,
 
-    comicLibraryPath, comicTrashPath, comicImportPath, komgaUrl, komgaUsername, komgaPassword, komgaComicLibraryPath;
+    komgaUrl, komgaUsername, komgaPassword, komgaComicLibraryPath;
 }

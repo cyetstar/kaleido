@@ -19,4 +19,6 @@ public interface SubjectAttributeMapper extends BaseMapper<SubjectAttributeDO> {
     void deleteBySubjectIdAndAttributeType(@Param("subjectId") String subjectId, @Param("attributeType") String attributeType);
 
     List<SubjectAttributeDO> listBySubjectIdAndAttributeType(@Param("subjectId") String subjectId, @Param("attributeType") String attributeType);
+
+    List<SubjectAttributeDO> listByAttributeValueAndAttributeType(@Param("attributeValue") String attributeValue, @Param("attributeType") String attributeType);
 }

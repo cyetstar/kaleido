@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.utils;
 
+import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.google.common.collect.Sets;
@@ -28,37 +29,50 @@ public class KaleidoUtils {
     private static final String IMPORT = "import";
     private static final String RECYCLE = "#recycle";
 
-    public static Path getMoviePath(String path) {
+    public static Path getMovieBasicPath(String path) {
         String plexLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryPath);
+        path = StringUtils.removeStart(path, plexLibraryPath);
+        return Paths.get(path);
+    }
+
+    public static Path getMoviePath(String path) {
+        return Paths.get(getMovieLibraryPath().toString(), path);
+    }
+
+    public static Path getMovieLibraryPath() {
         String libraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
-        path = StringUtils.replace(path, plexLibraryPath, libraryPath);
-        return Paths.get(path.substring(0, path.lastIndexOf("/")));
+        return Paths.get(libraryPath);
     }
 
     public static Path getMovieImportPath() {
-        String libraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
-        return Paths.get(libraryPath).resolveSibling(IMPORT);
+        return getMovieLibraryPath().resolveSibling(IMPORT);
     }
 
     public static Path getMovieRecyclePath() {
-        String libraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
-        return Paths.get(libraryPath).resolveSibling(RECYCLE);
+        return getMovieLibraryPath().resolveSibling(RECYCLE);
     }
 
-    public static String getTvshowPath(String path) {
+    public static Path getTvshowBasicPath(String path) {
         String plexLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryPath);
+        path = StringUtils.removeStart(path, plexLibraryPath);
+        return Paths.get(path);
+    }
+
+    public static Path getTvshowPath(String path) {
+        return Paths.get(getTvshowLibraryPath().toString(), path);
+    }
+
+    public static Path getTvshowLibraryPath() {
         String libraryPath = ConfigUtils.getSysConfig(ConfigKey.tvshowLibraryPath);
-        return StringUtils.replace(path, plexLibraryPath, libraryPath);
+        return Paths.get(libraryPath);
     }
 
     public static Path getTvshowImportPath() {
-        String libraryPath = ConfigUtils.getSysConfig(ConfigKey.tvshowLibraryPath);
-        return Paths.get(libraryPath).resolveSibling(IMPORT);
+        return getTvshowLibraryPath().resolveSibling(IMPORT);
     }
 
     public static Path getTvshowRecyclePath() {
-        String libraryPath = ConfigUtils.getSysConfig(ConfigKey.tvshowLibraryPath);
-        return Paths.get(libraryPath).resolveSibling(RECYCLE);
+        return getTvshowLibraryPath().resolveSibling(RECYCLE);
     }
 
     public static Path getMusicPath(String path) {
@@ -93,6 +107,13 @@ public class KaleidoUtils {
     public static Path getComicRecyclePath() {
         String libraryPath = ConfigUtils.getSysConfig(ConfigKey.comicLibraryPath);
         return Paths.get(libraryPath).resolveSibling(RECYCLE);
+    }
+
+    public static Path inverseMoviePath(String path) {
+        String plexLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryPath);
+        String libraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
+        path = StringUtils.replace(path, libraryPath, plexLibraryPath);
+        return Paths.get(path);
     }
 
     public static Path inverseComicPath(String path) {
@@ -153,9 +174,17 @@ public class KaleidoUtils {
         CollectionUtils.addIgnoreNull(authors, StringUtils.defaultIfEmpty(writerName, null));
         CollectionUtils.addIgnoreNull(authors, StringUtils.defaultIfEmpty(pencillerName, null));
         String authorName = StringUtils.join(authors, "×");
-        String folder = String.format("%S [%S]", seriesTitle, authorName);
+        String folder = String.format("%s [%s]", seriesTitle, authorName);
         folder = folder.replaceAll("[\\\\/:*?\"<>|]", "_");
         return folder;
+    }
+
+    public static String genMoviePath(MovieBasicDTO movieBasicDTO) {
+        String decade = movieBasicDTO.getDecade();
+        if (StringUtils.isEmpty(decade)) {
+            decade = StringUtils.substring(movieBasicDTO.getYear(), 0, 3) + "0s";
+        }
+        return String.format("%s/%s (%s)", decade, movieBasicDTO.getTitle(), movieBasicDTO.getYear());
     }
 
 }

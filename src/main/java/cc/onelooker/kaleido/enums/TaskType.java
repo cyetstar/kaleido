@@ -7,4 +7,5 @@ package cc.onelooker.kaleido.enums;
  */
 public enum TaskType {
     writeComicInfo,
+    writeMovieNFO,
 }

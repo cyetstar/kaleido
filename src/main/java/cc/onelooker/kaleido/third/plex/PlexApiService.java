@@ -78,7 +78,7 @@ public class PlexApiService {
         });
     }
 
-    public Metadata findArtistById(Long artistId) {
+    public Metadata findArtistById(String artistId) {
         return doRequest(() -> {
             PlexResult plexResult = restTemplate.getForObject(plexUrl + API_ARTIST_FIND, PlexResult.class, artistId, plexToken);
             MediaContainer mediaContainer = plexResult.getMediaContainer();
@@ -102,7 +102,7 @@ public class PlexApiService {
         });
     }
 
-    public Metadata findAlbumById(Long albumId) {
+    public Metadata findAlbumById(String albumId) {
         return doRequest(() -> {
             PlexResult plexResult = restTemplate.getForObject(plexUrl + API_ALBUM_FIND, PlexResult.class, albumId, plexToken);
             MediaContainer mediaContainer = plexResult.getMediaContainer();
@@ -110,7 +110,7 @@ public class PlexApiService {
         });
     }
 
-    public List<Metadata> listAlbumByArtist(String libraryId, Long artistId) {
+    public List<Metadata> listAlbumByArtist(String libraryId, String artistId) {
         return doRequest(() -> {
             PlexResult plexResult = restTemplate.getForObject(plexUrl + API_ALBUM_LIST_BY_ARTIST, PlexResult.class, libraryId, artistId, plexToken);
             MediaContainer mediaContainer = plexResult.getMediaContainer();
@@ -118,7 +118,7 @@ public class PlexApiService {
         });
     }
 
-    public List<Metadata> listTrackByAlbumId(Long albumId) {
+    public List<Metadata> listTrackByAlbumId(String albumId) {
         return doRequest(() -> {
             PlexResult plexResult = restTemplate.getForObject(plexUrl + API_TRACK_LIST_BY_ALBUM, PlexResult.class, albumId, plexToken);
             MediaContainer mediaContainer = plexResult.getMediaContainer();
@@ -133,7 +133,7 @@ public class PlexApiService {
         });
     }
 
-    public Metadata findMovieById(Long movieId) {
+    public Metadata findMovieById(String movieId) {
         return doRequest(() -> {
             PlexResult plexResult = restTemplate.getForObject(plexUrl + API_MOVIE_FIND, PlexResult.class, movieId, plexToken);
             MediaContainer mediaContainer = plexResult.getMediaContainer();
@@ -189,7 +189,7 @@ public class PlexApiService {
         });
     }
 
-    public Metadata findEpisodeById(Long episodeId) {
+    public Metadata findEpisodeById(String episodeId) {
         return doRequest(() -> {
             PlexResult plexResult = restTemplate.getForObject(plexUrl + API_EPISODE_FIND, PlexResult.class, episodeId, plexToken);
             MediaContainer mediaContainer = plexResult.getMediaContainer();
@@ -197,7 +197,7 @@ public class PlexApiService {
         });
     }
 
-    public Metadata findSeasonById(Long seasonId) {
+    public Metadata findSeasonById(String seasonId) {
         return doRequest(() -> {
             PlexResult plexResult = restTemplate.getForObject(plexUrl + API_SEASON_FIND, PlexResult.class, seasonId, plexToken);
             MediaContainer mediaContainer = plexResult.getMediaContainer();
@@ -205,7 +205,7 @@ public class PlexApiService {
         });
     }
 
-    public Metadata findTvshowById(Long tvshowId) {
+    public Metadata findTvshowById(String tvshowId) {
         return doRequest(() -> {
             PlexResult plexResult = restTemplate.getForObject(plexUrl + API_TVSHOW_FIND, PlexResult.class, tvshowId, plexToken);
             MediaContainer mediaContainer = plexResult.getMediaContainer();
@@ -213,14 +213,14 @@ public class PlexApiService {
         });
     }
 
-    public void refreshMovieById(Long movieId) {
+    public void refreshMovieById(String movieId) {
         doRequest(() -> {
             restTemplate.put(plexUrl + API_MOVIE_REFRESH, String.class, movieId, plexToken);
             return true;
         });
     }
 
-    public void refresAlbumById(Long albumId) {
+    public void refresAlbumById(String albumId) {
         doRequest(() -> {
             restTemplate.put(plexUrl + API_ALBUM_REFRESH, String.class, albumId, plexToken);
             return true;
@@ -243,14 +243,14 @@ public class PlexApiService {
         });
     }
 
-    public void deleteCollection(Long collectionId) {
+    public void deleteCollection(String collectionId) {
         doRequest(() -> {
             restTemplate.delete(plexUrl + API_COLLECTION, collectionId, plexToken);
             return true;
         });
     }
 
-    public Metadata findCollectionById(Long collectionId) {
+    public Metadata findCollectionById(String collectionId) {
         return doRequest(() -> {
             PlexResult plexResult = restTemplate.getForObject(plexUrl + API_COLLECTION, PlexResult.class, collectionId, plexToken);
             MediaContainer mediaContainer = plexResult.getMediaContainer();
@@ -258,7 +258,7 @@ public class PlexApiService {
         });
     }
 
-    public List<Metadata> listMovieByCollectionId(Long collectionId) {
+    public List<Metadata> listMovieByCollectionId(String collectionId) {
         return doRequest(() -> {
             PlexResult plexResult = restTemplate.getForObject(plexUrl + API_COLLECTION_CHILDREN, PlexResult.class, collectionId, plexToken);
             MediaContainer mediaContainer = plexResult.getMediaContainer();
@@ -274,21 +274,21 @@ public class PlexApiService {
         });
     }
 
-    public void deleteMetadata(Long metadataId) {
+    public void deleteMetadata(String metadataId) {
         doRequest(() -> {
             restTemplate.delete(plexUrl + API_METADATA, metadataId, plexToken);
             return true;
         });
     }
 
-    public List<Metadata> listMetadataChildren(Long metadataId) {
+    public List<Metadata> listMetadataChildren(String metadataId) {
         return doRequest(() -> {
             PlexResult plexResult = restTemplate.getForObject(plexUrl + API_METADATA_CHILDREN, PlexResult.class, metadataId, plexToken);
             return plexResult.getMediaContainer().getMetadataList();
         });
     }
 
-    public Metadata findMetadata(Long metadataId) {
+    public Metadata findMetadata(String metadataId) {
         return doRequest(() -> {
             PlexResult plexResult = restTemplate.getForObject(plexUrl + API_METADATA, PlexResult.class, metadataId, plexToken);
             MediaContainer mediaContainer = plexResult.getMediaContainer();
@@ -296,7 +296,7 @@ public class PlexApiService {
         });
     }
 
-    public void refreshMetadata(Long metadataId) {
+    public void refreshMetadata(String metadataId) {
          doRequest(() -> {
             restTemplate.put(plexUrl + API_METADATA_REFRESH, String.class, metadataId, plexToken);
             return true;

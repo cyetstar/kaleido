@@ -1,9 +1,9 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.dto.tvshow.TvshowEpisodeDTO;
+import cc.onelooker.kaleido.dto.TvshowEpisodeDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.tvshow.TvshowEpisodeService;
-import cc.onelooker.kaleido.service.tvshow.TvshowManager;
+import cc.onelooker.kaleido.service.TvshowEpisodeService;
+import cc.onelooker.kaleido.service.TvshowManager;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
@@ -51,11 +51,11 @@ public class TvshowSyncPlexRunnable extends AbstractEntityActionRunnable<Metadat
     @Override
     protected void afterRun(Map<String, String> params) {
         List<TvshowEpisodeDTO> tvshowEpisodeDTOList = tvshowEpisodeService.list(null);
-        List<Long> idList = tvshowEpisodeDTOList.stream().map(TvshowEpisodeDTO::getId).collect(Collectors.toList());
-        List<Long> plexIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
-        Collection<Long> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
+        List<String> idList = tvshowEpisodeDTOList.stream().map(TvshowEpisodeDTO::getId).collect(Collectors.toList());
+        List<String> plexIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
+        Collection<String> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
         if (CollectionUtils.isNotEmpty(deleteIdList)) {
-            for (Long deleteId : deleteIdList) {
+            for (String deleteId : deleteIdList) {
                 tvshowEpisodeService.deleteById(deleteId);
             }
         }

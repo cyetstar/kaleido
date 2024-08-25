@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.service.movie;
 
 import cc.onelooker.kaleido.enums.ConfigKey;
+import cc.onelooker.kaleido.service.MovieCollectionService;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;

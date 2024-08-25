@@ -1,9 +1,9 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.dto.movie.MovieBasicCollectionDTO;
-import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
-import cc.onelooker.kaleido.service.movie.MovieBasicCollectionService;
-import cc.onelooker.kaleido.service.movie.MovieManager;
+import cc.onelooker.kaleido.dto.MovieBasicCollectionDTO;
+import cc.onelooker.kaleido.dto.MovieCollectionDTO;
+import cc.onelooker.kaleido.service.MovieBasicCollectionService;
+import cc.onelooker.kaleido.service.MovieManager;
 import cc.onelooker.kaleido.third.tmm.Movie;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cn.hutool.core.thread.ThreadUtil;

@@ -4,19 +4,15 @@ import cc.onelooker.kaleido.dto.AlternateTitleDTO;
 import cc.onelooker.kaleido.dto.AttributeDTO;
 import cc.onelooker.kaleido.dto.PathInfoDTO;
 import cc.onelooker.kaleido.dto.SubjectAttributeDTO;
-import cc.onelooker.kaleido.dto.comic.ComicAuthorDTO;
-import cc.onelooker.kaleido.dto.comic.ComicBookDTO;
-import cc.onelooker.kaleido.dto.comic.ComicSeriesAuthorDTO;
-import cc.onelooker.kaleido.dto.comic.ComicSeriesDTO;
+import cc.onelooker.kaleido.dto.ComicAuthorDTO;
+import cc.onelooker.kaleido.dto.ComicBookDTO;
+import cc.onelooker.kaleido.dto.ComicSeriesAuthorDTO;
+import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.enums.AttributeType;
 import cc.onelooker.kaleido.enums.AuthorRole;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.nfo.ComicInfoNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
-import cc.onelooker.kaleido.service.comic.ComicAuthorService;
-import cc.onelooker.kaleido.service.comic.ComicBookService;
-import cc.onelooker.kaleido.service.comic.ComicSeriesAuthorService;
-import cc.onelooker.kaleido.service.comic.ComicSeriesService;
 import cc.onelooker.kaleido.third.komga.*;
 import cc.onelooker.kaleido.third.tmm.Comic;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
@@ -213,7 +209,7 @@ public class ComicManager {
 
     @Transactional
     public void matchPath(Path path, String bgmId) {
-        Path importPath = Paths.get(ConfigUtils.getSysConfig(ConfigKey.comicImportPath));
+        Path importPath = KaleidoUtils.getComicImportPath();
         try {
             if (!Files.isDirectory(path)) {
                 String baseName = FilenameUtils.getBaseName(path.getFileName().toString());
@@ -340,7 +336,7 @@ public class ComicManager {
         ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(seriesId);
         comicSeriesAuthorService.listBySeriesId(seriesId).forEach(s -> {
             ComicAuthorDTO comicAuthorDTO = comicAuthorService.findById(s.getAuthorId());
-            if (StringUtils.equals(s.getRole(), AuthorRole.writer.name())) {
+            if (StringUtils.equals(s.getRole(), AuthorRole.Writer.name())) {
                 comicSeriesDTO.setWriterName(comicAuthorDTO.getName());
             } else {
                 comicSeriesDTO.setPencillerName(comicAuthorDTO.getName());

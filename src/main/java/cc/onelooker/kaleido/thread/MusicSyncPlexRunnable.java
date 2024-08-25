@@ -1,9 +1,9 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
+import cc.onelooker.kaleido.dto.MusicAlbumDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.music.MusicAlbumService;
-import cc.onelooker.kaleido.service.music.MusicManager;
+import cc.onelooker.kaleido.service.MusicAlbumService;
+import cc.onelooker.kaleido.service.MusicManager;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
@@ -57,11 +57,11 @@ public class MusicSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata
     @Override
     protected void afterRun(@Nullable Map<String, String> params) {
         List<MusicAlbumDTO> musicAlbumDTOList = musicAlbumService.list(null);
-        List<Long> idList = musicAlbumDTOList.stream().map(MusicAlbumDTO::getId).collect(Collectors.toList());
-        List<Long> plexIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
-        Collection<Long> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
+        List<String> idList = musicAlbumDTOList.stream().map(MusicAlbumDTO::getId).collect(Collectors.toList());
+        List<String> plexIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
+        Collection<String> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
         if (CollectionUtils.isNotEmpty(deleteIdList)) {
-            for (Long deleteId : deleteIdList) {
+            for (String deleteId : deleteIdList) {
                 musicAlbumService.deleteById(deleteId);
             }
         }

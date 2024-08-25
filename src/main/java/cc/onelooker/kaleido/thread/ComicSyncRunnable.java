@@ -1,11 +1,12 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.convert.comic.ComicBookConvert;
-import cc.onelooker.kaleido.dto.comic.ComicBookDTO;
+import cc.onelooker.kaleido.convert.ComicBookConvert;
+import cc.onelooker.kaleido.dto.ComicBookDTO;
+import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.enums.TaskType;
+import cc.onelooker.kaleido.service.ComicBookService;
 import cc.onelooker.kaleido.service.ComicManager;
 import cc.onelooker.kaleido.service.TaskService;
-import cc.onelooker.kaleido.service.comic.ComicBookService;
 import cc.onelooker.kaleido.third.komga.Book;
 import cc.onelooker.kaleido.third.komga.KomgaApiService;
 import cc.onelooker.kaleido.third.komga.Series;
@@ -74,7 +75,9 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
     @Override
     protected void processEntity(Map<String, String> params, Book book) throws Exception {
         ComicBookDTO comicBookDTO = comicBookService.findById(book.getId());
-        if (comicBookDTO == null || book.getUpdatedAt().compareTo(comicBookDTO.getUpdatedAt()) > 0 || MapUtils.getBooleanValue(params, "force")) {
+        if (comicBookDTO == null
+                || book.getUpdatedAt().compareTo(comicBookDTO.getUpdatedAt()) > 0
+                || MapUtils.getBooleanValue(params, "force")) {
             //同步komga
             comicManager.syncBook(book);
             if (seriesIdCache.add(book.getSeriesId())) {
@@ -84,12 +87,17 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
                 comicManager.readComicInfo(book.getSeriesId());
             }
             //将数据写回到comicinfo.xml
-            taskService.newTask(book.getId(), "ComicBook", TaskType.writeComicInfo);
+            taskService.newTask(book.getId(), SubjectType.ComicBook, TaskType.writeComicInfo);
         }
     }
 
     @Override
     protected void afterRun(Map<String, String> params) {
+        String seriesId = MapUtils.getString(params, "seriesId");
+        if (StringUtils.isNotEmpty(seriesId)) {
+            //单条记录同步，不做后续处理
+            return;
+        }
         ComicBookDTO param = ComicBookConvert.INSTANCE.convertToDTO(params);
         List<ComicBookDTO> comicBookDTOList = comicBookService.list(param);
         List<String> idList = comicBookDTOList.stream().map(ComicBookDTO::getId).collect(Collectors.toList());

@@ -1,9 +1,9 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.dto.movie.MovieThreadDTO;
+import cc.onelooker.kaleido.dto.MovieThreadDTO;
 import cc.onelooker.kaleido.enums.ThreadStatus;
-import cc.onelooker.kaleido.service.movie.MovieManager;
-import cc.onelooker.kaleido.service.movie.MovieThreadService;
+import cc.onelooker.kaleido.service.MovieManager;
+import cc.onelooker.kaleido.service.MovieThreadService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;

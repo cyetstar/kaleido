@@ -7,6 +7,6 @@ package cc.onelooker.kaleido.enums;
  */
 public enum AuthorRole {
 
-    writer,
-    penciller,
+    Writer,
+    Penciller,
 }

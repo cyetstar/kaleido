@@ -14,9 +14,17 @@ import java.util.List;
  */
 public interface SubjectAttributeService extends IBaseService<SubjectAttributeDTO> {
 
-    void deleteBySubjectIdAndAttributeType(String subject, AttributeType type);
+    void deleteBySubjectIdAndAttributeType(String subjectId, AttributeType attributeType);
+
+    void deleteBySubjectId(String subjectId);
 
     void insert(String subjectId, String attributeId);
 
-    List<SubjectAttributeDTO> listBySubjectIdAndAttributeType(String subjectId, AttributeType type);
+    List<SubjectAttributeDTO> listBySubjectIdAndAttributeType(String subjectId, AttributeType attributeType);
+
+    List<SubjectAttributeDTO> listByAttributeValueAndAttributeType(String attributeValue, AttributeType attributeType);
+
+    void updateAttributeIds(List<String> attributeIdList, String subjectId, AttributeType attributeType);
+
+    void updateAttribute(List<String> attributeValueList, String subjectId, AttributeType attributeType);
 }

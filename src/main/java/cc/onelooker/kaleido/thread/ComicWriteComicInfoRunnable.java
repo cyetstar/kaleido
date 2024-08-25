@@ -1,15 +1,15 @@
 package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.dto.TaskDTO;
-import cc.onelooker.kaleido.dto.comic.ComicBookDTO;
-import cc.onelooker.kaleido.dto.comic.ComicSeriesDTO;
+import cc.onelooker.kaleido.dto.ComicBookDTO;
+import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.nfo.ComicInfoNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.service.ComicManager;
 import cc.onelooker.kaleido.service.TaskService;
-import cc.onelooker.kaleido.service.comic.ComicBookService;
-import cc.onelooker.kaleido.service.comic.ComicSeriesService;
+import cc.onelooker.kaleido.service.ComicBookService;
+import cc.onelooker.kaleido.service.ComicSeriesService;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cn.hutool.core.util.CharsetUtil;

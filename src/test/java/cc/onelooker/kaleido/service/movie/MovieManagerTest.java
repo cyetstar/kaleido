@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.service.movie;
 
+import cc.onelooker.kaleido.service.MovieManager;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cc.onelooker.kaleido.mapper.system.SysResourceMapper">
+<mapper namespace="cc.onelooker.kaleido.mapper.SysResourceMapper">
 
-    <select id="listByUserId" resultType="cc.onelooker.kaleido.entity.system.SysResourceDO">
+    <select id="listByUserId" resultType="cc.onelooker.kaleido.entity.SysResourceDO">
         select distinct t1.*
           from sys_resource t1
     inner join sys_role_resource t2 on t2.resource_id = t1.id
@@ -10,7 +10,7 @@
          where t3.user_id = #{userId}
     </select>
 
-    <select id="listByRoleId" resultType="cc.onelooker.kaleido.entity.system.SysResourceDO">
+    <select id="listByRoleId" resultType="cc.onelooker.kaleido.entity.SysResourceDO">
         select distinct t1.*
           from sys_resource t1
     inner join sys_role_resource t2 on t2.resource_id = t1.id

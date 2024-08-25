@@ -1,9 +1,9 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.dto.movie.MovieBasicCollectionDTO;
-import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
-import cc.onelooker.kaleido.service.movie.MovieBasicCollectionService;
-import cc.onelooker.kaleido.service.movie.MovieBasicService;
+import cc.onelooker.kaleido.dto.MovieBasicCollectionDTO;
+import cc.onelooker.kaleido.dto.MovieBasicDTO;
+import cc.onelooker.kaleido.service.MovieBasicCollectionService;
+import cc.onelooker.kaleido.service.MovieBasicService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.util.constant.Constants;

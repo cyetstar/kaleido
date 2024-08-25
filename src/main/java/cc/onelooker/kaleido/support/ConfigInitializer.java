@@ -1,7 +1,7 @@
 package cc.onelooker.kaleido.support;
 
-import cc.onelooker.kaleido.dto.system.SysConfigDTO;
-import cc.onelooker.kaleido.service.system.SysConfigService;
+import cc.onelooker.kaleido.dto.SysConfigDTO;
+import cc.onelooker.kaleido.service.SysConfigService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

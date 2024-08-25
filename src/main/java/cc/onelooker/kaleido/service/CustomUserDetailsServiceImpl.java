@@ -1,9 +1,7 @@
 package cc.onelooker.kaleido.service;
 
-import cc.onelooker.kaleido.dto.system.SysRoleDTO;
-import cc.onelooker.kaleido.dto.system.SysUserDTO;
-import cc.onelooker.kaleido.service.system.SysRoleService;
-import cc.onelooker.kaleido.service.system.SysUserService;
+import cc.onelooker.kaleido.dto.SysRoleDTO;
+import cc.onelooker.kaleido.dto.SysUserDTO;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.zjjcnt.common.core.dict.Dictionary;
 import com.zjjcnt.common.security.component.AbstractCustomUserDetailsServiceImpl;

@@ -1,7 +1,7 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.dto.movie.MovieCollectionDTO;
-import cc.onelooker.kaleido.service.movie.MovieCollectionService;
+import cc.onelooker.kaleido.dto.MovieCollectionDTO;
+import cc.onelooker.kaleido.service.MovieCollectionService;
 import cc.onelooker.kaleido.third.tmm.Doulist;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.DateTimeUtil;

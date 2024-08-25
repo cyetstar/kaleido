@@ -1,15 +1,13 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.ComicManager;
-import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,7 +21,7 @@ import java.util.stream.Collectors;
 public class ComicUpdateSourceRunnable extends AbstractEntityActionRunnable<Path> {
 
     private final ComicManager comicManager;
-    private String importPath;
+    private Path importPath;
 
     public ComicUpdateSourceRunnable(ComicManager comicManager) {
         this.comicManager = comicManager;
@@ -36,7 +34,7 @@ public class ComicUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     @Override
     protected void beforeRun(Map<String, String> params) {
-        importPath = ConfigUtils.getSysConfig(ConfigKey.comicImportPath);
+        importPath = KaleidoUtils.getComicImportPath();
     }
 
     @Override
@@ -45,7 +43,7 @@ public class ComicUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
             PageResult<Path> pageResult = new PageResult<>();
             pageResult.setSearchCount(true);
             if (pageNumber == 1) {
-                List<Path> pathList = Files.list(Paths.get(importPath)).collect(Collectors.toList());
+                List<Path> pathList = Files.list(importPath).collect(Collectors.toList());
                 pageResult.setTotal((long) pathList.size());
                 pageResult.setRecords(pathList);
             }

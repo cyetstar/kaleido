@@ -1,12 +1,12 @@
 package cc.onelooker.kaleido.utils;
 
-import cc.onelooker.kaleido.dto.movie.MovieThreadDTO;
-import cc.onelooker.kaleido.dto.movie.MovieThreadFilenameDTO;
-import cc.onelooker.kaleido.dto.movie.PTThreadDTO;
+import cc.onelooker.kaleido.dto.MovieThreadDTO;
+import cc.onelooker.kaleido.dto.MovieThreadFilenameDTO;
+import cc.onelooker.kaleido.dto.PTThreadDTO;
 import cc.onelooker.kaleido.enums.ThreadStatus;
-import cc.onelooker.kaleido.service.movie.MovieThreadFilenameService;
-import cc.onelooker.kaleido.service.movie.MovieThreadService;
-import cc.onelooker.kaleido.service.movie.PTThreadService;
+import cc.onelooker.kaleido.service.MovieThreadFilenameService;
+import cc.onelooker.kaleido.service.MovieThreadService;
+import cc.onelooker.kaleido.service.PTThreadService;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.RandomUtil;

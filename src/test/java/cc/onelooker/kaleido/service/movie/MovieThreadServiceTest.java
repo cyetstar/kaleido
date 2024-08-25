@@ -1,7 +1,8 @@
 package cc.onelooker.kaleido.service.movie;
 
-import cc.onelooker.kaleido.dto.movie.MovieThreadDTO;
+import cc.onelooker.kaleido.dto.MovieThreadDTO;
 import cc.onelooker.kaleido.enums.ThreadStatus;
+import cc.onelooker.kaleido.service.MovieThreadService;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.RandomUtil;

@@ -1,15 +1,8 @@
 package cc.onelooker.kaleido.schedule;
 
-import cc.onelooker.kaleido.service.movie.MovieManager;
-import cc.onelooker.kaleido.service.system.SysDictTypeService;
-import cc.onelooker.kaleido.thread.ComicSyncRunnable;
-import cc.onelooker.kaleido.thread.ComicWriteComicInfoRunnable;
-import cc.onelooker.kaleido.thread.MovieAnalyzeRunnable;
-import cc.onelooker.kaleido.thread.MovieCheckThreadStatusRunnable;
-import cc.onelooker.kaleido.thread.MovieCollectionCheckMovieStatusRunnable;
-import cc.onelooker.kaleido.thread.MovieSyncPlexRunnable;
-import cc.onelooker.kaleido.thread.MusicSyncPlexRunnable;
-import cc.onelooker.kaleido.thread.TvshowSyncPlexRunnable;
+import cc.onelooker.kaleido.service.MovieManager;
+import cc.onelooker.kaleido.service.SysDictTypeService;
+import cc.onelooker.kaleido.thread.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,7 +24,7 @@ public class JobManager {
     private MovieCollectionCheckMovieStatusRunnable movieCollectionCheckMovieStatusRunnable;
 
     @Autowired
-    private MovieSyncPlexRunnable movieSyncPlexRunnable;
+    private MovieSyncRunnable movieSyncPlexRunnable;
 
     @Autowired
     private MovieAnalyzeRunnable movieAnalyzeRunnable;
@@ -53,6 +46,9 @@ public class JobManager {
 
     @Autowired
     private ComicWriteComicInfoRunnable comicWriteComicInfoRunnable;
+
+    @Autowired
+    private MovieWriteNFORunnable movieWriteNFORunnable;
 
     @Scheduled(cron = "0 0 2 * * ?")
     public void syncPlexMovie() {
@@ -103,9 +99,16 @@ public class JobManager {
     }
 
     @Scheduled(cron = "0 * * * * ?")
-    public void executeTask() {
+    public void executeWriteComicInfo() {
         if (comicWriteComicInfoRunnable.isNeedRun()) {
             comicWriteComicInfoRunnable.run();
+        }
+    }
+
+    @Scheduled(cron = "0 * * * * ?")
+    public void executeWriteMovieNFO() {
+        if (movieWriteNFORunnable.isNeedRun()) {
+            movieWriteNFORunnable.run();
         }
     }
 

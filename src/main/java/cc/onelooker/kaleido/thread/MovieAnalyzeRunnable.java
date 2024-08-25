@@ -1,12 +1,12 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.convert.movie.MovieBasicConvert;
-import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
-import cc.onelooker.kaleido.dto.system.SysConfigDTO;
+import cc.onelooker.kaleido.convert.MovieBasicConvert;
+import cc.onelooker.kaleido.dto.MovieBasicDTO;
+import cc.onelooker.kaleido.dto.SysConfigDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.movie.MovieBasicService;
-import cc.onelooker.kaleido.service.movie.MovieManager;
-import cc.onelooker.kaleido.service.system.SysConfigService;
+import cc.onelooker.kaleido.service.MovieBasicService;
+import cc.onelooker.kaleido.service.MovieManager;
+import cc.onelooker.kaleido.service.SysConfigService;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
@@ -38,7 +38,7 @@ public class MovieAnalyzeRunnable extends AbstractEntityActionRunnable<Metadata>
 
     private Long maxUpdatedAt = 0L;
 
-    private List<Long> idList;
+    private List<String> idList;
 
     public MovieAnalyzeRunnable(MovieManager movieManager, PlexApiService plexApiService, SysConfigService sysConfigService, MovieBasicService movieBasicService) {
         this.movieManager = movieManager;
@@ -90,6 +90,7 @@ public class MovieAnalyzeRunnable extends AbstractEntityActionRunnable<Metadata>
     @Override
     protected void processEntity(Map<String, String> params, Metadata metadata) throws Exception {
         if (CollectionUtils.isNotEmpty(idList) && idList.contains(metadata.getRatingKey())) {
+            //查出所有数据后，匹配上的才进行分析
             movieManager.analyze(metadata);
         } else {
             long lastUpdatedAt = metadata.getUpdatedAt();

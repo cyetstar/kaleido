@@ -1,15 +1,13 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.tvshow.TvshowManager;
-import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.service.TvshowManager;
+import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,7 +20,7 @@ public class TvshowUpdateSourceRunnable extends AbstractEntityActionRunnable<Pat
 
     private final TvshowManager tvshowManager;
 
-    private String downloadPath;
+    private Path importPath;
 
     public TvshowUpdateSourceRunnable(TvshowManager tvshowManager) {
         this.tvshowManager = tvshowManager;
@@ -35,7 +33,7 @@ public class TvshowUpdateSourceRunnable extends AbstractEntityActionRunnable<Pat
 
     @Override
     protected void beforeRun(Map<String, String> params) {
-        downloadPath = ConfigUtils.getSysConfig(ConfigKey.tvshowDownloadPath);
+        importPath = KaleidoUtils.getTvshowImportPath();
     }
 
     @Override
@@ -44,7 +42,7 @@ public class TvshowUpdateSourceRunnable extends AbstractEntityActionRunnable<Pat
             PageResult<Path> pageResult = new PageResult<>();
             pageResult.setSearchCount(true);
             if (pageNumber == 1) {
-                List<Path> pathList = Files.list(Paths.get(downloadPath)).collect(Collectors.toList());
+                List<Path> pathList = Files.list(importPath).collect(Collectors.toList());
                 pageResult.setTotal((long) pathList.size());
                 pageResult.setRecords(pathList);
             }

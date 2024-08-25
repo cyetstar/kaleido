@@ -1,7 +1,7 @@
 package cc.onelooker.kaleido.service.movie;
 
-import cc.onelooker.kaleido.dto.movie.PTThreadDTO;
-import cn.hutool.core.thread.ThreadUtil;
+import cc.onelooker.kaleido.dto.PTThreadDTO;
+import cc.onelooker.kaleido.service.PTThreadService;
 import com.alibaba.fastjson2.JSONArray;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -13,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * @Author xiadawei

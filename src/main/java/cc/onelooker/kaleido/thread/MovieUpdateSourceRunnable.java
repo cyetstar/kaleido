@@ -1,8 +1,9 @@
 package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.movie.MovieManager;
+import cc.onelooker.kaleido.service.MovieManager;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,7 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     private final MovieManager movieManager;
 
-    private String downloadPath;
+    private Path importPath;
 
     public MovieUpdateSourceRunnable(MovieManager movieManager) {
         this.movieManager = movieManager;
@@ -35,7 +36,7 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     @Override
     protected void beforeRun(Map<String, String> params) {
-        downloadPath = ConfigUtils.getSysConfig(ConfigKey.movieDownloadPath);
+        importPath = KaleidoUtils.getMovieImportPath();
     }
 
     @Override
@@ -44,7 +45,7 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
             PageResult<Path> pageResult = new PageResult<>();
             pageResult.setSearchCount(true);
             if (pageNumber == 1) {
-                List<Path> pathList = Files.list(Paths.get(downloadPath)).collect(Collectors.toList());
+                List<Path> pathList = Files.list(importPath).collect(Collectors.toList());
                 pageResult.setTotal((long) pathList.size());
                 pageResult.setRecords(pathList);
             }

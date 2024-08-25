@@ -1,14 +1,13 @@
 package cc.onelooker.kaleido.nfo;
 
-import cc.onelooker.kaleido.dto.comic.ComicBookDTO;
-import cc.onelooker.kaleido.dto.comic.ComicSeriesDTO;
+import cc.onelooker.kaleido.dto.ComicBookDTO;
+import cc.onelooker.kaleido.dto.ComicSeriesDTO;
+import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.enums.SourceType;
-import cc.onelooker.kaleido.third.plex.Metadata;
-import cc.onelooker.kaleido.third.plex.Tag;
 import cc.onelooker.kaleido.third.tmm.*;
 import cn.hutool.core.exceptions.ExceptionUtil;
+import cn.hutool.extra.pinyin.PinyinUtil;
 import com.google.common.collect.Lists;
-import com.zjjcnt.common.util.DateTimeUtils;
 import com.zjjcnt.common.util.constant.Constants;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -97,8 +96,54 @@ public class NFOUtil {
         return comicInfoNFO;
     }
 
-    public static MovieNFO toMovieNFO(MovieNFO movieNFO, Movie movie) {
+    public static MovieNFO toMovieNFO(MovieBasicDTO movieBasicDTO) {
+        MovieNFO movieNFO = new MovieNFO();
+        movieNFO.setDoubanId(movieBasicDTO.getDoubanId());
+        movieNFO.setImdbId(movieBasicDTO.getImdbId());
+        movieNFO.setTmdbId(movieBasicDTO.getTmdbId());
+        movieNFO.setTitle(movieBasicDTO.getTitle());
+        movieNFO.setOriginalTitle(movieBasicDTO.getOriginalTitle());
+        movieNFO.setSortTitle(movieBasicDTO.getTitleSort());
+        movieNFO.setYear(movieBasicDTO.getYear());
+        List<RatingNFO> ratingNFOList = Lists.newArrayList();
+        CollectionUtils.addIgnoreNull(ratingNFOList, toRatingNFO(movieBasicDTO.getRating()));
+        movieNFO.setRatings(ratingNFOList);
+        List<UniqueidNFO> uniqueidNFOList = Lists.newArrayList();
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.douban, movieBasicDTO.getDoubanId()));
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.imdb, movieBasicDTO.getImdbId()));
+        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.tmdb, movieBasicDTO.getTmdbId()));
+        movieNFO.setUniqueids(uniqueidNFOList);
+        movieNFO.setAkas(movieBasicDTO.getAkaList());
+        movieNFO.setPlot(movieBasicDTO.getSummary());
+        movieNFO.setGenres(movieBasicDTO.getGenreList());
+        movieNFO.setCountries(movieBasicDTO.getCountryList());
+        movieNFO.setMpaa(movieBasicDTO.getContentRating());
+        if (CollectionUtils.isNotEmpty(movieBasicDTO.getDirectorList())) {
+            movieNFO.setDirectors(movieBasicDTO.getDirectorList().stream().map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName())).collect(Collectors.toList()));
+        }
+        if (CollectionUtils.isNotEmpty(movieBasicDTO.getWriterList())) {
+            movieNFO.setCredits(movieBasicDTO.getWriterList().stream().map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName())).collect(Collectors.toList()));
+        }
+        if (CollectionUtils.isNotEmpty(movieBasicDTO.getActorList())) {
+            movieNFO.setActors(movieBasicDTO.getActorList().stream().map(s -> {
+                ActorNFO actorNFO = new ActorNFO();
+                actorNFO.setName(StringUtils.defaultString(s.getName(), s.getOriginalName()));
+                actorNFO.setRole(s.getPlayRole());
+                actorNFO.setThumb(s.getThumb());
+                return actorNFO;
+            }).collect(Collectors.toList()));
+
+        }
+        return movieNFO;
+    }
+
+    public static MovieNFO toMovieNFO(Movie movie) {
+        MovieNFO movieNFO = new MovieNFO();
+        movieNFO.setDoubanId(movie.getDoubanId());
+        movieNFO.setImdbId(movie.getImdbId());
+        movieNFO.setTmdbId(movie.getTmdbId());
         movieNFO.setTitle(movie.getTitle());
+        movieNFO.setSortTitle(PinyinUtil.getFirstLetter(movie.getTitle(), StringUtils.EMPTY));
         movieNFO.setOriginalTitle(movie.getOriginalTitle());
         movieNFO.setYear(movie.getYear());
         List<RatingNFO> ratingNFOList = Lists.newArrayList();
@@ -121,47 +166,6 @@ public class NFOUtil {
             movieNFO.setCredits(movie.getWriters().stream().map(s -> StringUtils.defaultString(s.getCnName(), s.getEnName())).collect(Collectors.toList()));
         }
         movieNFO.setActors(toActorNFOs(movie.getActors()));
-        return movieNFO;
-    }
-
-    public static MovieNFO toMovieNFO(Movie movie) {
-        MovieNFO movieNFO = new MovieNFO();
-        return toMovieNFO(movieNFO, movie);
-    }
-
-    public static MovieNFO toMovieNFO(Metadata metadata) {
-        MovieNFO movieNFO = new MovieNFO();
-        movieNFO.setId(String.valueOf(metadata.getRatingKey()));
-        movieNFO.setTitle(metadata.getTitle());
-        movieNFO.setOriginalTitle(metadata.getOriginalTitle());
-        movieNFO.setSortTitle(metadata.getTitleSort());
-        movieNFO.setYear(metadata.getYear());
-        movieNFO.setPlot(metadata.getSummary());
-        movieNFO.setMpaa(metadata.getContentRating());
-        if (metadata.getGenreList() != null) {
-            movieNFO.setGenres(metadata.getGenreList().stream().map(Tag::getTag).collect(Collectors.toList()));
-        }
-        if (metadata.getCountryList() != null) {
-            movieNFO.setCountries(metadata.getCountryList().stream().map(Tag::getTag).collect(Collectors.toList()));
-        }
-        if (metadata.getRating() != null) {
-            RatingNFO ratingNFO = new RatingNFO();
-            ratingNFO.setValue(String.valueOf(metadata.getRating()));
-            movieNFO.setRatings(Lists.newArrayList(ratingNFO));
-        }
-        if (metadata.getDirectorList() != null) {
-            movieNFO.setDirectors(metadata.getDirectorList().stream().map(Tag::getTag).collect(Collectors.toList()));
-        }
-        if (metadata.getWriterList() != null) {
-            movieNFO.setCredits(metadata.getWriterList().stream().map(Tag::getTag).collect(Collectors.toList()));
-        }
-        if (metadata.getRoleList() != null) {
-            movieNFO.setActors(metadata.getRoleList().stream().map(s -> toActorNFO(s.getTag(), s.getRole(), s.getThumb())).collect(Collectors.toList()));
-        }
-        if (metadata.getCollectionList() != null) {
-            movieNFO.setSets(metadata.getCollectionList().stream().map(s -> toSetNFO(s.getTag())).collect(Collectors.toList()));
-        }
-        movieNFO.setDateadded(DateTimeUtils.formatDateTime(DateTimeUtils.parseSecondTimestamp(metadata.getAddedAt()), "yyyy-MM-dd HH:mm:ss"));
         return movieNFO;
     }
 

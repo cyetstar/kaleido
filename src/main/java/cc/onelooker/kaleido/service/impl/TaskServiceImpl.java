@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.service.impl;
 import cc.onelooker.kaleido.convert.TaskConvert;
 import cc.onelooker.kaleido.dto.TaskDTO;
 import cc.onelooker.kaleido.entity.TaskDO;
+import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.mapper.TaskMapper;
 import cc.onelooker.kaleido.service.TaskService;
@@ -49,10 +50,10 @@ public class TaskServiceImpl extends AbstractBaseServiceImpl<TaskMapper, TaskDO,
 
     @Override
     @Transactional
-    public void newTask(String subjectId, String subjectType, TaskType taskType) {
+    public void newTask(String subjectId, SubjectType subjectType, TaskType taskType) {
         TaskDTO taskDTO = new TaskDTO();
         taskDTO.setSubjectId(subjectId);
-        taskDTO.setSubjectType(subjectType);
+        taskDTO.setSubjectType(subjectType.name());
         taskDTO.setTaskType(taskType.name());
         taskDTO.setTaskStatus(KaleidoConstants.TASK_STATUS_TODO);
         TaskDTO existTaskDTO = find(taskDTO);

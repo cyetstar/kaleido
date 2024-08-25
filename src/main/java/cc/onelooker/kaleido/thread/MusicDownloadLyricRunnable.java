@@ -1,10 +1,10 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.convert.music.MusicAlbumConvert;
-import cc.onelooker.kaleido.dto.music.MusicAlbumDTO;
+import cc.onelooker.kaleido.convert.MusicAlbumConvert;
+import cc.onelooker.kaleido.dto.MusicAlbumDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.music.MusicAlbumService;
-import cc.onelooker.kaleido.service.music.MusicManager;
+import cc.onelooker.kaleido.service.MusicAlbumService;
+import cc.onelooker.kaleido.service.MusicManager;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;

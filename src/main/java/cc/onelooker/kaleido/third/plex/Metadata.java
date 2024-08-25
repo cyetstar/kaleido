@@ -13,11 +13,11 @@ import java.util.List;
  */
 @Data
 public class Metadata {
-    private Long ratingKey;
+    private String ratingKey;
     private String key;
     private Integer index;
     private String guid;
-    private Long parentRatingKey;
+    private String parentRatingKey;
     private String parentGuid;
     private String parentStudio;
     private String parentKey;
@@ -25,7 +25,7 @@ public class Metadata {
     private Integer parentIndex;
     private String parentYear;
     private String parentThumb;
-    private Long grandparentRatingKey;
+    private String grandparentRatingKey;
     private String grandparentGuid;
     private String grandparentTitle;
     private String grandparentKey;

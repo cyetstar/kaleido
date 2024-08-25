@@ -1,7 +1,7 @@
 package cc.onelooker.kaleido.web.api;
 
-import cc.onelooker.kaleido.dto.movie.MovieBasicDTO;
-import cc.onelooker.kaleido.service.movie.MovieBasicService;
+import cc.onelooker.kaleido.dto.MovieBasicDTO;
+import cc.onelooker.kaleido.service.MovieBasicService;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import org.apache.commons.lang3.StringUtils;
