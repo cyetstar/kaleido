@@ -2,13 +2,14 @@ package cc.onelooker.kaleido.service.impl;
 
 import cc.onelooker.kaleido.convert.ComicBookConvert;
 import cc.onelooker.kaleido.dto.ComicBookDTO;
+import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.entity.ComicBookDO;
 import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.mapper.ComicBookMapper;
-import cc.onelooker.kaleido.service.TaskService;
 import cc.onelooker.kaleido.service.ComicBookService;
 import cc.onelooker.kaleido.service.ComicSeriesService;
+import cc.onelooker.kaleido.service.TaskService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
@@ -89,7 +90,8 @@ public class ComicBookServiceImpl extends AbstractBaseServiceImpl<ComicBookMappe
     @Transactional
     public void save(ComicBookDTO dto) {
         update(dto);
+        ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(dto.getSeriesId());
         //生成重写ComicInfo任务
-        taskService.newTask(dto.getId(), SubjectType.ComicBook, TaskType.writeComicInfo);
+        taskService.newTask(dto.getId(), SubjectType.ComicBook, comicSeriesDTO.getTitle() + "【" + dto.getTitle() + "】", TaskType.writeComicInfo);
     }
 }

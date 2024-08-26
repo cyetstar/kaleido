@@ -13,7 +13,7 @@ import com.zjjcnt.common.core.service.IBaseService;
  */
 public interface TaskService extends IBaseService<TaskDTO> {
 
-    void newTask(String subjectId, SubjectType subjectType, TaskType taskType);
+    void newTask(String subjectId, SubjectType subjectType, String subjectTitle, TaskType taskType);
 
     void updateTaskStatus(String id, String taskStatus);
 }

@@ -1,11 +1,7 @@
 package cc.onelooker.kaleido.dto;
 
-import lombok.Data;
 import com.zjjcnt.common.core.dto.BaseDTO;
-
-import java.lang.Long;
-import com.zjjcnt.common.core.annotation.Dict;
-import java.lang.String;
+import lombok.Data;
 
 /**
  * 任务DTO
@@ -34,6 +30,11 @@ public class TaskDTO implements BaseDTO<String> {
     private String subjectType;
 
     /**
+     * 项目标题
+     */
+    private String subjectTitle;
+
+    /**
      * 任务类型
      */
     private String taskType;
@@ -49,7 +50,6 @@ public class TaskDTO implements BaseDTO<String> {
     private String taskStatus;
 
     // ------ 非数据库表字段 -------
-
 
     @Override
     public String getId() {

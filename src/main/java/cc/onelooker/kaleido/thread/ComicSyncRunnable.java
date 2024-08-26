@@ -75,9 +75,7 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
     @Override
     protected void processEntity(Map<String, String> params, Book book) throws Exception {
         ComicBookDTO comicBookDTO = comicBookService.findById(book.getId());
-        if (comicBookDTO == null
-                || book.getUpdatedAt().compareTo(comicBookDTO.getUpdatedAt()) > 0
-                || MapUtils.getBooleanValue(params, "force")) {
+        if (comicBookDTO == null || book.getUpdatedAt().compareTo(comicBookDTO.getUpdatedAt()) > 0 || MapUtils.getBooleanValue(params, "force")) {
             //同步komga
             comicManager.syncBook(book);
             if (seriesIdCache.add(book.getSeriesId())) {
@@ -86,8 +84,9 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
                 //读取comicinfo.xml
                 comicManager.readComicInfo(book.getSeriesId());
             }
+
             //将数据写回到comicinfo.xml
-            taskService.newTask(book.getId(), SubjectType.ComicBook, TaskType.writeComicInfo);
+            taskService.newTask(book.getId(), SubjectType.ComicBook, book.getSeriesTitle() + "【" + book.getName() + "】", TaskType.writeComicInfo);
         }
     }
 

@@ -4,6 +4,7 @@ import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.google.common.collect.Sets;
+import com.zjjcnt.common.util.constant.Constants;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RegExUtils;
@@ -32,11 +33,17 @@ public class KaleidoUtils {
     public static Path getMovieBasicPath(String path) {
         String plexLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryPath);
         path = StringUtils.removeStart(path, plexLibraryPath);
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
         return Paths.get(path);
     }
 
     public static Path getMoviePath(String path) {
-        return Paths.get(getMovieLibraryPath().toString(), path);
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        return getMovieLibraryPath().resolve(path);
     }
 
     public static Path getMovieLibraryPath() {
@@ -55,11 +62,17 @@ public class KaleidoUtils {
     public static Path getTvshowBasicPath(String path) {
         String plexLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryPath);
         path = StringUtils.removeStart(path, plexLibraryPath);
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
         return Paths.get(path);
     }
 
     public static Path getTvshowPath(String path) {
-        return Paths.get(getTvshowLibraryPath().toString(), path);
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        return getTvshowLibraryPath().resolve(path);
     }
 
     public static Path getTvshowLibraryPath() {

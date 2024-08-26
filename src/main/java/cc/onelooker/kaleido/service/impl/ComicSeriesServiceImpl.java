@@ -1,26 +1,14 @@
 package cc.onelooker.kaleido.service.impl;
 
 import cc.onelooker.kaleido.convert.ComicSeriesConvert;
-import cc.onelooker.kaleido.dto.AlternateTitleDTO;
-import cc.onelooker.kaleido.dto.AttributeDTO;
-import cc.onelooker.kaleido.dto.ComicAuthorDTO;
-import cc.onelooker.kaleido.dto.ComicBookDTO;
-import cc.onelooker.kaleido.dto.ComicSeriesAuthorDTO;
-import cc.onelooker.kaleido.dto.ComicSeriesDTO;
+import cc.onelooker.kaleido.dto.*;
 import cc.onelooker.kaleido.entity.ComicSeriesDO;
 import cc.onelooker.kaleido.enums.AttributeType;
 import cc.onelooker.kaleido.enums.AuthorRole;
 import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.mapper.ComicSeriesMapper;
-import cc.onelooker.kaleido.service.AlternateTitleService;
-import cc.onelooker.kaleido.service.AttributeService;
-import cc.onelooker.kaleido.service.SubjectAttributeService;
-import cc.onelooker.kaleido.service.TaskService;
-import cc.onelooker.kaleido.service.ComicAuthorService;
-import cc.onelooker.kaleido.service.ComicBookService;
-import cc.onelooker.kaleido.service.ComicSeriesAuthorService;
-import cc.onelooker.kaleido.service.ComicSeriesService;
+import cc.onelooker.kaleido.service.*;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
 import cn.hutool.core.exceptions.ExceptionUtil;
@@ -177,7 +165,7 @@ public class ComicSeriesServiceImpl extends AbstractBaseServiceImpl<ComicSeriesM
         }
 
         //生成重写ComicInfo任务
-        comicBookDTOList.forEach(s -> taskService.newTask(s.getId(), SubjectType.ComicBook, TaskType.writeComicInfo));
+        comicBookDTOList.forEach(s -> taskService.newTask(s.getId(), SubjectType.ComicBook, dto.getTitle() + "【" + s.getTitle() + "】", TaskType.writeComicInfo));
     }
 
     private void saveComicAuthor(String seriesId, String name, AuthorRole role) {

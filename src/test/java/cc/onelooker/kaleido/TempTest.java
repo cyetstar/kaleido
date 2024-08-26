@@ -128,6 +128,14 @@ public class TempTest {
     }
 
     @Test
+    public void testPath2() {
+        String folder = "/1990s/阿里 (1994)";
+        Path path = Paths.get("/Users/cyetstar/dev/kaleido/");
+        path = path.resolve(folder);
+        System.out.println(path.toString());
+    }
+
+    @Test
     public void replaceColor() throws IOException {
         /**
          * 要处理的图片目录

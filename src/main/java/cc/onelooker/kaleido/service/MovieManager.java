@@ -117,7 +117,7 @@ public class MovieManager {
                 movieBasicService.update(movieBasicDTO);
             }
             renameDirIfChanged(movieBasicDTO);
-            taskService.newTask(movieBasicDTO.getId(), SubjectType.MovieBasic, TaskType.writeMovieNFO);
+            taskService.newTask(movieBasicDTO.getId(), SubjectType.MovieBasic, movieBasicDTO.getTitle(), TaskType.writeMovieNFO);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -487,7 +487,7 @@ public class MovieManager {
         }
         return actorList.stream().map(s -> {
             MovieActorDTO movieActorDTO = null;
-            if (StringUtils.isNotEmpty(s.getThumb()) && !StringUtils.endsWith(s.getThumb(), "png")) {
+            if (StringUtils.isNotEmpty(s.getThumb()) && !StringUtils.endsWith(s.getThumb(), KaleidoConstants.SUFFIX_PNG)) {
                 movieActorDTO = movieActorService.findByThumb(s.getThumb());
             }
             if (movieActorDTO == null && StringUtils.isNotEmpty(s.getDoubanId())) {
@@ -503,6 +503,10 @@ public class MovieManager {
                 movieActorDTO.setThumb(s.getThumb());
                 movieActorDTO.setDoubanId(s.getDoubanId());
                 movieActorDTO = movieActorService.insert(movieActorDTO);
+            } else {
+                movieActorDTO.setThumb(s.getThumb());
+                movieActorDTO.setDoubanId(s.getDoubanId());
+                movieActorService.update(movieActorDTO);
             }
             movieActorDTO.setRole(actorRole.name());
             movieActorDTO.setPlayRole(s.getRole());
@@ -698,7 +702,11 @@ public class MovieManager {
         }
         title = StringUtils.replace(title, "?", "");
         title = StringUtils.replace(title, "!", "");
-        String folderName = decade + "/" + title + " (" + year + ")";
+        MovieBasicDTO movieBasicDTO = new MovieBasicDTO();
+        movieBasicDTO.setTitle(title);
+        movieBasicDTO.setYear(year);
+        movieBasicDTO.setDecade(decade);
+        String folderName = KaleidoUtils.genMoviePath(movieBasicDTO);
         Path folderPath = path.resolve(folderName);
         if (Files.notExists(folderPath)) {
             Files.createDirectory(folderPath);

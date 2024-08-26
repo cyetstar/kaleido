@@ -38,6 +38,12 @@ public class TaskDO implements IdEntity<String> {
     private String subjectType;
 
     /**
+     * 项目标题
+     */
+    @TableField(value = "subject_title")
+    private String subjectTitle;
+
+    /**
      * 任务类型
      */
     @TableField(value = "task_type")
