@@ -1,21 +1,12 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.dto.AlternateTitleDTO;
-import cc.onelooker.kaleido.dto.AttributeDTO;
-import cc.onelooker.kaleido.dto.TaskDTO;
-import cc.onelooker.kaleido.dto.MovieActorDTO;
-import cc.onelooker.kaleido.dto.MovieBasicDTO;
+import cc.onelooker.kaleido.dto.*;
 import cc.onelooker.kaleido.enums.ActorRole;
 import cc.onelooker.kaleido.enums.AttributeType;
 import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.nfo.MovieNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
-import cc.onelooker.kaleido.service.AlternateTitleService;
-import cc.onelooker.kaleido.service.AttributeService;
-import cc.onelooker.kaleido.service.TaskService;
-import cc.onelooker.kaleido.service.MovieActorService;
-import cc.onelooker.kaleido.service.MovieBasicService;
-import cc.onelooker.kaleido.service.MovieManager;
+import cc.onelooker.kaleido.service.*;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -123,6 +114,6 @@ public class MovieWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO>
 
     @Override
     protected String getMessage(TaskDTO taskDTO) {
-        return taskDTO.getSubjectId() + "@" + taskDTO.getSubjectType();
+        return taskDTO.getSubjectTitle();
     }
 }
