@@ -1,7 +1,10 @@
 package cc.onelooker.kaleido.utils;
 
+import cc.onelooker.kaleido.dto.ComicAuthorDTO;
+import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
+import cn.hutool.extra.pinyin.PinyinUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.google.common.collect.Sets;
 import com.zjjcnt.common.util.constant.Constants;
@@ -14,6 +17,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -105,6 +109,15 @@ public class KaleidoUtils {
         return Paths.get(libraryPath).resolveSibling(RECYCLE);
     }
 
+    public static Path getComicBasicPath(String path) {
+        String komgaLibraryPath = ConfigUtils.getSysConfig(ConfigKey.komgaComicLibraryPath);
+        path = StringUtils.removeStart(path, komgaLibraryPath);
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        return Paths.get(path);
+    }
+
     public static Path getComicPath(String path) {
         String komgaLibraryPath = ConfigUtils.getSysConfig(ConfigKey.komgaComicLibraryPath);
         String libraryPath = ConfigUtils.getSysConfig(ConfigKey.comicLibraryPath);
@@ -182,14 +195,24 @@ public class KaleidoUtils {
         return result4.setScale(2, RoundingMode.HALF_UP).toPlainString() + "TB";
     }
 
-    public static String genComicFolder(String seriesTitle, String writerName, String pencillerName) {
+    public static String genTitleSort(String title) {
+        if (StringUtils.isNotEmpty(title)) {
+            String titleSort = PinyinUtil.getFirstLetter(title, StringUtils.EMPTY);
+            titleSort = StringUtils.lowerCase(titleSort);
+            titleSort = titleSort.replaceAll("[^a-zA-Z0-9]", StringUtils.EMPTY);
+            return titleSort;
+        }
+        return StringUtils.EMPTY;
+    }
+
+    public static String genComicPath(ComicSeriesDTO comicSeriesDTO) {
+        Optional<String> writerOptional = comicSeriesDTO.getWriterList().stream().map(ComicAuthorDTO::getName).findFirst();
+        Optional<String> pencillerOptional = comicSeriesDTO.getPencillerList().stream().map(ComicAuthorDTO::getName).findFirst();
         Set<String> authors = Sets.newLinkedHashSet();
-        CollectionUtils.addIgnoreNull(authors, StringUtils.defaultIfEmpty(writerName, null));
-        CollectionUtils.addIgnoreNull(authors, StringUtils.defaultIfEmpty(pencillerName, null));
+        CollectionUtils.addIgnoreNull(authors, writerOptional.orElse(null));
+        CollectionUtils.addIgnoreNull(authors, pencillerOptional.orElse(null));
         String authorName = StringUtils.join(authors, "×");
-        String folder = String.format("%s [%s]", seriesTitle, authorName);
-        folder = folder.replaceAll("[\\\\/:*?\"<>|]", "_");
-        return folder;
+        return String.format("%s [%s]", sanitizeFileName(comicSeriesDTO.getTitle()), sanitizeFileName(authorName));
     }
 
     public static String genMoviePath(MovieBasicDTO movieBasicDTO) {
@@ -197,7 +220,15 @@ public class KaleidoUtils {
         if (StringUtils.isEmpty(decade)) {
             decade = StringUtils.substring(movieBasicDTO.getYear(), 0, 3) + "0s";
         }
-        return String.format("%s/%s (%s)", decade, movieBasicDTO.getTitle(), movieBasicDTO.getYear());
+        return String.format("%s/%s (%s)", decade, sanitizeFileName(movieBasicDTO.getTitle()), movieBasicDTO.getYear());
+    }
+
+    private static String sanitizeFileName(String fileName) {
+        // 将字符串中的非法字符替换为下划线
+        fileName = fileName.replaceAll("[\\\\/:*?\"<>|\\s]", Constants.UNDER_LINE);
+        fileName = fileName.replaceAll("_+", Constants.UNDER_LINE);
+        fileName = fileName.replaceAll("^_+|_+$", StringUtils.EMPTY);
+        return fileName;
     }
 
 }

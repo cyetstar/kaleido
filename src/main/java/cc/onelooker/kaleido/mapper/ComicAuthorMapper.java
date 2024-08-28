@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
-
 /**
  * 漫画作者Mapper接口
  *
@@ -16,5 +14,5 @@ import java.util.List;
 @Mapper
 public interface ComicAuthorMapper extends BaseMapper<ComicAuthorDO> {
 
-    List<ComicAuthorDO> listBySeriesId(@Param("seriesId") String seriesId);
+    void deleteBySeriesIdAndRole(@Param("seriesId") String seriesId, @Param("role") String role);
 }

@@ -91,6 +91,24 @@ public class AttributeServiceImpl extends AbstractBaseServiceImpl<AttributeMappe
     }
 
     @Override
+    public void updateAttributes(List<String> attributeValueList, String subjectId, AttributeType type) {
+        if (attributeValueList == null) {
+            return;
+        }
+        subjectAttributeService.deleteBySubjectIdAndAttributeType(subjectId, type);
+        attributeValueList.forEach(attributeValue -> {
+            AttributeDTO attributeDTO = findByValueAndType(attributeValue, type);
+            if (attributeDTO == null) {
+                attributeDTO = new AttributeDTO();
+                attributeDTO.setValue(attributeValue);
+                attributeDTO.setType(type.name());
+                attributeDTO = insert(attributeDTO);
+            }
+            subjectAttributeService.insert(subjectId, attributeDTO.getId());
+        });
+    }
+
+    @Override
     public List<AttributeDTO> listBySubjectId(String subjectId) {
         List<AttributeDO> attributeDOList = baseMapper.listBySubjectId(subjectId);
         return convertToDTO(attributeDOList);

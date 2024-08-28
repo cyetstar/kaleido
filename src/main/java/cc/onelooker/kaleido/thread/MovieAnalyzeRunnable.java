@@ -10,9 +10,11 @@ import cc.onelooker.kaleido.service.SysConfigService;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -76,22 +78,31 @@ public class MovieAnalyzeRunnable extends AbstractEntityActionRunnable<Metadata>
 
     @Override
     protected PageResult<Metadata> page(Map<String, String> params, int pageNumber, int pageSize) {
+        String id = MapUtils.getString(params, "id");
         PageResult<Metadata> pageResult = new PageResult<>();
         pageResult.setSearchCount(true);
+        List<Metadata> metadataList = Lists.newArrayList();
         if (pageNumber == 1) {
-            String movieLibraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
-            List<Metadata> metadataList = plexApiService.listMovie(movieLibraryId);
-            pageResult.setTotal((long) metadataList.size());
-            pageResult.setRecords(metadataList);
+            if (StringUtils.isNotEmpty(id)) {
+                Metadata metadata = plexApiService.findMetadata(id);
+                CollectionUtils.addIgnoreNull(metadataList, metadata);
+            } else {
+                String movieLibraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
+                metadataList = plexApiService.listMovie(movieLibraryId);
+            }
         }
+        pageResult.setTotal((long) metadataList.size());
+        pageResult.setRecords(metadataList);
         return pageResult;
     }
 
     @Override
     protected void processEntity(Map<String, String> params, Metadata metadata) throws Exception {
-        if (CollectionUtils.isNotEmpty(idList) && idList.contains(metadata.getRatingKey())) {
-            //查出所有数据后，匹配上的才进行分析
-            movieManager.analyze(metadata);
+        if (CollectionUtils.isNotEmpty(idList)) {
+            if (idList.contains(metadata.getRatingKey())) {
+                //查出所有数据后，匹配上的才进行分析
+                movieManager.analyze(metadata);
+            }
         } else {
             long lastUpdatedAt = metadata.getUpdatedAt();
             if (lastUpdatedAt > lastAnalyzeTime) {

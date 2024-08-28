@@ -2,11 +2,8 @@ package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.convert.ComicBookConvert;
 import cc.onelooker.kaleido.dto.ComicBookDTO;
-import cc.onelooker.kaleido.enums.SubjectType;
-import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.service.ComicBookService;
 import cc.onelooker.kaleido.service.ComicManager;
-import cc.onelooker.kaleido.service.TaskService;
 import cc.onelooker.kaleido.third.komga.Book;
 import cc.onelooker.kaleido.third.komga.KomgaApiService;
 import cc.onelooker.kaleido.third.komga.Series;
@@ -37,17 +34,14 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
 
     private final ComicBookService comicBookService;
 
-    private final TaskService taskService;
-
     private final List<String> bookIdList = Lists.newArrayList();
 
     private Set<String> seriesIdCache = Sets.newHashSet();
 
-    public ComicSyncRunnable(KomgaApiService komgaApiService, ComicManager comicManager, ComicBookService comicBookService, TaskService taskService) {
+    public ComicSyncRunnable(KomgaApiService komgaApiService, ComicManager comicManager, ComicBookService comicBookService) {
         this.komgaApiService = komgaApiService;
         this.comicManager = comicManager;
         this.comicBookService = comicBookService;
-        this.taskService = taskService;
     }
 
     @Override
@@ -81,12 +75,7 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
             if (seriesIdCache.add(book.getSeriesId())) {
                 Series series = komgaApiService.findSeries(book.getSeriesId());
                 comicManager.syncSeries(series);
-                //读取comicinfo.xml
-                comicManager.readComicInfo(book.getSeriesId());
             }
-
-            //将数据写回到comicinfo.xml
-            taskService.newTask(book.getId(), SubjectType.ComicBook, book.getSeriesTitle() + "【" + book.getName() + "】", TaskType.writeComicInfo);
         }
     }
 

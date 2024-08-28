@@ -14,12 +14,6 @@ import java.util.List;
  */
 public interface ComicSeriesAuthorService extends IBaseService<ComicSeriesAuthorDTO> {
 
-    void insert(String seriesId, String authorId, AuthorRole role);
-
-    void deleteBySeriesId(String seriesId);
-
-    void deleteBySeriesIdAndRole(String seriesId, AuthorRole role);
-
     List<ComicSeriesAuthorDTO> listBySeriesId(String seriesId);
 
     List<ComicSeriesAuthorDTO> listByAuthorId(String authorId);

@@ -1,13 +1,16 @@
 package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.convert.MovieBasicConvert;
-import cc.onelooker.kaleido.dto.*;
+import cc.onelooker.kaleido.dto.MovieActorDTO;
+import cc.onelooker.kaleido.dto.MovieBasicCollectionDTO;
+import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.dto.resp.*;
-import cc.onelooker.kaleido.enums.ActorRole;
-import cc.onelooker.kaleido.enums.AttributeType;
 import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.*;
+import cc.onelooker.kaleido.service.MovieActorService;
+import cc.onelooker.kaleido.service.MovieBasicCollectionService;
+import cc.onelooker.kaleido.service.MovieBasicService;
+import cc.onelooker.kaleido.service.MovieManager;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.third.tmm.Movie;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
@@ -66,16 +69,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     private MovieBasicCollectionService movieBasicCollectionService;
 
     @Autowired
-    private AttributeService attributeService;
-
-    @Autowired
-    private AlternateTitleService alternateTitleService;
-
-    @Autowired
     private MovieManager movieManager;
-
-    @Autowired
-    private AsyncTaskManager taskManager;
 
     @Autowired
     private PlexApiService plexApiService;
@@ -91,25 +85,15 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @GetMapping("page")
     @ApiOperation(value = "查询电影")
     public CommonResult<PageResult<MovieBasicPageResp>> page(MovieBasicPageReq req, PageParam pageParam) {
-        pageParam.setOrderBy("DESC:id");
+        pageParam.setOrderBy("DESC:added_at");
         return super.page(req, pageParam, MovieBasicConvert.INSTANCE::convertToDTO, MovieBasicConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
     @ApiOperation(value = "查看电影详情")
     public CommonResult<MovieBasicViewResp> view(String id) {
-        MovieBasicViewResp resp = super.doView(id, MovieBasicConvert.INSTANCE::convertToViewResp);
-        List<AttributeDTO> attributeDTOList = attributeService.listBySubjectId(id);
-        List<MovieActorDTO> movieActorDTOList = movieActorService.listByMovieId(id);
-        List<AlternateTitleDTO> alternateTitleDTOList = alternateTitleService.listBySubjectId(id);
-        resp.setCountryList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.MovieCountry.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
-        resp.setGenreList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.MovieGenre.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
-        resp.setLanguageList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.MovieLanguage.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
-        resp.setTagList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.MovieTag.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
-        resp.setAkaList(alternateTitleDTOList.stream().map(AlternateTitleDTO::getTitle).collect(Collectors.toList()));
-        resp.setDirectorList(movieActorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Director.name())).map(MovieBasicConvert.INSTANCE::convertToViewResp).collect(Collectors.toList()));
-        resp.setWriterList(movieActorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Writer.name())).map(MovieBasicConvert.INSTANCE::convertToViewResp).collect(Collectors.toList()));
-        resp.setActorList(movieActorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Actor.name())).map(MovieBasicConvert.INSTANCE::convertToViewResp).collect(Collectors.toList()));
+        MovieBasicDTO movieBasicDTO = movieManager.findMovieBasic(id);
+        MovieBasicViewResp resp = MovieBasicConvert.INSTANCE.convertToViewResp(movieBasicDTO);
         return CommonResult.success(resp);
     }
 
@@ -144,15 +128,8 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @ApiOperation(value = "删除电影")
     public CommonResult<Boolean> delete(@RequestBody String[] id) {
         if (id != null) {
-            Arrays.stream(id).forEach(s -> movieManager.deleteMovie(s));
+            Arrays.stream(id).forEach(s -> movieManager.deleteMovieBasic(s));
         }
-        return CommonResult.success(true);
-    }
-
-    @PostMapping("refreshPlexById")
-    @ApiOperation(value = "刷新资料")
-    public CommonResult<Boolean> refreshPlexById(@RequestBody MovieBasicRefreshPlexByIdReq req) {
-        plexApiService.refreshMovieById(req.getId());
         return CommonResult.success(true);
     }
 
@@ -218,54 +195,10 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         return CommonResult.success(respList);
     }
 
-    @PostMapping("checkThreadStatus")
-    @ApiOperation(value = "检查发布收藏状态")
-    public CommonResult<Boolean> checkThreadStatus() {
-        taskManager.checkThreadStatus();
-        return CommonResult.success(true);
-    }
-
     @PostMapping("matchPath")
     @ApiOperation(value = "匹配文件信息")
     public CommonResult<Boolean> matchPath(@RequestBody MovieBasicMatchPathReq req) {
         movieManager.matchPath(Paths.get(req.getPath()), req.getDoubanId(), req.getTmdbId(), req.getTvdbId());
-        return CommonResult.success(true);
-    }
-
-    @PostMapping("moveMovieFolder")
-    @ApiOperation(value = "重命名文件夹")
-    public CommonResult<Boolean> moveMovieFolder() {
-        String movieLibraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
-        Pattern pattern = Pattern.compile("\\((\\d+)\\)");
-        try (Stream<Path> paths = Files.list(Paths.get(movieLibraryPath))) {
-            List<Path> pathList = paths.collect(Collectors.toList());
-            int count = 0;
-            for (Path p : pathList) {
-                count++;
-                if (!Files.isDirectory(p)) {
-                    continue;
-                }
-                String fileName = p.getFileName().toString();
-                if (StringUtils.equalsAny(fileName, "#recycle", "2020s", "2010s", "2000s", "1990s", "1980s", "1970s", "1960s", "1950s", "1940s", "1930s", "1920s", "1910s", "1900s", "1890s")) {
-                    continue;
-                }
-                Matcher matcher = pattern.matcher(fileName);
-                if (matcher.find()) {
-                    String year = matcher.group(1);
-                    String decade = year.substring(0, 3) + "0s";
-                    Path decadePath = Paths.get(movieLibraryPath, decade);
-                    if (!Files.exists(decadePath)) {
-                        Files.createDirectory(decadePath);
-                    }
-                    NioFileUtils.moveDir(p, decadePath, StandardCopyOption.REPLACE_EXISTING);
-                }
-                if (count % 1000 == 0) {
-                    log.info("已经处理了 {} 个文件夹", count);
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         return CommonResult.success(true);
     }
 

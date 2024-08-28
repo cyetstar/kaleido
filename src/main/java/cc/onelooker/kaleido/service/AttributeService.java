@@ -25,4 +25,7 @@ public interface AttributeService extends IBaseService<AttributeDTO> {
     List<AttributeDTO> listBySubjectIdList(List<String> subjectIdList);
 
     List<AttributeDTO> listByType(AttributeType type);
+
+    void updateAttributes(List<String> attributeValueList, String subjectId, AttributeType type);
+
 }

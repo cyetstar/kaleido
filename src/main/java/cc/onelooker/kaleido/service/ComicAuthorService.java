@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.service;
 
 import cc.onelooker.kaleido.dto.ComicAuthorDTO;
+import cc.onelooker.kaleido.enums.AuthorRole;
 import com.zjjcnt.common.core.service.IBaseService;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface ComicAuthorService extends IBaseService<ComicAuthorDTO> {
     List<ComicAuthorDTO> listByKeyword(String keyword);
 
     List<ComicAuthorDTO> listBySeriesId(String seriesId);
+
+    void updateAuthors(List<ComicAuthorDTO> comicAuthorDTOList, String seriesId, AuthorRole authorRole);
 }

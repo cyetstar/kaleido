@@ -4,9 +4,11 @@ import cc.onelooker.kaleido.dto.ComicBookDTO;
 import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.enums.SourceType;
-import cc.onelooker.kaleido.third.tmm.*;
+import cc.onelooker.kaleido.third.tmm.Actor;
+import cc.onelooker.kaleido.third.tmm.Episode;
+import cc.onelooker.kaleido.third.tmm.Season;
+import cc.onelooker.kaleido.third.tmm.Tvshow;
 import cn.hutool.core.exceptions.ExceptionUtil;
-import cn.hutool.extra.pinyin.PinyinUtil;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.util.constant.Constants;
 import org.apache.commons.collections4.CollectionUtils;
@@ -44,11 +46,6 @@ public class NFOUtil {
 
     private static Unmarshaller unmarshaller;
 
-    public static ComicInfoNFO toComicInfoNFO(Comic comic) {
-        ComicInfoNFO comicInfoNFO = new ComicInfoNFO();
-        return toComicInfoNFO(comicInfoNFO, comic);
-    }
-
     public static ComicInfoNFO toComicInfoNFO(ComicSeriesDTO comicSeriesDTO, ComicBookDTO comicBookDTO) {
         ComicInfoNFO comicInfoNFO = new ComicInfoNFO();
         comicInfoNFO.setTitle(comicBookDTO.getTitle());
@@ -67,32 +64,6 @@ public class NFOUtil {
         comicInfoNFO.setAkas(comicSeriesDTO.getAlternateTitleList());
         comicInfoNFO.setSeriesBgmId(comicSeriesDTO.getBgmId());
         comicInfoNFO.setSeriesStatus(comicSeriesDTO.getStatus());
-        return comicInfoNFO;
-    }
-
-    private static ComicInfoNFO toComicInfoNFO(ComicInfoNFO comicInfoNFO, Comic comic) {
-        comicInfoNFO.setSeries(StringUtils.defaultIfEmpty(comic.getSeries(), comic.getOriginalSeries()));
-        comicInfoNFO.setCount(comic.getVolumeCount());
-        comicInfoNFO.setYear(comic.getYear());
-        comicInfoNFO.setSummary(comic.getSummary());
-        String writer = comic.getAuthors().stream().filter(s -> s.getRole().equals("作者")).findFirst().map(Author::getName).orElse(null);
-        if (StringUtils.isEmpty(writer)) {
-            writer = comic.getAuthors().stream().filter(s -> s.getRole().equals("原作")).findFirst().map(Author::getName).orElse(null);
-        }
-        String penciller = comic.getAuthors().stream().filter(s -> StringUtils.equals(s.getRole(), "作画")).findFirst().map(Author::getName).orElse(null);
-        comicInfoNFO.setWriter(writer);
-        comicInfoNFO.setPenciller(penciller);
-        comicInfoNFO.setPublishers(comic.getPublishers());
-        comicInfoNFO.setCommunityRating(comic.getAverage());
-        comicInfoNFO.setOriginalSeries(comic.getOriginalSeries());
-        comicInfoNFO.setTags(StringUtils.join(comic.getTags(), Constants.COMMA));
-        comicInfoNFO.setAkas(comic.getAkas());
-        comicInfoNFO.setSeriesBgmId(comic.getBgmId());
-        if (comic.getTags().stream().anyMatch(s -> StringUtils.equalsAny(s, "完结", "已完结", "全一卷"))) {
-            comicInfoNFO.setSeriesStatus("ENDED");
-        } else {
-            comicInfoNFO.setSeriesStatus("ONGOING");
-        }
         return comicInfoNFO;
     }
 
@@ -134,38 +105,6 @@ public class NFOUtil {
             }).collect(Collectors.toList()));
 
         }
-        return movieNFO;
-    }
-
-    public static MovieNFO toMovieNFO(Movie movie) {
-        MovieNFO movieNFO = new MovieNFO();
-        movieNFO.setDoubanId(movie.getDoubanId());
-        movieNFO.setImdbId(movie.getImdbId());
-        movieNFO.setTmdbId(movie.getTmdbId());
-        movieNFO.setTitle(movie.getTitle());
-        movieNFO.setSortTitle(PinyinUtil.getFirstLetter(movie.getTitle(), StringUtils.EMPTY));
-        movieNFO.setOriginalTitle(movie.getOriginalTitle());
-        movieNFO.setYear(movie.getYear());
-        List<RatingNFO> ratingNFOList = Lists.newArrayList();
-        CollectionUtils.addIgnoreNull(ratingNFOList, toRatingNFO(movie.getAverage()));
-        movieNFO.setRatings(ratingNFOList);
-        List<UniqueidNFO> uniqueidNFOList = Lists.newArrayList();
-        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.douban, movie.getDoubanId()));
-        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.imdb, movie.getImdbId()));
-        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.tmdb, movie.getTmdbId()));
-        movieNFO.setUniqueids(uniqueidNFOList);
-        movieNFO.setAkas(movie.getAkas());
-        movieNFO.setPlot(movie.getPlot());
-        movieNFO.setGenres(movie.getGenres());
-        movieNFO.setCountries(movie.getCountries());
-        movieNFO.setMpaa(movie.getMpaa());
-        if (CollectionUtils.isNotEmpty(movie.getDirectors())) {
-            movieNFO.setDirectors(movie.getDirectors().stream().map(s -> StringUtils.defaultString(s.getCnName(), s.getEnName())).collect(Collectors.toList()));
-        }
-        if (CollectionUtils.isNotEmpty(movie.getWriters())) {
-            movieNFO.setCredits(movie.getWriters().stream().map(s -> StringUtils.defaultString(s.getCnName(), s.getEnName())).collect(Collectors.toList()));
-        }
-        movieNFO.setActors(toActorNFOs(movie.getActors()));
         return movieNFO;
     }
 

@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.service;
 
 import cc.onelooker.kaleido.dto.AlternateTitleDTO;
+import cc.onelooker.kaleido.enums.SubjectType;
 import com.zjjcnt.common.core.service.IBaseService;
 
 import java.util.List;
@@ -17,5 +18,8 @@ public interface AlternateTitleService extends IBaseService<AlternateTitleDTO> {
 
     List<AlternateTitleDTO> listBySubjectId(String subjectId);
 
-    List<AlternateTitleDTO> listByTitleAndSubjectType(String title, String subjectType);
+    List<AlternateTitleDTO> listByTitleAndSubjectType(String title, SubjectType subjectType);
+
+    void updateTitles(List<String> alternateTitleList, String subjectId, SubjectType subjectType);
+
 }

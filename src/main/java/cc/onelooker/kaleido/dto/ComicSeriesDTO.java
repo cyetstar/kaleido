@@ -93,6 +93,10 @@ public class ComicSeriesDTO implements BaseDTO<String> {
 
     private List<String> alternateTitleList;
 
+    private List<ComicAuthorDTO> writerList;
+
+    private List<ComicAuthorDTO> pencillerList;
+
     @Override
     public String getId() {
         return this.id;

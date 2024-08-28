@@ -179,6 +179,11 @@ public class MovieBasicDTO implements BaseDTO<String> {
     private String decade;
 
     /**
+     * 海报
+     */
+    private String poster;
+
+    /**
      * 主键队列
      */
     private List<String> idList;

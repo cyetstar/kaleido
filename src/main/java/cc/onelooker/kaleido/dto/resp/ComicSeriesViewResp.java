@@ -49,10 +49,10 @@ public class ComicSeriesViewResp {
     private String bgmId;
 
     @ApiModelProperty("作者")
-    private Author writer;
+    private List<Author> writerList;
 
     @ApiModelProperty("作画")
-    public Author penciller;
+    public List<Author> pencillerList;
 
     @ApiModelProperty("别名")
     private List<String> alternateTitleList;
@@ -62,8 +62,12 @@ public class ComicSeriesViewResp {
 
     public List<Author> getAuthorList() {
         List<Author> authorList = Lists.newArrayList();
-        CollectionUtils.addIgnoreNull(authorList, writer);
-        CollectionUtils.addIgnoreNull(authorList, penciller);
+        if (writerList != null) {
+            CollectionUtils.addAll(authorList, writerList);
+        }
+        if (pencillerList != null) {
+            CollectionUtils.addAll(authorList, pencillerList);
+        }
         return authorList;
     }
 

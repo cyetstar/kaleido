@@ -2,7 +2,9 @@ package cc.onelooker.kaleido.service.impl;
 
 import cc.onelooker.kaleido.convert.ComicAuthorConvert;
 import cc.onelooker.kaleido.dto.ComicAuthorDTO;
+import cc.onelooker.kaleido.dto.ComicSeriesAuthorDTO;
 import cc.onelooker.kaleido.entity.ComicAuthorDO;
+import cc.onelooker.kaleido.enums.AuthorRole;
 import cc.onelooker.kaleido.mapper.ComicAuthorMapper;
 import cc.onelooker.kaleido.service.ComicAuthorService;
 import cc.onelooker.kaleido.service.ComicSeriesAuthorService;
@@ -14,8 +16,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 漫画作者ServiceImpl
@@ -74,7 +78,27 @@ public class ComicAuthorServiceImpl extends AbstractBaseServiceImpl<ComicAuthorM
 
     @Override
     public List<ComicAuthorDTO> listBySeriesId(String seriesId) {
-        List<ComicAuthorDO> comicAuthorDOList = baseMapper.listBySeriesId(seriesId);
-        return convertToDTO(comicAuthorDOList);
+        List<ComicSeriesAuthorDTO> comicSeriesAuthorDTOList = comicSeriesAuthorService.listBySeriesId(seriesId);
+        return comicSeriesAuthorDTOList.stream().map(s -> {
+            ComicAuthorDTO comicAuthorDTO = findById(s.getAuthorId());
+            comicAuthorDTO.setRole(s.getRole());
+            return comicAuthorDTO;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void updateAuthors(List<ComicAuthorDTO> comicAuthorDTOList, String seriesId, AuthorRole authorRole) {
+        if (comicAuthorDTOList == null) {
+            return;
+        }
+        baseMapper.deleteBySeriesIdAndRole(seriesId, authorRole.name());
+        comicAuthorDTOList.stream().forEach(s -> {
+            ComicSeriesAuthorDTO comicSeriesAuthorDTO = new ComicSeriesAuthorDTO();
+            comicSeriesAuthorDTO.setSeriesId(seriesId);
+            comicSeriesAuthorDTO.setAuthorId(s.getId());
+            comicSeriesAuthorDTO.setRole(authorRole.name());
+            comicSeriesAuthorService.insert(comicSeriesAuthorDTO);
+        });
     }
 }

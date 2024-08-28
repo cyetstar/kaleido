@@ -33,6 +33,7 @@ public class ComicAuthorDTO implements BaseDTO<String> {
 
     private String keyword;
 
+    private String role;
 
     @Override
     public String getId() {

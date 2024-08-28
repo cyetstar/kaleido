@@ -24,7 +24,4 @@ public interface SubjectAttributeService extends IBaseService<SubjectAttributeDT
 
     List<SubjectAttributeDTO> listByAttributeValueAndAttributeType(String attributeValue, AttributeType attributeType);
 
-    void updateAttributeIds(List<String> attributeIdList, String subjectId, AttributeType attributeType);
-
-    void updateAttribute(List<String> attributeValueList, String subjectId, AttributeType attributeType);
 }

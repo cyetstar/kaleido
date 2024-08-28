@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.service.impl;
 import cc.onelooker.kaleido.convert.AlternateTitleConvert;
 import cc.onelooker.kaleido.dto.AlternateTitleDTO;
 import cc.onelooker.kaleido.entity.AlternateTitleDO;
+import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.mapper.AlternateTitleMapper;
 import cc.onelooker.kaleido.service.AlternateTitleService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -60,10 +61,26 @@ public class AlternateTitleServiceImpl extends AbstractBaseServiceImpl<Alternate
     }
 
     @Override
-    public List<AlternateTitleDTO> listByTitleAndSubjectType(String title, String subjectType) {
+    public List<AlternateTitleDTO> listByTitleAndSubjectType(String title, SubjectType subjectType) {
         AlternateTitleDTO param = new AlternateTitleDTO();
         param.setTitle(title);
-        param.setSubjectType(subjectType);
+        param.setSubjectType(subjectType.name());
         return list(param);
+    }
+
+    @Override
+    @Transactional
+    public void updateTitles(List<String> alternateTitleList, String subjectId, SubjectType subjectType) {
+        if (alternateTitleList == null) {
+            return;
+        }
+        deleteBySubjectId(subjectId);
+        alternateTitleList.forEach(s -> {
+            AlternateTitleDTO alternateTitleDTO = new AlternateTitleDTO();
+            alternateTitleDTO.setTitle(s);
+            alternateTitleDTO.setSubjectId(subjectId);
+            alternateTitleDTO.setSubjectType(subjectType.name());
+            insert(alternateTitleDTO);
+        });
     }
 }

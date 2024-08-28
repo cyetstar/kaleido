@@ -87,6 +87,8 @@ public class ComicBookDTO implements BaseDTO<String> {
 
     // ------ 非数据库表字段 -------
 
+    private String web;
+
     @Override
     public String getId() {
         return this.id;
