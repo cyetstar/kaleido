@@ -1,10 +1,7 @@
 package cc.onelooker.kaleido.service;
 
 import cc.onelooker.kaleido.dto.*;
-import cc.onelooker.kaleido.enums.ActorRole;
-import cc.onelooker.kaleido.enums.AttributeType;
-import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.enums.SourceType;
+import cc.onelooker.kaleido.enums.*;
 import cc.onelooker.kaleido.nfo.EpisodeNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.nfo.SeasonNFO;
@@ -17,11 +14,13 @@ import cc.onelooker.kaleido.third.tmm.Season;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.third.tmm.Tvshow;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.http.HttpUtil;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -38,12 +37,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -65,19 +62,16 @@ public class TvshowManager {
     private TvshowEpisodeService tvshowEpisodeService;
 
     @Autowired
-    private TvshowActorService tvshowActorService;
-
-    @Autowired
-    private TvshowShowActorService tvshowShowActorService;
-
-    @Autowired
-    private TvshowEpisodeActorService tvshowEpisodeActorService;
-
-    @Autowired
-    private SubjectAttributeService subjectAttributeService;
-
-    @Autowired
     private AttributeService attributeService;
+
+    @Autowired
+    private AlternateTitleService alternateTitleService;
+
+    @Autowired
+    private ActorService actorService;
+
+    @Autowired
+    private TaskService taskService;
 
     @Autowired
     private PlexApiService plexApiService;
@@ -88,186 +82,173 @@ public class TvshowManager {
     private Pattern pattern = Pattern.compile("(S_?(\\d+))?EP?_?(\\d+)");
 
     @Transactional
-    public void syncPlexEpisode(String episodeId) {
-        Metadata metadata = plexApiService.findEpisodeById(episodeId);
-        syncPlexEpisode(metadata);
-    }
-
-    @Transactional
-    public void syncPlexShow(String tvshowId) {
-        try {
-            Metadata metadata = plexApiService.findMetadata(tvshowId);
-            TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowId);
-            if (tvshowShowDTO == null) {
-                tvshowShowDTO = new TvshowShowDTO();
-                tvshowShowDTO.setId(metadata.getRatingKey());
-                tvshowShowDTO.setTitle(metadata.getTitle());
-                tvshowShowDTO.setStudio(metadata.getStudio());
-                tvshowShowDTO.setContentRating(metadata.getContentRating());
-                tvshowShowDTO.setSummary(metadata.getSummary());
-                tvshowShowDTO.setRating(metadata.getRating());
-                tvshowShowDTO.setYear(metadata.getYear());
-                tvshowShowDTO.setThumb(metadata.getThumb());
-                tvshowShowDTO.setArt(metadata.getArt());
-                tvshowShowDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
-                tvshowShowDTO.setTotalSeasons(metadata.getChildCount());
-                Path path = KaleidoUtils.getTvshowBasicPath(FilenameUtils.getFullPath(metadata.getLocation().getPath()));
-                tvshowShowDTO.setPath(path.toString());
-                tvshowShowDTO.setAddedAt(metadata.getAddedAt());
-                tvshowShowDTO.setUpdatedAt(metadata.getUpdatedAt());
-                tvshowShowService.insert(tvshowShowDTO);
-            } else {
-                tvshowShowDTO.setTitle(metadata.getTitle());
-                tvshowShowDTO.setStudio(metadata.getStudio());
-                tvshowShowDTO.setContentRating(metadata.getContentRating());
-                tvshowShowDTO.setSummary(metadata.getSummary());
-                tvshowShowDTO.setRating(metadata.getRating());
-                tvshowShowDTO.setYear(metadata.getYear());
-                tvshowShowDTO.setThumb(metadata.getThumb());
-                tvshowShowDTO.setArt(metadata.getArt());
-                tvshowShowDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
-                tvshowShowDTO.setTotalSeasons(metadata.getChildCount());
-                Path path = KaleidoUtils.getTvshowBasicPath(FilenameUtils.getFullPath(metadata.getLocation().getPath()));
-                tvshowShowDTO.setPath(path.toString());
-                tvshowShowDTO.setAddedAt(metadata.getAddedAt());
-                tvshowShowDTO.setUpdatedAt(metadata.getUpdatedAt());
-                tvshowShowService.update(tvshowShowDTO);
-            }
-
-            syncPlexGenre(metadata.getGenreList(), tvshowShowDTO.getId());
-            syncPlexTvshowActor(metadata.getRoleList(), tvshowShowDTO.getId(), ActorRole.Actor);
-            List<Metadata> children = plexApiService.listMetadataChildren(tvshowId);
-            for (Metadata child : children) {
-                syncPlexShowSeason(child.getRatingKey());
-            }
-            readShowNFO(Paths.get(tvshowShowDTO.getPath()), tvshowShowDTO);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Transactional
-    public void syncPlexShowSeason(String seasonId) {
-        try {
-            Metadata metadata = plexApiService.findMetadata(seasonId);
-            TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(seasonId);
-            if (tvshowSeasonDTO == null) {
-                tvshowSeasonDTO = new TvshowSeasonDTO();
-                tvshowSeasonDTO.setId(metadata.getRatingKey());
-                tvshowSeasonDTO.setShowId(metadata.getParentRatingKey());
-                tvshowSeasonDTO.setTitle(metadata.getTitle());
-                tvshowSeasonDTO.setSummary(metadata.getSummary());
-                tvshowSeasonDTO.setSeasonIndex(metadata.getIndex());
-                tvshowSeasonDTO.setThumb(metadata.getThumb());
-                tvshowSeasonDTO.setArt(metadata.getArt());
-                tvshowSeasonDTO.setAddedAt(metadata.getAddedAt());
-                tvshowSeasonDTO.setUpdatedAt(metadata.getUpdatedAt());
-                tvshowSeasonService.insert(tvshowSeasonDTO);
-            } else {
-                tvshowSeasonDTO.setTitle(metadata.getTitle());
-                tvshowSeasonDTO.setSummary(metadata.getSummary());
-                tvshowSeasonDTO.setSeasonIndex(metadata.getIndex());
-                tvshowSeasonDTO.setThumb(metadata.getThumb());
-                tvshowSeasonDTO.setArt(metadata.getArt());
-                tvshowSeasonDTO.setAddedAt(metadata.getAddedAt());
-                tvshowSeasonDTO.setUpdatedAt(metadata.getUpdatedAt());
-                tvshowSeasonService.update(tvshowSeasonDTO);
-            }
-            readSeasonNFO(seasonId);
-            List<Metadata> children = plexApiService.listMetadataChildren(seasonId);
-            for (Metadata child : children) {
-                syncPlexShowEpisode(child.getRatingKey());
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void syncPlexShowEpisode(String episodeId) {
-        Metadata metadata = plexApiService.findMetadata(episodeId);
-        TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(episodeId);
-        if (tvshowEpisodeDTO == null) {
-            tvshowEpisodeDTO = new TvshowEpisodeDTO();
-            tvshowEpisodeDTO.setId(metadata.getRatingKey());
-            tvshowEpisodeDTO.setShowId(metadata.getGrandparentRatingKey());
-            tvshowEpisodeDTO.setSeasonId(metadata.getParentRatingKey());
-            tvshowEpisodeDTO.setTitle(metadata.getTitle());
-            tvshowEpisodeDTO.setContentRating(metadata.getContentRating());
-            tvshowEpisodeDTO.setSummary(metadata.getSummary());
-            tvshowEpisodeDTO.setEpisodeIndex(metadata.getIndex());
-            tvshowEpisodeDTO.setRating(metadata.getRating());
-            tvshowEpisodeDTO.setYear(metadata.getYear());
-            tvshowEpisodeDTO.setThumb(metadata.getThumb());
-            tvshowEpisodeDTO.setArt(metadata.getArt());
-            tvshowEpisodeDTO.setDuration(metadata.getDuration());
-            tvshowEpisodeDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
-            tvshowEpisodeDTO.setAddedAt(metadata.getAddedAt());
-            tvshowEpisodeDTO.setUpdatedAt(metadata.getUpdatedAt());
-            tvshowEpisodeDTO = tvshowEpisodeService.insert(tvshowEpisodeDTO);
+    public void saveEpisode(TvshowEpisodeDTO tvshowEpisodeDTO) {
+        TvshowEpisodeDTO existTvshowEpisodeDTO = tvshowEpisodeService.findById(tvshowEpisodeDTO.getId());
+        if (existTvshowEpisodeDTO == null) {
+            tvshowEpisodeService.insert(tvshowEpisodeDTO);
         } else {
-            tvshowEpisodeDTO.setTitle(metadata.getTitle());
-            tvshowEpisodeDTO.setContentRating(metadata.getContentRating());
-            tvshowEpisodeDTO.setSummary(metadata.getSummary());
-            tvshowEpisodeDTO.setEpisodeIndex(metadata.getIndex());
-            tvshowEpisodeDTO.setRating(metadata.getRating());
-            tvshowEpisodeDTO.setYear(metadata.getYear());
-            tvshowEpisodeDTO.setThumb(metadata.getThumb());
-            tvshowEpisodeDTO.setArt(metadata.getArt());
-            tvshowEpisodeDTO.setDuration(metadata.getDuration());
-            tvshowEpisodeDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
-            tvshowEpisodeDTO.setAddedAt(metadata.getAddedAt());
-            tvshowEpisodeDTO.setUpdatedAt(metadata.getUpdatedAt());
             tvshowEpisodeService.update(tvshowEpisodeDTO);
         }
-        syncPlexEpisodeActor(metadata.getDirectorList(), tvshowEpisodeDTO.getId(), ActorRole.Director);
-        syncPlexEpisodeActor(metadata.getWriterList(), tvshowEpisodeDTO.getId(), ActorRole.Writer);
+        taskService.newTask(tvshowEpisodeDTO.getId(), SubjectType.TvshowShow, tvshowEpisodeDTO.getTitle(), TaskType.writeEpisodeNFO);
     }
 
     @Transactional
-    public void readShowNFO(String showId) throws Exception {
-        TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(showId);
-        Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
-        readShowNFO(path, tvshowShowDTO);
-        List<TvshowSeasonDTO> tvshowSeasonDTOList = tvshowSeasonService.listByShowId(showId);
-        for (TvshowSeasonDTO tvshowSeasonDTO : tvshowSeasonDTOList) {
-            Path seasonPath = path.resolve("Season " + StringUtils.leftPad(String.valueOf(tvshowSeasonDTO.getSeasonIndex()), 2, "0"));
-            readSeasonNFO(seasonPath, tvshowSeasonDTO);
+    public void saveSeason(TvshowSeasonDTO tvshowSeasonDTO) {
+        actorService.updateSeasonActors(tvshowSeasonDTO.getDirectorList(), tvshowSeasonDTO.getId(), ActorRole.Director);
+        actorService.updateSeasonActors(tvshowSeasonDTO.getWriterList(), tvshowSeasonDTO.getId(), ActorRole.Writer);
+        actorService.updateSeasonActors(tvshowSeasonDTO.getActorList(), tvshowSeasonDTO.getId(), ActorRole.Actor);
+        TvshowSeasonDTO existTvshowSeasonDTO = tvshowSeasonService.findById(tvshowSeasonDTO.getId());
+        if (existTvshowSeasonDTO == null) {
+            tvshowSeasonService.insert(tvshowSeasonDTO);
+        } else {
+            tvshowSeasonService.update(tvshowSeasonDTO);
+        }
+        taskService.newTask(tvshowSeasonDTO.getId(), SubjectType.TvshowShow, tvshowSeasonDTO.getTitle(), TaskType.writeSeasonNFO);
+    }
+
+    @Transactional
+    public void saveShow(TvshowShowDTO tvshowShowDTO) {
+        try {
+            attributeService.updateAttributes(tvshowShowDTO.getTagList(), tvshowShowDTO.getId(), AttributeType.Tag);
+            attributeService.updateAttributes(tvshowShowDTO.getGenreList(), tvshowShowDTO.getId(), AttributeType.Genre);
+            attributeService.updateAttributes(tvshowShowDTO.getCountryList(), tvshowShowDTO.getId(), AttributeType.Country);
+            attributeService.updateAttributes(tvshowShowDTO.getLanguageList(), tvshowShowDTO.getId(), AttributeType.Language);
+            alternateTitleService.updateTitles(tvshowShowDTO.getAkaList(), tvshowShowDTO.getId(), SubjectType.TvshowShow);
+            TvshowShowDTO existTvshowShowDTO = tvshowShowService.findById(tvshowShowDTO.getId());
+            renameDirIfChanged(tvshowShowDTO);
+            if (existTvshowShowDTO == null) {
+                tvshowShowService.insert(tvshowShowDTO);
+            } else {
+                tvshowShowService.update(tvshowShowDTO);
+            }
+            taskService.newTask(tvshowShowDTO.getId(), SubjectType.TvshowShow, tvshowShowDTO.getTitle(), TaskType.writeShowNFO);
+        } catch (Exception e) {
+            ExceptionUtil.wrapAndThrow(e);
         }
     }
 
-    private void readShowNFO(Path path, TvshowShowDTO tvshowShowDTO) throws Exception {
-        TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, path, "tvshow.nfo");
+    private void renameDirIfChanged(TvshowShowDTO tvshowShowDTO) throws IOException {
+        String newPath = KaleidoUtils.genShowFolder(tvshowShowDTO);
+        if (!StringUtils.equals(newPath, tvshowShowDTO.getPath())) {
+            Path tvshowPath = KaleidoUtils.getTvshowPath(newPath);
+            if (Files.notExists(tvshowPath)) {
+                Files.createDirectories(tvshowPath);
+            }
+            NioFileUtils.renameDir(KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath()), tvshowPath);
+            tvshowShowDTO.setPath(newPath);
+        }
+    }
+
+    @Transactional
+    public void syncEpisode(Metadata metadata) {
+        TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(metadata.getRatingKey());
+        if (tvshowEpisodeDTO == null) {
+            tvshowEpisodeDTO = new TvshowEpisodeDTO();
+        }
+        tvshowEpisodeDTO.setId(metadata.getRatingKey());
+        tvshowEpisodeDTO.setShowId(metadata.getGrandparentRatingKey());
+        tvshowEpisodeDTO.setSeasonId(metadata.getParentRatingKey());
+        tvshowEpisodeDTO.setTitle(metadata.getTitle());
+        tvshowEpisodeDTO.setContentRating(metadata.getContentRating());
+        tvshowEpisodeDTO.setSummary(metadata.getSummary());
+        tvshowEpisodeDTO.setEpisodeIndex(metadata.getIndex());
+        tvshowEpisodeDTO.setRating(metadata.getRating());
+        tvshowEpisodeDTO.setYear(metadata.getYear());
+        tvshowEpisodeDTO.setThumb(metadata.getThumb());
+        tvshowEpisodeDTO.setArt(metadata.getArt());
+        tvshowEpisodeDTO.setDuration(metadata.getDuration());
+        tvshowEpisodeDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
+        tvshowEpisodeDTO.setAddedAt(metadata.getAddedAt());
+        tvshowEpisodeDTO.setUpdatedAt(metadata.getUpdatedAt());
+        //无需读取nfo
+        saveEpisode(tvshowEpisodeDTO);
+    }
+
+    @Transactional
+    public void syncShow(Metadata metadata) {
+        TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(metadata.getRatingKey());
+        if (tvshowShowDTO == null) {
+            tvshowShowDTO = new TvshowShowDTO();
+        }
+        tvshowShowDTO.setId(metadata.getRatingKey());
+        tvshowShowDTO.setTitle(metadata.getTitle());
+        tvshowShowDTO.setStudio(metadata.getStudio());
+        tvshowShowDTO.setContentRating(metadata.getContentRating());
+        tvshowShowDTO.setSummary(metadata.getSummary());
+        tvshowShowDTO.setRating(metadata.getRating());
+        tvshowShowDTO.setYear(metadata.getYear());
+        tvshowShowDTO.setThumb(metadata.getThumb());
+        tvshowShowDTO.setArt(metadata.getArt());
+        tvshowShowDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
+        tvshowShowDTO.setTotalSeasons(metadata.getChildCount());
+        Path path = KaleidoUtils.getTvshowBasicPath(FilenameUtils.getFullPath(metadata.getLocation().getPath()));
+        tvshowShowDTO.setPath(path.toString());
+        tvshowShowDTO.setAddedAt(metadata.getAddedAt());
+        tvshowShowDTO.setUpdatedAt(metadata.getUpdatedAt());
+        if (metadata.getGenreList() != null) {
+            tvshowShowDTO.setGenreList(metadata.getGenreList().stream().map(Tag::getTag).collect(Collectors.toList()));
+        }
+        readNFO(tvshowShowDTO);
+        saveShow(tvshowShowDTO);
+    }
+
+    @Transactional
+    public void syncSeason(Metadata metadata) {
+        TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(metadata.getRatingKey());
+        if (tvshowSeasonDTO == null) {
+            tvshowSeasonDTO = new TvshowSeasonDTO();
+        }
+        tvshowSeasonDTO.setId(metadata.getRatingKey());
+        tvshowSeasonDTO.setShowId(metadata.getParentRatingKey());
+        tvshowSeasonDTO.setTitle(metadata.getTitle());
+        tvshowSeasonDTO.setSummary(metadata.getSummary());
+        tvshowSeasonDTO.setSeasonIndex(metadata.getIndex());
+        tvshowSeasonDTO.setThumb(metadata.getThumb());
+        tvshowSeasonDTO.setArt(metadata.getArt());
+        tvshowSeasonDTO.setAddedAt(metadata.getAddedAt());
+        tvshowSeasonDTO.setUpdatedAt(metadata.getUpdatedAt());
+        readNFO(tvshowSeasonDTO);
+        saveSeason(tvshowSeasonDTO);
+    }
+
+    private void readNFO(TvshowShowDTO tvshowShowDTO) {
+        Path filePath = KaleidoUtils.getMoviePath(tvshowShowDTO.getPath());
+        if (Files.notExists(filePath.resolve(KaleidoConstants.TVSHOW_SHOW_NFO))) {
+            return;
+        }
+        TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, filePath, KaleidoConstants.TVSHOW_SHOW_NFO);
         String doubanId = NFOUtil.getUniqueid(tvshowNFO.getUniqueids(), SourceType.douban.name());
         String imdb = NFOUtil.getUniqueid(tvshowNFO.getUniqueids(), SourceType.imdb.name());
         String tmdb = NFOUtil.getUniqueid(tvshowNFO.getUniqueids(), SourceType.tmdb.name());
-
         tvshowShowDTO.setDoubanId(StringUtils.defaultIfEmpty(doubanId, tvshowNFO.getDoubanId()));
         tvshowShowDTO.setImdbId(StringUtils.defaultIfEmpty(imdb, tvshowNFO.getImdbId()));
         tvshowShowDTO.setTmdbId(StringUtils.defaultIfEmpty(tmdb, tvshowNFO.getTmdbId()));
         tvshowShowDTO.setOriginalTitle(tvshowNFO.getOriginalTitle());
-        tvshowShowService.update(tvshowShowDTO);
+        tvshowShowDTO.setAkaList(tvshowNFO.getAkas());
+        tvshowShowDTO.setTagList(tvshowNFO.getTags());
+        tvshowShowDTO.setGenreList(tvshowNFO.getGenres());
+        tvshowShowDTO.setCountryList(tvshowNFO.getCountries());
+        tvshowShowDTO.setLanguageList(tvshowNFO.getLanguages());
     }
 
-    @Transactional
-    public void readSeasonNFO(String seasonId) throws Exception {
-        TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(seasonId);
-        if (tvshowSeasonDTO.getSeasonIndex() == 0) {
+    private void readNFO(TvshowSeasonDTO tvshowSeasonDTO) {
+        if (tvshowSeasonDTO.getSeasonIndex() == null || tvshowSeasonDTO.getSeasonIndex() == 0) {
             return;
         }
+        String seasonFolder = KaleidoUtils.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
         TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowSeasonDTO.getShowId());
         Path folderPath = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
-        Path seasonPath = folderPath.resolve("Season " + StringUtils.leftPad(String.valueOf(tvshowSeasonDTO.getSeasonIndex()), 2, "0"));
-        readSeasonNFO(seasonPath, tvshowSeasonDTO);
-    }
-
-    private void readSeasonNFO(Path path, TvshowSeasonDTO tvshowSeasonDTO) throws Exception {
-        SeasonNFO seasonNFO = NFOUtil.read(SeasonNFO.class, path, "season.nfo");
+        Path seasonPath = folderPath.resolve(seasonFolder);
+        if (Files.notExists(seasonPath.resolve(KaleidoConstants.TVSHOW_SEASON_NFO))) {
+            return;
+        }
+        SeasonNFO seasonNFO = NFOUtil.read(SeasonNFO.class, seasonPath, KaleidoConstants.TVSHOW_SEASON_NFO);
         String doubanId = NFOUtil.getUniqueid(seasonNFO.getUniqueids(), SourceType.douban.name());
-        String imdb = NFOUtil.getUniqueid(seasonNFO.getUniqueids(), SourceType.imdb.name());
-        String tmdb = NFOUtil.getUniqueid(seasonNFO.getUniqueids(), SourceType.tmdb.name());
+        String imdbId = NFOUtil.getUniqueid(seasonNFO.getUniqueids(), SourceType.imdb.name());
+        String tmdbId = NFOUtil.getUniqueid(seasonNFO.getUniqueids(), SourceType.tmdb.name());
         tvshowSeasonDTO.setDoubanId(StringUtils.defaultIfEmpty(doubanId, seasonNFO.getDoubanId()));
-        tvshowSeasonDTO.setImdbId(StringUtils.defaultIfEmpty(imdb, seasonNFO.getImdbId()));
-        tvshowSeasonDTO.setTmdbId(StringUtils.defaultIfEmpty(tmdb, seasonNFO.getTmdbId()));
+        tvshowSeasonDTO.setImdbId(StringUtils.defaultIfEmpty(imdbId, seasonNFO.getImdbId()));
+        tvshowSeasonDTO.setTmdbId(StringUtils.defaultIfEmpty(tmdbId, seasonNFO.getTmdbId()));
         tvshowSeasonDTO.setOriginalTitle(seasonNFO.getOriginalTitle());
         tvshowSeasonDTO.setSummary(seasonNFO.getPlot());
         tvshowSeasonDTO.setYear(seasonNFO.getYear());
@@ -275,7 +256,15 @@ public class TvshowManager {
         if (CollectionUtils.isNotEmpty(seasonNFO.getRatings())) {
             tvshowSeasonDTO.setRating(Float.valueOf(seasonNFO.getRatings().get(0).getValue()));
         }
-        tvshowSeasonService.update(tvshowSeasonDTO);
+        if (seasonNFO.getDirectors() != null) {
+            tvshowSeasonDTO.setDirectorList(seasonNFO.getDirectors().stream().map(ActorDTO::new).collect(Collectors.toList()));
+        }
+        if (seasonNFO.getCredits() != null) {
+            tvshowSeasonDTO.setWriterList(seasonNFO.getCredits().stream().map(ActorDTO::new).collect(Collectors.toList()));
+        }
+        if (seasonNFO.getActors() != null) {
+            tvshowSeasonDTO.setActorList(seasonNFO.getActors().stream().map(NFOUtil::toActorDTO).collect(Collectors.toList()));
+        }
     }
 
     public void updateSource(Path path) {
@@ -501,144 +490,6 @@ public class TvshowManager {
         return folderPath;
     }
 
-    private void syncPlexEpisode(Metadata metadata) {
-        TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(metadata.getRatingKey());
-        if (tvshowEpisodeDTO == null) {
-            tvshowEpisodeDTO = new TvshowEpisodeDTO();
-            tvshowEpisodeDTO.setId(metadata.getRatingKey());
-            tvshowEpisodeDTO.setShowId(metadata.getGrandparentRatingKey());
-            tvshowEpisodeDTO.setSeasonId(metadata.getParentRatingKey());
-            tvshowEpisodeDTO.setTitle(metadata.getTitle());
-            tvshowEpisodeDTO.setContentRating(metadata.getContentRating());
-            tvshowEpisodeDTO.setSummary(metadata.getSummary());
-            tvshowEpisodeDTO.setEpisodeIndex(metadata.getIndex());
-            tvshowEpisodeDTO.setRating(metadata.getRating());
-            tvshowEpisodeDTO.setYear(metadata.getYear());
-            tvshowEpisodeDTO.setThumb(metadata.getThumb());
-            tvshowEpisodeDTO.setArt(metadata.getArt());
-            tvshowEpisodeDTO.setDuration(metadata.getDuration());
-            tvshowEpisodeDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
-            tvshowEpisodeDTO.setAddedAt(metadata.getAddedAt());
-            tvshowEpisodeDTO.setUpdatedAt(metadata.getUpdatedAt());
-            tvshowEpisodeDTO = tvshowEpisodeService.insert(tvshowEpisodeDTO);
-        } else {
-            tvshowEpisodeDTO.setTitle(metadata.getTitle());
-            tvshowEpisodeDTO.setContentRating(metadata.getContentRating());
-            tvshowEpisodeDTO.setSummary(metadata.getSummary());
-            tvshowEpisodeDTO.setEpisodeIndex(metadata.getIndex());
-            tvshowEpisodeDTO.setRating(metadata.getRating());
-            tvshowEpisodeDTO.setYear(metadata.getYear());
-            tvshowEpisodeDTO.setThumb(metadata.getThumb());
-            tvshowEpisodeDTO.setArt(metadata.getArt());
-            tvshowEpisodeDTO.setDuration(metadata.getDuration());
-            tvshowEpisodeDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
-            tvshowEpisodeDTO.setAddedAt(metadata.getAddedAt());
-            tvshowEpisodeDTO.setUpdatedAt(metadata.getUpdatedAt());
-            tvshowEpisodeService.update(tvshowEpisodeDTO);
-        }
-        syncPlexEpisodeActor(metadata.getDirectorList(), tvshowEpisodeDTO.getId(), ActorRole.Director);
-        syncPlexEpisodeActor(metadata.getWriterList(), tvshowEpisodeDTO.getId(), ActorRole.Writer);
-
-        syncPlexSeason(metadata.getParentRatingKey());
-    }
-
-    private void syncPlexSeason(String seasonId) {
-        Metadata metadata = plexApiService.findSeasonById(seasonId);
-        TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(seasonId);
-        if (tvshowSeasonDTO == null) {
-            tvshowSeasonDTO = new TvshowSeasonDTO();
-            tvshowSeasonDTO.setId(metadata.getRatingKey());
-            tvshowSeasonDTO.setShowId(metadata.getParentRatingKey());
-            tvshowSeasonDTO.setTitle(metadata.getTitle());
-            tvshowSeasonDTO.setSummary(metadata.getSummary());
-            tvshowSeasonDTO.setSeasonIndex(metadata.getIndex());
-            tvshowSeasonDTO.setThumb(metadata.getThumb());
-            tvshowSeasonDTO.setArt(metadata.getArt());
-            tvshowSeasonDTO.setAddedAt(metadata.getAddedAt());
-            tvshowSeasonDTO.setUpdatedAt(metadata.getUpdatedAt());
-            tvshowSeasonService.insert(tvshowSeasonDTO);
-        } else {
-            tvshowSeasonDTO.setTitle(metadata.getTitle());
-            tvshowSeasonDTO.setSummary(metadata.getSummary());
-            tvshowSeasonDTO.setSeasonIndex(metadata.getIndex());
-            tvshowSeasonDTO.setThumb(metadata.getThumb());
-            tvshowSeasonDTO.setArt(metadata.getArt());
-            tvshowSeasonDTO.setAddedAt(metadata.getAddedAt());
-            tvshowSeasonDTO.setUpdatedAt(metadata.getUpdatedAt());
-            tvshowSeasonService.update(tvshowSeasonDTO);
-        }
-        syncPlexShow(metadata.getParentRatingKey());
-    }
-
-    private void syncPlexEpisodeActor(List<Tag> actorList, String episodeId, ActorRole actorRole) {
-        tvshowEpisodeActorService.deleteByEpisodeIdAndRole(episodeId, actorRole);
-        if (actorList == null) {
-            return;
-        }
-        for (Tag tag : actorList) {
-            TvshowActorDTO tvshowActorDTO = saveActor(tag);
-            TvshowEpisodeActorDTO tvshowEpisodeActorDTO = tvshowEpisodeActorService.findByEpisodeIdAndActorId(episodeId, tvshowActorDTO.getId());
-            if (tvshowEpisodeActorDTO == null) {
-                tvshowEpisodeActorDTO = new TvshowEpisodeActorDTO();
-                tvshowEpisodeActorDTO.setEpisodeId(episodeId);
-                tvshowEpisodeActorDTO.setActorId(tvshowActorDTO.getId());
-                tvshowEpisodeActorDTO.setRole(actorRole.name());
-                tvshowEpisodeActorDTO.setPlayRole(tag.getRole());
-                tvshowEpisodeActorService.insert(tvshowEpisodeActorDTO);
-            }
-        }
-
-    }
-
-    private void syncPlexTvshowActor(List<Tag> actorList, String showId, ActorRole actorRole) {
-        tvshowShowActorService.deleteByShowIdAndRole(showId, actorRole);
-        if (actorList == null) {
-            return;
-        }
-        for (Tag tag : actorList) {
-            TvshowActorDTO tvshowActorDTO = saveActor(tag);
-            TvshowShowActorDTO tvshowShowActorDTO = tvshowShowActorService.findByShowIdAndActorId(showId, tvshowActorDTO.getId());
-            if (tvshowShowActorDTO == null) {
-                tvshowShowActorDTO = new TvshowShowActorDTO();
-                tvshowShowActorDTO.setShowId(showId);
-                tvshowShowActorDTO.setActorId(tvshowActorDTO.getId());
-                tvshowShowActorDTO.setRole(actorRole.name());
-                tvshowShowActorDTO.setPlayRole(tag.getRole());
-                tvshowShowActorService.insert(tvshowShowActorDTO);
-            }
-        }
-    }
-
-    private TvshowActorDTO saveActor(Tag tag) {
-        TvshowActorDTO tvshowActorDTO = tvshowActorService.findById(tag.getId());
-        if (tvshowActorDTO == null) {
-            tvshowActorDTO = new TvshowActorDTO();
-            tvshowActorDTO.setId(tag.getId());
-            tvshowActorDTO.setName(tag.getTag());
-            tvshowActorDTO.setOriginalName(tag.getTag());
-            tvshowActorDTO.setThumb(tag.getThumb());
-            tvshowActorDTO = tvshowActorService.insert(tvshowActorDTO);
-        } else if (StringUtils.isNotEmpty(tag.getThumb())) {
-            tvshowActorDTO.setThumb(tag.getThumb());
-            tvshowActorService.update(tvshowActorDTO);
-        }
-        return tvshowActorDTO;
-    }
-
-    private void syncPlexGenre(List<Tag> attributeList, String showId) {
-        if (attributeList == null) {
-            return;
-        }
-        subjectAttributeService.deleteBySubjectIdAndAttributeType(showId, AttributeType.TvshowGenre);
-        attributeList.forEach(s -> {
-            AttributeDTO attributeDTO = attributeService.findByValueAndType(s.getTag(), AttributeType.TvshowGenre);
-            if (attributeDTO == null) {
-                attributeDTO = attributeService.insert(s.getTag(), AttributeType.TvshowGenre);
-            }
-            subjectAttributeService.insert(showId, attributeDTO.getId());
-        });
-    }
-
     /**
      * 将path与信息关系记录在nfo文件中
      *
@@ -678,9 +529,8 @@ public class TvshowManager {
     }
 
     @Transactional
-    public void matchInfo(String id, String doubanId, String imdbId, String tmdbId) {
+    public void matchInfo(String id, Tvshow tvshow) {
         try {
-            Tvshow tvshow = tmmApiService.findTvshow(doubanId, imdbId, tmdbId);
             TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(id);
             Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
             Files.list(path).forEach(s -> {
@@ -715,5 +565,26 @@ public class TvshowManager {
         } catch (Exception e) {
             log.error("匹配剧集信息发生错误：{}", ExceptionUtil.getMessage(e));
         }
+    }
+
+    public TvshowShowDTO findTvshowShow(String showId) {
+        TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(showId);
+        List<AttributeDTO> attributeDTOList = attributeService.listBySubjectId(tvshowShowDTO.getId());
+        Set<ActorDTO> actorDTOSet = Sets.newHashSet();
+        List<TvshowSeasonDTO> tvshowSeasonDTOList = tvshowSeasonService.listByShowId(tvshowShowDTO.getId());
+        tvshowSeasonDTOList.forEach(s -> {
+            actorDTOSet.addAll(actorService.listBySeasonId(s.getId()));
+        });
+        List<ActorDTO> actorDTOList = new ArrayList<>(actorDTOSet);
+        List<AlternateTitleDTO> alternateTitleDTOList = alternateTitleService.listBySubjectId(tvshowShowDTO.getId());
+        tvshowShowDTO.setDirectorList(actorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Director.name())).collect(Collectors.toList()));
+        tvshowShowDTO.setWriterList(actorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Writer.name())).collect(Collectors.toList()));
+        tvshowShowDTO.setActorList(actorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Actor.name())).collect(Collectors.toList()));
+        tvshowShowDTO.setAkaList(alternateTitleDTOList.stream().map(AlternateTitleDTO::getTitle).collect(Collectors.toList()));
+        tvshowShowDTO.setLanguageList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Language.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
+        tvshowShowDTO.setCountryList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Country.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
+        tvshowShowDTO.setGenreList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Genre.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
+        tvshowShowDTO.setTagList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Tag.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
+        return tvshowShowDTO;
     }
 }

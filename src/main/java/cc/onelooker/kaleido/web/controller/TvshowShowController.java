@@ -1,22 +1,17 @@
 package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.convert.TvshowShowConvert;
-import cc.onelooker.kaleido.dto.AttributeDTO;
-import cc.onelooker.kaleido.dto.TvshowActorDTO;
 import cc.onelooker.kaleido.dto.TvshowShowDTO;
 import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.dto.resp.TvshowShowCreateResp;
 import cc.onelooker.kaleido.dto.resp.TvshowShowPageResp;
 import cc.onelooker.kaleido.dto.resp.TvshowShowSearchInfoResp;
 import cc.onelooker.kaleido.dto.resp.TvshowShowViewResp;
-import cc.onelooker.kaleido.enums.ActorRole;
-import cc.onelooker.kaleido.service.AttributeService;
-import cc.onelooker.kaleido.service.TvshowActorService;
 import cc.onelooker.kaleido.service.TvshowManager;
 import cc.onelooker.kaleido.service.TvshowShowService;
-import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.third.tmm.Movie;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
+import cc.onelooker.kaleido.third.tmm.Tvshow;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cn.hutool.http.HttpUtil;
@@ -29,7 +24,6 @@ import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,16 +50,7 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     private TvshowShowService tvshowShowService;
 
     @Autowired
-    private TvshowActorService tvshowActorService;
-
-    @Autowired
-    private AttributeService attributeService;
-
-    @Autowired
     private TvshowManager tvshowManager;
-
-    @Autowired
-    private PlexApiService plexApiService;
 
     @Autowired
     private TmmApiService tmmApiService;
@@ -78,18 +63,15 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @GetMapping("page")
     @ApiOperation(value = "查询剧集")
     public CommonResult<PageResult<TvshowShowPageResp>> page(TvshowShowPageReq req, PageParam pageParam) {
-        pageParam.setOrderBy("DESC:id");
+        pageParam.setOrderBy("DESC:added_at");
         return super.page(req, pageParam, TvshowShowConvert.INSTANCE::convertToDTO, TvshowShowConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
     @ApiOperation(value = "查看剧集详情")
     public CommonResult<TvshowShowViewResp> view(String id) {
-        TvshowShowViewResp resp = doView(id, TvshowShowConvert.INSTANCE::convertToViewResp);
-        List<TvshowActorDTO> tvshowActorDTOList = tvshowActorService.listByShowId(id);
-        List<AttributeDTO> attributeDTOList = attributeService.listBySubjectId(id);
-        resp.setActorList(tvshowActorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Actor.name())).map(TvshowShowConvert.INSTANCE::convertToViewResp).collect(Collectors.toList()));
-        resp.setGenreList(attributeDTOList.stream().map(AttributeDTO::getValue).collect(Collectors.toList()));
+        TvshowShowDTO tvshowShowDTO = tvshowManager.findTvshowShow(id);
+        TvshowShowViewResp resp = TvshowShowConvert.INSTANCE.convertToViewResp(tvshowShowDTO);
         return CommonResult.success(resp);
     }
 
@@ -142,21 +124,8 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @PostMapping("matchInfo")
     @ApiOperation(value = "匹配信息")
     public CommonResult<Boolean> matchInfo(@RequestBody TvshowShowMatchInfoReq req) {
-        tvshowManager.matchInfo(req.getId(), req.getDoubanId(), req.getImdbId(), req.getTmdbId());
-        return CommonResult.success(true);
-    }
-
-    @PostMapping("syncPlex")
-    @ApiOperation(value = "同步资料")
-    public CommonResult<Boolean> syncPlex(@RequestBody TvshowShowSyncPlexReq req) {
-        tvshowManager.syncPlexShow(req.getId());
-        return CommonResult.success(true);
-    }
-
-    @PostMapping("readNFO")
-    @ApiOperation(value = "读取NFO")
-    public CommonResult<Boolean> readNFO(@RequestBody TvshowShowReadNFOReq req) throws Exception {
-        tvshowManager.readShowNFO(req.getId());
+        Tvshow tvshow = tmmApiService.findTvshow(req.getDoubanId(), req.getImdbId(), req.getTmdbId());
+        tvshowManager.matchInfo(req.getId(), tvshow);
         return CommonResult.success(true);
     }
 

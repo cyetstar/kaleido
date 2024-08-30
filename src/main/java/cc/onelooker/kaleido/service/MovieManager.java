@@ -54,7 +54,7 @@ public class MovieManager {
     private MovieCollectionService movieCollectionService;
 
     @Autowired
-    private MovieActorService movieActorService;
+    private ActorService actorService;
 
     @Autowired
     private AttributeService attributeService;
@@ -64,9 +64,6 @@ public class MovieManager {
 
     @Autowired
     private MovieBasicCollectionService movieBasicCollectionService;
-
-    @Autowired
-    private MovieBasicActorService movieBasicActorService;
 
     @Autowired
     private MovieThreadService movieThreadService;
@@ -97,14 +94,14 @@ public class MovieManager {
     @Transactional
     public void saveMovie(MovieBasicDTO movieBasicDTO) {
         try {
-            attributeService.updateAttributes(movieBasicDTO.getCountryList(), movieBasicDTO.getId(), AttributeType.MovieCountry);
-            attributeService.updateAttributes(movieBasicDTO.getLanguageList(), movieBasicDTO.getId(), AttributeType.MovieLanguage);
-            attributeService.updateAttributes(movieBasicDTO.getGenreList(), movieBasicDTO.getId(), AttributeType.MovieGenre);
-            attributeService.updateAttributes(movieBasicDTO.getTagList(), movieBasicDTO.getId(), AttributeType.MovieTag);
+            attributeService.updateAttributes(movieBasicDTO.getCountryList(), movieBasicDTO.getId(), AttributeType.Country);
+            attributeService.updateAttributes(movieBasicDTO.getLanguageList(), movieBasicDTO.getId(), AttributeType.Language);
+            attributeService.updateAttributes(movieBasicDTO.getGenreList(), movieBasicDTO.getId(), AttributeType.Genre);
+            attributeService.updateAttributes(movieBasicDTO.getTagList(), movieBasicDTO.getId(), AttributeType.Tag);
             alternateTitleService.updateTitles(movieBasicDTO.getAkaList(), movieBasicDTO.getId(), SubjectType.MovieBasic);
-            updateActor(movieBasicDTO.getDirectorList(), movieBasicDTO.getId(), ActorRole.Director);
-            updateActor(movieBasicDTO.getWriterList(), movieBasicDTO.getId(), ActorRole.Writer);
-            updateActor(movieBasicDTO.getActorList(), movieBasicDTO.getId(), ActorRole.Actor);
+            actorService.updateMovieActors(movieBasicDTO.getDirectorList(), movieBasicDTO.getId(), ActorRole.Director);
+            actorService.updateMovieActors(movieBasicDTO.getWriterList(), movieBasicDTO.getId(), ActorRole.Writer);
+            actorService.updateMovieActors(movieBasicDTO.getActorList(), movieBasicDTO.getId(), ActorRole.Actor);
             movieBasicDTO.setTitleSort(KaleidoUtils.genTitleSort(movieBasicDTO.getTitle()));
             renameDirIfChanged(movieBasicDTO);
             MovieBasicDTO existMovieBasicDTO = movieBasicService.findById(movieBasicDTO.getId());
@@ -373,16 +370,16 @@ public class MovieManager {
     public MovieBasicDTO findMovieBasic(String movieId) {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(movieId);
         List<AttributeDTO> attributeDTOList = attributeService.listBySubjectId(movieBasicDTO.getId());
-        List<MovieActorDTO> movieActorDTOList = movieActorService.listByMovieId(movieBasicDTO.getId());
+        List<ActorDTO> actorDTOList = actorService.listByMovieId(movieBasicDTO.getId());
         List<AlternateTitleDTO> alternateTitleDTOList = alternateTitleService.listBySubjectId(movieBasicDTO.getId());
-        movieBasicDTO.setDirectorList(movieActorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Director.name())).collect(Collectors.toList()));
-        movieBasicDTO.setWriterList(movieActorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Writer.name())).collect(Collectors.toList()));
-        movieBasicDTO.setActorList(movieActorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Actor.name())).collect(Collectors.toList()));
+        movieBasicDTO.setDirectorList(actorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Director.name())).collect(Collectors.toList()));
+        movieBasicDTO.setWriterList(actorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Writer.name())).collect(Collectors.toList()));
+        movieBasicDTO.setActorList(actorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Actor.name())).collect(Collectors.toList()));
         movieBasicDTO.setAkaList(alternateTitleDTOList.stream().map(AlternateTitleDTO::getTitle).collect(Collectors.toList()));
-        movieBasicDTO.setLanguageList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.MovieLanguage.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
-        movieBasicDTO.setCountryList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.MovieCountry.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
-        movieBasicDTO.setGenreList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.MovieGenre.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
-        movieBasicDTO.setTagList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.MovieTag.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
+        movieBasicDTO.setLanguageList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Language.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
+        movieBasicDTO.setCountryList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Country.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
+        movieBasicDTO.setGenreList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Genre.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
+        movieBasicDTO.setTagList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Tag.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
         return movieBasicDTO;
     }
 
@@ -429,12 +426,12 @@ public class MovieManager {
                 }
                 Media media = metadata.getMedia();
                 List<Media.Stream> streamList = media.getPart().getStreamList();
-                if (streamList != null && streamList.stream().anyMatch(s -> s.getStreamType() == 2 && isChinese(s))) {
+                if (streamList != null && streamList.stream().anyMatch(s -> s.getStreamType() == 2 && KaleidoUtils.isChineseStream(s))) {
                     movieBasicDTO.setMandarin(Constants.YES);
                 } else {
                     movieBasicDTO.setMandarin(Constants.NO);
                 }
-                if (streamList != null && streamList.stream().anyMatch(s -> s.getStreamType() == 3 && isChinese(s))) {
+                if (streamList != null && streamList.stream().anyMatch(s -> s.getStreamType() == 3 && KaleidoUtils.isChineseStream(s))) {
                     movieBasicDTO.setNoSubtitle(Constants.NO);
                 } else {
                     movieBasicDTO.setNoSubtitle(Constants.YES);
@@ -444,15 +441,6 @@ public class MovieManager {
         } catch (Exception e) {
             ExceptionUtil.wrapAndThrow(e);
         }
-    }
-
-    private boolean isChinese(Media.Stream stream) {
-        List<String> values = Lists.newArrayList();
-        CollectionUtils.addIgnoreNull(values, stream.getLanguage());
-        CollectionUtils.addIgnoreNull(values, stream.getLanguageTag());
-        CollectionUtils.addIgnoreNull(values, stream.getLanguageCode());
-        CollectionUtils.addIgnoreNull(values, stream.getTitle());
-        return values.stream().anyMatch(s -> StringUtils.equalsAnyIgnoreCase(s, "zh", "chs", "cht", "ch", "中文", "中字", "简中", "繁中", "简体中文", "简体中字", "繁体中文", "繁体中字", "普通话", "国语"));
     }
 
     @Transactional
@@ -490,75 +478,60 @@ public class MovieManager {
 
     }
 
-    private List<MovieActorDTO> transformActor(List<Actor> actorList, ActorRole actorRole) {
+    private List<ActorDTO> transformActor(List<Actor> actorList, ActorRole actorRole) {
         if (actorList == null) {
             return null;
         }
         return actorList.stream().map(s -> {
-            MovieActorDTO movieActorDTO = null;
+            ActorDTO actorDTO = null;
             if (StringUtils.isNotEmpty(s.getThumb()) && !StringUtils.endsWith(s.getThumb(), KaleidoConstants.SUFFIX_PNG)) {
-                movieActorDTO = movieActorService.findByThumb(s.getThumb());
+                actorDTO = actorService.findByThumb(s.getThumb());
             }
-            if (movieActorDTO == null && StringUtils.isNotEmpty(s.getDoubanId())) {
-                movieActorDTO = movieActorService.findByDoubanId(s.getDoubanId());
+            if (actorDTO == null && StringUtils.isNotEmpty(s.getDoubanId())) {
+                actorDTO = actorService.findByDoubanId(s.getDoubanId());
             }
-            if (movieActorDTO == null && StringUtils.isNotEmpty(s.getCnName())) {
-                movieActorDTO = movieActorService.findByName(s.getCnName());
+            if (actorDTO == null && StringUtils.isNotEmpty(s.getCnName())) {
+                actorDTO = actorService.findByName(s.getCnName());
             }
-            if (movieActorDTO == null) {
-                movieActorDTO = new MovieActorDTO();
-                movieActorDTO.setName(StringUtils.defaultString(s.getCnName(), s.getEnName()));
-                movieActorDTO.setOriginalName(s.getEnName());
-                movieActorDTO.setThumb(s.getThumb());
-                movieActorDTO.setDoubanId(s.getDoubanId());
-                movieActorDTO = movieActorService.insert(movieActorDTO);
+            if (actorDTO == null) {
+                actorDTO = new ActorDTO();
+                actorDTO.setName(StringUtils.defaultString(s.getCnName(), s.getEnName()));
+                actorDTO.setOriginalName(s.getEnName());
+                actorDTO.setThumb(s.getThumb());
+                actorDTO.setDoubanId(s.getDoubanId());
+                actorDTO = actorService.insert(actorDTO);
             } else {
-                movieActorDTO.setThumb(s.getThumb());
-                movieActorDTO.setDoubanId(s.getDoubanId());
-                movieActorService.update(movieActorDTO);
+                actorDTO.setThumb(s.getThumb());
+                actorDTO.setDoubanId(s.getDoubanId());
+                actorService.update(actorDTO);
             }
-            movieActorDTO.setRole(actorRole.name());
-            movieActorDTO.setPlayRole(s.getRole());
-            return movieActorDTO;
+            actorDTO.setRole(actorRole.name());
+            actorDTO.setPlayRole(s.getRole());
+            return actorDTO;
         }).collect(Collectors.toList());
     }
 
-    private List<MovieActorDTO> transformTag(List<Tag> actorList, ActorRole actorRole) {
+    private List<ActorDTO> transformTag(List<Tag> actorList, ActorRole actorRole) {
         if (actorList == null) {
             return null;
         }
         return actorList.stream().map(s -> {
-            MovieActorDTO movieActorDTO = movieActorService.findByName(s.getTag());
-            if (movieActorDTO == null) {
-                movieActorDTO = new MovieActorDTO();
-                movieActorDTO.setName(s.getTag());
-                movieActorDTO.setOriginalName(s.getTag());
-                movieActorDTO.setThumb(s.getThumb());
-                movieActorDTO = movieActorService.insert(movieActorDTO);
+            ActorDTO actorDTO = actorService.findByName(s.getTag());
+            if (actorDTO == null) {
+                actorDTO = new ActorDTO();
+                actorDTO.setName(s.getTag());
+                actorDTO.setOriginalName(s.getTag());
+                actorDTO.setThumb(s.getThumb());
+                actorDTO = actorService.insert(actorDTO);
             }
-            movieActorDTO.setRole(actorRole.name());
-            movieActorDTO.setPlayRole(s.getRole());
-            return movieActorDTO;
+            actorDTO.setRole(actorRole.name());
+            actorDTO.setPlayRole(s.getRole());
+            return actorDTO;
         }).collect(Collectors.toList());
-    }
-
-    private void updateActor(List<MovieActorDTO> movieActorDTOList, String movieId, ActorRole actorRole) {
-        if (movieActorDTOList == null) {
-            return;
-        }
-        movieBasicActorService.deleteByMovieIdAndRole(movieId, actorRole);
-        movieActorDTOList.stream().forEach(s -> {
-            MovieBasicActorDTO movieBasicActorDTO = new MovieBasicActorDTO();
-            movieBasicActorDTO.setMovieId(movieId);
-            movieBasicActorDTO.setActorId(s.getId());
-            movieBasicActorDTO.setRole(actorRole.name());
-            movieBasicActorDTO.setPlayRole(s.getPlayRole());
-            movieBasicActorService.insert(movieBasicActorDTO);
-        });
     }
 
     private void renameDirIfChanged(MovieBasicDTO movieBasicDTO) throws IOException {
-        String newPath = KaleidoUtils.genMoviePath(movieBasicDTO);
+        String newPath = KaleidoUtils.genMovieFolder(movieBasicDTO);
         if (!StringUtils.equals(newPath, movieBasicDTO.getPath())) {
             Path moviePath = KaleidoUtils.getMoviePath(newPath);
             if (Files.notExists(moviePath)) {
@@ -643,7 +616,7 @@ public class MovieManager {
     }
 
     private Path createFolderPath(MovieBasicDTO movieBasicDTO) throws IOException {
-        String folderName = KaleidoUtils.genMoviePath(movieBasicDTO);
+        String folderName = KaleidoUtils.genMovieFolder(movieBasicDTO);
         Path folderPath = null;
         int i = 1;
         while (true) {

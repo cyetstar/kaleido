@@ -1,6 +1,6 @@
 package cc.onelooker.kaleido.convert;
 
-import cc.onelooker.kaleido.dto.ComicAuthorDTO;
+import cc.onelooker.kaleido.dto.AuthorDTO;
 import cc.onelooker.kaleido.dto.ComicBookDTO;
 import cc.onelooker.kaleido.dto.req.ComicBookCreateReq;
 import cc.onelooker.kaleido.dto.req.ComicBookPageReq;
@@ -45,7 +45,7 @@ public interface ComicBookConvert {
 
     ComicBookCreateResp convertToCreateResp(ComicBookDTO dto);
 
-    ComicBookViewResp.Author convertToViewResp(ComicAuthorDTO comicAuthorDTO);
+    ComicBookViewResp.Author convertToViewResp(AuthorDTO authorDTO);
 
     ComicBookListPageResp convertToListPageResp(Page page);
 

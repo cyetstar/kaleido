@@ -7,13 +7,16 @@ import cc.onelooker.kaleido.service.TvshowManager;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import com.google.common.collect.Sets;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +34,10 @@ public class TvshowSyncPlexRunnable extends AbstractEntityActionRunnable<Metadat
     private String libraryId;
 
     private List<Metadata> metadataList;
+
+    private Set<String> seasonIdCache = Sets.newHashSet();
+
+    private Set<String> showIdCache = Sets.newHashSet();
 
     public TvshowSyncPlexRunnable(PlexApiService plexApiService, TvshowEpisodeService tvshowEpisodeService, TvshowManager tvshowManager) {
         this.plexApiService = plexApiService;
@@ -59,6 +66,8 @@ public class TvshowSyncPlexRunnable extends AbstractEntityActionRunnable<Metadat
                 tvshowEpisodeService.deleteById(deleteId);
             }
         }
+        seasonIdCache.clear();
+        showIdCache.clear();
     }
 
     @Override
@@ -76,8 +85,14 @@ public class TvshowSyncPlexRunnable extends AbstractEntityActionRunnable<Metadat
     @Override
     protected void processEntity(Map<String, String> params, Metadata metadata) throws Exception {
         TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(metadata.getRatingKey());
-        if (tvshowEpisodeDTO == null || metadata.getUpdatedAt().compareTo(tvshowEpisodeDTO.getUpdatedAt()) > 0) {
-            tvshowManager.syncPlexEpisode(metadata.getRatingKey());
+        if (tvshowEpisodeDTO == null || metadata.getUpdatedAt().compareTo(tvshowEpisodeDTO.getUpdatedAt()) > 0 || MapUtils.getBooleanValue(params, "force")) {
+            tvshowManager.syncEpisode(metadata);
+            if (seasonIdCache.add(metadata.getParentRatingKey())) {
+                tvshowManager.syncSeason(plexApiService.findMetadata(metadata.getParentRatingKey()));
+            }
+            if (showIdCache.add(metadata.getGrandparentRatingKey())) {
+                tvshowManager.syncShow(plexApiService.findMetadata(metadata.getGrandparentRatingKey()));
+            }
         }
     }
 

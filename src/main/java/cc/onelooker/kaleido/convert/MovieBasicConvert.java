@@ -1,6 +1,6 @@
 package cc.onelooker.kaleido.convert;
 
-import cc.onelooker.kaleido.dto.MovieActorDTO;
+import cc.onelooker.kaleido.dto.ActorDTO;
 import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.dto.req.MovieBasicCreateReq;
 import cc.onelooker.kaleido.dto.req.MovieBasicPageReq;
@@ -42,7 +42,7 @@ public interface MovieBasicConvert {
 
     MovieBasicViewResp convertToViewResp(MovieBasicDTO dto);
 
-    MovieBasicViewResp.Actor convertToViewResp(MovieActorDTO dto);
+    MovieBasicViewResp.Actor convertToViewResp(ActorDTO dto);
 
     MovieBasicCreateResp convertToCreateResp(MovieBasicDTO dto);
 

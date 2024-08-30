@@ -73,7 +73,7 @@ public class TvshowShowServiceImpl extends AbstractBaseServiceImpl<TvshowShowMap
     @Override
     public PageResult<TvshowShowDTO> page(@Nullable TvshowShowDTO dto, Page page) {
         if (dto != null && StringUtils.isNotEmpty(dto.getKeyword()) && StringUtils.isNotEmpty(dto.getKeywordType())) {
-            List<SubjectAttributeDTO> subjectAttributeDTOList = subjectAttributeService.listBySubjectIdAndAttributeType(dto.getId(), AttributeType.TvshowGenre);
+            List<SubjectAttributeDTO> subjectAttributeDTOList = subjectAttributeService.listBySubjectIdAndAttributeType(dto.getId(), AttributeType.Genre);
             dto.setIdList(subjectAttributeDTOList.stream().map(SubjectAttributeDTO::getSubjectId).collect(Collectors.toList()));
         }
         return super.page(dto, page);

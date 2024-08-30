@@ -33,6 +33,8 @@ public class TvshowNFO {
     private List<String> genres;
     @XmlElement(name = "country")
     private List<String> countries;
+    @XmlElement(name = "language")
+    private List<String> languages;
     private List<String> credits;
     @XmlElement(name = "director")
     private List<String> directors;

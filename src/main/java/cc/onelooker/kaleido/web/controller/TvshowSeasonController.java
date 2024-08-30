@@ -5,7 +5,6 @@ import cc.onelooker.kaleido.dto.TvshowSeasonDTO;
 import cc.onelooker.kaleido.dto.TvshowShowDTO;
 import cc.onelooker.kaleido.dto.req.TvshowSeasonCreateReq;
 import cc.onelooker.kaleido.dto.req.TvshowSeasonPageReq;
-import cc.onelooker.kaleido.dto.req.TvshowSeasonReadNFOReq;
 import cc.onelooker.kaleido.dto.req.TvshowSeasonUpdateReq;
 import cc.onelooker.kaleido.dto.resp.TvshowSeasonCreateResp;
 import cc.onelooker.kaleido.dto.resp.TvshowSeasonPageResp;
@@ -48,8 +47,6 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
     @Autowired
     private TvshowManager tvshowManager;
 
-    @Autowired
-
     @Override
     protected IBaseService getService() {
         return tvshowSeasonService;
@@ -83,13 +80,6 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
     @ApiOperation(value = "删除单季")
     public CommonResult<Boolean> delete(@RequestBody String[] id) {
         return super.delete(id);
-    }
-
-    @PostMapping("readNFO")
-    @ApiOperation(value = "读取NFO")
-    public CommonResult<Boolean> readNFO(@RequestBody TvshowSeasonReadNFOReq req) throws Exception {
-        tvshowManager.readSeasonNFO(req.getId());
-        return CommonResult.success(true);
     }
 
     @GetMapping("viewPath")

@@ -1,6 +1,6 @@
 package cc.onelooker.kaleido.convert;
 
-import cc.onelooker.kaleido.dto.TvshowActorDTO;
+import cc.onelooker.kaleido.dto.ActorDTO;
 import cc.onelooker.kaleido.dto.TvshowShowDTO;
 import cc.onelooker.kaleido.dto.req.TvshowShowCreateReq;
 import cc.onelooker.kaleido.dto.req.TvshowShowPageReq;
@@ -46,7 +46,7 @@ public interface TvshowShowConvert {
 
     TvshowShowViewResp convertToViewResp(TvshowShowDTO dto);
 
-    TvshowShowViewResp.Actor convertToViewResp(TvshowActorDTO dto);
+    TvshowShowViewResp.Actor convertToViewResp(ActorDTO dto);
 
     TvshowShowCreateResp convertToCreateResp(TvshowShowDTO dto);
 

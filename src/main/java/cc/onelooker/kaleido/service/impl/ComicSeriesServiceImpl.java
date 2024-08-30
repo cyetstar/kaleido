@@ -2,14 +2,14 @@ package cc.onelooker.kaleido.service.impl;
 
 import cc.onelooker.kaleido.convert.ComicSeriesConvert;
 import cc.onelooker.kaleido.dto.AlternateTitleDTO;
-import cc.onelooker.kaleido.dto.ComicAuthorDTO;
+import cc.onelooker.kaleido.dto.AuthorDTO;
 import cc.onelooker.kaleido.dto.ComicSeriesAuthorDTO;
 import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.entity.ComicSeriesDO;
 import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.mapper.ComicSeriesMapper;
 import cc.onelooker.kaleido.service.AlternateTitleService;
-import cc.onelooker.kaleido.service.ComicAuthorService;
+import cc.onelooker.kaleido.service.AuthorService;
 import cc.onelooker.kaleido.service.ComicSeriesAuthorService;
 import cc.onelooker.kaleido.service.ComicSeriesService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -43,7 +43,7 @@ public class ComicSeriesServiceImpl extends AbstractBaseServiceImpl<ComicSeriesM
     private ComicSeriesAuthorService comicSeriesAuthorService;
 
     @Autowired
-    private ComicAuthorService comicAuthorService;
+    private AuthorService authorService;
 
     @Override
     protected Wrapper<ComicSeriesDO> genQueryWrapper(ComicSeriesDTO dto) {
@@ -75,11 +75,11 @@ public class ComicSeriesServiceImpl extends AbstractBaseServiceImpl<ComicSeriesM
     }
 
     private List<String> listSeriesIdByAuthor(String author) {
-        List<ComicAuthorDTO> comicAuthorDTOList = comicAuthorService.listByKeyword(author);
+        List<AuthorDTO> authorDTOList = authorService.listByKeyword(author);
         List<ComicSeriesAuthorDTO> comicSeriesAuthorDTOList = Lists.newArrayList();
-        if (CollectionUtils.isNotEmpty(comicAuthorDTOList)) {
-            for (ComicAuthorDTO comicAuthorDTO : comicAuthorDTOList) {
-                comicSeriesAuthorDTOList.addAll(comicSeriesAuthorService.listByAuthorId(comicAuthorDTO.getId()));
+        if (CollectionUtils.isNotEmpty(authorDTOList)) {
+            for (AuthorDTO authorDTO : authorDTOList) {
+                comicSeriesAuthorDTOList.addAll(comicSeriesAuthorService.listByAuthorId(authorDTO.getId()));
             }
         }
         return comicSeriesAuthorDTOList.stream().map(ComicSeriesAuthorDTO::getSeriesId).collect(Collectors.toList());

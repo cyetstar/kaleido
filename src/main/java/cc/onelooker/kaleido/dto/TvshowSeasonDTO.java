@@ -4,6 +4,8 @@ import cc.onelooker.kaleido.entity.TvshowSeasonDO;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 单季DTO
  *
@@ -96,6 +98,21 @@ public class TvshowSeasonDTO implements BaseDTO<String> {
     private Long updatedAt;
 
     // ------ 非数据库表字段 -------
+
+    /**
+     * 导演列表
+     */
+    private List<ActorDTO> directorList;
+
+    /**
+     * 编剧列表
+     */
+    private List<ActorDTO> writerList;
+
+    /**
+     * 演员列表
+     */
+    private List<ActorDTO> actorList;
 
     @Override
     public String getId() {

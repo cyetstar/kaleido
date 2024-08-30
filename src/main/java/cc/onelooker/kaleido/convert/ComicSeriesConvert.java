@@ -1,6 +1,6 @@
 package cc.onelooker.kaleido.convert;
 
-import cc.onelooker.kaleido.dto.ComicAuthorDTO;
+import cc.onelooker.kaleido.dto.AuthorDTO;
 import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.dto.req.ComicSeriesCreateReq;
 import cc.onelooker.kaleido.dto.req.ComicSeriesPageReq;
@@ -47,7 +47,7 @@ public interface ComicSeriesConvert {
 
     ComicSeriesCreateResp convertToCreateResp(ComicSeriesDTO dto);
 
-    ComicSeriesViewResp.Author convertToViewResp(ComicAuthorDTO comicAuthorDTO);
+    ComicSeriesViewResp.Author convertToViewResp(AuthorDTO authorDTO);
 
     ComicSeriesSearchInfoResp convertToSearchInfoResp(Comic comic);
 

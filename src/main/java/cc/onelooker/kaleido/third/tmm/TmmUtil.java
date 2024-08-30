@@ -30,13 +30,13 @@ public class TmmUtil {
         movieBasicDTO.setAkaList(movie.getAkas());
         movieBasicDTO.setTagList(movie.getTags());
         if (movie.getDirectors() != null) {
-            movieBasicDTO.setDirectorList(movie.getDirectors().stream().map(TmmUtil::toMovieActorDTO).collect(Collectors.toList()));
+            movieBasicDTO.setDirectorList(movie.getDirectors().stream().map(TmmUtil::toActorDTO).collect(Collectors.toList()));
         }
         if (movie.getWriters() != null) {
-            movieBasicDTO.setWriterList(movie.getWriters().stream().map(TmmUtil::toMovieActorDTO).collect(Collectors.toList()));
+            movieBasicDTO.setWriterList(movie.getWriters().stream().map(TmmUtil::toActorDTO).collect(Collectors.toList()));
         }
         if (movie.getActors() != null) {
-            movieBasicDTO.setActorList(movie.getActors().stream().map(TmmUtil::toMovieActorDTO).collect(Collectors.toList()));
+            movieBasicDTO.setActorList(movie.getActors().stream().map(TmmUtil::toActorDTO).collect(Collectors.toList()));
         }
         movieBasicDTO.setPoster(movie.getPoster());
         return movieBasicDTO;
@@ -53,8 +53,8 @@ public class TmmUtil {
         comicSeriesDTO.setYear(comic.getYear());
         comicSeriesDTO.setSummary(comic.getSummary());
         if (comic.getAuthors() != null) {
-            comicSeriesDTO.setWriterList(comic.getAuthors().stream().filter(s -> StringUtils.equals(s.getRole(), "作者")).map(TmmUtil::toComicAuthorDTO).collect(Collectors.toList()));
-            comicSeriesDTO.setPencillerList(comic.getAuthors().stream().filter(s -> StringUtils.equals(s.getRole(), "作画")).map(TmmUtil::toComicAuthorDTO).collect(Collectors.toList()));
+            comicSeriesDTO.setWriterList(comic.getAuthors().stream().filter(s -> StringUtils.equals(s.getRole(), "作者")).map(TmmUtil::toAuthorDTO).collect(Collectors.toList()));
+            comicSeriesDTO.setPencillerList(comic.getAuthors().stream().filter(s -> StringUtils.equals(s.getRole(), "作画")).map(TmmUtil::toAuthorDTO).collect(Collectors.toList()));
         }
         if (CollectionUtils.isNotEmpty(comic.getPublishers())) {
             comic.getPublishers().stream().findFirst().ifPresent(comicSeriesDTO::setPublisher);
@@ -85,19 +85,19 @@ public class TmmUtil {
         return comicBookDTO;
     }
 
-    private static MovieActorDTO toMovieActorDTO(Actor actor) {
-        MovieActorDTO movieActorDTO = new MovieActorDTO();
-        movieActorDTO.setName(actor.getCnName());
-        movieActorDTO.setOriginalName(actor.getEnName());
-        movieActorDTO.setPlayRole(actor.getRole());
-        movieActorDTO.setThumb(actor.getThumb());
-        movieActorDTO.setDoubanId(actor.getDoubanId());
-        return movieActorDTO;
+    private static ActorDTO toActorDTO(Actor actor) {
+        ActorDTO actorDTO = new ActorDTO();
+        actorDTO.setName(actor.getCnName());
+        actorDTO.setOriginalName(actor.getEnName());
+        actorDTO.setPlayRole(actor.getRole());
+        actorDTO.setThumb(actor.getThumb());
+        actorDTO.setDoubanId(actor.getDoubanId());
+        return actorDTO;
     }
 
-    private static ComicAuthorDTO toComicAuthorDTO(Author author) {
-        ComicAuthorDTO comicAuthorDTO = new ComicAuthorDTO();
-        comicAuthorDTO.setName(author.getName());
-        return comicAuthorDTO;
+    private static AuthorDTO toAuthorDTO(Author author) {
+        AuthorDTO authorDTO = new AuthorDTO();
+        authorDTO.setName(author.getName());
+        return authorDTO;
     }
 }

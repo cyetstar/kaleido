@@ -125,6 +125,46 @@ public class TvshowShowDTO implements BaseDTO<String> {
     private Long genreId;
 
     /**
+     * 别名列表
+     */
+    private List<String> akaList;
+
+    /**
+     * 标签列表
+     */
+    private List<String> tagList;
+
+    /**
+     * 电影类型列表
+     */
+    private List<String> genreList;
+
+    /**
+     * 语言列表
+     */
+    private List<String> languageList;
+
+    /**
+     * 国家地区列表
+     */
+    private List<String> countryList;
+
+    /**
+     * 导演列表
+     */
+    private List<ActorDTO> directorList;
+
+    /**
+     * 编剧列表
+     */
+    private List<ActorDTO> writerList;
+
+    /**
+     * 演员列表
+     */
+    private List<ActorDTO> actorList;
+
+    /**
      * 主键队列
      */
     private List<String> idList;

@@ -201,17 +201,17 @@ public class MovieBasicDTO implements BaseDTO<String> {
     /**
      * 导演列表
      */
-    private List<MovieActorDTO> directorList;
+    private List<ActorDTO> directorList;
 
     /**
      * 编剧列表
      */
-    private List<MovieActorDTO> writerList;
+    private List<ActorDTO> writerList;
 
     /**
      * 演员列表
      */
-    private List<MovieActorDTO> actorList;
+    private List<ActorDTO> actorList;
 
     /**
      * 电影类型列表

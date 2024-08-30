@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.nfo;
 
+import cc.onelooker.kaleido.dto.ActorDTO;
 import cc.onelooker.kaleido.dto.ComicBookDTO;
 import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.dto.MovieBasicDTO;
@@ -96,13 +97,7 @@ public class NFOUtil {
             movieNFO.setCredits(movieBasicDTO.getWriterList().stream().map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName())).collect(Collectors.toList()));
         }
         if (CollectionUtils.isNotEmpty(movieBasicDTO.getActorList())) {
-            movieNFO.setActors(movieBasicDTO.getActorList().stream().map(s -> {
-                ActorNFO actorNFO = new ActorNFO();
-                actorNFO.setName(StringUtils.defaultString(s.getName(), s.getOriginalName()));
-                actorNFO.setRole(s.getPlayRole());
-                actorNFO.setThumb(s.getThumb());
-                return actorNFO;
-            }).collect(Collectors.toList()));
+            movieNFO.setActors(movieBasicDTO.getActorList().stream().map(NFOUtil::toActorNFO).collect(Collectors.toList()));
 
         }
         return movieNFO;
@@ -245,18 +240,22 @@ public class NFOUtil {
         return actorNFOList;
     }
 
-    private static ActorNFO toActorNFO(String name, String role, String thumb) {
+    private static ActorNFO toActorNFO(ActorDTO actorDTO) {
         ActorNFO actorNFO = new ActorNFO();
-        actorNFO.setName(name);
-        actorNFO.setRole(role);
-        actorNFO.setThumb(thumb);
+        actorNFO.setName(actorDTO.getName());
+        actorNFO.setRole(actorDTO.getPlayRole());
+        actorNFO.setThumb(actorDTO.getThumb());
+        actorNFO.setDoubanId(actorDTO.getDoubanId());
         return actorNFO;
     }
 
-    private static SetNFO toSetNFO(String name) {
-        SetNFO setNFO = new SetNFO();
-        setNFO.setName(name);
-        return setNFO;
+    public static ActorDTO toActorDTO(ActorNFO actorNFO) {
+        ActorDTO actorDTO = new ActorDTO();
+        actorDTO.setName(actorNFO.getName());
+        actorDTO.setPlayRole(actorNFO.getRole());
+        actorDTO.setThumb(actorNFO.getThumb());
+        actorDTO.setDoubanId(actorNFO.getDoubanId());
+        return actorDTO;
     }
 
     public static <T> void write(T object, Class<T> clazz, Path path, String filename) {
@@ -306,7 +305,7 @@ public class NFOUtil {
         return null;
     }
 
-    public static String indentFormat(String xml) {
+    private static String indentFormat(String xml) {
         try {
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer();
@@ -330,7 +329,7 @@ public class NFOUtil {
         if (CollectionUtils.isEmpty(uniqueids)) {
             return null;
         }
-        return uniqueids.stream().filter(s -> StringUtils.equals(s.getType(), type)).map(s -> s.getValue()).findFirst().orElse(null);
+        return uniqueids.stream().filter(s -> StringUtils.equals(s.getType(), type)).map(UniqueidNFO::getValue).findFirst().orElse(null);
     }
 
     public static Float getRating(List<RatingNFO> ratings, String type) {

@@ -7,6 +7,6 @@ package cc.onelooker.kaleido.enums;
  */
 public enum AttributeType {
 
-    MovieGenre, MovieLanguage, MovieCountry, MovieTag, TvshowGenre, ComicTag,
+    Genre, Language, Country, Tag,
     ;
 }

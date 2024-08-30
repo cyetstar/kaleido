@@ -13,6 +13,8 @@ public class KaleidoConstants {
     public static final String MOVIE_NFO = "movie.nfo";
     public static final String MOVIE_POSTER = "poster.jpg";
 
+    public static final String TVSHOW_SHOW_NFO = "tvshow.nfo";
+    public static final String TVSHOW_SEASON_NFO = "season.nfo";
     public static final String TVSHOW_POSTER = "poster.jpg";
 
     public static final String SFJG_WIN = "1";

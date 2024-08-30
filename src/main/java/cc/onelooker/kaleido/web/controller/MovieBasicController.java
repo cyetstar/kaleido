@@ -1,13 +1,13 @@
 package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.convert.MovieBasicConvert;
-import cc.onelooker.kaleido.dto.MovieActorDTO;
+import cc.onelooker.kaleido.dto.ActorDTO;
 import cc.onelooker.kaleido.dto.MovieBasicCollectionDTO;
 import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.dto.resp.*;
 import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.MovieActorService;
+import cc.onelooker.kaleido.service.ActorService;
 import cc.onelooker.kaleido.service.MovieBasicCollectionService;
 import cc.onelooker.kaleido.service.MovieBasicService;
 import cc.onelooker.kaleido.service.MovieManager;
@@ -63,7 +63,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     private MovieBasicService movieBasicService;
 
     @Autowired
-    private MovieActorService movieActorService;
+    private ActorService actorService;
 
     @Autowired
     private MovieBasicCollectionService movieBasicCollectionService;
@@ -108,16 +108,16 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     public CommonResult<Boolean> update(@RequestBody MovieBasicUpdateReq req) {
         MovieBasicDTO dto = MovieBasicConvert.INSTANCE.convertToDTO(req);
         if (req.getDirectorIdList() != null) {
-            dto.setDirectorList(req.getDirectorIdList().stream().map(s -> movieActorService.findById(s)).collect(Collectors.toList()));
+            dto.setDirectorList(req.getDirectorIdList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
         }
         if (req.getWriterIdList() != null) {
-            dto.setWriterList(req.getWriterIdList().stream().map(s -> movieActorService.findById(s)).collect(Collectors.toList()));
+            dto.setWriterList(req.getWriterIdList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
         }
         if (req.getActorList() != null) {
             dto.setActorList(req.getActorList().stream().map(s -> {
-                MovieActorDTO movieActorDTO = movieActorService.findById(s.getId());
-                movieActorDTO.setPlayRole(s.getPlayRole());
-                return movieActorDTO;
+                ActorDTO actorDTO = actorService.findById(s.getId());
+                actorDTO.setPlayRole(s.getPlayRole());
+                return actorDTO;
             }).collect(Collectors.toList()));
         }
         movieManager.saveMovie(dto);

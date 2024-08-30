@@ -49,7 +49,7 @@ public class DictInitializer extends BaseDictionaryInitializer {
     }
 
     private void initAttributeDict(Map<String, Map<String, String>> dicts) {
-        AttributeType[] types = new AttributeType[]{AttributeType.MovieCountry, AttributeType.MovieGenre, AttributeType.MovieLanguage};
+        AttributeType[] types = new AttributeType[]{AttributeType.Country, AttributeType.Genre, AttributeType.Language};
         for (AttributeType type : types) {
             List<AttributeDTO> attributeDTOList = attributeService.listByType(type);
             for (AttributeDTO attributeDTO : attributeDTOList) {

@@ -1,11 +1,14 @@
 package cc.onelooker.kaleido.utils;
 
-import cc.onelooker.kaleido.dto.ComicAuthorDTO;
+import cc.onelooker.kaleido.dto.AuthorDTO;
 import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.dto.MovieBasicDTO;
+import cc.onelooker.kaleido.dto.TvshowShowDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
+import cc.onelooker.kaleido.third.plex.Media;
 import cn.hutool.extra.pinyin.PinyinUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zjjcnt.common.util.constant.Constants;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,6 +20,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -205,9 +209,9 @@ public class KaleidoUtils {
         return StringUtils.EMPTY;
     }
 
-    public static String genComicPath(ComicSeriesDTO comicSeriesDTO) {
-        Optional<String> writerOptional = comicSeriesDTO.getWriterList().stream().map(ComicAuthorDTO::getName).findFirst();
-        Optional<String> pencillerOptional = comicSeriesDTO.getPencillerList().stream().map(ComicAuthorDTO::getName).findFirst();
+    public static String genComicFolder(ComicSeriesDTO comicSeriesDTO) {
+        Optional<String> writerOptional = comicSeriesDTO.getWriterList().stream().map(AuthorDTO::getName).findFirst();
+        Optional<String> pencillerOptional = comicSeriesDTO.getPencillerList().stream().map(AuthorDTO::getName).findFirst();
         Set<String> authors = Sets.newLinkedHashSet();
         CollectionUtils.addIgnoreNull(authors, writerOptional.orElse(null));
         CollectionUtils.addIgnoreNull(authors, pencillerOptional.orElse(null));
@@ -215,12 +219,29 @@ public class KaleidoUtils {
         return String.format("%s [%s]", sanitizeFileName(comicSeriesDTO.getTitle()), sanitizeFileName(authorName));
     }
 
-    public static String genMoviePath(MovieBasicDTO movieBasicDTO) {
+    public static String genMovieFolder(MovieBasicDTO movieBasicDTO) {
         String decade = movieBasicDTO.getDecade();
         if (StringUtils.isEmpty(decade)) {
             decade = StringUtils.substring(movieBasicDTO.getYear(), 0, 3) + "0s";
         }
         return String.format("%s/%s (%s)", decade, sanitizeFileName(movieBasicDTO.getTitle()), movieBasicDTO.getYear());
+    }
+
+    public static String genShowFolder(TvshowShowDTO tvshowShowDTO) {
+        return String.format("%s (%s)", sanitizeFileName(tvshowShowDTO.getTitle()), tvshowShowDTO.getYear());
+    }
+
+    public static String genSeasonFolder(Integer seasonIndex) {
+        return "Season " + StringUtils.leftPad(String.valueOf(seasonIndex), 2, "0");
+    }
+
+    public static boolean isChineseStream(Media.Stream stream) {
+        List<String> values = Lists.newArrayList();
+        CollectionUtils.addIgnoreNull(values, stream.getLanguage());
+        CollectionUtils.addIgnoreNull(values, stream.getLanguageTag());
+        CollectionUtils.addIgnoreNull(values, stream.getLanguageCode());
+        CollectionUtils.addIgnoreNull(values, stream.getTitle());
+        return values.stream().anyMatch(s -> StringUtils.equalsAnyIgnoreCase(s, "zh", "chs", "cht", "ch", "中文", "中字", "简中", "繁中", "简体中文", "简体中字", "繁体中文", "繁体中字", "普通话", "国语"));
     }
 
     private static String sanitizeFileName(String fileName) {

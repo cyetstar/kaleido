@@ -7,7 +7,10 @@ import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.nfo.ComicInfoNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
-import cc.onelooker.kaleido.third.komga.*;
+import cc.onelooker.kaleido.third.komga.Author;
+import cc.onelooker.kaleido.third.komga.Book;
+import cc.onelooker.kaleido.third.komga.Link;
+import cc.onelooker.kaleido.third.komga.Series;
 import cc.onelooker.kaleido.third.tmm.Comic;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.third.tmm.TmmUtil;
@@ -48,19 +51,13 @@ import java.util.stream.Collectors;
 public class ComicManager {
 
     @Autowired
-    private KomgaApiService komgaApiService;
-
-    @Autowired
     private ComicBookService comicBookService;
 
     @Autowired
     private ComicSeriesService comicSeriesService;
 
     @Autowired
-    private ComicAuthorService comicAuthorService;
-
-    @Autowired
-    private ComicSeriesAuthorService comicSeriesAuthorService;
+    private AuthorService authorService;
 
     @Autowired
     private AlternateTitleService alternateTitleService;
@@ -94,10 +91,10 @@ public class ComicManager {
     @Transactional
     public void saveSeries(ComicSeriesDTO comicSeriesDTO) {
         try {
-            attributeService.updateAttributes(comicSeriesDTO.getTagList(), comicSeriesDTO.getId(), AttributeType.ComicTag);
+            attributeService.updateAttributes(comicSeriesDTO.getTagList(), comicSeriesDTO.getId(), AttributeType.Tag);
             alternateTitleService.updateTitles(comicSeriesDTO.getAlternateTitleList(), comicSeriesDTO.getId(), SubjectType.ComicSeries);
-            comicAuthorService.updateAuthors(comicSeriesDTO.getWriterList(), comicSeriesDTO.getId(), AuthorRole.Writer);
-            comicAuthorService.updateAuthors(comicSeriesDTO.getPencillerList(), comicSeriesDTO.getId(), AuthorRole.Penciller);
+            authorService.updateAuthors(comicSeriesDTO.getWriterList(), comicSeriesDTO.getId(), AuthorRole.Writer);
+            authorService.updateAuthors(comicSeriesDTO.getPencillerList(), comicSeriesDTO.getId(), AuthorRole.Penciller);
             String oldPath = comicSeriesDTO.getPath();
             renameDirIfChanged(comicSeriesDTO);
             ComicSeriesDTO existComicSeriesDTO = comicSeriesService.findById(comicSeriesDTO.getId());
@@ -234,11 +231,11 @@ public class ComicManager {
         ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(seriesId);
         List<AttributeDTO> attributeDTOList = attributeService.listBySubjectId(seriesId);
         List<AlternateTitleDTO> alternateTitleDTOList = alternateTitleService.listBySubjectId(seriesId);
-        List<ComicAuthorDTO> comicAuthorDTOList = comicAuthorService.listBySeriesId(seriesId);
+        List<AuthorDTO> authorDTOList = authorService.listBySeriesId(seriesId);
         comicSeriesDTO.setAlternateTitleList(alternateTitleDTOList.stream().map(AlternateTitleDTO::getTitle).collect(Collectors.toList()));
-        comicSeriesDTO.setTagList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.ComicTag.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
-        comicSeriesDTO.setWriterList(comicAuthorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), AuthorRole.Writer.name())).collect(Collectors.toList()));
-        comicSeriesDTO.setPencillerList(comicAuthorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), AuthorRole.Penciller.name())).collect(Collectors.toList()));
+        comicSeriesDTO.setTagList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Tag.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
+        comicSeriesDTO.setWriterList(authorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), AuthorRole.Writer.name())).collect(Collectors.toList()));
+        comicSeriesDTO.setPencillerList(authorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), AuthorRole.Penciller.name())).collect(Collectors.toList()));
         return comicSeriesDTO;
     }
 
@@ -255,7 +252,7 @@ public class ComicManager {
     }
 
     private void renameDirIfChanged(ComicSeriesDTO comicSeriesDTO) throws IOException {
-        String newPath = KaleidoUtils.genComicPath(comicSeriesDTO);
+        String newPath = KaleidoUtils.genComicFolder(comicSeriesDTO);
         if (!StringUtils.equals(newPath, comicSeriesDTO.getPath())) {
             Path path = KaleidoUtils.getComicPath(newPath);
             if (Files.notExists(path)) {
@@ -266,14 +263,14 @@ public class ComicManager {
         }
     }
 
-    private List<ComicAuthorDTO> transformAuthor(List<Author> authorList, AuthorRole authorRole) {
+    private List<AuthorDTO> transformAuthor(List<Author> authorList, AuthorRole authorRole) {
         if (authorList == null) {
             return null;
         }
         return authorList.stream().filter(s -> s.getRole().equals(authorRole.name().toLowerCase())).map(s -> {
-            ComicAuthorDTO comicAuthorDTO = new ComicAuthorDTO();
-            comicAuthorDTO.setName(s.getName());
-            return comicAuthorDTO;
+            AuthorDTO authorDTO = new AuthorDTO();
+            authorDTO.setName(s.getName());
+            return authorDTO;
         }).collect(Collectors.toList());
     }
 
@@ -359,7 +356,7 @@ public class ComicManager {
     private void convertBook(Path path, Comic comic) {
         try {
             ComicSeriesDTO comicSeriesDTO = TmmUtil.toComicSeriesDTO(comic);
-            String folderName = KaleidoUtils.genComicPath(comicSeriesDTO);
+            String folderName = KaleidoUtils.genComicFolder(comicSeriesDTO);
             Path targetFolder = KaleidoUtils.getComicPath(folderName);
             String fileName = path.getFileName().toString();
             String baseName = FilenameUtils.getBaseName(fileName);

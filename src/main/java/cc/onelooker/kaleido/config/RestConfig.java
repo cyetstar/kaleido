@@ -14,7 +14,7 @@ import java.time.Duration;
 @Configuration
 public class RestConfig {
 
-    private static final long READ_TIMEOUT_SECONDS = 60L;
+    private static final long READ_TIMEOUT_SECONDS = 300L;
     private static final long CONNECT_TIMEOUT_SECONDS = 5L;
 
     @Bean
