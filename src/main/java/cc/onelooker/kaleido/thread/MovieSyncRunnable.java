@@ -2,11 +2,8 @@ package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.enums.SubjectType;
-import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.service.MovieBasicService;
 import cc.onelooker.kaleido.service.MovieManager;
-import cc.onelooker.kaleido.service.TaskService;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
@@ -34,9 +31,7 @@ public class MovieSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
 
     private final MovieManager movieManager;
 
-    private String libraryId;
-
-    private List<Metadata> metadataList;
+    private List<String> plexIdList = Lists.newArrayList();
 
     public MovieSyncRunnable(PlexApiService plexApiService, MovieManager movieManager, MovieBasicService movieBasicService) {
         this.plexApiService = plexApiService;
@@ -50,11 +45,6 @@ public class MovieSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
     }
 
     @Override
-    protected void beforeRun(Map<String, String> params) {
-        libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
-    }
-
-    @Override
     protected void afterRun(Map<String, String> params) {
         String id = MapUtils.getString(params, "id");
         if (StringUtils.isNotEmpty(id)) {
@@ -63,7 +53,6 @@ public class MovieSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
         }
         List<MovieBasicDTO> movieBasicDTOList = movieBasicService.list(null);
         List<String> idList = movieBasicDTOList.stream().map(MovieBasicDTO::getId).collect(Collectors.toList());
-        List<String> plexIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
         Collection<String> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
         if (CollectionUtils.isNotEmpty(deleteIdList)) {
             for (String deleteId : deleteIdList) {
@@ -73,6 +62,7 @@ public class MovieSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
                 movieBasicService.deleteById(deleteId);
             }
         }
+        plexIdList.clear();
     }
 
     @Override
@@ -80,27 +70,27 @@ public class MovieSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
         String id = MapUtils.getString(params, "id");
         PageResult<Metadata> pageResult = new PageResult<>();
         pageResult.setSearchCount(true);
-        if (pageNumber == 1) {
-            if (StringUtils.isNotEmpty(id)) {
-                Metadata metadata = plexApiService.findMetadata(id);
-                if (metadata != null) {
-                    metadataList = Lists.newArrayList(metadata);
-                }
-            } else {
-                metadataList = plexApiService.listMovie(libraryId);
-            }
-            pageResult.setTotal((long) metadataList.size());
-            pageResult.setRecords(metadataList);
+        if (StringUtils.isEmpty(id)) {
+            String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
+            pageResult = plexApiService.pageMovie(libraryId, pageNumber, pageSize);
+            plexIdList.addAll(pageResult.getRecords().stream().map(Metadata::getRatingKey).collect(Collectors.toList()));
+        } else if (pageNumber == 1) {
+            Metadata metadata = plexApiService.findMetadata(id);
+            pageResult.setTotal(1L);
+            pageResult.setRecords(Lists.newArrayList(metadata));
         }
         return pageResult;
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, Metadata metadata) throws Exception {
+    protected int processEntity(Map<String, String> params, Metadata metadata) throws Exception {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
         if (movieBasicDTO == null || metadata.getUpdatedAt().compareTo(movieBasicDTO.getUpdatedAt()) > 0 || MapUtils.getBooleanValue(params, "force")) {
+            metadata = plexApiService.findMetadata(metadata.getRatingKey());
             movieManager.syncMovie(metadata);
+            return SUCCESS;
         }
+        return IGNORE;
     }
 
 }

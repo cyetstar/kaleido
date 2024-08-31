@@ -28,8 +28,9 @@ public class MusicReadAudioTagRunnable extends AbstractEntityActionRunnable<Musi
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, MusicAlbumDTO entity) throws Exception {
+    protected int processEntity(Map<String, String> params, MusicAlbumDTO entity) throws Exception {
         musicManager.readAudioTag(entity.getId());
+        return SUCCESS;
     }
 
     @Override

@@ -54,9 +54,10 @@ public class MovieMatchInfoRunnable extends AbstractEntityActionRunnable<MovieBa
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, MovieBasicDTO dto) throws Exception {
+    protected int processEntity(Map<String, String> params, MovieBasicDTO dto) throws Exception {
         Movie movie = tmmApiService.findMovie(dto.getDoubanId(), dto.getImdbId(), dto.getTmdbId());
         movieManager.matchMovie(dto.getId(), movie);
+        return SUCCESS;
     }
 
     @Override

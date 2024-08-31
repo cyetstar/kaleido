@@ -11,6 +11,7 @@ import com.google.common.collect.Sets;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
  * Created by cyetstar on 2021/1/7.
  */
 @Component
-public class TvshowSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata> {
+public class TvshowSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
 
     private final PlexApiService plexApiService;
 
@@ -31,15 +32,13 @@ public class TvshowSyncPlexRunnable extends AbstractEntityActionRunnable<Metadat
 
     private final TvshowManager tvshowManager;
 
-    private String libraryId;
+    private final List<String> plexIdList = Lists.newArrayList();
 
-    private List<Metadata> metadataList;
+    private final Set<String> seasonIdCache = Sets.newHashSet();
 
-    private Set<String> seasonIdCache = Sets.newHashSet();
+    private final Set<String> showIdCache = Sets.newHashSet();
 
-    private Set<String> showIdCache = Sets.newHashSet();
-
-    public TvshowSyncPlexRunnable(PlexApiService plexApiService, TvshowEpisodeService tvshowEpisodeService, TvshowManager tvshowManager) {
+    public TvshowSyncRunnable(PlexApiService plexApiService, TvshowEpisodeService tvshowEpisodeService, TvshowManager tvshowManager) {
         this.plexApiService = plexApiService;
         this.tvshowEpisodeService = tvshowEpisodeService;
         this.tvshowManager = tvshowManager;
@@ -47,19 +46,13 @@ public class TvshowSyncPlexRunnable extends AbstractEntityActionRunnable<Metadat
 
     @Override
     public Action getAction() {
-        return Action.tvshowSyncPlex;
-    }
-
-    @Override
-    protected void beforeRun(Map<String, String> params) {
-        libraryId = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryId);
+        return Action.tvshowSync;
     }
 
     @Override
     protected void afterRun(Map<String, String> params) {
         List<TvshowEpisodeDTO> tvshowEpisodeDTOList = tvshowEpisodeService.list(null);
         List<String> idList = tvshowEpisodeDTOList.stream().map(TvshowEpisodeDTO::getId).collect(Collectors.toList());
-        List<String> plexIdList = metadataList.stream().map(Metadata::getRatingKey).collect(Collectors.toList());
         Collection<String> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
         if (CollectionUtils.isNotEmpty(deleteIdList)) {
             for (String deleteId : deleteIdList) {
@@ -68,22 +61,19 @@ public class TvshowSyncPlexRunnable extends AbstractEntityActionRunnable<Metadat
         }
         seasonIdCache.clear();
         showIdCache.clear();
+        plexIdList.clear();
     }
 
     @Override
     protected PageResult<Metadata> page(Map<String, String> params, int pageNumber, int pageSize) {
-        PageResult<Metadata> pageResult = new PageResult<>();
-        pageResult.setSearchCount(true);
-        if (pageNumber < 2) {
-            metadataList = plexApiService.listEpsiode(libraryId);
-            pageResult.setTotal((long) metadataList.size());
-            pageResult.setRecords(metadataList);
-        }
+        String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryId);
+        PageResult<Metadata> pageResult = plexApiService.pageEpsiode(libraryId, pageNumber, pageSize);
+        plexIdList.addAll(pageResult.getRecords().stream().map(Metadata::getRatingKey).collect(Collectors.toList()));
         return pageResult;
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, Metadata metadata) throws Exception {
+    protected int processEntity(Map<String, String> params, Metadata metadata) throws Exception {
         TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(metadata.getRatingKey());
         if (tvshowEpisodeDTO == null || metadata.getUpdatedAt().compareTo(tvshowEpisodeDTO.getUpdatedAt()) > 0 || MapUtils.getBooleanValue(params, "force")) {
             tvshowManager.syncEpisode(metadata);
@@ -93,7 +83,9 @@ public class TvshowSyncPlexRunnable extends AbstractEntityActionRunnable<Metadat
             if (showIdCache.add(metadata.getGrandparentRatingKey())) {
                 tvshowManager.syncShow(plexApiService.findMetadata(metadata.getGrandparentRatingKey()));
             }
+            return SUCCESS;
         }
+        return IGNORE;
     }
 
 }

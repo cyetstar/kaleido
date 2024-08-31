@@ -41,10 +41,12 @@ public class MusicDownloadLyricRunnable extends AbstractEntityActionRunnable<Mus
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, MusicAlbumDTO entity) throws Exception {
+    protected int processEntity(Map<String, String> params, MusicAlbumDTO entity) throws Exception {
         if (StringUtils.isNotEmpty(entity.getNeteaseId())) {
             musicManager.downloadLyric(entity.getId());
+            return SUCCESS;
         }
+        return IGNORE;
     }
 
     @Override

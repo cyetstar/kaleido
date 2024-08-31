@@ -15,6 +15,8 @@ import java.util.List;
 public class MediaContainer {
 
     private Integer size;
+    private Integer totalSize;
+    private Integer offset;
     private String title1;
     private String allowSync;
     private String identifier;

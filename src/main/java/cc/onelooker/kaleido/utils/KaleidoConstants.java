@@ -77,6 +77,7 @@ public class KaleidoConstants {
     public static final String TASK_STATUS_TODO = "0";
     public static final String TASK_STATUS_DONE = "1";
     public static final String TASK_STATUS_ERROR = "4";
+    public static final String TASK_STATUS_IGNORE = "9";
 
     public static final CharSequence SUFFIX_PNG = "png";
 }

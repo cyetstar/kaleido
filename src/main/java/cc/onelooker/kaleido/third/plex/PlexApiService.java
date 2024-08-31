@@ -3,6 +3,8 @@ package cc.onelooker.kaleido.third.plex;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cn.hutool.core.thread.ThreadUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zjjcnt.common.core.domain.PageResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,6 +12,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author cyetstar
@@ -34,11 +37,11 @@ public class PlexApiService {
     private final static String API_ALBUM_FIND = "/library/metadata/{albumId}?X-Plex-Token={plexToken}";
     private final static String API_ALBUM_REFRESH = "/library/metadata/{albumId}/refresh?force=1&X-Plex-Token={plexToken}";
     private final static String API_TRACK_LIST_BY_ALBUM = "/library/metadata/{albumId}/children?X-Plex-Token={plexToken}";
-    private final static String API_MOVIE_LIST = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
+    private final static String API_MOVIE_LIST = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}&X-Plex-Container-Start={start}&X-Plex-Container-Size={size}";
     private final static String API_MOVIE_LIST_BY_UPDATED_AT = "/library/sections/{libraryId}/all?updatedAt>={updatedAt}&X-Plex-Token={plexToken}";
     private final static String API_MOVIE_FIND = "/library/metadata/{movieId}?X-Plex-Token={plexToken}";
     private final static String API_MOVIE_REFRESH = "/library/metadata/{movieId}/refresh?force=1&X-Plex-Token={plexToken}";
-    private final static String API_EPISODE_LIST = "/library/sections/{libraryId}/all?type=4&X-Plex-Token={plexToken}";
+    private final static String API_EPISODE_LIST = "/library/sections/{libraryId}/all?type=4&X-Plex-Token={plexToken}&X-Plex-Container-Start={start}&X-Plex-Container-Size={size}";
     private final static String API_EPISODE_LIST_BY_UPDATED_AT = "/library/sections/{libraryId}/all?type=4&updatedAt>={updatedAt}&X-Plex-Token={plexToken}";
     private final static String API_EPISODE_FIND = "/library/metadata/{episodeId}?X-Plex-Token={plexToken}";
     private final static String API_SEASON_FIND = "/library/metadata/{seasonId}?X-Plex-Token={plexToken}";
@@ -141,11 +144,11 @@ public class PlexApiService {
         });
     }
 
-    public List<Metadata> listMovie(String libraryId) {
+    public PageResult<Metadata> pageMovie(String libraryId, Integer pageNumber, Integer pageSize) {
         return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_MOVIE_LIST, PlexResult.class, libraryId, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getMetadataList();
+            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_MOVIE_LIST, PlexResult.class, libraryId, plexToken, (pageNumber - 1) * pageSize, pageSize);
+            MediaContainer mediaContainer = Objects.requireNonNull(plexResult).getMediaContainer();
+            return PageResult.convert(Page.of((long) pageNumber, (long) pageSize, (long) mediaContainer.getTotalSize()), mediaContainer.getMetadataList());
         });
     }
 
@@ -173,11 +176,17 @@ public class PlexApiService {
         });
     }
 
-    public List<Metadata> listEpsiode(String libraryId) {
+    public PageResult<Metadata> pageEpsiode(String libraryId, Integer number, Integer size) {
         return doRequest(() -> {
-            PlexResult episodes = restTemplate.getForObject(plexUrl + API_EPISODE_LIST, PlexResult.class, libraryId, plexToken);
-            MediaContainer mediaContainer = episodes.getMediaContainer();
-            return mediaContainer.getMetadataList();
+            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_EPISODE_LIST, PlexResult.class, libraryId, plexToken, (number - 1) * size, size);
+            MediaContainer mediaContainer = plexResult.getMediaContainer();
+            PageResult<Metadata> pageResult = new PageResult<>();
+            pageResult.setPageSize(size.longValue());
+            pageResult.setPageNumber(number.longValue());
+            pageResult.setSearchCount(true);
+            pageResult.setTotal(mediaContainer.getTotalSize().longValue());
+            pageResult.setRecords(mediaContainer.getMetadataList());
+            return pageResult;
         });
     }
 
@@ -297,7 +306,7 @@ public class PlexApiService {
     }
 
     public void refreshMetadata(String metadataId) {
-         doRequest(() -> {
+        doRequest(() -> {
             restTemplate.put(plexUrl + API_METADATA_REFRESH, String.class, metadataId, plexToken);
             return true;
         });

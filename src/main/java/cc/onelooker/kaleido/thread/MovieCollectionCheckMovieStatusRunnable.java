@@ -39,13 +39,15 @@ public class MovieCollectionCheckMovieStatusRunnable extends AbstractEntityActio
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, MovieBasicCollectionDTO dto) throws Exception {
+    protected int processEntity(Map<String, String> params, MovieBasicCollectionDTO dto) throws Exception {
         MovieBasicDTO movieBasicDTO = movieBasicService.findByDoubanId(dto.getDoubanId());
         if (movieBasicDTO != null) {
             dto.setMovieId(movieBasicDTO.getId());
             dto.setStatus(Constants.YES);
             movieBasicCollectionService.update(dto);
+            return SUCCESS;
         }
+        return IGNORE;
     }
 
 }

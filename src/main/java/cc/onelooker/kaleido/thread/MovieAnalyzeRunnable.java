@@ -81,35 +81,34 @@ public class MovieAnalyzeRunnable extends AbstractEntityActionRunnable<Metadata>
         String id = MapUtils.getString(params, "id");
         PageResult<Metadata> pageResult = new PageResult<>();
         pageResult.setSearchCount(true);
-        List<Metadata> metadataList = Lists.newArrayList();
-        if (pageNumber == 1) {
-            if (StringUtils.isNotEmpty(id)) {
-                Metadata metadata = plexApiService.findMetadata(id);
-                CollectionUtils.addIgnoreNull(metadataList, metadata);
-            } else {
-                String movieLibraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
-                metadataList = plexApiService.listMovie(movieLibraryId);
-            }
+        if (StringUtils.isEmpty(id)) {
+            String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
+            pageResult = plexApiService.pageMovie(libraryId, pageNumber, pageSize);
+        } else if (pageNumber == 1) {
+            Metadata metadata = plexApiService.findMetadata(id);
+            pageResult.setTotal(1L);
+            pageResult.setRecords(Lists.newArrayList(metadata));
         }
-        pageResult.setTotal((long) metadataList.size());
-        pageResult.setRecords(metadataList);
         return pageResult;
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, Metadata metadata) throws Exception {
+    protected int processEntity(Map<String, String> params, Metadata metadata) throws Exception {
         if (CollectionUtils.isNotEmpty(idList)) {
             if (idList.contains(metadata.getRatingKey())) {
                 //查出所有数据后，匹配上的才进行分析
                 movieManager.analyze(metadata);
+                return SUCCESS;
             }
         } else {
             long lastUpdatedAt = metadata.getUpdatedAt();
             if (lastUpdatedAt > lastAnalyzeTime) {
                 movieManager.analyze(metadata);
+                return SUCCESS;
             }
             maxUpdatedAt = lastUpdatedAt > maxUpdatedAt ? lastUpdatedAt : maxUpdatedAt;
         }
+        return IGNORE;
     }
 
 }

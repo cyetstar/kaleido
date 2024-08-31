@@ -53,12 +53,13 @@ public class TvshowUpdateSourceRunnable extends AbstractEntityActionRunnable<Pat
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, Path path) throws Exception {
+    protected int processEntity(Map<String, String> params, Path path) throws Exception {
         tvshowManager.updateSource(path);
+        return SUCCESS;
     }
 
     @Override
-    protected String getMessage(Path path) {
-        return path.getFileName().toString();
+    protected String getMessage(Path path, Integer state) {
+        return path.getFileName().toString() + " " + getStateMessage(state);
     }
 }

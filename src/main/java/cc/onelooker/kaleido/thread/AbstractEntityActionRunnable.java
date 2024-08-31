@@ -2,9 +2,11 @@ package cc.onelooker.kaleido.thread;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.thread.ThreadUtil;
+import com.google.common.collect.ImmutableMap;
 import com.zjjcnt.common.core.domain.PageResult;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -19,17 +21,30 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
 
     private int sleepSecond = 0;
 
+    private Map<Integer, String> stateMap = ImmutableMap.of(SUCCESS, "成功", ERROR, "错误", IGNORE, "忽略");
+
+    public static final int SUCCESS = 0;
+    public static final int ERROR = -1;
+    public static final int IGNORE = 9;
+
     /**
      * 负责处理单条记录
      *
      * @param entity
      */
-    protected abstract void processEntity(Map<String, String> params, T entity) throws Exception;
+    protected abstract int processEntity(Map<String, String> params, T entity) throws Exception;
 
     protected abstract PageResult<T> page(Map<String, String> params, int pageNumber, int pageSize);
 
-    protected String getMessage(T entity) {
-        return entity.toString();
+    protected String getMessage(T entity, Integer state) {
+        return entity.toString() + " " + getStateMessage(state);
+    }
+
+    protected String getStateMessage(Integer state) {
+        if (state == null) {
+            state = 1;
+        }
+        return "[" + MapUtils.getString(stateMap, state, "异常") + "]";
     }
 
     @Override
@@ -48,11 +63,11 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
                     if (entity == null) {
                         continue;
                     }
-                    updateActionState(getMessage(entity), total, num++);
                     if (isStop()) {
                         break;
                     }
-                    processEntity(params, entity);
+                    int state = processEntity(params, entity);
+                    updateActionState(getMessage(entity, state), total, num++);
                 } catch (Exception e) {
                     processError(params, entity, e);
                 } finally {
@@ -75,7 +90,7 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
     }
 
     protected void processError(Map<String, String> params, T entity, Exception e) {
-        log.error("【{}】>>> {} 执行发生错误，{}", getAction(), getMessage(entity), ExceptionUtil.getMessage(e));
+        log.error("【{}】>>> {} 执行发生错误，{}", getAction(), getMessage(entity, ERROR), ExceptionUtil.getMessage(e));
         e.printStackTrace();
     }
 

@@ -67,20 +67,25 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, TaskDTO taskDTO) throws Exception {
+    protected int processEntity(Map<String, String> params, TaskDTO taskDTO) throws Exception {
         ComicBookDTO comicBookDTO = comicBookService.findById(taskDTO.getSubjectId());
         ComicInfoNFO comicInfoNFO = readComicInfoNFO(comicBookDTO);
         if (comicInfoNFO == null) {
             comicManager.writeComicInfo(comicBookDTO);
+            taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
+            return SUCCESS;
         } else {
             ComicSeriesDTO comicSeriesDTO = comicManager.findSeriesById(comicBookDTO.getSeriesId());
             ComicInfoNFO newComicInfoNFO = NFOUtil.toComicInfoNFO(comicSeriesDTO, comicBookDTO);
             if (!newComicInfoNFO.equals(comicInfoNFO)) {
                 log.info("不一致需要重写ComicInfo.xml");
                 comicManager.writeComicInfo(comicBookDTO);
+                taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
+                return SUCCESS;
             }
         }
-        taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
+        taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_IGNORE);
+        return IGNORE;
     }
 
     @Override
@@ -98,8 +103,4 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
         return NFOUtil.read(ComicInfoNFO.class, tempPath, KaleidoConstants.COMIC_INFO);
     }
 
-    @Override
-    protected String getMessage(TaskDTO taskDTO) {
-        return taskDTO.getSubjectTitle();
-    }
 }

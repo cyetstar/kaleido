@@ -80,11 +80,13 @@ public class MusicSyncPlexRunnable extends AbstractEntityActionRunnable<Metadata
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, Metadata metadata) throws Exception {
+    protected int processEntity(Map<String, String> params, Metadata metadata) throws Exception {
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(metadata.getRatingKey());
         if (musicAlbumDTO == null || metadata.getUpdatedAt().compareTo(musicAlbumDTO.getUpdatedAt()) > 0) {
             musicManager.syncPlexAlbumAndReadAudioTag(libraryPath, metadata.getRatingKey());
+            return SUCCESS;
         }
+        return IGNORE;
     }
 
 }

@@ -36,10 +36,12 @@ public class MovieCheckThreadStatusRunnable extends AbstractEntityActionRunnable
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, MovieThreadDTO dto) throws Exception {
+    protected int processEntity(Map<String, String> params, MovieThreadDTO dto) throws Exception {
         if (dto.getStatus() == ThreadStatus.todo.ordinal()) {
             movieManager.checkThreadStatus(dto);
+            return SUCCESS;
         }
+        return IGNORE;
     }
 
 }

@@ -42,6 +42,11 @@ public class Book {
         return Instant.parse(this.lastModified).getLong(ChronoField.INSTANT_SECONDS);
     }
 
+    @Override
+    public String toString() {
+        return getSeriesTitle() + "(" + getMetadata().getTitle() + ")";
+    }
+
     @Data
     public static class Media {
         private String status;

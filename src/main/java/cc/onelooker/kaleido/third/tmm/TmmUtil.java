@@ -1,9 +1,15 @@
 package cc.onelooker.kaleido.third.tmm;
 
 import cc.onelooker.kaleido.dto.*;
+import cc.onelooker.kaleido.enums.SourceType;
+import cc.onelooker.kaleido.nfo.RatingNFO;
+import cc.onelooker.kaleido.nfo.SeasonNFO;
+import cc.onelooker.kaleido.nfo.UniqueidNFO;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -99,5 +105,39 @@ public class TmmUtil {
         AuthorDTO authorDTO = new AuthorDTO();
         authorDTO.setName(author.getName());
         return authorDTO;
+    }
+
+    public static TvshowShowDTO toTvshowShow(Tvshow tvshow) {
+        return null;
+    }
+
+    public static TvshowSeasonDTO toTvshowSeason(Season season) {
+        TvshowSeasonDTO tvshowSeasonDTO = new TvshowSeasonDTO();
+        tvshowSeasonDTO.setTitle(season.getTitle());
+        tvshowSeasonDTO.setOriginalTitle(season.getOriginalTitle());
+        tvshowSeasonDTO.setSeasonIndex(season.getSeasonNumber());
+        tvshowSeasonDTO.setSummary(season.getPlot());
+        tvshowSeasonDTO.setYear(season.getYear());
+//        tvshowSeasonDTO.setOriginallyAvailableAt(season.getPremiered());
+//        List<RatingNFO> ratingNFOList = Lists.newArrayList();
+//        CollectionUtils.addIgnoreNull(ratingNFOList, toRatingNFO(season.getAverage()));
+//        tvshowSeasonDTO.setRatings(ratingNFOList);
+//        List<UniqueidNFO> uniqueidNFOList = Lists.newArrayList();
+//        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.douban, season.getDoubanId()));
+//        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.imdb, season.getImdbId()));
+//        CollectionUtils.addIgnoreNull(uniqueidNFOList, toUniqueidNFO(SourceType.tmdb, season.getTmdbId()));
+//        tvshowSeasonDTO.setUniqueids(uniqueidNFOList);
+//        if (CollectionUtils.isNotEmpty(season.getCredits())) {
+//            tvshowSeasonDTO.setCredits(season.getCredits().stream().map(s -> StringUtils.defaultString(s.getCnName(), s.getEnName())).collect(Collectors.toList()));
+//        }
+//        if (CollectionUtils.isNotEmpty(season.getDirectors())) {
+//            tvshowSeasonDTO.setDirectors(season.getDirectors().stream().map(s -> StringUtils.defaultString(s.getCnName(), s.getEnName())).collect(Collectors.toList()));
+//        }
+//        tvshowSeasonDTO.setActors(toActorNFOs(season.getActors()));
+//        tvshowSeasonDTO.setAkas(tvshow.getAkas());
+//        tvshowSeasonDTO.setGenres(tvshow.getGenres());
+//        tvshowSeasonDTO.setMpaa(tvshow.getMpaa());
+//        tvshowSeasonDTO.setStudios(tvshow.getStudios());
+        return tvshowSeasonDTO;
     }
 }

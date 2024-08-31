@@ -53,21 +53,18 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
     protected PageResult<Book> page(Map<String, String> params, int pageNumber, int pageSize) {
         String seriesId = MapUtils.getString(params, "seriesId");
         PageResult<Book> bookPageResult = null;
-        if (StringUtils.isNotEmpty(seriesId)) {
-            List<Book> records = Lists.newArrayList();
-            if (pageNumber == 1) {
-                records = komgaApiService.listBookBySeries(seriesId);
-            }
-            bookPageResult = PageResult.convert(Page.of(pageNumber, pageSize, records.size()), records);
-        } else {
+        if (StringUtils.isEmpty(seriesId)) {
             bookPageResult = komgaApiService.pageBook(pageNumber - 1, pageSize);
+            bookIdList.addAll(bookPageResult.getRecords().stream().map(Book::getId).collect(Collectors.toList()));
+        } else if (pageNumber == 1) {
+            List<Book> records = komgaApiService.listBookBySeries(seriesId);
+            bookPageResult = PageResult.convert(Page.of(pageNumber, pageSize, records.size()), records);
         }
-        bookIdList.addAll(bookPageResult.getRecords().stream().map(Book::getId).collect(Collectors.toList()));
         return bookPageResult;
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, Book book) throws Exception {
+    protected int processEntity(Map<String, String> params, Book book) throws Exception {
         ComicBookDTO comicBookDTO = comicBookService.findById(book.getId());
         if (comicBookDTO == null || book.getUpdatedAt().compareTo(comicBookDTO.getUpdatedAt()) > 0 || MapUtils.getBooleanValue(params, "force")) {
             //同步komga
@@ -76,7 +73,9 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
                 Series series = komgaApiService.findSeries(book.getSeriesId());
                 comicManager.syncSeries(series);
             }
+            return SUCCESS;
         }
+        return IGNORE;
     }
 
     @Override
@@ -96,10 +95,7 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
             }
         }
         seriesIdCache.clear();
+        bookIdList.clear();
     }
 
-    @Override
-    protected String getMessage(Book book) {
-        return book.getSeriesTitle() + "(" + book.getMetadata().getTitle() + ")";
-    }
 }

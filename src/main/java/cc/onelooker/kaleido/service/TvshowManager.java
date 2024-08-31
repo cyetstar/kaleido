@@ -9,10 +9,7 @@ import cc.onelooker.kaleido.nfo.TvshowNFO;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.third.plex.Tag;
-import cc.onelooker.kaleido.third.tmm.Episode;
-import cc.onelooker.kaleido.third.tmm.Season;
-import cc.onelooker.kaleido.third.tmm.TmmApiService;
-import cc.onelooker.kaleido.third.tmm.Tvshow;
+import cc.onelooker.kaleido.third.tmm.*;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
@@ -89,7 +86,7 @@ public class TvshowManager {
         } else {
             tvshowEpisodeService.update(tvshowEpisodeDTO);
         }
-        taskService.newTask(tvshowEpisodeDTO.getId(), SubjectType.TvshowShow, tvshowEpisodeDTO.getTitle(), TaskType.writeEpisodeNFO);
+        taskService.newTask(tvshowEpisodeDTO.getId(), SubjectType.TvshowEpisode, tvshowEpisodeDTO.getTitle(), TaskType.writeEpisodeNFO);
     }
 
     @Transactional
@@ -103,7 +100,7 @@ public class TvshowManager {
         } else {
             tvshowSeasonService.update(tvshowSeasonDTO);
         }
-        taskService.newTask(tvshowSeasonDTO.getId(), SubjectType.TvshowShow, tvshowSeasonDTO.getTitle(), TaskType.writeSeasonNFO);
+        taskService.newTask(tvshowSeasonDTO.getId(), SubjectType.TvshowSeason, tvshowSeasonDTO.getTitle(), TaskType.writeSeasonNFO);
     }
 
     @Transactional
@@ -275,12 +272,14 @@ public class TvshowManager {
             }
             log.info("== 源文件信息:{}", path);
             Tvshow tvshow = findTvshowByNFO(path);
-            if (tvshow == null) {
-                log.info("== 找不到剧集信息");
-                return;
+            if (tvshow != null) {
+                log.info("== 查询到剧集信息:{}", tvshow.getTitle());
+                TvshowShowDTO tvshowShowDTO = TmmUtil.toTvshowShow(tvshow);
+                operationFolder(tvshow, path);
+            } else {
+
             }
-            log.info("== 查询到剧集信息:{}", tvshow.getTitle());
-            operationFolder(tvshow, path);
+
         } catch (Exception e) {
             log.error("{}, 更新电影源发生错误", path, e);
         } finally {
@@ -310,7 +309,7 @@ public class TvshowManager {
             try {
                 File file = s.toFile();
                 String fileName = file.getName();
-                if (file.isDirectory() && StringUtils.equals(fileName, "Specials")) {
+                if (file.isDirectory() && StringUtils.equals(fileName, "Season 00")) {
                     NioFileUtils.moveDir(s, targetPath, StandardCopyOption.REPLACE_EXISTING);
                     log.info("== 移动特别季文件夹: {}", fileName);
                     return;

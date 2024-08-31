@@ -42,14 +42,15 @@ public class MovieCollectionSyncDoubanAllRunnable extends AbstractEntityActionRu
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, MovieCollectionDTO movieCollectionDTO) throws Exception {
+    protected int processEntity(Map<String, String> params, MovieCollectionDTO movieCollectionDTO) throws Exception {
         Doulist doulist = tmmApiService.findDoulist(movieCollectionDTO.getDoubanId());
         String updated = DateTimeUtil.formatDateTime(doulist.getUpdated());
         if (StringUtils.compare(movieCollectionDTO.getUpdateTime(), updated) >= 0) {
-            return;
+            return IGNORE;
         }
         movieCollectionSyncDoubanRunnable.setParams(ImmutableMap.of("id", String.valueOf(movieCollectionDTO.getId())));
         movieCollectionSyncDoubanRunnable.run();
+        return SUCCESS;
     }
 
 }

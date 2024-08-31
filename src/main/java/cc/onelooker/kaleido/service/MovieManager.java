@@ -276,10 +276,11 @@ public class MovieManager {
             plexApiService.refreshMetadata(movieBasicDTO.getId());
         } catch (Exception e) {
             log.error("导出NFO发生错误:{}", ExceptionUtil.getMessage(e));
-            throw new RuntimeException(e);
+            ExceptionUtil.wrapAndThrow(e);
         }
     }
 
+    //FIXME 不能周五下午5点之后执行
     public void syncDoubanWeekly() {
         LocalDate today = LocalDate.now();
         int dayOfWeekValue = today.getDayOfWeek().getValue();
@@ -484,11 +485,11 @@ public class MovieManager {
         }
         return actorList.stream().map(s -> {
             ActorDTO actorDTO = null;
-            if (StringUtils.isNotEmpty(s.getThumb()) && !StringUtils.endsWith(s.getThumb(), KaleidoConstants.SUFFIX_PNG)) {
-                actorDTO = actorService.findByThumb(s.getThumb());
-            }
-            if (actorDTO == null && StringUtils.isNotEmpty(s.getDoubanId())) {
+            if (StringUtils.isNotEmpty(s.getDoubanId())) {
                 actorDTO = actorService.findByDoubanId(s.getDoubanId());
+            }
+            if (actorDTO == null && StringUtils.isNotEmpty(s.getThumb()) && !StringUtils.endsWith(s.getThumb(), KaleidoConstants.SUFFIX_PNG)) {
+                actorDTO = actorService.findByThumb(s.getThumb());
             }
             if (actorDTO == null && StringUtils.isNotEmpty(s.getCnName())) {
                 actorDTO = actorService.findByName(s.getCnName());

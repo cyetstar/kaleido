@@ -1,8 +1,6 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.MovieManager;
-import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
@@ -10,7 +8,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,12 +53,13 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, Path path) throws Exception {
+    protected int processEntity(Map<String, String> params, Path path) throws Exception {
         movieManager.updateSource(path);
+        return SUCCESS;
     }
 
     @Override
-    protected String getMessage(Path path) {
-        return path.getFileName().toString();
+    protected String getMessage(Path path, Integer state) {
+        return path.getFileName().toString() + " " + getStateMessage(state);
     }
 }

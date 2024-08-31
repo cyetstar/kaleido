@@ -60,4 +60,9 @@ public class TaskDTO implements BaseDTO<String> {
     public void setId(String id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return getSubjectTitle();
+    }
 }

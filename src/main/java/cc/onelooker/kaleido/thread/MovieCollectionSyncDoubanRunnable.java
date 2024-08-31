@@ -81,9 +81,10 @@ public class MovieCollectionSyncDoubanRunnable extends AbstractEntityActionRunna
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, Movie movie) throws Exception {
+    protected int processEntity(Map<String, String> params, Movie movie) throws Exception {
         doubanIdList.add(movie.getDoubanId());
         movieManager.syncCollectionMovie(movieCollectionDTO.getId(), movie);
+        return SUCCESS;
     }
 
 }

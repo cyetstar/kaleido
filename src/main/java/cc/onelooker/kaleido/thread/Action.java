@@ -21,7 +21,7 @@ public enum Action {
     musicReadAudioTag("读取音乐标签"),
     musicDownloadLyric("下载歌词"),
 
-    tvshowSyncPlex("同步Plex剧集库"),
+    tvshowSync("同步剧集库"),
     tvshowUpdateSource("更新剧集源"),
 
     comicSync("漫画同步"),

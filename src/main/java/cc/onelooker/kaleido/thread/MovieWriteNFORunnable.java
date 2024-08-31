@@ -57,20 +57,25 @@ public class MovieWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO>
     }
 
     @Override
-    protected void processEntity(Map<String, String> params, TaskDTO taskDTO) throws Exception {
+    protected int processEntity(Map<String, String> params, TaskDTO taskDTO) throws Exception {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(taskDTO.getSubjectId());
         MovieNFO movieNFO = readMovieNFO(movieBasicDTO);
         if (movieNFO == null) {
             movieBasicDTO = movieManager.findMovieBasic(movieBasicDTO.getId());
             movieManager.writeMovieNFO(movieBasicDTO);
+            taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
+            return SUCCESS;
         } else {
             movieBasicDTO = movieManager.findMovieBasic(movieBasicDTO.getId());
             MovieNFO newMovieNFO = NFOUtil.toMovieNFO(movieBasicDTO);
             if (!newMovieNFO.equals(movieNFO)) {
                 movieManager.writeMovieNFO(movieBasicDTO);
+                taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
+                return SUCCESS;
             }
         }
-        taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
+        taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_IGNORE);
+        return IGNORE;
     }
 
     @Override
@@ -84,8 +89,4 @@ public class MovieWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO>
         return NFOUtil.read(MovieNFO.class, path, KaleidoConstants.MOVIE_NFO);
     }
 
-    @Override
-    protected String getMessage(TaskDTO taskDTO) {
-        return taskDTO.getSubjectTitle();
-    }
 }
