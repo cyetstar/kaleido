@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 漫画作者DTO
+ * 作者DTO
  *
  * @author cyetstar
  * @date 2024-03-12 17:47:50

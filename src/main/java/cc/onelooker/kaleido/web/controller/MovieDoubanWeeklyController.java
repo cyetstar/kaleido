@@ -54,7 +54,7 @@ public class MovieDoubanWeeklyController extends AbstractCrudController<MovieDou
         pageParam.setOrderBy("DESC:status;ASC:top;DESC:id");
         PageResult<MovieDoubanWeeklyPageResp> pageResult = super.doPage(req, pageParam, MovieDoubanWeeklyConvert.INSTANCE::convertToDTO, MovieDoubanWeeklyConvert.INSTANCE::convertToPageResp);
         pageResult.getRecords().stream().forEach(s -> {
-            MovieBasicDTO movieBasicDTO = movieBasicService.findByDoubanId(String.valueOf(s.getId()));
+            MovieBasicDTO movieBasicDTO = movieBasicService.findByDoubanId(s.getDoubanId());
             if (movieBasicDTO != null) {
                 s.setMovieId(movieBasicDTO.getId());
                 s.setImdb(movieBasicDTO.getImdbId());

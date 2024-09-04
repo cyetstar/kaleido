@@ -5,14 +5,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 漫画作者响应对象
+ * 作者响应对象
  *
  * @author cyetstar
  * @date 2024-03-12 17:47:50
  *
  */
 @Data
-@ApiModel("漫画作者响应对象")
+@ApiModel("作者响应对象")
 public class AuthorViewResp{
 
     @ApiModelProperty("主键")

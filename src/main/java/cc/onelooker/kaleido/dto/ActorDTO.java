@@ -40,6 +40,7 @@ public class ActorDTO implements BaseDTO<String> {
     /**
      * 中文名
      */
+    @Deprecated
     private String cnName;
 
     /**

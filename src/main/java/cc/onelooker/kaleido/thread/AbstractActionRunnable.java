@@ -49,6 +49,7 @@ public abstract class AbstractActionRunnable implements ActionRunnable {
         } catch (Exception e) {
             log.error("【{}】执行发生错误，{}", getAction(), ExceptionUtil.getMessage(e));
         } finally {
+            finalRun(params);
             ActionContext.clear(getAction());
             this.stopFlag = false;
             log.info("【{}】执行完毕", getAction());
@@ -65,6 +66,10 @@ public abstract class AbstractActionRunnable implements ActionRunnable {
 
     protected void afterRun(@Nullable Map<String, String> params) {
     }
+
+    protected void finalRun(@Nullable Map<String, String> params) {
+    }
+
 
     public boolean isNeedRun() {
         return true;

@@ -2,13 +2,13 @@ package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.convert.ComicBookConvert;
 import cc.onelooker.kaleido.dto.ComicBookDTO;
+import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.dto.resp.ComicBookCreateResp;
 import cc.onelooker.kaleido.dto.resp.ComicBookListPageResp;
 import cc.onelooker.kaleido.dto.resp.ComicBookPageResp;
 import cc.onelooker.kaleido.dto.resp.ComicBookViewResp;
-import cc.onelooker.kaleido.dto.req.*;
-import cc.onelooker.kaleido.service.ComicManager;
 import cc.onelooker.kaleido.service.ComicBookService;
+import cc.onelooker.kaleido.service.ComicManager;
 import cc.onelooker.kaleido.third.komga.KomgaApiService;
 import cc.onelooker.kaleido.third.komga.Page;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
@@ -89,7 +89,7 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
     @ApiOperation(value = "编辑漫画书籍")
     public CommonResult<Boolean> update(@RequestBody ComicBookUpdateReq req) {
         ComicBookDTO comicBookDTO = ComicBookConvert.INSTANCE.convertToDTO(req);
-        comicBookService.save(comicBookDTO);
+        comicManager.saveBook(comicBookDTO);
         return CommonResult.success(true);
     }
 

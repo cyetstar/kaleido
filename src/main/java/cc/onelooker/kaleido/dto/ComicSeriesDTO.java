@@ -106,4 +106,9 @@ public class ComicSeriesDTO implements BaseDTO<String> {
     public void setId(String id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return getTitle();
+    }
 }

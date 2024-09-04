@@ -3,7 +3,7 @@ package cc.onelooker.kaleido.third.plex;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cn.hutool.core.thread.ThreadUtil;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,7 +148,13 @@ public class PlexApiService {
         return doRequest(() -> {
             PlexResult plexResult = restTemplate.getForObject(plexUrl + API_MOVIE_LIST, PlexResult.class, libraryId, plexToken, (pageNumber - 1) * pageSize, pageSize);
             MediaContainer mediaContainer = Objects.requireNonNull(plexResult).getMediaContainer();
-            return PageResult.convert(Page.of((long) pageNumber, (long) pageSize, (long) mediaContainer.getTotalSize()), mediaContainer.getMetadataList());
+            PageResult<Metadata> pageResult = new PageResult<>();
+            pageResult.setPageNumber(pageNumber.longValue());
+            pageResult.setPageSize(pageSize.longValue());
+            pageResult.setSearchCount(true);
+            pageResult.setTotal(mediaContainer.getTotalSize().longValue());
+            pageResult.setRecords(mediaContainer.getMetadataList() == null ? Lists.newArrayList() : mediaContainer.getMetadataList());
+            return pageResult;
         });
     }
 
@@ -176,16 +182,16 @@ public class PlexApiService {
         });
     }
 
-    public PageResult<Metadata> pageEpsiode(String libraryId, Integer number, Integer size) {
+    public PageResult<Metadata> pageEpsiode(String libraryId, Integer pageNumber, Integer pageSize) {
         return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_EPISODE_LIST, PlexResult.class, libraryId, plexToken, (number - 1) * size, size);
+            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_EPISODE_LIST, PlexResult.class, libraryId, plexToken, (pageNumber - 1) * pageSize, pageSize);
             MediaContainer mediaContainer = plexResult.getMediaContainer();
             PageResult<Metadata> pageResult = new PageResult<>();
-            pageResult.setPageSize(size.longValue());
-            pageResult.setPageNumber(number.longValue());
+            pageResult.setPageNumber(pageNumber.longValue());
+            pageResult.setPageSize(pageSize.longValue());
             pageResult.setSearchCount(true);
             pageResult.setTotal(mediaContainer.getTotalSize().longValue());
-            pageResult.setRecords(mediaContainer.getMetadataList());
+            pageResult.setRecords(mediaContainer.getMetadataList() == null ? Lists.newArrayList() : mediaContainer.getMetadataList());
             return pageResult;
         });
     }

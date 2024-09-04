@@ -86,7 +86,7 @@ public class TvshowManager {
         } else {
             tvshowEpisodeService.update(tvshowEpisodeDTO);
         }
-        taskService.newTask(tvshowEpisodeDTO.getId(), SubjectType.TvshowEpisode, tvshowEpisodeDTO.getTitle(), TaskType.writeEpisodeNFO);
+        taskService.newTask(tvshowEpisodeDTO.getId(), SubjectType.TvshowEpisode, TaskType.writeEpisodeNFO);
     }
 
     @Transactional
@@ -100,7 +100,7 @@ public class TvshowManager {
         } else {
             tvshowSeasonService.update(tvshowSeasonDTO);
         }
-        taskService.newTask(tvshowSeasonDTO.getId(), SubjectType.TvshowSeason, tvshowSeasonDTO.getTitle(), TaskType.writeSeasonNFO);
+        taskService.newTask(tvshowSeasonDTO.getId(), SubjectType.TvshowSeason, TaskType.writeSeasonNFO);
     }
 
     @Transactional
@@ -118,7 +118,7 @@ public class TvshowManager {
             } else {
                 tvshowShowService.update(tvshowShowDTO);
             }
-            taskService.newTask(tvshowShowDTO.getId(), SubjectType.TvshowShow, tvshowShowDTO.getTitle(), TaskType.writeShowNFO);
+            taskService.newTask(tvshowShowDTO.getId(), SubjectType.TvshowShow, TaskType.writeShowNFO);
         } catch (Exception e) {
             ExceptionUtil.wrapAndThrow(e);
         }

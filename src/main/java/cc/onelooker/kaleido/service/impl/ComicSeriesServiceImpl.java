@@ -48,6 +48,7 @@ public class ComicSeriesServiceImpl extends AbstractBaseServiceImpl<ComicSeriesM
     @Override
     protected Wrapper<ComicSeriesDO> genQueryWrapper(ComicSeriesDTO dto) {
         LambdaQueryWrapper<ComicSeriesDO> query = new LambdaQueryWrapper<>();
+        query.eq(StringUtils.isNotEmpty(dto.getId()), ComicSeriesDO::getId, dto.getId());
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), ComicSeriesDO::getTitle, dto.getTitle());
         query.eq(Objects.nonNull(dto.getSummary()), ComicSeriesDO::getSummary, dto.getSummary());
         query.eq(StringUtils.isNotEmpty(dto.getPublisher()), ComicSeriesDO::getPublisher, dto.getPublisher());

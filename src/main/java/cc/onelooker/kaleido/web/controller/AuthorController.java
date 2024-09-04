@@ -14,22 +14,26 @@ import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
+import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-/**
-* 漫画作者前端控制器
-*
-* @author cyetstar
-* @date 2024-03-12 17:47:50
-*/
+import java.util.Arrays;
 
-@Api(tags = "漫画作者")
+/**
+ * 作者前端控制器
+ *
+ * @author cyetstar
+ * @date 2024-03-12 17:47:50
+ */
+
+@Api(tags = "作者")
 @RestController
 @RequestMapping("/author")
-public class AuthorController extends AbstractCrudController<AuthorDTO>{
+public class AuthorController extends AbstractCrudController<AuthorDTO> {
 
     @Autowired
     private AuthorService authorService;
@@ -40,34 +44,39 @@ public class AuthorController extends AbstractCrudController<AuthorDTO>{
     }
 
     @GetMapping("page")
-    @ApiOperation(value = "查询漫画作者")
+    @ApiOperation(value = "查询作者")
     public CommonResult<PageResult<AuthorPageResp>> page(AuthorPageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, AuthorConvert.INSTANCE::convertToDTO, AuthorConvert.INSTANCE::convertToPageResp);
+        AuthorDTO dto = AuthorConvert.INSTANCE.convertToDTO(req);
+        if (StringUtils.isNotEmpty(req.getIds())) {
+            dto.setIdList(Arrays.asList(StringUtils.split(req.getIds(), Constants.COMMA)));
+        }
+        PageResult<AuthorDTO> dtoPageResult = authorService.page(dto, pageParam.toPage());
+        PageResult<AuthorPageResp> pageResult = PageResult.convert(dtoPageResult, AuthorConvert.INSTANCE::convertToPageResp);
+        return CommonResult.success(pageResult);
     }
 
     @GetMapping("view")
-    @ApiOperation(value = "查看漫画作者详情")
+    @ApiOperation(value = "查看作者详情")
     public CommonResult<AuthorViewResp> view(String id) {
         return super.view(id, AuthorConvert.INSTANCE::convertToViewResp);
     }
 
     @PostMapping("create")
-    @ApiOperation(value = "新增漫画作者")
+    @ApiOperation(value = "新增作者")
     public CommonResult<AuthorCreateResp> create(@RequestBody AuthorCreateReq req) {
         return super.create(req, AuthorConvert.INSTANCE::convertToDTO, AuthorConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
-    @ApiOperation(value = "编辑漫画作者")
+    @ApiOperation(value = "编辑作者")
     public CommonResult<Boolean> update(@RequestBody AuthorUpdateReq req) {
         return super.update(req, AuthorConvert.INSTANCE::convertToDTO);
     }
 
     @DeleteMapping(value = "delete")
-    @ApiOperation(value = "删除漫画作者")
+    @ApiOperation(value = "删除作者")
     public CommonResult<Boolean> delete(@RequestBody String[] id) {
         return super.delete(id);
     }
-
 
 }

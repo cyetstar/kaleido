@@ -15,5 +15,4 @@ public interface ComicBookService extends IBaseService<ComicBookDTO> {
 
     List<ComicBookDTO> listBySeriesId(String seriesId);
 
-    void save(ComicBookDTO dto);
 }

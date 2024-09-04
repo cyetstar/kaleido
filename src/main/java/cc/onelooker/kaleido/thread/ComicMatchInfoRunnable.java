@@ -1,13 +1,14 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.convert.MovieBasicConvert;
+import cc.onelooker.kaleido.convert.ComicSeriesConvert;
+import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.dto.SysConfigDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.MovieBasicService;
-import cc.onelooker.kaleido.service.MovieManager;
+import cc.onelooker.kaleido.service.ComicManager;
+import cc.onelooker.kaleido.service.ComicSeriesService;
 import cc.onelooker.kaleido.service.SysConfigService;
-import cc.onelooker.kaleido.third.tmm.Movie;
+import cc.onelooker.kaleido.third.tmm.Comic;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
@@ -24,39 +25,36 @@ import java.util.Random;
  * Created by cyetstar on 2021/1/7.
  */
 @Component
-public class MovieMatchInfoRunnable extends AbstractEntityActionRunnable<MovieBasicDTO> {
+public class ComicMatchInfoRunnable extends AbstractEntityActionRunnable<ComicSeriesDTO> {
 
-    private final MovieBasicService movieBasicService;
+    private final ComicSeriesService comicSeriesService;
 
     private final SysConfigService sysConfigService;
 
-    private final MovieManager movieManager;
+    private final ComicManager comicManager;
 
     private final TmmApiService tmmApiService;
-
-    private Integer sleepSecond;
 
     private Long lastUpdatedAt = 0L;
 
     private Long maxUpdatedAt = 0L;
 
-    public MovieMatchInfoRunnable(MovieBasicService movieBasicService, SysConfigService sysConfigService, MovieManager movieManager, TmmApiService tmmApiService) {
-        this.movieBasicService = movieBasicService;
+    public ComicMatchInfoRunnable(ComicSeriesService comicSeriesService, SysConfigService sysConfigService, ComicManager comicManager, TmmApiService tmmApiService) {
+        this.comicSeriesService = comicSeriesService;
         this.sysConfigService = sysConfigService;
-        this.movieManager = movieManager;
+        this.comicManager = comicManager;
         this.tmmApiService = tmmApiService;
     }
 
     @Override
     public Action getAction() {
-        return Action.movieMatchInfo;
+        return Action.comicMatchInfo;
     }
 
     @Override
     protected void beforeRun(@Nullable Map<String, String> params) {
         super.beforeRun(params);
-        this.lastUpdatedAt = Long.parseLong(ConfigUtils.getSysConfig(ConfigKey.lastMovieMatchInfo, "0"));
-        this.sleepSecond = Integer.valueOf(ConfigUtils.getSysConfig(ConfigKey.matchInfoSleepSecond, "0"));
+        this.lastUpdatedAt = Long.parseLong(ConfigUtils.getSysConfig(ConfigKey.lastComicMatchInfo, "0"));
     }
 
     @Override
@@ -66,33 +64,29 @@ public class MovieMatchInfoRunnable extends AbstractEntityActionRunnable<MovieBa
         }
         //强制抓取匹配时，不更新时间节点
         SysConfigDTO sysConfigDTO = new SysConfigDTO();
-        sysConfigDTO.setConfigKey(ConfigKey.lastMovieMatchInfo.name());
+        sysConfigDTO.setConfigKey(ConfigKey.lastComicMatchInfo.name());
         sysConfigDTO.setConfigValue(String.valueOf(maxUpdatedAt));
         sysConfigService.save(sysConfigDTO);
     }
 
     @Override
-    protected PageResult<MovieBasicDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
-        MovieBasicDTO movieBasicDTO = MovieBasicConvert.INSTANCE.convertToDTO(params);
+    protected PageResult<ComicSeriesDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
+        ComicSeriesDTO param = ComicSeriesConvert.INSTANCE.convertToDTO(params);
         Page<MovieBasicDTO> page = Page.of(pageNumber, pageSize, true);
         page.addOrder(OrderItem.asc("updated_at"));
-        return movieBasicService.page(movieBasicDTO, page);
+        return comicSeriesService.page(param, page);
     }
 
     @Override
-    protected int processEntity(Map<String, String> params, MovieBasicDTO dto) throws Exception {
+    protected int processEntity(Map<String, String> params, ComicSeriesDTO dto) throws Exception {
         long updatedAt = dto.getUpdatedAt();
         if (updatedAt > lastUpdatedAt || MapUtils.getBooleanValue(params, "force")) {
-            Movie movie = tmmApiService.findMovie(dto.getDoubanId(), dto.getImdbId(), dto.getTmdbId());
-            movieManager.matchMovie(dto.getId(), movie);
+            Comic comic = tmmApiService.findComic(dto.getBgmId());
+            comicManager.matchSeries(dto.getId(), comic);
             maxUpdatedAt = updatedAt > maxUpdatedAt ? updatedAt : maxUpdatedAt;
             return SUCCESS;
         }
         return IGNORE;
     }
 
-    @Override
-    public int getSleepSecond() {
-        return new Random().nextInt(sleepSecond);
-    }
 }

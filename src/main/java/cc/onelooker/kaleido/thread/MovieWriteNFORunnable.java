@@ -13,6 +13,7 @@ import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
@@ -89,4 +90,9 @@ public class MovieWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO>
         return NFOUtil.read(MovieNFO.class, path, KaleidoConstants.MOVIE_NFO);
     }
 
+    @Override
+    protected String getMessage(TaskDTO taskDTO, Integer state) {
+        MovieBasicDTO movieBasicDTO = movieBasicService.findById(taskDTO.getSubjectId());
+        return movieBasicDTO.getTitle() + StringUtils.SPACE + getStateMessage(state);
+    }
 }

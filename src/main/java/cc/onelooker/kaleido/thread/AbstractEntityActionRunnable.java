@@ -91,7 +91,6 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
 
     protected void processError(Map<String, String> params, T entity, Exception e) {
         log.error("【{}】>>> {} 执行发生错误，{}", getAction(), getMessage(entity, ERROR), ExceptionUtil.getMessage(e));
-        e.printStackTrace();
     }
 
     protected void sleep() {

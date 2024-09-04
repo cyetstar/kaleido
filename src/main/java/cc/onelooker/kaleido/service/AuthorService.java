@@ -7,7 +7,7 @@ import com.zjjcnt.common.core.service.IBaseService;
 import java.util.List;
 
 /**
- * 漫画作者Service
+ * 作者Service
  *
  * @author cyetstar
  * @date 2024-03-12 17:47:50
@@ -15,8 +15,6 @@ import java.util.List;
 public interface AuthorService extends IBaseService<AuthorDTO> {
 
     AuthorDTO findByName(String name);
-
-    AuthorDTO insert(String name);
 
     List<AuthorDTO> listByKeyword(String keyword);
 

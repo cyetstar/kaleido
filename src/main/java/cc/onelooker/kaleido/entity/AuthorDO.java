@@ -9,7 +9,7 @@ import com.zjjcnt.common.core.entity.IdEntity;
 import lombok.Data;
 
 /**
- * 漫画作者DO
+ * 作者DO
  *
  * @author cyetstar
  * @date 2024-03-12 17:47:50

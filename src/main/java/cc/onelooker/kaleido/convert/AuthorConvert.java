@@ -13,7 +13,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 漫画作者Convert
+* 作者Convert
 *
 * @author cyetstar
 * @date 2024-03-12 17:47:50

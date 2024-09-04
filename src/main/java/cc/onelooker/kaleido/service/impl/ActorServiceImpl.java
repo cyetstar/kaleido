@@ -11,6 +11,7 @@ import cc.onelooker.kaleido.service.ActorService;
 import cc.onelooker.kaleido.service.MovieBasicActorService;
 import cc.onelooker.kaleido.service.TvshowSeasonActorService;
 import cc.onelooker.kaleido.service.TvshowSeasonService;
+import cc.onelooker.kaleido.utils.KaleidoConstants;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
@@ -20,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -125,11 +127,13 @@ public class ActorServiceImpl extends AbstractBaseServiceImpl<ActorMapper, Actor
             tvshowShowActorDTO.setSeasonId(seasonId);
             tvshowShowActorDTO.setActorId(s.getId());
             tvshowShowActorDTO.setRole(actorRole.name());
+            tvshowShowActorDTO.setPlayRole(s.getPlayRole());
             tvshowSeasonActorService.insert(tvshowShowActorDTO);
         });
     }
 
     @Override
+    @Transactional
     public void updateMovieActors(List<ActorDTO> actorDTOList, String movieId, ActorRole actorRole) {
         if (actorDTOList == null) {
             return;
@@ -138,9 +142,43 @@ public class ActorServiceImpl extends AbstractBaseServiceImpl<ActorMapper, Actor
         actorDTOList.stream().forEach(s -> {
             MovieBasicActorDTO movieBasicActorDTO = new MovieBasicActorDTO();
             movieBasicActorDTO.setMovieId(movieId);
-            movieBasicActorDTO.setActorId(s.getId());
             movieBasicActorDTO.setRole(actorRole.name());
+            movieBasicActorDTO.setPlayRole(s.getPlayRole());
+            if (StringUtils.isEmpty(s.getId())) {
+                ActorDTO actorDTO = findOrSave(s);
+                movieBasicActorDTO.setActorId(actorDTO.getId());
+            } else {
+                movieBasicActorDTO.setActorId(s.getId());
+            }
             movieBasicActorService.insert(movieBasicActorDTO);
         });
+    }
+
+    private ActorDTO findOrSave(ActorDTO s) {
+        ActorDTO actorDTO = null;
+        if (StringUtils.isNotEmpty(s.getDoubanId())) {
+            actorDTO = findByDoubanId(s.getDoubanId());
+        }
+        if (actorDTO == null && StringUtils.isNotEmpty(s.getThumb()) && !StringUtils.endsWith(s.getThumb(), KaleidoConstants.SUFFIX_PNG)) {
+            actorDTO = findByThumb(s.getThumb());
+        }
+        if (actorDTO == null && StringUtils.isNotEmpty(s.getName())) {
+            actorDTO = findByName(s.getName());
+        }
+        if (actorDTO == null) {
+            actorDTO = new ActorDTO();
+            actorDTO.setName(StringUtils.defaultString(s.getName(), s.getOriginalName()));
+            actorDTO.setOriginalName(s.getOriginalName());
+            actorDTO.setThumb(s.getThumb());
+            actorDTO.setDoubanId(s.getDoubanId());
+            actorDTO = insert(actorDTO);
+        } else {
+            actorDTO.setName(StringUtils.defaultString(s.getName(), s.getOriginalName()));
+            actorDTO.setOriginalName(s.getOriginalName());
+            actorDTO.setThumb(s.getThumb());
+            actorDTO.setDoubanId(s.getDoubanId());
+            update(actorDTO);
+        }
+        return actorDTO;
     }
 }

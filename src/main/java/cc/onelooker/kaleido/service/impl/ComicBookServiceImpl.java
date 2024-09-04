@@ -86,12 +86,4 @@ public class ComicBookServiceImpl extends AbstractBaseServiceImpl<ComicBookMappe
         return result;
     }
 
-    @Override
-    @Transactional
-    public void save(ComicBookDTO dto) {
-        update(dto);
-        ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(dto.getSeriesId());
-        //生成重写ComicInfo任务
-        taskService.newTask(dto.getId(), SubjectType.ComicBook, comicSeriesDTO.getTitle() + "【" + dto.getTitle() + "】", TaskType.writeComicInfo);
-    }
 }

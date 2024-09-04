@@ -78,7 +78,6 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
             ComicSeriesDTO comicSeriesDTO = comicManager.findSeriesById(comicBookDTO.getSeriesId());
             ComicInfoNFO newComicInfoNFO = NFOUtil.toComicInfoNFO(comicSeriesDTO, comicBookDTO);
             if (!newComicInfoNFO.equals(comicInfoNFO)) {
-                log.info("不一致需要重写ComicInfo.xml");
                 comicManager.writeComicInfo(comicBookDTO);
                 taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
                 return SUCCESS;
@@ -103,4 +102,10 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
         return NFOUtil.read(ComicInfoNFO.class, tempPath, KaleidoConstants.COMIC_INFO);
     }
 
+    @Override
+    protected String getMessage(TaskDTO taskDTO, Integer state) {
+        ComicBookDTO comicBookDTO = comicBookService.findById(taskDTO.getSubjectId());
+        ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(comicBookDTO.getSeriesId());
+        return String.format("%s %s %s", comicSeriesDTO.getTitle(), comicBookDTO.getTitle(), getStateMessage(state));
+    }
 }

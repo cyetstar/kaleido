@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 漫画作者ServiceImpl
+ * 作者ServiceImpl
  *
  * @author cyetstar
  * @date 2024-03-12 17:47:50
@@ -62,12 +62,6 @@ public class AuthorServiceImpl extends AbstractBaseServiceImpl<AuthorMapper, Aut
         return find(param);
     }
 
-    @Override
-    public AuthorDTO insert(String name) {
-        AuthorDTO dto = new AuthorDTO();
-        dto.setName(name);
-        return insert(dto);
-    }
 
     @Override
     public List<AuthorDTO> listByKeyword(String keyword) {
@@ -96,9 +90,24 @@ public class AuthorServiceImpl extends AbstractBaseServiceImpl<AuthorMapper, Aut
         authorDTOList.stream().forEach(s -> {
             ComicSeriesAuthorDTO comicSeriesAuthorDTO = new ComicSeriesAuthorDTO();
             comicSeriesAuthorDTO.setSeriesId(seriesId);
-            comicSeriesAuthorDTO.setAuthorId(s.getId());
             comicSeriesAuthorDTO.setRole(authorRole.name());
+            if (StringUtils.isEmpty(s.getId())) {
+                AuthorDTO authorDTO = findOrSave(s);
+                comicSeriesAuthorDTO.setAuthorId(authorDTO.getId());
+            } else {
+                comicSeriesAuthorDTO.setAuthorId(s.getId());
+            }
             comicSeriesAuthorService.insert(comicSeriesAuthorDTO);
         });
+    }
+
+    private AuthorDTO findOrSave(AuthorDTO s) {
+        AuthorDTO authorDTO = findByName(s.getName());
+        if (authorDTO == null) {
+            authorDTO = new AuthorDTO();
+            authorDTO.setName(s.getName());
+            authorDTO = insert(authorDTO);
+        }
+        return authorDTO;
     }
 }

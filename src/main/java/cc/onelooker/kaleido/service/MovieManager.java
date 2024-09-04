@@ -9,8 +9,11 @@ import cc.onelooker.kaleido.third.douban.Subject;
 import cc.onelooker.kaleido.third.plex.Media;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.third.plex.Tag;
-import cc.onelooker.kaleido.third.tmm.*;
+import cc.onelooker.kaleido.third.plex.PlexUtil;
+import cc.onelooker.kaleido.third.tmm.Doulist;
+import cc.onelooker.kaleido.third.tmm.Movie;
+import cc.onelooker.kaleido.third.tmm.TmmApiService;
+import cc.onelooker.kaleido.third.tmm.TmmUtil;
 import cc.onelooker.kaleido.utils.DateTimeUtil;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
@@ -86,11 +89,6 @@ public class MovieManager {
     @Autowired
     private TmmApiService tmmApiService;
 
-    /**
-     * 保存编辑信息
-     *
-     * @param movieBasicDTO
-     */
     @Transactional
     public void saveMovie(MovieBasicDTO movieBasicDTO) {
         try {
@@ -110,7 +108,7 @@ public class MovieManager {
             } else {
                 movieBasicService.update(movieBasicDTO);
             }
-            taskService.newTask(movieBasicDTO.getId(), SubjectType.MovieBasic, movieBasicDTO.getTitle(), TaskType.writeMovieNFO);
+            taskService.newTask(movieBasicDTO.getId(), SubjectType.MovieBasic, TaskType.writeMovieNFO);
         } catch (IOException e) {
             ExceptionUtil.wrapAndThrow(e);
         }
@@ -123,33 +121,7 @@ public class MovieManager {
         if (movieBasicDTO == null) {
             movieBasicDTO = new MovieBasicDTO();
         }
-        movieBasicDTO.setId(metadata.getRatingKey());
-        movieBasicDTO.setTitle(metadata.getTitle());
-        movieBasicDTO.setTitleSort(metadata.getTitleSort());
-        movieBasicDTO.setOriginalTitle(metadata.getOriginalTitle());
-        movieBasicDTO.setContentRating(metadata.getContentRating());
-        movieBasicDTO.setStudio(metadata.getStudio());
-        movieBasicDTO.setSummary(metadata.getSummary());
-        movieBasicDTO.setRating(metadata.getRating());
-        movieBasicDTO.setYear(metadata.getYear());
-        movieBasicDTO.setThumb(metadata.getThumb());
-        movieBasicDTO.setArt(metadata.getArt());
-        movieBasicDTO.setDuration(metadata.getDuration());
-        movieBasicDTO.setLastViewedAt(metadata.getLastViewedAt());
-        movieBasicDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
-        Path path = KaleidoUtils.getMovieBasicPath(FilenameUtils.getFullPath(metadata.getMedia().getPart().getFile()));
-        movieBasicDTO.setPath(path.toString());
-        movieBasicDTO.setAddedAt(metadata.getAddedAt());
-        movieBasicDTO.setUpdatedAt(metadata.getUpdatedAt());
-        if (metadata.getCountryList() != null) {
-            movieBasicDTO.setCountryList(metadata.getCountryList().stream().map(Tag::getTag).collect(Collectors.toList()));
-        }
-        if (metadata.getGenreList() != null) {
-            movieBasicDTO.setGenreList(metadata.getGenreList().stream().map(Tag::getTag).collect(Collectors.toList()));
-        }
-        movieBasicDTO.setDirectorList(transformTag(metadata.getDirectorList(), ActorRole.Director));
-        movieBasicDTO.setWriterList(transformTag(metadata.getWriterList(), ActorRole.Writer));
-        movieBasicDTO.setActorList(transformTag(metadata.getRoleList(), ActorRole.Actor));
+        PlexUtil.toMovieBasicDTO(movieBasicDTO, metadata);
         //读取NFO文件
         readNFO(movieBasicDTO);
         saveMovie(movieBasicDTO);
@@ -157,31 +129,12 @@ public class MovieManager {
 
     @Transactional
     public void matchMovie(String movieId, Movie movie) {
-        try {
-            if (movie == null) {
-                return;
-            }
-            MovieBasicDTO movieBasicDTO = movieBasicService.findById(movieId);
-            movieBasicDTO.setTitle(StringUtils.defaultIfEmpty(movie.getTitle(), movieBasicDTO.getTitle()));
-            movieBasicDTO.setYear(StringUtils.defaultIfEmpty(movie.getYear(), movieBasicDTO.getYear()));
-            movieBasicDTO.setOriginalTitle(movie.getOriginalTitle());
-            movieBasicDTO.setSummary(movie.getPlot());
-            movieBasicDTO.setRating(movie.getAverage());
-            movieBasicDTO.setDoubanId(movie.getDoubanId());
-            movieBasicDTO.setImdbId(movie.getImdbId());
-            movieBasicDTO.setWebsite(movie.getWebsite());
-            movieBasicDTO.setAkaList(movie.getAkas());
-            movieBasicDTO.setTagList(movie.getTags());
-            movieBasicDTO.setGenreList(movie.getGenres());
-            movieBasicDTO.setCountryList(movie.getCountries());
-            movieBasicDTO.setLanguageList(movie.getLanguages());
-            movieBasicDTO.setDirectorList(transformActor(movie.getDirectors(), ActorRole.Director));
-            movieBasicDTO.setWriterList(transformActor(movie.getWriters(), ActorRole.Writer));
-            movieBasicDTO.setActorList(transformActor(movie.getActors(), ActorRole.Actor));
-            saveMovie(movieBasicDTO);
-        } catch (Exception e) {
-            log.error("匹配电影信息发生错误：{}", ExceptionUtil.getMessage(e));
+        if (movie == null) {
+            return;
         }
+        MovieBasicDTO movieBasicDTO = movieBasicService.findById(movieId);
+        TmmUtil.toMovieBasicDTO(movieBasicDTO, movie);
+        saveMovie(movieBasicDTO);
     }
 
     /**
@@ -273,7 +226,8 @@ public class MovieManager {
             Path path = KaleidoUtils.getMoviePath(movieBasicDTO.getPath());
             MovieNFO movieNFO = NFOUtil.toMovieNFO(movieBasicDTO);
             NFOUtil.write(movieNFO, MovieNFO.class, path, KaleidoConstants.MOVIE_NFO);
-            plexApiService.refreshMetadata(movieBasicDTO.getId());
+            //不刷新，否则可能会带来性能灾难
+//            plexApiService.refreshMetadata(movieBasicDTO.getId());
         } catch (Exception e) {
             log.error("导出NFO发生错误:{}", ExceptionUtil.getMessage(e));
             ExceptionUtil.wrapAndThrow(e);
@@ -477,58 +431,6 @@ public class MovieManager {
         }
         return movieBasicCollectionDTO;
 
-    }
-
-    private List<ActorDTO> transformActor(List<Actor> actorList, ActorRole actorRole) {
-        if (actorList == null) {
-            return null;
-        }
-        return actorList.stream().map(s -> {
-            ActorDTO actorDTO = null;
-            if (StringUtils.isNotEmpty(s.getDoubanId())) {
-                actorDTO = actorService.findByDoubanId(s.getDoubanId());
-            }
-            if (actorDTO == null && StringUtils.isNotEmpty(s.getThumb()) && !StringUtils.endsWith(s.getThumb(), KaleidoConstants.SUFFIX_PNG)) {
-                actorDTO = actorService.findByThumb(s.getThumb());
-            }
-            if (actorDTO == null && StringUtils.isNotEmpty(s.getCnName())) {
-                actorDTO = actorService.findByName(s.getCnName());
-            }
-            if (actorDTO == null) {
-                actorDTO = new ActorDTO();
-                actorDTO.setName(StringUtils.defaultString(s.getCnName(), s.getEnName()));
-                actorDTO.setOriginalName(s.getEnName());
-                actorDTO.setThumb(s.getThumb());
-                actorDTO.setDoubanId(s.getDoubanId());
-                actorDTO = actorService.insert(actorDTO);
-            } else {
-                actorDTO.setThumb(s.getThumb());
-                actorDTO.setDoubanId(s.getDoubanId());
-                actorService.update(actorDTO);
-            }
-            actorDTO.setRole(actorRole.name());
-            actorDTO.setPlayRole(s.getRole());
-            return actorDTO;
-        }).collect(Collectors.toList());
-    }
-
-    private List<ActorDTO> transformTag(List<Tag> actorList, ActorRole actorRole) {
-        if (actorList == null) {
-            return null;
-        }
-        return actorList.stream().map(s -> {
-            ActorDTO actorDTO = actorService.findByName(s.getTag());
-            if (actorDTO == null) {
-                actorDTO = new ActorDTO();
-                actorDTO.setName(s.getTag());
-                actorDTO.setOriginalName(s.getTag());
-                actorDTO.setThumb(s.getThumb());
-                actorDTO = actorService.insert(actorDTO);
-            }
-            actorDTO.setRole(actorRole.name());
-            actorDTO.setPlayRole(s.getRole());
-            return actorDTO;
-        }).collect(Collectors.toList());
     }
 
     private void renameDirIfChanged(MovieBasicDTO movieBasicDTO) throws IOException {

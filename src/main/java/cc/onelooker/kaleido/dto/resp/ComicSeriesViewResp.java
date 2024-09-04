@@ -60,6 +60,12 @@ public class ComicSeriesViewResp {
     @ApiModelProperty("标签")
     private List<String> tagList;
 
+    @ApiModelProperty("加入时间")
+    private Long addedAt;
+
+    @ApiModelProperty("更新时间")
+    private Long updatedAt;
+
     public List<Author> getAuthorList() {
         List<Author> authorList = Lists.newArrayList();
         if (writerList != null) {
@@ -74,6 +80,7 @@ public class ComicSeriesViewResp {
     @Data
     public static class Author {
         private String id;
+
         private String name;
     }
 }

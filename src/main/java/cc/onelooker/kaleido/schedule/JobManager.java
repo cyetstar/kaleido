@@ -101,7 +101,7 @@ public class JobManager {
     @Scheduled(cron = "0 * * * * ?")
     public void executeWriteComicInfo() {
         if (comicWriteComicInfoRunnable.isNeedRun()) {
-            comicWriteComicInfoRunnable.run();
+//            comicWriteComicInfoRunnable.run();
         }
     }
 

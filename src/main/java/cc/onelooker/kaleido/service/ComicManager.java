@@ -7,8 +7,8 @@ import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.nfo.ComicInfoNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
-import cc.onelooker.kaleido.third.komga.Author;
 import cc.onelooker.kaleido.third.komga.Book;
+import cc.onelooker.kaleido.third.komga.KomgaUtil;
 import cc.onelooker.kaleido.third.komga.Link;
 import cc.onelooker.kaleido.third.komga.Series;
 import cc.onelooker.kaleido.third.tmm.Comic;
@@ -19,6 +19,7 @@ import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ZipUtil;
 import cn.hutool.extra.compress.CompressUtil;
 import cn.hutool.extra.compress.extractor.Extractor;
@@ -74,7 +75,7 @@ public class ComicManager {
     @Autowired
     private TmmApiService tmmApiService;
 
-    private Pattern pattern = Pattern.compile("[V|v]ol[.|_](\\d+)");
+    private final Pattern pattern = Pattern.compile("[V|v]ol[.|_](\\d+)");
 
     @Transactional
     public void saveBook(ComicBookDTO comicBookDTO) {
@@ -84,8 +85,7 @@ public class ComicManager {
         } else {
             comicBookService.update(comicBookDTO);
         }
-        ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(comicBookDTO.getSeriesId());
-        taskService.newTask(comicBookDTO.getId(), SubjectType.ComicBook, comicSeriesDTO.getTitle() + "【" + comicBookDTO.getTitle() + "】", TaskType.writeComicInfo);
+        taskService.newTask(comicBookDTO.getId(), SubjectType.ComicBook, TaskType.writeComicInfo);
     }
 
     @Transactional
@@ -111,7 +111,7 @@ public class ComicManager {
                     comicBookService.update(s);
                 }
                 //生成重写ComicInfo任务
-                taskService.newTask(s.getId(), SubjectType.ComicBook, comicSeriesDTO.getTitle() + "【" + s.getTitle() + "】", TaskType.writeComicInfo);
+                taskService.newTask(s.getId(), SubjectType.ComicBook, TaskType.writeComicInfo);
             });
         } catch (Exception e) {
             ExceptionUtil.wrapAndThrow(e);
@@ -124,21 +124,7 @@ public class ComicManager {
         if (comicSeriesDTO == null) {
             comicSeriesDTO = new ComicSeriesDTO();
         }
-        Series.Metadata metadata = series.getMetadata();
-        Series.BooksMetadata booksMetadata = series.getBooksMetadata();
-        comicSeriesDTO.setId(series.getId());
-        comicSeriesDTO.setTitle(metadata.getTitle());
-        comicSeriesDTO.setSummary(booksMetadata.getSummary());
-        comicSeriesDTO.setBookCount(metadata.getTotalBookCount());
-        comicSeriesDTO.setBgmId(getBgmId(metadata.getLinks()));
-        comicSeriesDTO.setPublisher(metadata.getPublisher());
-        Path path = KaleidoUtils.getComicBasicPath(series.getUrl());
-        comicSeriesDTO.setPath(path.toString());
-        comicSeriesDTO.setAddedAt(series.getAddedAt());
-        comicSeriesDTO.setUpdatedAt(series.getUpdatedAt());
-        comicSeriesDTO.setWriterList(transformAuthor(booksMetadata.getAuthors(), AuthorRole.Writer));
-        comicSeriesDTO.setPencillerList(transformAuthor(booksMetadata.getAuthors(), AuthorRole.Penciller));
-        comicSeriesDTO.setTagList(booksMetadata.getTags());
+        KomgaUtil.toComicSeriesDTO(comicSeriesDTO, series);
         //读取ComicInfo文件
         readComicInfo(comicSeriesDTO);
         saveSeries(comicSeriesDTO);
@@ -150,19 +136,7 @@ public class ComicManager {
         if (comicBookDTO == null) {
             comicBookDTO = new ComicBookDTO();
         }
-        Book.Media media = book.getMedia();
-        Book.Metadata metadata = book.getMetadata();
-        comicBookDTO.setId(book.getId());
-        comicBookDTO.setSeriesId(book.getSeriesId());
-        comicBookDTO.setTitle(metadata.getTitle());
-        comicBookDTO.setBookNumber(metadata.getNumber());
-        comicBookDTO.setSortNumber(metadata.getNumberSort());
-        comicBookDTO.setPageCount(media.getPagesCount());
-        comicBookDTO.setPath(book.getUrl());
-        comicBookDTO.setBgmId(getBgmId(metadata.getLinks()));
-        comicBookDTO.setFileSize(book.getSizeBytes());
-        comicBookDTO.setAddedAt(book.getAddedAt());
-        comicBookDTO.setUpdatedAt(book.getUpdatedAt());
+        KomgaUtil.toComicBookDTO(comicBookDTO, book);
         saveBook(comicBookDTO);
     }
 
@@ -251,54 +225,71 @@ public class ComicManager {
         zip(folderPath, zipPath);
     }
 
-    private void renameDirIfChanged(ComicSeriesDTO comicSeriesDTO) throws IOException {
-        String newPath = KaleidoUtils.genComicFolder(comicSeriesDTO);
-        if (!StringUtils.equals(newPath, comicSeriesDTO.getPath())) {
-            Path path = KaleidoUtils.getComicPath(newPath);
-            if (Files.notExists(path)) {
-                Files.createDirectories(path);
-            }
-            NioFileUtils.renameDir(KaleidoUtils.getComicPath(comicSeriesDTO.getPath()), path);
-            comicSeriesDTO.setPath(newPath);
+    @Transactional
+    public void matchSeries(String seriesId, Comic comic) {
+        if (comic == null) {
+            return;
         }
+        ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(seriesId);
+        List<ComicBookDTO> comicBookDTOList = comicBookService.listBySeriesId(seriesId);
+        TmmUtil.toComicSeriesDTO(comicSeriesDTO, comic);
+        saveSeries(comicSeriesDTO);
+
+        comicBookDTOList.forEach(s -> {
+            Integer number = s.getBookNumber();
+            Comic.Volume volume = getVolume(comic.getVolumes(), number);
+            if (volume == null) {
+                return;
+            }
+            TmmUtil.toComicBookDTO(s, volume, number);
+            saveBook(s);
+        });
     }
 
-    private List<AuthorDTO> transformAuthor(List<Author> authorList, AuthorRole authorRole) {
-        if (authorList == null) {
-            return null;
+    private void renameDirIfChanged(ComicSeriesDTO comicSeriesDTO) throws IOException {
+        String comicFolder = KaleidoUtils.genComicFolder(comicSeriesDTO);
+        if (!StringUtils.equals(comicFolder, comicSeriesDTO.getPath())) {
+            Path newPath = KaleidoUtils.getComicPath(comicFolder);
+            Path oldPath = KaleidoUtils.getComicPath(comicSeriesDTO.getPath());
+            if (Files.notExists(newPath)) {
+                Files.createDirectories(newPath);
+            }
+            if (Files.exists(oldPath)) {
+                NioFileUtils.renameDir(oldPath, newPath);
+            } else {
+                log.info("原目录不存在，源数据可能存在目录不一致情况。{}", oldPath);
+            }
         }
-        return authorList.stream().filter(s -> s.getRole().equals(authorRole.name().toLowerCase())).map(s -> {
-            AuthorDTO authorDTO = new AuthorDTO();
-            authorDTO.setName(s.getName());
-            return authorDTO;
-        }).collect(Collectors.toList());
+        comicSeriesDTO.setPath(comicFolder);
     }
 
     private void readComicInfo(ComicSeriesDTO comicSeriesDTO) {
-        List<ComicBookDTO> comicBookDTOList = comicBookService.listBySeriesId(comicSeriesDTO.getId());
-        if (CollectionUtils.isEmpty(comicBookDTOList)) {
-            return;
+        try {
+            Path path = KaleidoUtils.getComicPath(comicSeriesDTO.getPath());
+            Path zipPath = Files.list(path).filter(s -> StringUtils.equalsAny(FilenameUtils.getExtension(s.getFileName().toString()), "zip", "cbz")).findFirst().orElse(null);
+            if (zipPath == null) {
+                return;
+            }
+            Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), zipPath.toFile());
+            Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), "kaleido");
+            extractor.extract(tempPath.toFile(), f -> StringUtils.equals(f.getName(), KaleidoConstants.COMIC_INFO));
+            extractor.close();
+            if (Files.notExists(tempPath.resolve(KaleidoConstants.COMIC_INFO))) {
+                return;
+            }
+            ComicInfoNFO comicInfoNFO = NFOUtil.read(ComicInfoNFO.class, tempPath, KaleidoConstants.COMIC_INFO);
+            if (comicInfoNFO == null) {
+                return;
+            }
+            comicSeriesDTO.setYear(comicInfoNFO.getYear());
+            comicSeriesDTO.setStatus(comicInfoNFO.getSeriesStatus());
+            comicSeriesDTO.setBgmId(StringUtils.defaultIfEmpty(comicSeriesDTO.getBgmId(), comicInfoNFO.getSeriesBgmId()));
+            comicSeriesDTO.setRating(NumberUtil.parseFloat(comicInfoNFO.getCommunityRating(), null));
+            comicSeriesDTO.setAlternateTitleList(comicInfoNFO.getAkas());
+        } catch (IOException e) {
+            log.error("== 读取漫画信息异常:{}", ExceptionUtil.getMessage(e));
+            ExceptionUtil.wrapAndThrow(e);
         }
-        ComicBookDTO comicBookDTO = comicBookDTOList.get(0);
-        Path path = KaleidoUtils.getComicPath(comicBookDTO.getPath());
-        Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), path.toFile());
-        Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), "kaleido");
-        extractor.extract(tempPath.toFile(), f -> StringUtils.equals(f.getName(), KaleidoConstants.COMIC_INFO));
-        extractor.close();
-        if (Files.notExists(tempPath.resolve(KaleidoConstants.COMIC_INFO))) {
-            return;
-        }
-        ComicInfoNFO comicInfoNFO = NFOUtil.read(ComicInfoNFO.class, tempPath, KaleidoConstants.COMIC_INFO);
-        if (comicInfoNFO == null) {
-            return;
-        }
-        comicSeriesDTO.setYear(comicInfoNFO.getYear());
-        comicSeriesDTO.setStatus(comicInfoNFO.getSeriesStatus());
-        comicSeriesDTO.setBgmId(StringUtils.defaultString(comicSeriesDTO.getBgmId(), comicInfoNFO.getSeriesBgmId()));
-        if (comicInfoNFO.getCommunityRating() != null) {
-            comicSeriesDTO.setRating(Float.parseFloat(comicInfoNFO.getCommunityRating()));
-        }
-        comicSeriesDTO.setAlternateTitleList(comicInfoNFO.getAkas());
     }
 
     private void unzip(Path zipPath, Path folderPath) {
@@ -361,41 +352,31 @@ public class ComicManager {
             String fileName = path.getFileName().toString();
             String baseName = FilenameUtils.getBaseName(fileName);
             String extension = FilenameUtils.getExtension(fileName);
-            if (StringUtils.equalsAnyIgnoreCase(extension, "jpg", "jpeg", "png")) {
-                log.info("== 移动图片文件:{}", fileName);
+            if (StringUtils.equalsAnyIgnoreCase(extension, "zip", "cbz")) {
+                //分析文件名，获取卷号
+                Integer number = getVolumeNumber(fileName);
+                Comic.Volume volume = getVolume(comic.getVolumes(), number);
+                ComicBookDTO comicBookDTO = TmmUtil.toComicBookDTO(volume, number);
+                Path folderPath = path.resolveSibling(baseName);
+                unzipBook(path, folderPath);
+                ComicInfoNFO comicInfoNFO = NFOUtil.toComicInfoNFO(comicSeriesDTO, comicBookDTO);
+                NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, folderPath, KaleidoConstants.COMIC_INFO);
+                log.info("== 输出ComicInfo.xml:{}", folderPath);
+                Path targetPath = targetFolder.resolve(baseName + ".zip");
+                ZipUtil.zip(folderPath.toString(), targetPath.toString());
+                log.info("== 输出目标文件:{}", targetPath);
+                NioFileUtils.deleteIfExists(folderPath);
+                log.info("== 删除解压文件夹:{}", folderPath);
+                Files.delete(path);
+                log.info("== 删除原文件:{}", path);
+            } else if (Files.isDirectory(path)) {
+                NioFileUtils.moveDir(path, targetFolder, StandardCopyOption.REPLACE_EXISTING);
+            } else {
                 Files.move(path, targetFolder.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-                return;
-            } else if (!StringUtils.equalsAnyIgnoreCase(extension, "zip", "cbz")) {
-                log.info("== 忽略非压缩:{}", fileName);
-                return;
             }
-
-            //分析文件名，获取卷号
-            Integer number = getVolumeNumber(fileName);
-            Comic.Volume volume = getVolume(comic.getVolumes(), number);
-            ComicBookDTO comicBookDTO = TmmUtil.toComicBookDTO(volume);
-            if (comicBookDTO == null) {
-                comicBookDTO = new ComicBookDTO();
-            }
-            if (StringUtils.isBlank(comicBookDTO.getTitle())) {
-                comicBookDTO.setTitle(number != null ? "卷" + number : "全一卷");
-            }
-            comicBookDTO.setBookNumber(number);
-
-            Path folderPath = path.resolveSibling(baseName);
-            unzipBook(path, folderPath);
-            ComicInfoNFO comicInfoNFO = NFOUtil.toComicInfoNFO(comicSeriesDTO, comicBookDTO);
-            NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, folderPath, KaleidoConstants.COMIC_INFO);
-            log.info("== 输出ComicInfo.xml:{}", folderPath);
-            Path targetPath = targetFolder.resolve(baseName + ".zip");
-            ZipUtil.zip(folderPath.toString(), targetPath.toString());
-            log.info("== 输出目标文件:{}", targetPath);
-            NioFileUtils.deleteIfExists(folderPath);
-            log.info("== 删除解压文件夹:{}", folderPath);
-            Files.delete(path);
-            log.info("== 删除原文件:{}", path);
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.info("== 转换压缩文件失败:{}", ExceptionUtil.getMessage(e));
+            ExceptionUtil.wrapAndThrow(e);
         }
     }
 
@@ -406,7 +387,7 @@ public class ComicManager {
         if (volumes.size() < number) {
             return null;
         }
-        return CollectionUtils.get(volumes, number);
+        return CollectionUtils.get(volumes, number - 1);
     }
 
     private Integer getVolumeNumber(String fileName) {

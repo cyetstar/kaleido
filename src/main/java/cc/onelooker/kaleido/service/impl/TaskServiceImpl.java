@@ -52,11 +52,10 @@ public class TaskServiceImpl extends AbstractBaseServiceImpl<TaskMapper, TaskDO,
 
     @Override
     @Transactional
-    public void newTask(String subjectId, SubjectType subjectType, String subjectTitle, TaskType taskType) {
+    public void newTask(String subjectId, SubjectType subjectType, TaskType taskType) {
         TaskDTO taskDTO = new TaskDTO();
         taskDTO.setSubjectId(subjectId);
         taskDTO.setSubjectType(subjectType.name());
-        taskDTO.setSubjectTitle(subjectTitle);
         taskDTO.setTaskType(taskType.name());
         taskDTO.setTaskStatus(KaleidoConstants.TASK_STATUS_TODO);
         TaskDTO existTaskDTO = find(taskDTO);

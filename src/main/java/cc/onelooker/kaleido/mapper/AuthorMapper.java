@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 /**
- * 漫画作者Mapper接口
+ * 作者Mapper接口
  *
  * @author cyetstar
  * @date 2024-03-12 17:47:50

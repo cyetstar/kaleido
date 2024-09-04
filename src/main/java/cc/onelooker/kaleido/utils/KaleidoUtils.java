@@ -123,20 +123,23 @@ public class KaleidoUtils {
     }
 
     public static Path getComicPath(String path) {
-        String komgaLibraryPath = ConfigUtils.getSysConfig(ConfigKey.komgaComicLibraryPath);
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        return getComicLibraryPath().resolve(path);
+    }
+
+    public static Path getComicLibraryPath() {
         String libraryPath = ConfigUtils.getSysConfig(ConfigKey.comicLibraryPath);
-        path = StringUtils.replace(path, komgaLibraryPath, libraryPath);
-        return Paths.get(path);
+        return Paths.get(libraryPath);
     }
 
     public static Path getComicImportPath() {
-        String libraryPath = ConfigUtils.getSysConfig(ConfigKey.comicLibraryPath);
-        return Paths.get(libraryPath).resolveSibling(IMPORT);
+        return getComicLibraryPath().resolveSibling(IMPORT);
     }
 
     public static Path getComicRecyclePath() {
-        String libraryPath = ConfigUtils.getSysConfig(ConfigKey.comicLibraryPath);
-        return Paths.get(libraryPath).resolveSibling(RECYCLE);
+        return getComicLibraryPath().resolveSibling(RECYCLE);
     }
 
     public static Path inverseMoviePath(String path) {

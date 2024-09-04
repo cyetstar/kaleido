@@ -85,7 +85,7 @@ public class MovieSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
     @Override
     protected int processEntity(Map<String, String> params, Metadata metadata) throws Exception {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
-        if (movieBasicDTO == null || metadata.getUpdatedAt().compareTo(movieBasicDTO.getUpdatedAt()) > 0 || MapUtils.getBooleanValue(params, "force")) {
+        if (movieBasicDTO == null || MapUtils.getBooleanValue(params, "force")) {
             metadata = plexApiService.findMetadata(metadata.getRatingKey());
             movieManager.syncMovie(metadata);
             return SUCCESS;
