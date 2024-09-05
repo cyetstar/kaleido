@@ -2,9 +2,11 @@ package cc.onelooker.kaleido.third.komga;
 
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import cn.hutool.core.exceptions.ExceptionUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.zjjcnt.common.core.domain.PageResult;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -19,6 +21,7 @@ import java.util.Objects;
  * @Date 2024-03-09 18:11:00
  * @Description TODO
  */
+@Slf4j
 @Component
 public class KomgaApiService {
 
@@ -91,11 +94,15 @@ public class KomgaApiService {
     }
 
     public List<Library> listLibrary() {
-        String url = ConfigUtils.getSysConfig(ConfigKey.komgaUrl, "http://192.168.3.100:25600");
-        ResponseEntity<JSONArray> response = restTemplate.exchange(url + API_LIBRARIES, HttpMethod.GET, new HttpEntity<>(getHeaders()), JSONArray.class);
-        JSONArray jsonArray = response.getBody();
-        if (jsonArray != null) {
-            return jsonArray.toJavaList(Library.class);
+        try {
+            String url = ConfigUtils.getSysConfig(ConfigKey.komgaUrl, "http://192.168.3.100:25600");
+            ResponseEntity<JSONArray> response = restTemplate.exchange(url + API_LIBRARIES, HttpMethod.GET, new HttpEntity<>(getHeaders()), JSONArray.class);
+            JSONArray jsonArray = response.getBody();
+            if (jsonArray != null) {
+                return jsonArray.toJavaList(Library.class);
+            }
+        } catch (Exception e) {
+            log.error("获取Komga库列表失败:{}", ExceptionUtil.getMessage(e));
         }
         return Lists.newArrayList();
     }

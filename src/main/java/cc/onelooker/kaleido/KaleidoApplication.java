@@ -17,6 +17,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 public class KaleidoApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(KaleidoApplication.class, args);
     }
 

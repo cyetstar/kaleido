@@ -30,6 +30,7 @@
         <jackson-datatype-guava.version>2.13.4</jackson-datatype-guava.version>
         <knife4j-spring-boot-starter.version>2.0.9</knife4j-spring-boot-starter.version>
         <dynamic-datasource-spring-boot-starter.version>3.5.1</dynamic-datasource-spring-boot-starter.version>
+        <flyway-core.version>6.4.4</flyway-core.version>
         <skipTests>true</skipTests>
     </properties>
     <dependencies>
@@ -142,6 +143,11 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>${flyway-core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -5,6 +5,7 @@ import cc.onelooker.kaleido.service.SysConfigService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
+@DependsOn("flyway")
 public class ConfigInitializer {
 
     @Autowired

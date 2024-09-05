@@ -25,7 +25,7 @@ public class SysRoleResourceDO implements IdEntity<Long> {
     /**
      * 关系id
      */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**

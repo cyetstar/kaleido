@@ -98,14 +98,14 @@ public class JobManager {
         movieManager.syncDoubanWeekly();
     }
 
-    @Scheduled(cron = "0 * * * * ?")
+   // @Scheduled(cron = "0 * * * * ?")
     public void executeWriteComicInfo() {
         if (comicWriteComicInfoRunnable.isNeedRun()) {
 //            comicWriteComicInfoRunnable.run();
         }
     }
 
-    @Scheduled(cron = "0 * * * * ?")
+   // @Scheduled(cron = "0 * * * * ?")
     public void executeWriteMovieNFO() {
         if (movieWriteNFORunnable.isNeedRun()) {
             movieWriteNFORunnable.run();

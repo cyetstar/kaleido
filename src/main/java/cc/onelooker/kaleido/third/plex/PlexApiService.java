@@ -2,9 +2,11 @@ package cc.onelooker.kaleido.third.plex;
 
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.PageResult;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,7 @@ import java.util.Objects;
  * @Date 2023-09-25 22:25:00
  * @Description TODO
  */
+@Slf4j
 @Component
 public class PlexApiService {
 
@@ -67,9 +70,14 @@ public class PlexApiService {
 
     public List<Directory> listLibrary() {
         return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_LIBRARY_LIST, PlexResult.class, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getDirectoryList();
+            try {
+                PlexResult plexResult = restTemplate.getForObject(plexUrl + API_LIBRARY_LIST, PlexResult.class, plexToken);
+                MediaContainer mediaContainer = plexResult.getMediaContainer();
+                return mediaContainer.getDirectoryList();
+            } catch (Exception e) {
+                log.error("获取Plex库列表失败:{}", ExceptionUtil.getMessage(e));
+            }
+            return Lists.newArrayList();
         });
     }
 
