@@ -5,6 +5,7 @@ import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.dto.TvshowShowDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
+import cc.onelooker.kaleido.nfo.MovieNFO;
 import cc.onelooker.kaleido.third.plex.Media;
 import cn.hutool.extra.pinyin.PinyinUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
@@ -255,4 +256,23 @@ public class KaleidoUtils {
         return fileName;
     }
 
+    public static boolean isSameMovie(MovieBasicDTO movieBasicDTO, MovieNFO movieNFO) {
+        if (movieBasicDTO == null || movieNFO == null) {
+            return false;
+        }
+        if (movieBasicDTO.getDoubanId() != null && movieNFO.getDoubanId() != null && StringUtils.equals(movieBasicDTO.getDoubanId(), movieNFO.getDoubanId())) {
+            return true;
+        }
+        if (movieBasicDTO.getImdbId() != null && movieNFO.getImdbId() != null && StringUtils.equals(movieBasicDTO.getImdbId(), movieNFO.getImdbId())) {
+            return true;
+        }
+        if (movieBasicDTO.getTmdbId() != null && movieNFO.getTmdbId() != null && StringUtils.equals(movieBasicDTO.getTmdbId(), movieNFO.getTmdbId())) {
+            return true;
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(StringUtils.equals(null, null));
+    }
 }

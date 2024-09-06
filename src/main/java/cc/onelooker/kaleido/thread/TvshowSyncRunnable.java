@@ -76,13 +76,13 @@ public class TvshowSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
     protected int processEntity(Map<String, String> params, Metadata metadata) throws Exception {
         TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(metadata.getRatingKey());
         if (tvshowEpisodeDTO == null || metadata.getUpdatedAt().compareTo(tvshowEpisodeDTO.getUpdatedAt()) > 0 || MapUtils.getBooleanValue(params, "force")) {
-            tvshowManager.syncEpisode(metadata);
-            if (seasonIdCache.add(metadata.getParentRatingKey())) {
-                tvshowManager.syncSeason(plexApiService.findMetadata(metadata.getParentRatingKey()));
-            }
             if (showIdCache.add(metadata.getGrandparentRatingKey())) {
                 tvshowManager.syncShow(plexApiService.findMetadata(metadata.getGrandparentRatingKey()));
             }
+            if (seasonIdCache.add(metadata.getParentRatingKey())) {
+                tvshowManager.syncSeason(plexApiService.findMetadata(metadata.getParentRatingKey()));
+            }
+            tvshowManager.syncEpisode(metadata);
             return SUCCESS;
         }
         return IGNORE;

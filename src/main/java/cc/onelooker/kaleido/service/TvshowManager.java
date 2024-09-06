@@ -101,6 +101,11 @@ public class TvshowManager {
             tvshowSeasonService.update(tvshowSeasonDTO);
         }
         taskService.newTask(tvshowSeasonDTO.getId(), SubjectType.TvshowSeason, TaskType.writeSeasonNFO);
+        List<TvshowEpisodeDTO> tvshowEpisodeDTOList = tvshowEpisodeService.listBySeasonId(tvshowSeasonDTO.getId());
+        tvshowEpisodeDTOList.forEach(e -> {
+            taskService.newTask(e.getId(), SubjectType.TvshowEpisode, TaskType.writeEpisodeNFO);
+        });
+
     }
 
     @Transactional
@@ -119,6 +124,14 @@ public class TvshowManager {
                 tvshowShowService.update(tvshowShowDTO);
             }
             taskService.newTask(tvshowShowDTO.getId(), SubjectType.TvshowShow, TaskType.writeShowNFO);
+            List<TvshowSeasonDTO> tvshowSeasonDTOList = tvshowSeasonService.listByShowId(tvshowShowDTO.getId());
+            tvshowSeasonDTOList.forEach(s -> {
+                taskService.newTask(s.getId(), SubjectType.TvshowSeason, TaskType.writeSeasonNFO);
+                List<TvshowEpisodeDTO> tvshowEpisodeDTOList = tvshowEpisodeService.listBySeasonId(s.getId());
+                tvshowEpisodeDTOList.forEach(e -> {
+                    taskService.newTask(e.getId(), SubjectType.TvshowEpisode, TaskType.writeEpisodeNFO);
+                });
+            });
         } catch (Exception e) {
             ExceptionUtil.wrapAndThrow(e);
         }
@@ -178,7 +191,7 @@ public class TvshowManager {
         tvshowShowDTO.setArt(metadata.getArt());
         tvshowShowDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
         tvshowShowDTO.setTotalSeasons(metadata.getChildCount());
-        Path path = KaleidoUtils.getTvshowBasicPath(FilenameUtils.getFullPath(metadata.getLocation().getPath()));
+        Path path = KaleidoUtils.getTvshowBasicPath(metadata.getLocation().getPath());
         tvshowShowDTO.setPath(path.toString());
         tvshowShowDTO.setAddedAt(metadata.getAddedAt());
         tvshowShowDTO.setUpdatedAt(metadata.getUpdatedAt());

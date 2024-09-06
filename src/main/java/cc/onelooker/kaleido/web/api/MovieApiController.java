@@ -33,7 +33,7 @@ public class MovieApiController {
             movieBasicDTO = movieBasicService.findByDoubanId(doubanId);
         }
         if (movieBasicDTO == null && StringUtils.isNotEmpty(imdbId)) {
-            movieBasicDTO = movieBasicService.findByImdb(imdbId);
+            movieBasicDTO = movieBasicService.findByImdbId(imdbId);
         }
         if (movieBasicDTO != null) {
             Metadata metadata = plexApiService.findMovieById(movieBasicDTO.getId());

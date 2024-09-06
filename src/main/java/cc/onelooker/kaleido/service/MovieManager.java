@@ -143,10 +143,9 @@ public class MovieManager {
      * @param path
      * @param doubanId
      * @param tmdbId
-     * @param tvdbId
      */
     @Transactional
-    public void matchPath(Path path, String doubanId, String tmdbId, String tvdbId) {
+    public void matchPath(Path path, String doubanId, String tmdbId) {
         Path movieImportPath = KaleidoUtils.getMovieImportPath();
         try {
             MovieNFO movieNFO = new MovieNFO();
@@ -181,14 +180,18 @@ public class MovieManager {
                 log.info("== 忽略不是文件夹的文件:{}", path);
                 return;
             }
-            Movie movie = findTmmMovieByNFO(path);
-            if (movie != null) {
-                MovieBasicDTO movieBasicDTO = TmmUtil.toMovieBasicDTO(movie);
-                log.info("== 查询到电影信息:{}", movieBasicDTO.getTitle());
-                operationDir(movieBasicDTO, path);
+            if (Files.exists(path.resolve(KaleidoConstants.MOVIE_NFO))) {
+                Movie movie = findTmmMovieByNFO(path);
+                if (movie != null) {
+                    MovieBasicDTO movieBasicDTO = TmmUtil.toMovieBasicDTO(movie);
+                    log.info("== 查询到电影信息:{}", movieBasicDTO.getTitle());
+                    operationDir(movieBasicDTO, path);
+                } else {
+                    Path movieLibraryPath = KaleidoUtils.getMovieLibraryPath();
+                    NioFileUtils.moveDir(path, movieLibraryPath, StandardCopyOption.REPLACE_EXISTING);
+                }
             } else {
-                Path movieLibraryPath = KaleidoUtils.getMovieLibraryPath();
-                NioFileUtils.moveDir(path, movieLibraryPath, StandardCopyOption.REPLACE_EXISTING);
+                //如果不存在movie.nfo，则不做任何操作
             }
         } catch (Exception e) {
             log.error("{}, 更新电影源发生错误", path, e);
@@ -207,7 +210,7 @@ public class MovieManager {
         if (StringUtils.isNotEmpty(movieThreadDTO.getDoubanId())) {
             movieBasicDTO = movieBasicService.findByDoubanId(movieThreadDTO.getDoubanId());
         } else if (StringUtils.isNotEmpty(movieThreadDTO.getImdb())) {
-            movieBasicDTO = movieBasicService.findByImdb(movieThreadDTO.getImdb());
+            movieBasicDTO = movieBasicService.findByImdbId(movieThreadDTO.getImdb());
         }
         if (movieBasicDTO == null) {
             return;
@@ -471,7 +474,7 @@ public class MovieManager {
             MovieNFO movieNFO = NFOUtil.read(MovieNFO.class, path, KaleidoConstants.MOVIE_NFO);
             return findTmmMovie(movieNFO.getDoubanId(), movieNFO.getImdbId(), movieNFO.getTmdbId());
         } catch (Exception e) {
-            log.info("NFO文件无法读取或不存在");
+            log.info("NFO文件无法读取");
         }
         return null;
     }
@@ -489,14 +492,14 @@ public class MovieManager {
         NFOUtil.write(movieNFO, MovieNFO.class, targetPath, KaleidoConstants.MOVIE_NFO);
         log.info("== 输出nfo文件");
 
-        NioFileUtils.moveDir(path, targetPath, StandardCopyOption.REPLACE_EXISTING);
+        NioFileUtils.renameDir(path, targetPath, StandardCopyOption.REPLACE_EXISTING);
         log.info("== 移动文件夹:{}", path.getFileName());
     }
 
     private void moveExistingFilesToRecycleBin(Path targetPath) {
         try {
             Path recyclePath = KaleidoUtils.getMovieRecyclePath();
-            Files.list(targetPath).forEach(s -> {
+            Files.list(targetPath.resolveSibling(targetPath)).forEach(s -> {
                 try {
                     if (KaleidoUtils.isVideoFile(s.getFileName().toString())) {
                         Files.move(s, recyclePath.resolve(s.getFileName()), StandardCopyOption.REPLACE_EXISTING);
@@ -507,7 +510,7 @@ public class MovieManager {
                 }
             });
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            ExceptionUtil.wrapAndThrow(e);
         }
     }
 
@@ -521,26 +524,29 @@ public class MovieManager {
     private Path createFolderPath(MovieBasicDTO movieBasicDTO) throws IOException {
         String folderName = KaleidoUtils.genMovieFolder(movieBasicDTO);
         Path folderPath = null;
-        int i = 1;
+        int i = 0;
         while (true) {
-            folderPath = createFolderPath(folderName);
-            if (folderPath == null) {
-                folderName = String.format("%s (%s)", folderName, i);
-                i++;
-            } else {
+            folderPath = KaleidoUtils.getMoviePath(i == 0 ? folderName : folderName + " " + i);
+            if (createFolderPath(folderPath)) {
                 break;
+            } else {
+                MovieNFO movieNFO = NFOUtil.read(MovieNFO.class, folderPath, KaleidoConstants.MOVIE_NFO);
+                if (KaleidoUtils.isSameMovie(movieBasicDTO, movieNFO)) {
+                    break;
+                } else {
+                    i++;
+                }
             }
         }
         return folderPath;
     }
 
-    private Path createFolderPath(String folderName) throws IOException {
-        Path folderPath = KaleidoUtils.getMoviePath(folderName);
+    private Boolean createFolderPath(Path folderPath) throws IOException {
         if (Files.notExists(folderPath)) {
             Files.createDirectories(folderPath);
-            return folderPath;
+            return true;
         } else {
-            return null;
+            return false;
         }
     }
 

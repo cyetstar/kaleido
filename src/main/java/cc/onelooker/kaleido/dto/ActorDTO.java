@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.dto;
 
 import cc.onelooker.kaleido.entity.ActorDO;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
@@ -38,10 +39,9 @@ public class ActorDTO implements BaseDTO<String> {
     private String originalName;
 
     /**
-     * 中文名
+     * 消歧
      */
-    @Deprecated
-    private String cnName;
+    private String disambiguation;
 
     /**
      * 缩略图

@@ -10,11 +10,14 @@ INSERT INTO sys_user (id, username, password, name, id_card_number, mobile, desc
                       is_account_non_locked, is_deleted, create_time, update_time, created_by, updated_by)
 VALUES (1, 'admin', '$2a$10$ZT1DXtX5.J2v8rDRT9vU..iWsekNBIg6o2.d.zDnvjj6SINH6.RLe', '管理员', '', '', '', '', 0, '', 1,
         1, 1, 1, 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00', 'system', 'system');
+
 INSERT INTO sys_role (id, parent_id, code, name, description, sub_count, is_deleted, create_time, update_time,
                       created_by, updated_by)
 VALUES (1, 0, 'ROLE_ADMIN', '管理员', '管理员', 0, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', 'system', 'system');
+
 INSERT INTO sys_user_role (id, user_id, role_id, create_time, update_time, created_by, updated_by)
 VALUES (1, 1, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', 'system', 'system');
+
 INSERT INTO sys_menu (id, parent_id, type, path, name, title, description, redirect, component, icon, meta,
                       is_show_root, is_hidden, order_num, sub_count, app, is_deleted, create_time, update_time,
                       created_by, updated_by, permission)
@@ -113,13 +116,9 @@ VALUES (19, 13, '', '/sysadmin/sysConfig/form', 'SysConfigForm', '系统配置',
 INSERT INTO sys_menu (id, parent_id, type, path, name, title, description, redirect, component, icon, meta,
                       is_show_root, is_hidden, order_num, sub_count, app, is_deleted, create_time, update_time,
                       created_by, updated_by, permission)
-VALUES (20, 13, '', '/sysadmin/webLog/page', 'webLogPage', '操作日志', '', '', '', '', '', 1, 0, 57, 0, '', 0,
-        '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '', 'webLog:page');
-INSERT INTO sys_menu (id, parent_id, type, path, name, title, description, redirect, component, icon, meta,
-                      is_show_root, is_hidden, order_num, sub_count, app, is_deleted, create_time, update_time,
-                      created_by, updated_by, permission)
-VALUES (21, 13, '', '/sysadmin/sysLog/page', 'SysLogPage', '系统日志', '', '', '', '', '', 1, 0, 58, 0, '', 0,
+VALUES (20, 13, '', '/sysadmin/sysLog/page', 'SysLogPage', '系统日志', '', '', '', '', '', 1, 0, 58, 0, '', 0,
         '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '', 'sysLog:page');
+
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
 VALUES (1, 'sysUser:page', 'sysUser', 'page', '/sysUser/page', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
@@ -318,450 +317,423 @@ VALUES (49, 'sysConfig:other', 'sysConfig', 'other', '/sysConfig/other', '', '',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (50, 'webLog:page', 'webLog', 'page', '/webLog/page', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
+VALUES (50, 'sysLog:page', 'sysLog', 'page', '/sysLog/page', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
         '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (51, 'webLog:view', 'webLog', 'view', '/webLog/view', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
+VALUES (51, 'sysLog:view', 'sysLog', 'view', '/sysLog/view', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
         '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (52, 'webLog:create', 'webLog', 'create', '/webLog/create', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+VALUES (52, 'sysLog:create', 'sysLog', 'create', '/sysLog/create', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
         '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (53, 'webLog:update', 'webLog', 'update', '/webLog/update', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+VALUES (53, 'sysLog:update', 'sysLog', 'update', '/sysLog/update', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
         '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (54, 'webLog:delete', 'webLog', 'delete', '/webLog/delete', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+VALUES (54, 'sysLog:delete', 'sysLog', 'delete', '/sysLog/delete', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
         '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (55, 'webLog:export', 'webLog', 'export', '/webLog/export', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+VALUES (55, 'sysLog:export', 'sysLog', 'export', '/sysLog/export', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
         '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (56, 'webLog:other', 'webLog', 'other', '/webLog/other', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+VALUES (56, 'sysLog:other', 'sysLog', 'other', '/sysLog/other', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
         '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (57, 'sysLog:page', 'sysLog', 'page', '/sysLog/page', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
+VALUES (57, 'actor:page', 'actor', 'page', '/actor/page', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
+                          updated_by)
+VALUES (58, 'actor:view', 'actor', 'view', '/actor/view', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
+                          updated_by)
+VALUES (59, 'actor:create', 'actor', 'create', '/actor/create', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+        '', '');
+INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
+                          updated_by)
+VALUES (60, 'actor:update', 'actor', 'update', '/actor/update', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+        '', '');
+INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
+                          updated_by)
+VALUES (61, 'actor:delete', 'actor', 'delete', '/actor/delete', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+        '', '');
+INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
+                          updated_by)
+VALUES (62, 'actor:export', 'actor', 'export', '/actor/export', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+        '', '');
+INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
+                          updated_by)
+VALUES (63, 'actor:other', 'actor', 'other', '/actor/other', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
         '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (58, 'sysLog:view', 'sysLog', 'view', '/sysLog/view', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
+VALUES (64, 'artist:page', 'artist', 'page', '/artist/page', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
         '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (59, 'sysLog:create', 'sysLog', 'create', '/sysLog/create', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
-        '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (60, 'sysLog:update', 'sysLog', 'update', '/sysLog/update', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
-        '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (61, 'sysLog:delete', 'sysLog', 'delete', '/sysLog/delete', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
-        '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (62, 'sysLog:export', 'sysLog', 'export', '/sysLog/export', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
-        '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (63, 'sysLog:other', 'sysLog', 'other', '/sysLog/other', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
-        '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (64, 'actor:page', 'actor', 'page', '/actor/page', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (65, 'actor:view', 'actor', 'view', '/actor/view', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (66, 'actor:create', 'actor', 'create', '/actor/create', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
-        '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (67, 'actor:update', 'actor', 'update', '/actor/update', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
-        '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (68, 'actor:delete', 'actor', 'delete', '/actor/delete', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
-        '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (69, 'actor:export', 'actor', 'export', '/actor/export', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
-        '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (70, 'actor:other', 'actor', 'other', '/actor/other', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
+VALUES (65, 'artist:view', 'artist', 'view', '/artist/view', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
         '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (71, 'artist:page', 'artist', 'page', '/artist/page', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
+VALUES (66, 'artist:create', 'artist', 'create', '/artist/create', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+        '', '');
+INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
+                          updated_by)
+VALUES (67, 'artist:update', 'artist', 'update', '/artist/update', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+        '', '');
+INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
+                          updated_by)
+VALUES (68, 'artist:delete', 'artist', 'delete', '/artist/delete', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+        '', '');
+INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
+                          updated_by)
+VALUES (69, 'artist:export', 'artist', 'export', '/artist/export', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+        '', '');
+INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
+                          updated_by)
+VALUES (70, 'artist:other', 'artist', 'other', '/artist/other', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+        '', '');
+INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
+                          updated_by)
+VALUES (71, 'author:page', 'author', 'page', '/author/page', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
         '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (72, 'artist:view', 'artist', 'view', '/artist/view', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
+VALUES (72, 'author:view', 'author', 'view', '/author/view', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
         '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (73, 'artist:create', 'artist', 'create', '/artist/create', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+VALUES (73, 'author:create', 'author', 'create', '/author/create', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
         '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (74, 'artist:update', 'artist', 'update', '/artist/update', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+VALUES (74, 'author:update', 'author', 'update', '/author/update', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
         '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (75, 'artist:delete', 'artist', 'delete', '/artist/delete', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+VALUES (75, 'author:delete', 'author', 'delete', '/author/delete', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
         '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (76, 'artist:export', 'artist', 'export', '/artist/export', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+VALUES (76, 'author:export', 'author', 'export', '/author/export', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
         '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (77, 'artist:other', 'artist', 'other', '/artist/other', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
+VALUES (77, 'author:other', 'author', 'other', '/author/other', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
         '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (78, 'author:page', 'author', 'page', '/author/page', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
-        '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (79, 'author:view', 'author', 'view', '/author/view', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00', '',
-        '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (80, 'author:create', 'author', 'create', '/author/create', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
-        '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (81, 'author:update', 'author', 'update', '/author/update', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
-        '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (82, 'author:delete', 'author', 'delete', '/author/delete', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
-        '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (83, 'author:export', 'author', 'export', '/author/export', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
-        '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (84, 'author:other', 'author', 'other', '/author/other', '', '', '2024-01-01 00:00:00', '2024-01-01 00:00:00',
-        '', '');
-INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
-                          updated_by)
-VALUES (85, 'movieBasic:page', 'movieBasic', 'page', '/movieBasic/page', '', '', '2024-01-01 00:00:00',
+VALUES (78, 'movieBasic:page', 'movieBasic', 'page', '/movieBasic/page', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (86, 'movieBasic:view', 'movieBasic', 'view', '/movieBasic/view', '', '', '2024-01-01 00:00:00',
+VALUES (79, 'movieBasic:view', 'movieBasic', 'view', '/movieBasic/view', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (87, 'movieBasic:create', 'movieBasic', 'create', '/movieBasic/create', '', '', '2024-01-01 00:00:00',
+VALUES (80, 'movieBasic:create', 'movieBasic', 'create', '/movieBasic/create', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (88, 'movieBasic:update', 'movieBasic', 'update', '/movieBasic/update', '', '', '2024-01-01 00:00:00',
+VALUES (81, 'movieBasic:update', 'movieBasic', 'update', '/movieBasic/update', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (89, 'movieBasic:delete', 'movieBasic', 'delete', '/movieBasic/delete', '', '', '2024-01-01 00:00:00',
+VALUES (82, 'movieBasic:delete', 'movieBasic', 'delete', '/movieBasic/delete', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (90, 'movieBasic:export', 'movieBasic', 'export', '/movieBasic/export', '', '', '2024-01-01 00:00:00',
+VALUES (83, 'movieBasic:export', 'movieBasic', 'export', '/movieBasic/export', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (91, 'movieBasic:other', 'movieBasic', 'other', '/movieBasic/other', '', '', '2024-01-01 00:00:00',
+VALUES (84, 'movieBasic:other', 'movieBasic', 'other', '/movieBasic/other', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (92, 'movieCollection:page', 'movieCollection', 'page', '/movieCollection/page', '', '', '2024-01-01 00:00:00',
+VALUES (85, 'movieCollection:page', 'movieCollection', 'page', '/movieCollection/page', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (93, 'movieCollection:view', 'movieCollection', 'view', '/movieCollection/view', '', '', '2024-01-01 00:00:00',
+VALUES (86, 'movieCollection:view', 'movieCollection', 'view', '/movieCollection/view', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (94, 'movieCollection:create', 'movieCollection', 'create', '/movieCollection/create', '', '',
+VALUES (87, 'movieCollection:create', 'movieCollection', 'create', '/movieCollection/create', '', '',
         '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (95, 'movieCollection:update', 'movieCollection', 'update', '/movieCollection/update', '', '',
+VALUES (88, 'movieCollection:update', 'movieCollection', 'update', '/movieCollection/update', '', '',
         '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (96, 'movieCollection:delete', 'movieCollection', 'delete', '/movieCollection/delete', '', '',
+VALUES (89, 'movieCollection:delete', 'movieCollection', 'delete', '/movieCollection/delete', '', '',
         '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (97, 'movieCollection:export', 'movieCollection', 'export', '/movieCollection/export', '', '',
+VALUES (90, 'movieCollection:export', 'movieCollection', 'export', '/movieCollection/export', '', '',
         '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (98, 'movieCollection:other', 'movieCollection', 'other', '/movieCollection/other', '', '',
+VALUES (91, 'movieCollection:other', 'movieCollection', 'other', '/movieCollection/other', '', '',
         '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (99, 'movieDoubanWeekly:page', 'movieDoubanWeekly', 'page', '/movieDoubanWeekly/page', '', '',
+VALUES (92, 'movieDoubanWeekly:page', 'movieDoubanWeekly', 'page', '/movieDoubanWeekly/page', '', '',
         '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (100, 'movieDoubanWeekly:view', 'movieDoubanWeekly', 'view', '/movieDoubanWeekly/view', '', '',
+VALUES (93, 'movieDoubanWeekly:view', 'movieDoubanWeekly', 'view', '/movieDoubanWeekly/view', '', '',
         '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (101, 'movieDoubanWeekly:create', 'movieDoubanWeekly', 'create', '/movieDoubanWeekly/create', '', '',
+VALUES (94, 'movieDoubanWeekly:create', 'movieDoubanWeekly', 'create', '/movieDoubanWeekly/create', '', '',
         '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (102, 'movieDoubanWeekly:update', 'movieDoubanWeekly', 'update', '/movieDoubanWeekly/update', '', '',
+VALUES (95, 'movieDoubanWeekly:update', 'movieDoubanWeekly', 'update', '/movieDoubanWeekly/update', '', '',
         '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (103, 'movieDoubanWeekly:delete', 'movieDoubanWeekly', 'delete', '/movieDoubanWeekly/delete', '', '',
+VALUES (96, 'movieDoubanWeekly:delete', 'movieDoubanWeekly', 'delete', '/movieDoubanWeekly/delete', '', '',
         '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (104, 'movieDoubanWeekly:export', 'movieDoubanWeekly', 'export', '/movieDoubanWeekly/export', '', '',
+VALUES (97, 'movieDoubanWeekly:export', 'movieDoubanWeekly', 'export', '/movieDoubanWeekly/export', '', '',
         '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (105, 'movieDoubanWeekly:other', 'movieDoubanWeekly', 'other', '/movieDoubanWeekly/other', '', '',
+VALUES (98, 'movieDoubanWeekly:other', 'movieDoubanWeekly', 'other', '/movieDoubanWeekly/other', '', '',
         '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (106, 'tvshowShow:page', 'tvshowShow', 'page', '/tvshowShow/page', '', '', '2024-01-01 00:00:00',
+VALUES (99, 'tvshowShow:page', 'tvshowShow', 'page', '/tvshowShow/page', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (107, 'tvshowShow:view', 'tvshowShow', 'view', '/tvshowShow/view', '', '', '2024-01-01 00:00:00',
+VALUES (100, 'tvshowShow:view', 'tvshowShow', 'view', '/tvshowShow/view', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (108, 'tvshowShow:create', 'tvshowShow', 'create', '/tvshowShow/create', '', '', '2024-01-01 00:00:00',
+VALUES (101, 'tvshowShow:create', 'tvshowShow', 'create', '/tvshowShow/create', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (109, 'tvshowShow:update', 'tvshowShow', 'update', '/tvshowShow/update', '', '', '2024-01-01 00:00:00',
+VALUES (102, 'tvshowShow:update', 'tvshowShow', 'update', '/tvshowShow/update', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (110, 'tvshowShow:delete', 'tvshowShow', 'delete', '/tvshowShow/delete', '', '', '2024-01-01 00:00:00',
+VALUES (103, 'tvshowShow:delete', 'tvshowShow', 'delete', '/tvshowShow/delete', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (111, 'tvshowShow:export', 'tvshowShow', 'export', '/tvshowShow/export', '', '', '2024-01-01 00:00:00',
+VALUES (104, 'tvshowShow:export', 'tvshowShow', 'export', '/tvshowShow/export', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (112, 'tvshowShow:other', 'tvshowShow', 'other', '/tvshowShow/other', '', '', '2024-01-01 00:00:00',
+VALUES (105, 'tvshowShow:other', 'tvshowShow', 'other', '/tvshowShow/other', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (113, 'musicAlbum:page', 'musicAlbum', 'page', '/musicAlbum/page', '', '', '2024-01-01 00:00:00',
+VALUES (106, 'musicAlbum:page', 'musicAlbum', 'page', '/musicAlbum/page', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (114, 'musicAlbum:view', 'musicAlbum', 'view', '/musicAlbum/view', '', '', '2024-01-01 00:00:00',
+VALUES (107, 'musicAlbum:view', 'musicAlbum', 'view', '/musicAlbum/view', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (115, 'musicAlbum:create', 'musicAlbum', 'create', '/musicAlbum/create', '', '', '2024-01-01 00:00:00',
+VALUES (108, 'musicAlbum:create', 'musicAlbum', 'create', '/musicAlbum/create', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (116, 'musicAlbum:update', 'musicAlbum', 'update', '/musicAlbum/update', '', '', '2024-01-01 00:00:00',
+VALUES (109, 'musicAlbum:update', 'musicAlbum', 'update', '/musicAlbum/update', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (117, 'musicAlbum:delete', 'musicAlbum', 'delete', '/musicAlbum/delete', '', '', '2024-01-01 00:00:00',
+VALUES (110, 'musicAlbum:delete', 'musicAlbum', 'delete', '/musicAlbum/delete', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (118, 'musicAlbum:export', 'musicAlbum', 'export', '/musicAlbum/export', '', '', '2024-01-01 00:00:00',
+VALUES (111, 'musicAlbum:export', 'musicAlbum', 'export', '/musicAlbum/export', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (119, 'musicAlbum:other', 'musicAlbum', 'other', '/musicAlbum/other', '', '', '2024-01-01 00:00:00',
+VALUES (112, 'musicAlbum:other', 'musicAlbum', 'other', '/musicAlbum/other', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (120, 'comicSeries:page', 'comicSeries', 'page', '/comicSeries/page', '', '', '2024-01-01 00:00:00',
+VALUES (113, 'comicSeries:page', 'comicSeries', 'page', '/comicSeries/page', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (121, 'comicSeries:view', 'comicSeries', 'view', '/comicSeries/view', '', '', '2024-01-01 00:00:00',
+VALUES (114, 'comicSeries:view', 'comicSeries', 'view', '/comicSeries/view', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (122, 'comicSeries:create', 'comicSeries', 'create', '/comicSeries/create', '', '', '2024-01-01 00:00:00',
+VALUES (115, 'comicSeries:create', 'comicSeries', 'create', '/comicSeries/create', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (123, 'comicSeries:update', 'comicSeries', 'update', '/comicSeries/update', '', '', '2024-01-01 00:00:00',
+VALUES (116, 'comicSeries:update', 'comicSeries', 'update', '/comicSeries/update', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (124, 'comicSeries:delete', 'comicSeries', 'delete', '/comicSeries/delete', '', '', '2024-01-01 00:00:00',
+VALUES (117, 'comicSeries:delete', 'comicSeries', 'delete', '/comicSeries/delete', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (125, 'comicSeries:export', 'comicSeries', 'export', '/comicSeries/export', '', '', '2024-01-01 00:00:00',
+VALUES (118, 'comicSeries:export', 'comicSeries', 'export', '/comicSeries/export', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_resource (id, code, type, name, url, method, description, create_time, update_time, created_by,
                           updated_by)
-VALUES (126, 'comicSeries:other', 'comicSeries', 'other', '/comicSeries/other', '', '', '2024-01-01 00:00:00',
+VALUES (119, 'comicSeries:other', 'comicSeries', 'other', '/comicSeries/other', '', '', '2024-01-01 00:00:00',
         '2024-01-01 00:00:00', '', '');
+
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (1, 1, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (1, 15, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (2, 2, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (2, 16, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (3, 3, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (3, 17, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (4, 4, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (4, 18, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (5, 5, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (5, 19, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (6, 6, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (6, 20, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (7, 7, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (7, 21, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (8, 8, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (8, 99, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (9, 9, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (9, 100, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (10, 10, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (10, 101, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (11, 11, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (11, 102, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (12, 12, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (12, 103, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (13, 13, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (13, 104, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (14, 14, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (14, 105, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (15, 64, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (15, 113, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (16, 65, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (16, 114, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (17, 66, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (17, 115, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (18, 67, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (18, 116, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (19, 68, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (19, 117, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (20, 70, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (20, 118, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (21, 69, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (21, 119, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (22, 71, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (22, 64, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (23, 72, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (23, 65, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (24, 73, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (24, 66, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (25, 74, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (25, 67, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (26, 75, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (26, 68, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (27, 76, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (27, 70, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (28, 77, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (28, 69, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (29, 79, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (29, 71, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (30, 80, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (30, 72, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (31, 81, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (31, 73, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (32, 82, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (32, 74, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (33, 83, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (33, 75, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (34, 84, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (34, 76, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (35, 78, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (35, 77, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (36, 120, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (36, 50, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (37, 121, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (37, 51, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (38, 122, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (38, 52, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (39, 123, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (39, 53, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (40, 124, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (40, 54, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (41, 125, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (41, 55, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (42, 126, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (42, 56, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (43, 85, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (43, 8, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (44, 86, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (44, 9, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (45, 87, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (45, 10, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (46, 88, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (46, 11, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (47, 89, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (47, 12, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (48, 90, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (48, 13, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (49, 91, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (49, 14, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (50, 92, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (50, 22, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (51, 93, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (51, 24, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (52, 94, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (52, 25, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (53, 95, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (53, 23, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (54, 96, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (54, 26, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (55, 97, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (55, 27, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (56, 98, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (56, 28, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (57, 99, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (57, 79, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (58, 100, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (58, 80, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (59, 101, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (59, 81, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (60, 102, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (60, 82, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (61, 103, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (61, 83, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (62, 104, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (62, 84, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (63, 105, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (63, 78, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (64, 113, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (64, 57, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (65, 114, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (65, 58, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (66, 115, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (66, 59, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (67, 116, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (67, 60, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (68, 117, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (68, 61, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (69, 118, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (69, 62, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (70, 119, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (70, 63, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
 VALUES (71, 43, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
@@ -777,100 +749,86 @@ VALUES (76, 48, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
 VALUES (77, 49, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (78, 36, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (78, 31, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (79, 38, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (79, 33, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (80, 40, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (80, 34, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (81, 41, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (81, 35, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (82, 42, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (82, 30, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (83, 39, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (83, 29, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (84, 37, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (84, 32, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (85, 31, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (85, 85, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (86, 33, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (86, 86, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (87, 34, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (87, 87, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (88, 35, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (88, 88, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (89, 30, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (89, 89, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (90, 29, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (90, 90, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (91, 32, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (91, 91, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (92, 57, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (92, 92, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (93, 58, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (93, 93, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (94, 59, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (94, 94, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (95, 60, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (95, 95, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (96, 61, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (96, 96, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (97, 62, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (97, 97, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (98, 63, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (98, 98, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (99, 22, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (99, 1, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (100, 24, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (100, 2, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (101, 25, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (101, 3, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (102, 23, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (102, 4, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (103, 26, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (103, 5, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (104, 27, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (104, 6, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (105, 28, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (105, 7, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (106, 15, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (106, 106, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (107, 16, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (107, 107, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (108, 17, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (108, 108, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (109, 18, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (109, 109, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (110, 19, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (110, 110, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (111, 20, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (111, 111, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (112, 21, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (112, 112, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (113, 106, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (113, 36, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (114, 107, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (114, 38, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (115, 108, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (115, 40, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (116, 109, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (116, 41, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (117, 110, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (117, 42, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (118, 111, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (118, 39, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
 INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (119, 112, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
-INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (120, 50, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
-INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (121, 51, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
-INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (122, 52, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
-INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (123, 53, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
-INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (124, 54, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
-INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (125, 55, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
-INSERT INTO sys_role_resource (id, resource_id, role_id, create_time, update_time, created_by, updated_by)
-VALUES (126, 56, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');
+VALUES (119, 37, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '');

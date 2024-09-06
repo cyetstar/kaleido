@@ -21,9 +21,9 @@ alter table oauth_client_details
 create table sys_config
 (
     id           bigint unsigned  not null auto_increment comment 'id',
-    config_name  varchar(100)     not null comment '配置名称',
+    config_name  varchar(100) comment '配置名称',
     config_key   varchar(100)     not null comment '配置键名',
-    config_value varchar(1024)    not null comment '配置键值',
+    config_value varchar(3000)    not null comment '配置键值',
     is_deleted   tinyint unsigned not null default '0' comment '是否已删除1：已删除，0：未删除',
     create_time  datetime         not null default CURRENT_TIMESTAMP comment '创建时间',
     update_time  datetime         not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
@@ -414,6 +414,10 @@ create table movie_basic
     imdb_id                 varchar(36) comment 'IMDb编号',
     douban_id               varchar(36) comment '豆瓣编号',
     tmdb_id                 varchar(36) comment 'TMDB编号',
+    multiple_files          varchar(1) comment '多文件',
+    no_subtitle             varchar(1) comment '无字幕',
+    mandarin                varchar(1) comment '国语配音',
+    low_quality             varchar(1) comment '低质量',
     added_at                bigint comment '加入时间',
     updated_at              bigint comment '更新时间',
     primary key (id)

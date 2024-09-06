@@ -10,6 +10,8 @@ import lombok.Data;
 @Data
 public class MovieBasicSearchInfoResp {
 
+    private String movieId;
+
     private String doubanId;
 
     private String tmdbId;
@@ -23,4 +25,5 @@ public class MovieBasicSearchInfoResp {
     private String year;
 
     private String poster;
+
 }

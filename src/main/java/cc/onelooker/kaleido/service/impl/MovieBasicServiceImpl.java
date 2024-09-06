@@ -83,6 +83,7 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
         query.eq(StringUtils.isNotEmpty(dto.getLowQuality()), MovieBasicDO::getLowQuality, dto.getLowQuality());
         query.eq(StringUtils.isNotEmpty(dto.getMandarin()), MovieBasicDO::getMandarin, dto.getMandarin());
         query.eq(StringUtils.isNotEmpty(dto.getNoSubtitle()), MovieBasicDO::getNoSubtitle, dto.getNoSubtitle());
+        query.eq(StringUtils.isNotEmpty(dto.getPath()), MovieBasicDO::getPath, dto.getPath());
         return query;
     }
 
@@ -119,10 +120,26 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
     }
 
     @Override
-    public MovieBasicDTO findByImdb(String imdb) {
-        Validate.notEmpty(imdb);
+    public MovieBasicDTO findByImdbId(String imdbId) {
+        Validate.notEmpty(imdbId);
         MovieBasicDTO param = new MovieBasicDTO();
-        param.setImdbId(imdb);
+        param.setImdbId(imdbId);
+        return find(param);
+    }
+
+    @Override
+    public MovieBasicDTO findByTmdbId(String tmdbId) {
+        Validate.notEmpty(tmdbId);
+        MovieBasicDTO param = new MovieBasicDTO();
+        param.setTmdbId(tmdbId);
+        return find(param);
+    }
+
+    @Override
+    public MovieBasicDTO findByPath(String path) {
+        Validate.notEmpty(path);
+        MovieBasicDTO param = new MovieBasicDTO();
+        param.setPath(path);
         return find(param);
     }
 

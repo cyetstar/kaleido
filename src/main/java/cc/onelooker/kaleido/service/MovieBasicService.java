@@ -15,6 +15,9 @@ public interface MovieBasicService extends IBaseService<MovieBasicDTO> {
 
     MovieBasicDTO findByDoubanId(String doubanId);
 
-    MovieBasicDTO findByImdb(String imdb);
+    MovieBasicDTO findByImdbId(String imdbId);
 
+    MovieBasicDTO findByTmdbId(String tmdbId);
+
+    MovieBasicDTO findByPath(String path);
 }

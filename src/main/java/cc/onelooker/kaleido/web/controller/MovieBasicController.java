@@ -6,7 +6,6 @@ import cc.onelooker.kaleido.dto.MovieBasicCollectionDTO;
 import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.dto.resp.*;
-import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.ActorService;
 import cc.onelooker.kaleido.service.MovieBasicCollectionService;
 import cc.onelooker.kaleido.service.MovieBasicService;
@@ -14,10 +13,8 @@ import cc.onelooker.kaleido.service.MovieManager;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.third.tmm.Movie;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
-import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
-import cc.onelooker.kaleido.utils.NioFileUtils;
 import cn.hutool.http.HttpUtil;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
@@ -38,13 +35,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 电影前端控制器
@@ -139,7 +132,19 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         List<Movie> movieList = tmmApiService.searchMovie(req.getKeyword(), req.getType());
         List<MovieBasicSearchInfoResp> respList = Lists.newArrayList();
         for (Movie movie : movieList) {
-            respList.add(MovieBasicConvert.INSTANCE.convertToSearchInfoResp(movie));
+            MovieBasicSearchInfoResp resp = MovieBasicConvert.INSTANCE.convertToSearchInfoResp(movie);
+            MovieBasicDTO movieBasicDTO = null;
+            if (StringUtils.isNotEmpty(movie.getDoubanId())) {
+                movieBasicDTO = movieBasicService.findByDoubanId(movie.getDoubanId());
+            } else if (StringUtils.isNotEmpty(movie.getImdbId())) {
+                movieBasicDTO = movieBasicService.findByImdbId(movie.getImdbId());
+            } else if (StringUtils.isNotEmpty(movie.getTmdbId())) {
+                movieBasicDTO = movieBasicService.findByTmdbId(movie.getTmdbId());
+            }
+            if (movieBasicDTO != null) {
+                resp.setMovieId(movieBasicDTO.getId());
+            }
+            respList.add(resp);
         }
         return CommonResult.success(respList);
     }
@@ -198,7 +203,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("matchPath")
     @ApiOperation(value = "匹配文件信息")
     public CommonResult<Boolean> matchPath(@RequestBody MovieBasicMatchPathReq req) {
-        movieManager.matchPath(Paths.get(req.getPath()), req.getDoubanId(), req.getTmdbId(), req.getTvdbId());
+        movieManager.matchPath(Paths.get(req.getPath()), req.getDoubanId(), req.getTmdbId());
         return CommonResult.success(true);
     }
 

@@ -45,10 +45,10 @@ public class ActorDO implements IdEntity<String> {
     private String originalName;
 
     /**
-     * 中文名
+     * 消歧
      */
-    @TableField(value = "cn_name")
-    private String cnName;
+    @TableField(value = "disambiguation")
+    private String disambiguation;
 
     /**
      * 缩略图

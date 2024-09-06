@@ -30,11 +30,6 @@ public class TaskDTO implements BaseDTO<String> {
     private String subjectType;
 
     /**
-     * 项目标题
-     */
-    private String subjectTitle;
-
-    /**
      * 任务类型
      */
     private String taskType;
@@ -61,8 +56,4 @@ public class TaskDTO implements BaseDTO<String> {
         this.id = id;
     }
 
-    @Override
-    public String toString() {
-        return getSubjectTitle();
-    }
 }
