@@ -55,7 +55,8 @@ public interface ComicSeriesConvert {
             @Mapping(target = "tagList", ignore = true),
             @Mapping(target = "alternateTitleList", ignore = true),
             @Mapping(target = "writerList", ignore = true),
-            @Mapping(target = "pencillerList", ignore = true)
+            @Mapping(target = "pencillerList", ignore = true),
+            @Mapping(target = "bookList", ignore = true)
     })
     ComicSeriesDTO convertToDTO(Map<String, String> params);
 }

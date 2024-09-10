@@ -1,8 +1,10 @@
 package cc.onelooker.kaleido.schedule;
 
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.MovieManager;
 import cc.onelooker.kaleido.service.SysDictTypeService;
 import cc.onelooker.kaleido.thread.*;
+import cc.onelooker.kaleido.utils.ConfigUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -98,16 +100,16 @@ public class JobManager {
         movieManager.syncDoubanWeekly();
     }
 
-   // @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 * * * * ?")
     public void executeWriteComicInfo() {
-        if (comicWriteComicInfoRunnable.isNeedRun()) {
-//            comicWriteComicInfoRunnable.run();
+        if (ConfigUtils.isEnabled(ConfigKey.writeComicInfo) && comicWriteComicInfoRunnable.isNeedRun()) {
+            comicWriteComicInfoRunnable.run();
         }
     }
 
-   // @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 * * * * ?")
     public void executeWriteMovieNFO() {
-        if (movieWriteNFORunnable.isNeedRun()) {
+        if (ConfigUtils.isEnabled(ConfigKey.writeMovieNFO) && movieWriteNFORunnable.isNeedRun()) {
             movieWriteNFORunnable.run();
         }
     }

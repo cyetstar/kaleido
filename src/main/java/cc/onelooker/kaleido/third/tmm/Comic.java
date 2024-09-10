@@ -41,6 +41,8 @@ public class Comic {
         @JsonProperty("original_title")
         private String originalTitle;
         private String cover;
+        @JsonProperty("volume_number")
+        private Integer volumeNumber;
 
     }
 }

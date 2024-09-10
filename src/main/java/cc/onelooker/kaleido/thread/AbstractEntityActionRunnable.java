@@ -21,9 +21,10 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
 
     private int sleepSecond = 0;
 
-    private Map<Integer, String> stateMap = ImmutableMap.of(SUCCESS, "成功", ERROR, "错误", IGNORE, "忽略");
+    private Map<Integer, String> stateMap = ImmutableMap.of(TODO, "开始处理", SUCCESS, "成功", ERROR, "错误", IGNORE, "忽略");
 
-    public static final int SUCCESS = 0;
+    public static final int TODO = 0;
+    public static final int SUCCESS = 1;
     public static final int ERROR = -1;
     public static final int IGNORE = 9;
 

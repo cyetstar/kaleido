@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 public class TvshowShowMatchPathReq {
 
-    private List<String> paths ;
+    private String path ;
 
     private String doubanId;
 

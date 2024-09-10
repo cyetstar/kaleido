@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.utils;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import com.zjjcnt.common.core.redis.RedisService;
 import com.zjjcnt.common.core.utils.ApplicationContextHelper;
+import com.zjjcnt.common.util.constant.Constants;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Set;
@@ -58,5 +59,10 @@ public class ConfigUtils {
      */
     private static String wrapKey(String configKey) {
         return SYS_CONFIG_KEY + configKey;
+    }
+
+    public static boolean isEnabled(ConfigKey configKey) {
+        String value = getSysConfig(configKey, Constants.YES);
+        return StringUtils.equals(value, Constants.YES);
     }
 }

@@ -36,6 +36,11 @@ public class TvshowEpisodeDTO implements BaseDTO<String> {
     private String title;
 
     /**
+     * 原标题
+     */
+    private String originalTitle;
+
+    /**
      * 制片公司
      */
     private String studio;
@@ -61,6 +66,11 @@ public class TvshowEpisodeDTO implements BaseDTO<String> {
     private String originallyAvailableAt;
 
     /**
+     * 季号
+     */
+    private Integer seasonIndex;
+
+    /**
      * 集号
      */
     private Integer episodeIndex;
@@ -84,6 +94,16 @@ public class TvshowEpisodeDTO implements BaseDTO<String> {
      * 艺术图
      */
     private String art;
+
+    /**
+     * 文件名
+     */
+    private String filename;
+
+    /**
+     * tmdb编号
+     */
+    private String tmdbId;
 
     /**
      * 加入时间

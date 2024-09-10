@@ -10,7 +10,11 @@ import cc.onelooker.kaleido.dto.resp.TvshowSeasonViewResp;
 import cc.onelooker.kaleido.entity.TvshowSeasonDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
+
+import java.util.Map;
 
 /**
  * 单季Convert
@@ -40,4 +44,11 @@ public interface TvshowSeasonConvert {
 
     TvshowSeasonCreateResp convertToCreateResp(TvshowSeasonDTO dto);
 
+    @Mappings({
+            @Mapping(target = "directorList", ignore = true),
+            @Mapping(target = "writerList", ignore = true),
+            @Mapping(target = "actorList", ignore = true),
+            @Mapping(target = "episodeList", ignore = true),
+    })
+    TvshowSeasonDTO convertToDTO(Map<String, String> params);
 }

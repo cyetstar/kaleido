@@ -45,6 +45,12 @@ public class TvshowSeasonDO implements IdEntity<String> {
     private String originalTitle;
 
     /**
+     * 排序名
+     */
+    @TableField(value = "sort_title")
+    private String sortTitle;
+
+    /**
      * 简介
      */
     @TableField(value = "summary")

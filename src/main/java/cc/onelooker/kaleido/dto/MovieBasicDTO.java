@@ -35,7 +35,7 @@ public class MovieBasicDTO implements BaseDTO<String> {
     /**
      * 排序名
      */
-    private String titleSort;
+    private String sortTitle;
 
     /**
      * 首映年份
@@ -177,11 +177,6 @@ public class MovieBasicDTO implements BaseDTO<String> {
      * 年代
      */
     private String decade;
-
-    /**
-     * 海报
-     */
-    private String poster;
 
     /**
      * 主键队列

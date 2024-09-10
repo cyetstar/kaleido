@@ -1,5 +1,8 @@
 package cc.onelooker.kaleido.utils;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -183,5 +186,15 @@ public class NioFileUtils {
      */
     public static boolean isSub(Path parent, Path sub) throws IOException {
         return (null == sub) ? false : sameOrSub(parent, sub.getParent());
+    }
+
+    public static void deleteByFilter(Path dir, String extension) throws IOException {
+        Files.list(dir).filter(s -> FilenameUtils.isExtension(s.getFileName().toString(), extension)).forEach(s -> {
+            try {
+                Files.delete(s);
+            } catch (IOException e) {
+                ExceptionUtil.wrapAndThrow(e);
+            }
+        });
     }
 }

@@ -32,6 +32,8 @@ public class MovieWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO>
 
     private final TaskService taskService;
 
+    private String title;
+
     public MovieWriteNFORunnable(MovieManager movieManager, MovieBasicService movieBasicService, TaskService taskService) {
         this.movieManager = movieManager;
         this.movieBasicService = movieBasicService;
@@ -63,19 +65,21 @@ public class MovieWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO>
         MovieNFO movieNFO = readMovieNFO(movieBasicDTO);
         if (movieNFO == null) {
             movieBasicDTO = movieManager.findMovieBasic(movieBasicDTO.getId());
-            movieManager.writeMovieNFO(movieBasicDTO);
+            movieNFO = NFOUtil.toMovieNFO(movieBasicDTO);
+            movieManager.writeMovieNFO(movieBasicDTO, movieNFO);
             taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
             return SUCCESS;
         } else {
             movieBasicDTO = movieManager.findMovieBasic(movieBasicDTO.getId());
             MovieNFO newMovieNFO = NFOUtil.toMovieNFO(movieBasicDTO);
             if (!newMovieNFO.equals(movieNFO)) {
-                movieManager.writeMovieNFO(movieBasicDTO);
+                movieManager.writeMovieNFO(movieBasicDTO, newMovieNFO);
                 taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
                 return SUCCESS;
             }
         }
         taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_IGNORE);
+        title = movieBasicDTO.getTitle();
         return IGNORE;
     }
 
@@ -92,7 +96,6 @@ public class MovieWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO>
 
     @Override
     protected String getMessage(TaskDTO taskDTO, Integer state) {
-        MovieBasicDTO movieBasicDTO = movieBasicService.findById(taskDTO.getSubjectId());
-        return movieBasicDTO.getTitle() + StringUtils.SPACE + getStateMessage(state);
+        return title + StringUtils.SPACE + getStateMessage(state);
     }
 }

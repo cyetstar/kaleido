@@ -39,6 +39,12 @@ public class TvshowShowDO implements IdEntity<String> {
     private String originalTitle;
 
     /**
+     * 排序名
+     */
+    @TableField(value = "sort_title")
+    private String sortTitle;
+
+    /**
      * 制片公司
      */
     @TableField(value = "studio")
@@ -87,6 +93,11 @@ public class TvshowShowDO implements IdEntity<String> {
     private String art;
 
     /**
+     * 路径
+     */
+    @TableField(value = "path")
+    private String path;
+    /**
      * 季数
      */
     @TableField(value = "total_seasons")
@@ -110,11 +121,6 @@ public class TvshowShowDO implements IdEntity<String> {
     @TableField(value = "tmdb_id")
     private String tmdbId;
 
-    /**
-     * 路径
-     */
-    @TableField(value = "path")
-    private String path;
 
     /**
      * 加入时间

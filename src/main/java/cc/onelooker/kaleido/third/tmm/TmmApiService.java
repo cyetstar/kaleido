@@ -79,6 +79,9 @@ public class TmmApiService {
     }
 
     public Comic findComic(String bgmId) {
+        if (StringUtils.isEmpty(bgmId)) {
+            return null;
+        }
         String url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl);
         return restTemplate.getForObject(url + API_FIND_COMIC, Comic.class, bgmId);
     }

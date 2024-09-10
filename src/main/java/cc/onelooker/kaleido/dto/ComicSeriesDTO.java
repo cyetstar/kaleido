@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.dto;
 import cc.onelooker.kaleido.entity.ComicSeriesDO;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
@@ -97,6 +98,8 @@ public class ComicSeriesDTO implements BaseDTO<String> {
 
     private List<AuthorDTO> pencillerList;
 
+    private List<ComicBookDTO> bookList;
+
     @Override
     public String getId() {
         return this.id;
@@ -110,5 +113,12 @@ public class ComicSeriesDTO implements BaseDTO<String> {
     @Override
     public String toString() {
         return getTitle();
+    }
+
+    public ComicBookDTO getBook(Integer volumeNumber) {
+        if (CollectionUtils.isEmpty(bookList)) {
+            return null;
+        }
+        return bookList.stream().filter(s -> volumeNumber.equals(s.getBookNumber())).findFirst().orElse(null);
     }
 }

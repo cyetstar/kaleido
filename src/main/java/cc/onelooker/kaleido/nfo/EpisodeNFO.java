@@ -40,6 +40,8 @@ public class EpisodeNFO {
     private List<String> studios;
     @XmlElement(name = "actor")
     private List<ActorNFO> actors;
+    @XmlElement(name = "aka")
+    private List<String> akas;
     private String tmdbid;
 
 }

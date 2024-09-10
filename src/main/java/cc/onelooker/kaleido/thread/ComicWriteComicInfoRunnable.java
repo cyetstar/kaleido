@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by cyetstar on 2021/1/7.
@@ -39,6 +40,8 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
     private final ComicBookService comicBookService;
 
     private final ComicSeriesService comicSeriesService;
+
+    private String title;
 
     public ComicWriteComicInfoRunnable(TaskService taskService, ComicManager comicManager, ComicBookService comicBookService, ComicSeriesService comicSeriesService) {
         this.taskService = taskService;
@@ -69,21 +72,16 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
     @Override
     protected int processEntity(Map<String, String> params, TaskDTO taskDTO) throws Exception {
         ComicBookDTO comicBookDTO = comicBookService.findById(taskDTO.getSubjectId());
+        ComicSeriesDTO comicSeriesDTO = comicManager.findSeriesById(comicBookDTO.getSeriesId());
         ComicInfoNFO comicInfoNFO = readComicInfoNFO(comicBookDTO);
-        if (comicInfoNFO == null) {
-            comicManager.writeComicInfo(comicBookDTO);
+        ComicInfoNFO newComicInfoNFO = NFOUtil.toComicInfoNFO(comicSeriesDTO, comicBookDTO);
+        if (comicInfoNFO == null || !Objects.equals(comicInfoNFO, newComicInfoNFO)) {
+            comicManager.writeComicInfo(comicBookDTO, newComicInfoNFO);
             taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
             return SUCCESS;
-        } else {
-            ComicSeriesDTO comicSeriesDTO = comicManager.findSeriesById(comicBookDTO.getSeriesId());
-            ComicInfoNFO newComicInfoNFO = NFOUtil.toComicInfoNFO(comicSeriesDTO, comicBookDTO);
-            if (!newComicInfoNFO.equals(comicInfoNFO)) {
-                comicManager.writeComicInfo(comicBookDTO);
-                taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
-                return SUCCESS;
-            }
         }
         taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_IGNORE);
+        title = comicSeriesDTO.getTitle() + StringUtils.SPACE + comicBookDTO.getTitle();
         return IGNORE;
     }
 
@@ -104,8 +102,6 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
 
     @Override
     protected String getMessage(TaskDTO taskDTO, Integer state) {
-        ComicBookDTO comicBookDTO = comicBookService.findById(taskDTO.getSubjectId());
-        ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(comicBookDTO.getSeriesId());
-        return String.format("%s %s %s", comicSeriesDTO.getTitle(), comicBookDTO.getTitle(), getStateMessage(state));
+        return title + StringUtils.SPACE + getStateMessage(state);
     }
 }

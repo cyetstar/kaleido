@@ -45,6 +45,12 @@ public class TvshowEpisodeDO implements IdEntity<String> {
     private String title;
 
     /**
+     * 原标题
+     */
+    @TableField(value = "original_title")
+    private String originalTitle;
+
+    /**
      * 制片公司
      */
     @TableField(value = "studio")
@@ -75,6 +81,12 @@ public class TvshowEpisodeDO implements IdEntity<String> {
     private String originallyAvailableAt;
 
     /**
+     * 季号
+     */
+    @TableField(value = "season_index")
+    private Integer seasonIndex;
+
+    /**
      * 集号
      */
     @TableField(value = "episode_index")
@@ -103,6 +115,18 @@ public class TvshowEpisodeDO implements IdEntity<String> {
      */
     @TableField(value = "art")
     private String art;
+
+    /**
+     * 文件名
+     */
+    @TableField(value = "filename")
+    private String filename;
+
+    /**
+     * tmdb编号
+     */
+    @TableField(value = "tmdb_id")
+    private String tmdbId;
 
     /**
      * 加入时间

@@ -17,7 +17,7 @@ public class PlexUtil {
     public static void toMovieBasicDTO(MovieBasicDTO movieBasicDTO, Metadata metadata) {
         movieBasicDTO.setId(metadata.getRatingKey());
         movieBasicDTO.setTitle(metadata.getTitle());
-        movieBasicDTO.setTitleSort(metadata.getTitleSort());
+        movieBasicDTO.setSortTitle(metadata.getTitleSort());
         movieBasicDTO.setOriginalTitle(metadata.getOriginalTitle());
         movieBasicDTO.setContentRating(metadata.getContentRating());
         movieBasicDTO.setStudio(metadata.getStudio());

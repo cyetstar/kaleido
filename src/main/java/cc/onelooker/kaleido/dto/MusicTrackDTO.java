@@ -94,6 +94,6 @@ public class MusicTrackDTO implements BaseDTO<String> {
     }
 
     public String getSimpleTitle() {
-        return KaleidoUtils.getSimpleName(title);
+        return KaleidoUtils.genSongSimpleName(title);
     }
 }

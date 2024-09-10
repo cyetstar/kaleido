@@ -84,7 +84,7 @@ public class MovieMatchInfoRunnable extends AbstractEntityActionRunnable<MovieBa
         long updatedAt = dto.getUpdatedAt();
         if (updatedAt > lastUpdatedAt || MapUtils.getBooleanValue(params, "force")) {
             Movie movie = tmmApiService.findMovie(dto.getDoubanId(), dto.getImdbId(), dto.getTmdbId());
-            movieManager.matchMovie(dto.getId(), movie);
+            movieManager.matchInfo(dto.getId(), movie);
             maxUpdatedAt = updatedAt > maxUpdatedAt ? updatedAt : maxUpdatedAt;
             return SUCCESS;
         }

@@ -23,6 +23,8 @@ public enum Action {
 
     tvshowSync("同步剧集库"),
     tvshowUpdateSource("更新剧集源"),
+    tvshowMatchInfo("匹配信息"),
+    tvshowWriteNFO("写入NFO"),
 
     comicSync("漫画同步"),
     comicUpdateSource("漫画更新源"),

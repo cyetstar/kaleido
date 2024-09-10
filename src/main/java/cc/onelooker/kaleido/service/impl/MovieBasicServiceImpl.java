@@ -58,7 +58,7 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
         query.eq(StringUtils.isNotEmpty(dto.getId()), MovieBasicDO::getId, dto.getId());
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), MovieBasicDO::getTitle, dto.getTitle());
         query.eq(StringUtils.isNotEmpty(dto.getOriginalTitle()), MovieBasicDO::getOriginalTitle, dto.getOriginalTitle());
-        query.eq(StringUtils.isNotEmpty(dto.getTitleSort()), MovieBasicDO::getTitleSort, dto.getTitleSort());
+        query.eq(StringUtils.isNotEmpty(dto.getSortTitle()), MovieBasicDO::getSortTitle, dto.getSortTitle());
         query.eq(StringUtils.isNotEmpty(dto.getYear()), MovieBasicDO::getYear, dto.getYear());
         query.eq(StringUtils.isNotEmpty(dto.getThumb()), MovieBasicDO::getThumb, dto.getThumb());
         query.eq(StringUtils.isNotEmpty(dto.getArt()), MovieBasicDO::getArt, dto.getArt());

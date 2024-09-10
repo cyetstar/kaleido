@@ -16,6 +16,6 @@ public class Song {
     private String name;
 
     public String getSimpleName() {
-        return KaleidoUtils.getSimpleName(name);
+        return KaleidoUtils.genSongSimpleName(name);
     }
 }

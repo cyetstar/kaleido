@@ -11,7 +11,6 @@ import cc.onelooker.kaleido.service.TvshowManager;
 import cc.onelooker.kaleido.service.TvshowShowService;
 import cc.onelooker.kaleido.third.tmm.Movie;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
-import cc.onelooker.kaleido.third.tmm.Tvshow;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cn.hutool.http.HttpUtil;
@@ -116,16 +115,7 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @PostMapping("matchPath")
     @ApiOperation(value = "匹配文件信息")
     public CommonResult<Boolean> matchPath(@RequestBody TvshowShowMatchPathReq req) {
-        List<Path> pathList = req.getPaths().stream().map(Paths::get).collect(Collectors.toList());
-        tvshowManager.matchPath(pathList, req.getDoubanId());
-        return CommonResult.success(true);
-    }
-
-    @PostMapping("matchInfo")
-    @ApiOperation(value = "匹配信息")
-    public CommonResult<Boolean> matchInfo(@RequestBody TvshowShowMatchInfoReq req) {
-        Tvshow tvshow = tmmApiService.findTvshow(req.getDoubanId(), req.getImdbId(), req.getTmdbId());
-        tvshowManager.matchInfo(req.getId(), tvshow);
+        tvshowManager.matchPath(Paths.get(req.getPath()), req.getDoubanId());
         return CommonResult.success(true);
     }
 

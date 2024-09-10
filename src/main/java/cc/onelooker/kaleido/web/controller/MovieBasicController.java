@@ -153,7 +153,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @ApiOperation(value = "匹配信息")
     public CommonResult<Boolean> matchInfo(@RequestBody MovieBasicMatchInfoReq req) {
         Movie movie = tmmApiService.findMovie(req.getDoubanId(), req.getImdbId(), req.getTmdbId());
-        movieManager.matchMovie(req.getId(), movie);
+        movieManager.matchInfo(req.getId(), movie);
         return CommonResult.success(true);
     }
 

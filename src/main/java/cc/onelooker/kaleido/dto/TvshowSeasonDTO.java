@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.dto;
 import cc.onelooker.kaleido.entity.TvshowSeasonDO;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
@@ -36,6 +37,11 @@ public class TvshowSeasonDTO implements BaseDTO<String> {
      * 原标题
      */
     private String originalTitle;
+
+    /**
+     * 排序名
+     */
+    private String sortTitle;
 
     /**
      * 简介
@@ -114,6 +120,11 @@ public class TvshowSeasonDTO implements BaseDTO<String> {
      */
     private List<ActorDTO> actorList;
 
+    /**
+     * 集列表
+     */
+    private List<TvshowEpisodeDTO> episodeList;
+
     @Override
     public String getId() {
         return this.id;
@@ -123,4 +134,12 @@ public class TvshowSeasonDTO implements BaseDTO<String> {
     public void setId(String id) {
         this.id = id;
     }
+
+    public TvshowEpisodeDTO getEpisode(Integer episodeIndex) {
+        if (CollectionUtils.isEmpty(episodeList)) {
+            return null;
+        }
+        return episodeList.stream().filter(s -> episodeIndex.equals(s.getEpisodeIndex())).findFirst().orElse(null);
+    }
+
 }

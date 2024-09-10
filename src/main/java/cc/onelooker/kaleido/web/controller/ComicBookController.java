@@ -137,11 +137,4 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
         return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + KaleidoConstants.COMIC_INFO).contentType(MediaType.TEXT_XML).body(data);
     }
 
-    @PostMapping("writeComicInfo")
-    @ApiOperation(value = "读取ComicInfo")
-    public CommonResult<Boolean> writeComicInfo(@RequestBody ComicBookWriteComicInfoReq req) {
-        ComicBookDTO comicBookDTO = comicBookService.findById(req.getId());
-        comicManager.writeComicInfo(comicBookDTO);
-        return CommonResult.success(true);
-    }
 }
