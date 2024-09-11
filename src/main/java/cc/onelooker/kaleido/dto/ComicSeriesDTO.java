@@ -86,10 +86,6 @@ public class ComicSeriesDTO implements BaseDTO<String> {
     // ------ 非数据库表字段 -------
     private String keyword;
 
-    private String writerName;
-
-    private String pencillerName;
-
     private List<String> tagList;
 
     private List<String> alternateTitleList;

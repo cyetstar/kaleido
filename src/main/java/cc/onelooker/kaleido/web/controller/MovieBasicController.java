@@ -56,10 +56,10 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     private MovieBasicService movieBasicService;
 
     @Autowired
-    private ActorService actorService;
+    private MovieBasicCollectionService movieBasicCollectionService;
 
     @Autowired
-    private MovieBasicCollectionService movieBasicCollectionService;
+    private ActorService actorService;
 
     @Autowired
     private MovieManager movieManager;

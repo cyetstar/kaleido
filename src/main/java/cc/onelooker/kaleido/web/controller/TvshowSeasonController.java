@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.convert.TvshowSeasonConvert;
+import cc.onelooker.kaleido.dto.ActorDTO;
 import cc.onelooker.kaleido.dto.TvshowSeasonDTO;
 import cc.onelooker.kaleido.dto.TvshowShowDTO;
 import cc.onelooker.kaleido.dto.req.TvshowSeasonCreateReq;
@@ -9,6 +10,7 @@ import cc.onelooker.kaleido.dto.req.TvshowSeasonUpdateReq;
 import cc.onelooker.kaleido.dto.resp.TvshowSeasonCreateResp;
 import cc.onelooker.kaleido.dto.resp.TvshowSeasonPageResp;
 import cc.onelooker.kaleido.dto.resp.TvshowSeasonViewResp;
+import cc.onelooker.kaleido.service.ActorService;
 import cc.onelooker.kaleido.service.TvshowManager;
 import cc.onelooker.kaleido.service.TvshowSeasonService;
 import cc.onelooker.kaleido.service.TvshowShowService;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 /**
  * 单季前端控制器
@@ -43,6 +46,9 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
 
     @Autowired
     private TvshowShowService tvshowShowService;
+
+    @Autowired
+    private ActorService actorService;
 
     @Autowired
     private TvshowManager tvshowManager;
@@ -73,7 +79,22 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
     @PostMapping("update")
     @ApiOperation(value = "编辑单季")
     public CommonResult<Boolean> update(@RequestBody TvshowSeasonUpdateReq req) {
-        return super.update(req, TvshowSeasonConvert.INSTANCE::convertToDTO);
+        TvshowSeasonDTO tvshowSeasonDTO = TvshowSeasonConvert.INSTANCE.convertToDTO(req);
+        if (req.getDirectorList() != null) {
+            tvshowSeasonDTO.setDirectorList(req.getDirectorList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
+        }
+        if (req.getWriterList() != null) {
+            tvshowSeasonDTO.setWriterList(req.getWriterList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
+        }
+        if (req.getActorList() != null) {
+            tvshowSeasonDTO.setActorList(req.getActorList().stream().map(s -> {
+                ActorDTO actorDTO = actorService.findById(s.getId());
+                actorDTO.setPlayRole(s.getPlayRole());
+                return actorDTO;
+            }).collect(Collectors.toList()));
+        }
+        tvshowManager.saveSeason(tvshowSeasonDTO);
+        return CommonResult.success(true);
     }
 
     @DeleteMapping(value = "delete")

@@ -253,6 +253,11 @@ public class ComicManager {
                     Path unzipBookPath = s.resolveSibling(baseName);
                     unzipBook(s, unzipBookPath);
                     ComicBookDTO comicBookDTO = comicSeriesDTO.getBook(volumeNumber);
+                    if (comicBookDTO == null) {
+                        comicBookDTO = new ComicBookDTO();
+                        comicBookDTO.setTitle(volumeNumber == 0 ? "全一卷" : "卷 " + volumeNumber);
+                        comicBookDTO.setBookNumber(volumeNumber);
+                    }
                     ComicInfoNFO comicInfoNFO = NFOUtil.toComicInfoNFO(comicSeriesDTO, comicBookDTO);
                     NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, unzipBookPath, KaleidoConstants.COMIC_INFO);
                     log.info("== 输出ComicInfo.xml: {}", unzipBookPath.resolve(KaleidoConstants.COMIC_INFO));

@@ -191,7 +191,7 @@ public class TvshowShowDTO implements BaseDTO<String> {
     }
 
     public TvshowSeasonDTO getSeason(Integer seasonIndex) {
-        if (CollectionUtils.isEmpty(seasonList)) {
+        if (CollectionUtils.isEmpty(seasonList) || seasonIndex == null) {
             return null;
         }
         return seasonList.stream().filter(s -> seasonIndex.equals(s.getSeasonIndex())).findFirst().orElse(null);

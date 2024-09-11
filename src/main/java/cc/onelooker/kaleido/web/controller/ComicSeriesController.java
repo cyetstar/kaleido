@@ -7,6 +7,7 @@ import cc.onelooker.kaleido.dto.resp.ComicSeriesCreateResp;
 import cc.onelooker.kaleido.dto.resp.ComicSeriesPageResp;
 import cc.onelooker.kaleido.dto.resp.ComicSeriesSearchInfoResp;
 import cc.onelooker.kaleido.dto.resp.ComicSeriesViewResp;
+import cc.onelooker.kaleido.service.AuthorService;
 import cc.onelooker.kaleido.service.ComicManager;
 import cc.onelooker.kaleido.service.ComicSeriesService;
 import cc.onelooker.kaleido.third.tmm.Comic;
@@ -43,6 +44,9 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     private ComicSeriesService comicSeriesService;
 
     @Autowired
+    private AuthorService authorService;
+
+    @Autowired
     private TmmApiService tmmApiService;
 
     @Autowired
@@ -77,7 +81,12 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     @ApiOperation(value = "编辑漫画系列")
     public CommonResult<Boolean> update(@RequestBody ComicSeriesUpdateReq req) {
         ComicSeriesDTO comicSeriesDTO = ComicSeriesConvert.INSTANCE.convertToDTO(req);
-        //FIXME
+        if (req.getWriterList() != null) {
+            comicSeriesDTO.setWriterList(req.getWriterList().stream().map(s -> authorService.findById(s)).collect(Collectors.toList()));
+        }
+        if (req.getPencillerList() != null) {
+            comicSeriesDTO.setPencillerList(req.getPencillerList().stream().map(s -> authorService.findById(s)).collect(Collectors.toList()));
+        }
         comicManager.saveSeries(comicSeriesDTO);
         return CommonResult.success(true);
     }

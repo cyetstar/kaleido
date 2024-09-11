@@ -36,6 +36,12 @@ public interface TvshowSeasonConvert {
 
     TvshowSeasonDTO convertToDTO(TvshowSeasonCreateReq req);
 
+    @Mappings({
+            @Mapping(target = "directorList", ignore = true),
+            @Mapping(target = "writerList", ignore = true),
+            @Mapping(target = "actorList", ignore = true),
+            @Mapping(target = "episodeList", ignore = true),
+    })
     TvshowSeasonDTO convertToDTO(TvshowSeasonUpdateReq req);
 
     TvshowSeasonPageResp convertToPageResp(TvshowSeasonDTO dto);

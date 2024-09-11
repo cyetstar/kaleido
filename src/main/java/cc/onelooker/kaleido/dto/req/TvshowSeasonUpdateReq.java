@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 单季请求对象
  *
@@ -23,22 +25,47 @@ public class TvshowSeasonUpdateReq {
     @ApiModelProperty("标题")
     private String title;
 
+    @ApiModelProperty("原标题")
+    private String originalTitle;
+
     @ApiModelProperty("简介")
     private String summary;
 
     @ApiModelProperty("季号")
     private Integer seasonIndex;
 
-    @ApiModelProperty("海报")
-    private String thumb;
+    @ApiModelProperty("首播年份")
+    private String year;
 
-    @ApiModelProperty("艺术图")
-    private String art;
+    @ApiModelProperty("首播日期")
+    private String originallyAvailableAt;
 
-    @ApiModelProperty("加入时间")
-    private Long addedAt;
+    @ApiModelProperty("IMDb编号")
+    private String imdbId;
 
-    @ApiModelProperty("更新时间")
-    private Long updatedAt;
+    @ApiModelProperty("豆瓣编号")
+    private String doubanId;
 
+    @ApiModelProperty("TMDB编号")
+    private String tmdbId;
+
+    @ApiModelProperty("导演主键列表")
+    private List<String> directorList;
+
+    @ApiModelProperty("编剧主键列表")
+    private List<String> writerList;
+
+    @ApiModelProperty("演员主键列表")
+    private List<Actor> actorList;
+
+    @Data
+    public static class Actor {
+
+        private String id;
+
+        private String name;
+
+        private String playRole;
+
+    }
 }

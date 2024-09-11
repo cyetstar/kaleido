@@ -52,8 +52,12 @@ public class NFOUtil {
         comicInfoNFO.setCount(comicSeriesDTO.getBookCount());
         comicInfoNFO.setYear(comicSeriesDTO.getYear());
         comicInfoNFO.setSummary(comicSeriesDTO.getSummary());
-        comicInfoNFO.setWriter(comicSeriesDTO.getWriterName());
-        comicInfoNFO.setPenciller(comicSeriesDTO.getPencillerName());
+        if (comicSeriesDTO.getWriterList() != null) {
+            comicSeriesDTO.getWriterList().stream().map(AuthorDTO::getName).findFirst().ifPresent(comicInfoNFO::setWriter);
+        }
+        if (comicSeriesDTO.getPencillerList() != null) {
+            comicSeriesDTO.getPencillerList().stream().map(AuthorDTO::getName).findFirst().ifPresent(comicInfoNFO::setPenciller);
+        }
         comicInfoNFO.setPublishers(Lists.newArrayList(comicSeriesDTO.getPublisher()));
         comicInfoNFO.setCommunityRating(String.valueOf(comicSeriesDTO.getRating()));
         comicInfoNFO.setTags(StringUtils.join(comicSeriesDTO.getTagList(), Constants.COMMA));

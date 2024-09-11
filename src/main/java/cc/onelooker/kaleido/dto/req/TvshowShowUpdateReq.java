@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 剧集请求对象
@@ -40,22 +40,31 @@ public class TvshowShowUpdateReq {
     @ApiModelProperty("首播日期")
     private String originallyAvailableAt;
 
-    @ApiModelProperty("评分")
-    private BigDecimal rating;
-
-    @ApiModelProperty("海报")
-    private String thumb;
-
-    @ApiModelProperty("艺术图")
-    private String art;
-
     @ApiModelProperty("季数")
     private Integer totalSeasons;
 
-    @ApiModelProperty("加入时间")
-    private Long addedAt;
+    @ApiModelProperty("IMDb编号")
+    private String imdbId;
 
-    @ApiModelProperty("更新时间")
-    private Long updatedAt;
+    @ApiModelProperty("豆瓣编号")
+    private String doubanId;
+
+    @ApiModelProperty("TMDB编号")
+    private String tmdbId;
+
+    @ApiModelProperty("别名列表")
+    private List<String> akaList;
+
+    @ApiModelProperty("类型列表")
+    private List<String> genreList;
+
+    @ApiModelProperty("语言列表")
+    private List<String> languageList;
+
+    @ApiModelProperty("国家地区列表")
+    private List<String> countryList;
+
+    @ApiModelProperty("标签列表")
+    private List<String> tagList;
 
 }

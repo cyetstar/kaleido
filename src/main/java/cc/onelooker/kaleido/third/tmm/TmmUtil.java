@@ -83,17 +83,10 @@ public class TmmUtil {
             comicSeriesDTO.setWriterList(comic.getAuthors().stream().filter(s -> StringUtils.equals(s.getRole(), "作者")).map(TmmUtil::toAuthorDTO).collect(Collectors.toList()));
             comicSeriesDTO.setPencillerList(comic.getAuthors().stream().filter(s -> StringUtils.equals(s.getRole(), "作画")).map(TmmUtil::toAuthorDTO).collect(Collectors.toList()));
         }
-        List<ComicBookDTO> comicBookDTOList = Lists.newArrayList();
         if (CollectionUtils.isNotEmpty(comic.getVolumes())) {
-            comicBookDTOList = comic.getVolumes().stream().map(TmmUtil::toComicBookDTO).collect(Collectors.toList());
-        } else {
-            ComicBookDTO comicBookDTO = new ComicBookDTO();
-            comicBookDTO.setTitle("全一卷");
-            comicBookDTO.setBookNumber(0);
-            comicBookDTO.setBgmId(comicSeriesDTO.getBgmId());
-            comicBookDTOList.add(comicBookDTO);
+            List<ComicBookDTO> comicBookDTOList = comic.getVolumes().stream().map(TmmUtil::toComicBookDTO).collect(Collectors.toList());
+            comicSeriesDTO.setBookList(comicBookDTOList);
         }
-        comicSeriesDTO.setBookList(comicBookDTOList);
         return comicSeriesDTO;
     }
 

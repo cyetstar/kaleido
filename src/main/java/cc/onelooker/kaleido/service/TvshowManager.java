@@ -412,7 +412,16 @@ public class TvshowManager {
 
                     Path episodePath = seasonPath.resolve(fileName);
                     TvshowSeasonDTO tvshowSeasonDTO = tvshowShowDTO.getSeason(seasonIndex);
+                    if (tvshowSeasonDTO == null) {
+                        log.info("== 无法找到季号信息，不再处理: {}", fileName);
+                    }
                     TvshowEpisodeDTO tvshowEpisodeDTO = tvshowSeasonDTO.getEpisode(episodeIndex);
+                    if (tvshowEpisodeDTO == null) {
+                        tvshowEpisodeDTO = new TvshowEpisodeDTO();
+                        tvshowEpisodeDTO.setTitle("第 " + episodeIndex + " 集");
+                        tvshowEpisodeDTO.setEpisodeIndex(episodeIndex);
+                        tvshowEpisodeDTO.setSeasonIndex(seasonIndex);
+                    }
                     downloadEpisodePoster(tvshowEpisodeDTO, episodePath);
                     exportEpisodeNFO(tvshowShowDTO, tvshowSeasonDTO, tvshowEpisodeDTO, episodePath);
                     if (seasonIndexSet.add(seasonIndex)) {
@@ -487,7 +496,7 @@ public class TvshowManager {
     }
 
     private void downloadEpisodePoster(TvshowEpisodeDTO tvshowEpisodeDTO, Path videoPath) {
-        if (StringUtils.isEmpty(tvshowEpisodeDTO.getThumb())) {
+        if (tvshowEpisodeDTO != null && StringUtils.isEmpty(tvshowEpisodeDTO.getThumb())) {
             return;
         }
         String fileName = videoPath.getFileName().toString();
@@ -518,9 +527,6 @@ public class TvshowManager {
 
     private void exportEpisodeNFO(TvshowShowDTO tvshowShowDTO, TvshowSeasonDTO tvshowSeasonDTO, TvshowEpisodeDTO tvshowEpisodeDTO, Path videoPath) {
         try {
-            if (tvshowEpisodeDTO == null) {
-                return;
-            }
             String fileName = videoPath.getFileName().toString();
             EpisodeNFO episodeNFO = NFOUtil.toEpisodeNFO(tvshowShowDTO, tvshowSeasonDTO, tvshowEpisodeDTO);
             String nfoFileName = FilenameUtils.getBaseName(fileName) + ".nfo";

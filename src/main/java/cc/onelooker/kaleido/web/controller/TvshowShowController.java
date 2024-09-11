@@ -30,7 +30,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 剧集前端控制器
@@ -83,7 +82,9 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @PostMapping("update")
     @ApiOperation(value = "编辑剧集")
     public CommonResult<Boolean> update(@RequestBody TvshowShowUpdateReq req) {
-        return super.update(req, TvshowShowConvert.INSTANCE::convertToDTO);
+        TvshowShowDTO tvshowShowDTO = TvshowShowConvert.INSTANCE.convertToDTO(req);
+        tvshowManager.saveShow(tvshowShowDTO);
+        return CommonResult.success(true);
     }
 
     @DeleteMapping(value = "delete")

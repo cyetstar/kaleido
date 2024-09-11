@@ -66,7 +66,7 @@ public class MovieBasicUpdateReq {
     @ApiModelProperty("别名列表")
     private List<String> akaList;
 
-    @ApiModelProperty("电影类型列表")
+    @ApiModelProperty("类型列表")
     private List<String> genreList;
 
     @ApiModelProperty("语言列表")

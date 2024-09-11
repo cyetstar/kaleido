@@ -44,10 +44,10 @@ public class ComicSeriesUpdateReq {
     private String bgmId;
 
     @ApiModelProperty("作者")
-    private String writerName;
+    private List<String> writerList;
 
     @ApiModelProperty("作画")
-    private String pencillerName;
+    private List<String> pencillerList;
 
     @ApiModelProperty("标签")
     private List<String> tagList;
