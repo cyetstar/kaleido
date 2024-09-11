@@ -116,7 +116,7 @@ public class ComicSeriesDTO implements BaseDTO<String> {
     }
 
     public ComicBookDTO getBook(Integer volumeNumber) {
-        if (CollectionUtils.isEmpty(bookList)) {
+        if (CollectionUtils.isEmpty(bookList) || volumeNumber == null) {
             return null;
         }
         return bookList.stream().filter(s -> volumeNumber.equals(s.getBookNumber())).findFirst().orElse(null);

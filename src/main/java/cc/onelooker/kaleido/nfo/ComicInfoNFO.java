@@ -24,7 +24,7 @@ public class ComicInfoNFO {
     @XmlElement(name = "Series")
     private String series;
     @XmlElement(name = "Number")
-    private String number;
+    private Integer number;
     @XmlElement(name = "Count")
     private Integer count;
     @XmlElement(name = "Volume")

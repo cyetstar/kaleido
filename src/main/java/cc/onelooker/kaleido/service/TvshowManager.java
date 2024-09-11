@@ -242,6 +242,7 @@ public class TvshowManager {
                     TvshowShowDTO tvshowShowDTO = TmmUtil.toTvshowShow(tvshow);
                     operationPath(tvshowShowDTO, path);
                 } else {
+                    log.info("== 未找到匹配信息，直接移动文件");
                     Path tvshowLibraryPath = KaleidoUtils.getTvshowLibraryPath();
                     Path targetPath = tvshowLibraryPath.resolve(path.getFileName());
                     if (Files.notExists(targetPath)) {
@@ -473,7 +474,7 @@ public class TvshowManager {
             return;
         }
         HttpUtil.downloadFile(tvshowShowDTO.getThumb(), tvshowPath.resolve("poster.jpg").toFile());
-        log.info("== 下载海报: {}", tvshowShowDTO.getThumb());
+        log.info("== 下载剧集海报: {}", tvshowShowDTO.getThumb());
     }
 
     private void downloadSeasonPoster(TvshowSeasonDTO tvshowSeasonDTO, Path seasonPath) {

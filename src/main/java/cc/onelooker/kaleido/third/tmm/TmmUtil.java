@@ -2,8 +2,10 @@ package cc.onelooker.kaleido.third.tmm;
 
 import cc.onelooker.kaleido.dto.*;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -81,9 +83,17 @@ public class TmmUtil {
             comicSeriesDTO.setWriterList(comic.getAuthors().stream().filter(s -> StringUtils.equals(s.getRole(), "作者")).map(TmmUtil::toAuthorDTO).collect(Collectors.toList()));
             comicSeriesDTO.setPencillerList(comic.getAuthors().stream().filter(s -> StringUtils.equals(s.getRole(), "作画")).map(TmmUtil::toAuthorDTO).collect(Collectors.toList()));
         }
+        List<ComicBookDTO> comicBookDTOList = Lists.newArrayList();
         if (CollectionUtils.isNotEmpty(comic.getVolumes())) {
-            comicSeriesDTO.setBookList(comic.getVolumes().stream().map(TmmUtil::toComicBookDTO).collect(Collectors.toList()));
+            comicBookDTOList = comic.getVolumes().stream().map(TmmUtil::toComicBookDTO).collect(Collectors.toList());
+        } else {
+            ComicBookDTO comicBookDTO = new ComicBookDTO();
+            comicBookDTO.setTitle("全一卷");
+            comicBookDTO.setBookNumber(0);
+            comicBookDTO.setBgmId(comicSeriesDTO.getBgmId());
+            comicBookDTOList.add(comicBookDTO);
         }
+        comicSeriesDTO.setBookList(comicBookDTOList);
         return comicSeriesDTO;
     }
 
@@ -96,11 +106,13 @@ public class TmmUtil {
             return comicBookDTO;
         }
         String title = StringUtils.defaultIfEmpty(volume.getTitle(), volume.getOriginalTitle());
-        title = StringUtils.defaultIfBlank(title, volume.getVolumeNumber() != null ? "卷" + volume.getVolumeNumber() : "全一卷");
+        title = StringUtils.defaultIfBlank(title, "卷 " + volume.getVolumeNumber());
         comicBookDTO.setTitle(title);
         comicBookDTO.setOriginalTitle(volume.getOriginalTitle());
         comicBookDTO.setBgmId(volume.getBgmId());
-        comicBookDTO.setWeb("https://bgm.tv/subject/" + volume.getBgmId());
+        if (StringUtils.isNotEmpty(volume.getBgmId())) {
+            comicBookDTO.setWeb("https://bgm.tv/subject/" + volume.getBgmId());
+        }
         comicBookDTO.setBookNumber(volume.getVolumeNumber());
         return comicBookDTO;
     }

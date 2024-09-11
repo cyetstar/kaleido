@@ -172,7 +172,6 @@ public class MovieManager {
 
     @Transactional
     public void updateSource(Path path) {
-
         boolean isDirectory = Files.isDirectory(path);
         if (!isDirectory) {
             return;
@@ -186,6 +185,7 @@ public class MovieManager {
                     log.info("== 查询到电影信息: {}", movieBasicDTO.getTitle());
                     operationPath(movieBasicDTO, path);
                 } else {
+                    log.info("== 未找到匹配信息，直接移动文件");
                     Path movieLibraryPath = KaleidoUtils.getMovieLibraryPath();
                     NioFileUtils.moveDir(path, movieLibraryPath, StandardCopyOption.REPLACE_EXISTING);
                 }

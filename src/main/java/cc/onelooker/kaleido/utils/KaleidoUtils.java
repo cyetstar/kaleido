@@ -37,7 +37,7 @@ public class KaleidoUtils {
 
     private static String[] noMainVideos = new String[]{"-other", "-CD2", "-CD3", "-CD4", "-CD5", "-CD6", "Part.2"};
     public static final String VIDEO_EXTENSION = "mkv,mp4,mpeg,mov,avi,wmv,rmvb,ts,m2ts";
-    public static final String COMIC_ZIP_EXTENSION = "zip,cbz";
+    public static final String COMIC_ZIP_EXTENSION = "zip,rar,cbz";
     public static String[] lowQualityExtensions = new String[]{"avi", "wmv", "rmvb", "mp4"};
 
     private static final Pattern seasonIndexPattern = Pattern.compile("S_?(\\d+)E");
@@ -326,12 +326,12 @@ public class KaleidoUtils {
         return null;
     }
 
-    public static Integer parseVolumeNumber(String text) {
+    public static Integer parseVolumeNumber(String text, Integer defaultValue) {
         Matcher matcher = volumeNumberPattern.matcher(text);
         if (matcher.find()) {
             return Integer.valueOf(matcher.group(1));
         }
-        return null;
+        return defaultValue;
     }
 
     public static void main(String[] args) {

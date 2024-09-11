@@ -2,7 +2,6 @@ package cc.onelooker.kaleido.nfo;
 
 import cc.onelooker.kaleido.dto.*;
 import cc.onelooker.kaleido.enums.SourceType;
-import cc.onelooker.kaleido.third.tmm.Actor;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.util.constant.Constants;
@@ -44,8 +43,10 @@ public class NFOUtil {
     public static ComicInfoNFO toComicInfoNFO(ComicSeriesDTO comicSeriesDTO, ComicBookDTO comicBookDTO) {
         ComicInfoNFO comicInfoNFO = new ComicInfoNFO();
         comicInfoNFO.setTitle(comicBookDTO.getTitle());
-        comicInfoNFO.setNumber(String.valueOf(comicBookDTO.getBookNumber()));
-        comicInfoNFO.setWeb("https://bgm.tv/subject/" + comicBookDTO.getBgmId());
+        comicInfoNFO.setNumber(comicBookDTO.getBookNumber());
+        if (StringUtils.isNotEmpty(comicBookDTO.getBgmId())) {
+            comicInfoNFO.setWeb("https://bgm.tv/subject/" + comicBookDTO.getBgmId());
+        }
         comicInfoNFO.setSeries(comicSeriesDTO.getTitle());
         comicInfoNFO.setOriginalSeries(comicSeriesDTO.getOriginalTitle());
         comicInfoNFO.setCount(comicSeriesDTO.getBookCount());
@@ -226,20 +227,6 @@ public class NFOUtil {
         uniqueidNFO.setType(type.name());
         uniqueidNFO.setValue(value);
         return uniqueidNFO;
-    }
-
-    private static List<ActorNFO> toActorNFOs(List<Actor> actorList) {
-        List<ActorNFO> actorNFOList = Lists.newArrayList();
-        if (actorList != null) {
-            for (Actor actor : actorList) {
-                ActorNFO actorNFO = new ActorNFO();
-                actorNFO.setName(StringUtils.defaultString(actor.getCnName(), actor.getEnName()));
-                actorNFO.setRole(actor.getRole());
-                actorNFO.setThumb(actor.getThumb());
-                actorNFOList.add(actorNFO);
-            }
-        }
-        return actorNFOList;
     }
 
     private static ActorNFO toActorNFO(ActorDTO actorDTO) {
