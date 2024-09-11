@@ -232,7 +232,7 @@ public class ComicManager {
             ComicInfoNFO comicInfoNFO = NFOUtil.read(ComicInfoNFO.class, path, KaleidoConstants.COMIC_INFO);
             return tmmApiService.findComic(comicInfoNFO.getSeriesBgmId());
         } catch (Exception e) {
-            log.info("NFO文件无法读取");
+            log.info("== NFO文件无法读取: {}", path.resolve(KaleidoConstants.COMIC_INFO));
         }
         return null;
     }
@@ -283,7 +283,7 @@ public class ComicManager {
                     Integer number = KaleidoUtils.parseVolumeNumber(fileName, 0);
                     if (KaleidoUtils.isComicZipFile(fileName) && Objects.equals(number, volumeNumber)) {
                         Files.move(s, recyclePath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-                        log.info("== 移除原漫画文件: {}", s.getFileName());
+                        log.info("== 移除待替换漫画文件: {}", s.getFileName());
                     }
                 } catch (IOException e) {
                     ExceptionUtil.wrapAndThrow(e);
