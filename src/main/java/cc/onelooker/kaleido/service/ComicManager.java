@@ -22,6 +22,7 @@ import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ZipUtil;
 import cn.hutool.extra.compress.CompressUtil;
 import cn.hutool.extra.compress.extractor.Extractor;
+import com.github.junrar.Junrar;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -62,9 +63,6 @@ public class ComicManager {
 
     @Autowired
     private AttributeService attributeService;
-
-    @Autowired
-    private PathInfoService pathInfoService;
 
     @Autowired
     private TaskService taskService;
@@ -371,9 +369,28 @@ public class ComicManager {
     }
 
     private void unzip(Path zipPath, Path folderPath) {
-        Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), zipPath.toFile());
-        extractor.extract(folderPath.toFile(), archiveEntry -> StringUtils.equalsAnyIgnoreCase(FilenameUtils.getExtension(archiveEntry.getName()), "jpg", "jpeg", "png", "xml"));
-        extractor.close();
+        try {
+            String extension = FilenameUtils.getExtension(zipPath.getFileName().toString());
+            if (StringUtils.equalsIgnoreCase(extension, "rar")) {
+                Junrar.extract(zipPath.toFile(), folderPath.toFile());
+            } else {
+                Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), zipPath.toFile());
+                extractor.extract(folderPath.toFile());
+                extractor.close();
+            }
+            Files.list(folderPath).forEach(s -> {
+                try {
+                    //删除非法文件
+                    if (!StringUtils.equalsAnyIgnoreCase(FilenameUtils.getExtension(s.getFileName().toString()), "jpg", "jpeg", "png", "xml")) {
+                        Files.delete(s);
+                    }
+                } catch (IOException e) {
+                    ExceptionUtil.wrapAndThrow(e);
+                }
+            });
+        } catch (Exception e) {
+            ExceptionUtil.wrapAndThrow(e);
+        }
     }
 
     private void zip(Path folderPath, Path zipPath) {

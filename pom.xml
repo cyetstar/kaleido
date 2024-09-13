@@ -31,6 +31,7 @@
         <knife4j-spring-boot-starter.version>2.0.9</knife4j-spring-boot-starter.version>
         <dynamic-datasource-spring-boot-starter.version>3.5.1</dynamic-datasource-spring-boot-starter.version>
         <flyway-core.version>6.4.4</flyway-core.version>
+        <junrar.version>7.5.5</junrar.version>
         <skipTests>true</skipTests>
     </properties>
     <dependencies>
@@ -128,6 +129,11 @@
             <groupId>net.jthink</groupId>
             <artifactId>jaudiotagger</artifactId>
             <version>${jaudiotagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.junrar</groupId>
+            <artifactId>junrar</artifactId>
+            <version>${junrar.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
