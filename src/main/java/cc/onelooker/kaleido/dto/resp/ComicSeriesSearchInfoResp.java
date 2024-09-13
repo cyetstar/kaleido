@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 public class ComicSeriesSearchInfoResp {
 
+    private String id;
     private String bgmId;
     private String series;
     private String originalSeries;

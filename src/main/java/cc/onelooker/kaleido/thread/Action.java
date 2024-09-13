@@ -17,7 +17,7 @@ public enum Action {
     movieAnalyze("分析电影信息"),
     movieWriteNFO("写入NFO"),
 
-    musicSyncPlex("同步Plex音乐库"),
+    musicSync("同步Plex音乐库"),
     musicReadAudioTag("读取音乐标签"),
     musicDownloadLyric("下载歌词"),
 

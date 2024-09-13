@@ -8,10 +8,12 @@ import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Objects;
@@ -25,11 +27,16 @@ import java.util.Objects;
 @Component
 public class PlexApiService {
 
+    public static final String TYPE_MOVIE = "1";
+    public static final String TYPE_SHOW = "2";
+    public static final String TYPE_SEASON = "3";
+    public static final String TYPE_EPISODE = "4";
+    public static final String TYPE_ALBUM = "9";
+
     private String plexToken;
     private String plexUrl;
     private Integer plexRetries;
 
-    private final static String API_LIBRARY_LIST = "/library/sections/?X-Plex-Token={plexToken}";
     private final static String API_LIBRARY_LIST_SECONDARY = "/library/sections/{libraryId}?X-Plex-Token={plexToken}";
     private final static String API_LIBRARY_VIEW_SECONDARY = "/library/sections/{libraryId}/{secondary}?X-Plex-Token={plexToken}";
     private final static String API_ARTIST_LIST = "/library/sections/{libraryId}/all?X-Plex-Token={plexToken}";
@@ -55,6 +62,8 @@ public class PlexApiService {
     private final static String API_COLLECTION = "/library/collections/{collectionId}?X-Plex-Token={plexToken}";
     private final static String API_COLLECTION_CHILDREN = "/library/collections/{collectionId}/children?X-Plex-Token={plexToken}";
 
+    private final static String API_LIBRARY_LIST = "/library/sections/?X-Plex-Token={plexToken}";
+    private final static String API_METADATA_LIST = "/library/sections/{libraryId}/all?type={type}&X-Plex-Token={plexToken}&X-Plex-Container-Start={start}&X-Plex-Container-Size={size}";
     private final static String API_METADATA = "/library/metadata/{metadataId}?X-Plex-Token={plexToken}";
     private final static String API_METADATA_CHILDREN = "/library/metadata/{metadataId}/children?X-Plex-Token={plexToken}";
     private final static String API_METADATA_REFRESH = "/library/metadata/{metadataId}/refresh?force=1&X-Plex-Token={plexToken}";
@@ -71,13 +80,35 @@ public class PlexApiService {
     public List<Directory> listLibrary() {
         return doRequest(() -> {
             try {
+                String plexUrl = ConfigUtils.getSysConfig(ConfigKey.plexUrl);
+                String plexToken = ConfigUtils.getSysConfig(ConfigKey.plexToken);
+                if (StringUtils.isEmpty(plexUrl) || StringUtils.isEmpty(plexToken)) {
+                    return Lists.newArrayList();
+                }
                 PlexResult plexResult = restTemplate.getForObject(plexUrl + API_LIBRARY_LIST, PlexResult.class, plexToken);
+                Validate.notNull(plexResult);
                 MediaContainer mediaContainer = plexResult.getMediaContainer();
                 return mediaContainer.getDirectoryList();
             } catch (Exception e) {
                 log.error("获取Plex库列表失败:{}", ExceptionUtil.getMessage(e));
             }
             return Lists.newArrayList();
+        });
+    }
+
+    public PageResult<Metadata> pageMetadata(String libraryId, String type, Integer pageNumber, Integer pageSize) {
+        return doRequest(() -> {
+            String uri = UriComponentsBuilder.fromHttpUrl(plexUrl + API_METADATA_LIST).queryParam("libraryId", libraryId).queryParam("type", type).queryParam("X-Plex-Token", plexToken).queryParam("start", (pageNumber - 1) * pageSize).queryParam("size", pageSize).toUriString();
+            PlexResult plexResult = restTemplate.getForObject(uri, PlexResult.class);
+            Validate.notNull(plexResult);
+            MediaContainer mediaContainer = plexResult.getMediaContainer();
+            PageResult<Metadata> pageResult = new PageResult<>();
+            pageResult.setPageNumber(pageNumber.longValue());
+            pageResult.setPageSize(pageSize.longValue());
+            pageResult.setSearchCount(true);
+            pageResult.setTotal(mediaContainer.getTotalSize().longValue());
+            pageResult.setRecords(mediaContainer.getMetadataList() == null ? Lists.newArrayList() : mediaContainer.getMetadataList());
+            return pageResult;
         });
     }
 

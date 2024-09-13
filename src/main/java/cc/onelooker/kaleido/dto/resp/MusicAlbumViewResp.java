@@ -1,6 +1,6 @@
 package cc.onelooker.kaleido.dto.resp;
 
-import cc.onelooker.kaleido.dto.MusicArtistDTO;
+import cc.onelooker.kaleido.dto.ArtistDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -74,7 +74,7 @@ public class MusicAlbumViewResp {
     @ApiModelProperty("更新时间")
     private Long updatedAt;
 
-    private List<MusicArtistDTO> musicArtistDTOList;
+    private List<ArtistDTO> artistDTOList;
 
     @JsonProperty
     public List<String> summaryList() {

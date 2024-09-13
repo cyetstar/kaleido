@@ -1,12 +1,6 @@
 package cc.onelooker.kaleido.convert;
 
 import cc.onelooker.kaleido.dto.SysRoleMenuDTO;
-import cc.onelooker.kaleido.dto.req.SysRoleMenuCreateReq;
-import cc.onelooker.kaleido.dto.req.SysRoleMenuPageReq;
-import cc.onelooker.kaleido.dto.req.SysRoleMenuUpdateReq;
-import cc.onelooker.kaleido.dto.resp.SysRoleMenuCreateResp;
-import cc.onelooker.kaleido.dto.resp.SysRoleMenuPageResp;
-import cc.onelooker.kaleido.dto.resp.SysRoleMenuViewResp;
 import cc.onelooker.kaleido.entity.SysRoleMenuDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -26,17 +20,5 @@ public interface SysRoleMenuConvert {
 
     @InheritInverseConfiguration(name = "convert")
     SysRoleMenuDO convertToDO(SysRoleMenuDTO sysRoleMenuDTO);
-
-    SysRoleMenuDTO convertToDTO(SysRoleMenuPageReq req);
-
-    SysRoleMenuDTO convertToDTO(SysRoleMenuCreateReq req);
-
-    SysRoleMenuDTO convertToDTO(SysRoleMenuUpdateReq req);
-
-    SysRoleMenuPageResp convertToPageResp(SysRoleMenuDTO dto);
-
-    SysRoleMenuViewResp convertToViewResp(SysRoleMenuDTO dto);
-
-    SysRoleMenuCreateResp convertToCreateResp(SysRoleMenuDTO dto);
 
 }

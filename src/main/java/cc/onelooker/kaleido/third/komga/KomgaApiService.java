@@ -8,6 +8,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.zjjcnt.common.core.domain.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -38,12 +39,16 @@ public class KomgaApiService {
     private RestTemplate restTemplate;
 
     public PageResult<Book> pageBook(Integer pageNumber, Integer pageSize) {
-        String url = ConfigUtils.getSysConfig(ConfigKey.komgaUrl, "http://192.168.3.100:25600");
+        PageResult<Book> pageResult = new PageResult<>();
+        pageResult.setSearchCount(true);
+        String url = ConfigUtils.getSysConfig(ConfigKey.komgaUrl);
+        if (StringUtils.isEmpty(url)) {
+            pageResult.setRecords(Lists.newArrayList());
+            return pageResult;
+        }
         ResponseEntity<JSONObject> response = restTemplate.exchange(url + API_BOOKS, HttpMethod.GET, new HttpEntity<>(getHeaders()), JSONObject.class, pageNumber, pageSize);
         JSONObject jsonObject = response.getBody();
         JSONArray content = Objects.requireNonNull(jsonObject).getJSONArray("content");
-        PageResult<Book> pageResult = new PageResult<>();
-        pageResult.setSearchCount(true);
         pageResult.setPageNumber(jsonObject.getLong("number"));
         pageResult.setPageSize(jsonObject.getLong("size"));
         pageResult.setTotal(jsonObject.getLong("totalElements"));
@@ -95,7 +100,10 @@ public class KomgaApiService {
 
     public List<Library> listLibrary() {
         try {
-            String url = ConfigUtils.getSysConfig(ConfigKey.komgaUrl, "http://192.168.3.100:25600");
+            String url = ConfigUtils.getSysConfig(ConfigKey.komgaUrl);
+            if (StringUtils.isEmpty(url)) {
+                return Lists.newArrayList();
+            }
             ResponseEntity<JSONArray> response = restTemplate.exchange(url + API_LIBRARIES, HttpMethod.GET, new HttpEntity<>(getHeaders()), JSONArray.class);
             JSONArray jsonArray = response.getBody();
             if (jsonArray != null) {

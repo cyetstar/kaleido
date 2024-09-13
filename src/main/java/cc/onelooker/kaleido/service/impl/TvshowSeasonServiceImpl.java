@@ -42,6 +42,9 @@ public class TvshowSeasonServiceImpl extends AbstractBaseServiceImpl<TvshowSeaso
         query.eq(Objects.nonNull(dto.getSeasonIndex()), TvshowSeasonDO::getSeasonIndex, dto.getSeasonIndex());
         query.eq(StringUtils.isNotEmpty(dto.getThumb()), TvshowSeasonDO::getThumb, dto.getThumb());
         query.eq(StringUtils.isNotEmpty(dto.getArt()), TvshowSeasonDO::getArt, dto.getArt());
+        query.eq(StringUtils.isNotEmpty(dto.getTmdbId()), TvshowSeasonDO::getTmdbId, dto.getTmdbId());
+        query.eq(StringUtils.isNotEmpty(dto.getDoubanId()), TvshowSeasonDO::getDoubanId, dto.getDoubanId());
+        query.eq(StringUtils.isNotEmpty(dto.getImdbId()), TvshowSeasonDO::getImdbId, dto.getImdbId());
         query.eq(Objects.nonNull(dto.getAddedAt()), TvshowSeasonDO::getAddedAt, dto.getAddedAt());
         query.eq(Objects.nonNull(dto.getUpdatedAt()), TvshowSeasonDO::getUpdatedAt, dto.getUpdatedAt());
         return query;
@@ -77,5 +80,13 @@ public class TvshowSeasonServiceImpl extends AbstractBaseServiceImpl<TvshowSeaso
         TvshowSeasonDTO param = new TvshowSeasonDTO();
         param.setShowId(showId);
         return list(param);
+    }
+
+    @Override
+    public TvshowSeasonDTO findByDoubanId(String doubanId) {
+        Validate.notEmpty(doubanId);
+        TvshowSeasonDTO param = new TvshowSeasonDTO();
+        param.setDoubanId(doubanId);
+        return find(param);
     }
 }

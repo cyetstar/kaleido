@@ -1,30 +1,24 @@
 package cc.onelooker.kaleido.dto;
 
-import cc.onelooker.kaleido.entity.MusicTrackDO;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.entity.ArtistDO;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
 /**
- * 曲目DTO
+ * 艺术家DTO
  *
  * @author cyetstar
  * @date 2023-11-25 22:16:58
- * @see MusicTrackDO
+ * @see ArtistDO
  */
 @Data
-public class MusicTrackDTO implements BaseDTO<String> {
-    private static final long serialVersionUID = 1574076813692141671L;
+public class ArtistDTO implements BaseDTO<String> {
+    private static final long serialVersionUID = 6665783261137191212L;
 
     /**
      * 主键
      */
     private String id;
-
-    /**
-     * 专辑id
-     */
-    private String albumId;
 
     /**
      * MusicBrainz编号
@@ -37,39 +31,29 @@ public class MusicTrackDTO implements BaseDTO<String> {
     private String neteaseId;
 
     /**
-     * 标题
+     * 国家地区
+     */
+    private String area;
+
+    /**
+     * 简介
+     */
+    private String summary;
+
+    /**
+     * 名称
      */
     private String title;
 
     /**
-     * 艺术家
+     * 排序名称
      */
-    private String artists;
+    private String titleSort;
 
     /**
-     * 文件格式
+     * 封面图
      */
-    private String format;
-
-    /**
-     * 曲长(毫秒)
-     */
-    private Integer duration;
-
-    /**
-     * 曲号
-     */
-    private Integer trackIndex;
-
-    /**
-     * 碟号
-     */
-    private Integer discIndex;
-
-    /**
-     * 文件路径
-     */
-    private String path;
+    private String thumb;
 
     /**
      * 加入时间
@@ -83,6 +67,8 @@ public class MusicTrackDTO implements BaseDTO<String> {
 
     // ------ 非数据库表字段 -------
 
+    private String keyword;
+
     @Override
     public String getId() {
         return this.id;
@@ -91,9 +77,5 @@ public class MusicTrackDTO implements BaseDTO<String> {
     @Override
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getSimpleTitle() {
-        return KaleidoUtils.genSongSimpleName(title);
     }
 }

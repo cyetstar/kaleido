@@ -1,12 +1,6 @@
 package cc.onelooker.kaleido.convert;
 
 import cc.onelooker.kaleido.dto.SysRoleResourceDTO;
-import cc.onelooker.kaleido.dto.req.SysRoleResourceCreateReq;
-import cc.onelooker.kaleido.dto.req.SysRoleResourcePageReq;
-import cc.onelooker.kaleido.dto.req.SysRoleResourceUpdateReq;
-import cc.onelooker.kaleido.dto.resp.SysRoleResourceCreateResp;
-import cc.onelooker.kaleido.dto.resp.SysRoleResourcePageResp;
-import cc.onelooker.kaleido.dto.resp.SysRoleResourceViewResp;
 import cc.onelooker.kaleido.entity.SysRoleResourceDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -26,17 +20,5 @@ public interface SysRoleResourceConvert {
 
     @InheritInverseConfiguration(name = "convert")
     SysRoleResourceDO convertToDO(SysRoleResourceDTO sysRoleResourceDTO);
-
-    SysRoleResourceDTO convertToDTO(SysRoleResourcePageReq req);
-
-    SysRoleResourceDTO convertToDTO(SysRoleResourceCreateReq req);
-
-    SysRoleResourceDTO convertToDTO(SysRoleResourceUpdateReq req);
-
-    SysRoleResourcePageResp convertToPageResp(SysRoleResourceDTO dto);
-
-    SysRoleResourceViewResp convertToViewResp(SysRoleResourceDTO dto);
-
-    SysRoleResourceCreateResp convertToCreateResp(SysRoleResourceDTO dto);
 
 }

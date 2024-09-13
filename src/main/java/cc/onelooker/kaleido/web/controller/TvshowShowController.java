@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.convert.TvshowShowConvert;
+import cc.onelooker.kaleido.dto.TvshowSeasonDTO;
 import cc.onelooker.kaleido.dto.TvshowShowDTO;
 import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.dto.resp.TvshowShowCreateResp;
@@ -8,6 +9,7 @@ import cc.onelooker.kaleido.dto.resp.TvshowShowPageResp;
 import cc.onelooker.kaleido.dto.resp.TvshowShowSearchInfoResp;
 import cc.onelooker.kaleido.dto.resp.TvshowShowViewResp;
 import cc.onelooker.kaleido.service.TvshowManager;
+import cc.onelooker.kaleido.service.TvshowSeasonService;
 import cc.onelooker.kaleido.service.TvshowShowService;
 import cc.onelooker.kaleido.third.tmm.Movie;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
@@ -30,6 +32,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 剧集前端控制器
@@ -46,6 +49,9 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
 
     @Autowired
     private TvshowShowService tvshowShowService;
+
+    @Autowired
+    private TvshowSeasonService tvshowSeasonService;
 
     @Autowired
     private TvshowManager tvshowManager;
@@ -98,9 +104,17 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     public CommonResult<List<TvshowShowSearchInfoResp>> searchInfo(@RequestBody TvshowShowSearchInfoReq req) {
         List<Movie> movieList = tmmApiService.searchMovie(req.getKeyword(), req.getType());
         List<TvshowShowSearchInfoResp> respList = Lists.newArrayList();
-        for (Movie movie : movieList) {
-            respList.add(TvshowShowConvert.INSTANCE.convertToSearchInfoResp(movie));
+        if (movieList != null) {
+            respList = movieList.stream().map(s -> {
+                TvshowShowSearchInfoResp resp = TvshowShowConvert.INSTANCE.convertToSearchInfoResp(s);
+                TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findByDoubanId(s.getDoubanId());
+                if (tvshowSeasonDTO != null) {
+                    resp.setId(tvshowSeasonDTO.getId());
+                }
+                return resp;
+            }).collect(Collectors.toList());
         }
+
         return CommonResult.success(respList);
     }
 

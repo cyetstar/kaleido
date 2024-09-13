@@ -478,48 +478,41 @@ public class MovieManager {
         return null;
     }
 
-    private void operationPath(MovieBasicDTO movieBasicDTO, Path path) throws Exception {
-        //创建规范文件夹
-        Path targetPath = createFolderPath(movieBasicDTO);
-        moveExistingFilesToRecycleBin(targetPath);
-
-        NioFileUtils.renameDir(path, targetPath, StandardCopyOption.REPLACE_EXISTING);
-        log.info("== 移动文件夹至: {}", targetPath);
-
-        //下载海报
-        downloadPoster(movieBasicDTO, targetPath);
-
-        //输出nfo文件
-        MovieNFO movieNFO = NFOUtil.toMovieNFO(movieBasicDTO);
-        NFOUtil.write(movieNFO, MovieNFO.class, targetPath, KaleidoConstants.MOVIE_NFO);
-        log.info("== 输出nfo文件: {}", targetPath.resolve(KaleidoConstants.MOVIE_NFO));
-    }
-
-    private void moveExistingFilesToRecycleBin(Path targetPath) {
+    private void operationPath(MovieBasicDTO movieBasicDTO, Path path) {
         try {
-            Path recyclePath = KaleidoUtils.getMovieRecyclePath();
-            Files.list(targetPath.resolveSibling(targetPath)).forEach(s -> {
-                try {
-                    if (KaleidoUtils.isVideoFile(s.getFileName().toString())) {
-                        Files.move(s, recyclePath.resolve(s.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-                        log.info("== 移除原视频文件: {}", s.getFileName());
-                    }
-                } catch (IOException e) {
-                    ExceptionUtil.wrapAndThrow(e);
-                }
-            });
-        } catch (IOException e) {
+            //创建规范文件夹
+            Path moviePath = createMoviePath(movieBasicDTO);
+            moveExistingFilesToRecycleBin(moviePath);
+            NioFileUtils.renameDir(path, moviePath, StandardCopyOption.REPLACE_EXISTING);
+            log.info("== 移动文件夹至: {}", moviePath);
+            //下载海报
+            downloadPoster(movieBasicDTO, moviePath);
+            //输出nfo文件
+            MovieNFO movieNFO = NFOUtil.toMovieNFO(movieBasicDTO);
+            NFOUtil.write(movieNFO, MovieNFO.class, moviePath, KaleidoConstants.MOVIE_NFO);
+            log.info("== 输出nfo文件: {}", moviePath.resolve(KaleidoConstants.MOVIE_NFO));
+        } catch (Exception e) {
             ExceptionUtil.wrapAndThrow(e);
         }
     }
 
-    private Path createFolderPath(MovieBasicDTO movieBasicDTO) throws IOException {
+    private void moveExistingFilesToRecycleBin(Path moviePath) throws IOException {
+        if (Files.exists(moviePath)) {
+            Path movieRecyclePath = KaleidoUtils.getMovieRecyclePath(moviePath.toString());
+            KaleidoUtils.createFolderPath(movieRecyclePath);
+            //直接将整个文件夹移到回收站
+            NioFileUtils.renameDir(moviePath, movieRecyclePath, StandardCopyOption.REPLACE_EXISTING);
+            log.info("== 原文件夹移至回收站: {}", movieRecyclePath);
+        }
+    }
+
+    private Path createMoviePath(MovieBasicDTO movieBasicDTO) throws IOException {
         String folderName = KaleidoUtils.genMovieFolder(movieBasicDTO);
         Path folderPath = null;
         int i = 0;
         while (true) {
             folderPath = KaleidoUtils.getMoviePath(i == 0 ? folderName : folderName + StringUtils.SPACE + i);
-            if (createFolderPath(folderPath)) {
+            if (KaleidoUtils.createFolderPath(folderPath)) {
                 break;
             } else {
                 MovieNFO movieNFO = NFOUtil.read(MovieNFO.class, folderPath, KaleidoConstants.MOVIE_NFO);
@@ -530,16 +523,8 @@ public class MovieManager {
                 }
             }
         }
+        log.info("== 创建电影文件夹: {}", folderPath);
         return folderPath;
-    }
-
-    private Boolean createFolderPath(Path folderPath) throws IOException {
-        if (Files.notExists(folderPath)) {
-            Files.createDirectories(folderPath);
-            return true;
-        } else {
-            return false;
-        }
     }
 
     private void downloadPoster(MovieBasicDTO movieBasicDTO, Path folderPath) {

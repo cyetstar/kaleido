@@ -23,6 +23,7 @@ import cn.hutool.core.util.ZipUtil;
 import cn.hutool.extra.compress.CompressUtil;
 import cn.hutool.extra.compress.extractor.Extractor;
 import com.github.junrar.Junrar;
+import com.github.junrar.exception.RarException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -36,6 +37,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -217,12 +220,16 @@ public class ComicManager {
 
     @Transactional
     public void writeComicInfo(ComicBookDTO comicBookDTO, ComicInfoNFO comicInfoNFO) {
-        String baseName = FilenameUtils.getBaseName(comicBookDTO.getPath());
-        Path zipPath = KaleidoUtils.getComicPath(comicBookDTO.getPath());
-        Path folderPath = zipPath.resolveSibling(baseName);
-        unzip(zipPath, folderPath);
-        NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, folderPath, KaleidoConstants.COMIC_INFO);
-        zip(folderPath, zipPath);
+        try {
+            String baseName = FilenameUtils.getBaseName(comicBookDTO.getPath());
+            Path zipPath = KaleidoUtils.getComicPath(comicBookDTO.getPath());
+            Path folderPath = zipPath.resolveSibling(baseName);
+            unzip(zipPath, folderPath);
+            NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, folderPath, KaleidoConstants.COMIC_INFO);
+            zip(folderPath, zipPath, true);
+        } catch (Exception e) {
+            ExceptionUtil.wrapAndThrow(e);
+        }
     }
 
     private Comic findTmmComicByNFO(Path path) {
@@ -236,8 +243,8 @@ public class ComicManager {
     }
 
     private void operationPath(ComicSeriesDTO comicSeriesDTO, Path path) {
-        Path targetPath = createFolderPath(comicSeriesDTO);
         try {
+            Path comicPath = createComicPath(comicSeriesDTO);
             Files.list(path).forEach(s -> {
                 try {
                     String fileName = s.getFileName().toString();
@@ -245,11 +252,12 @@ public class ComicManager {
                         return;
                     }
                     Integer volumeNumber = KaleidoUtils.parseVolumeNumber(fileName, 0);
-                    moveExistingFilesToRecycleBin(targetPath, volumeNumber);
+                    moveExistingFilesToRecycleBin(comicPath, volumeNumber);
 
                     String baseName = FilenameUtils.getBaseName(fileName);
-                    Path unzipBookPath = s.resolveSibling(baseName);
-                    unzipBook(s, unzipBookPath);
+                    Path folderPath = s.resolveSibling(baseName);
+                    unzip(s, folderPath);
+                    moveBookImage(folderPath, folderPath);
                     ComicBookDTO comicBookDTO = comicSeriesDTO.getBook(volumeNumber);
                     if (comicBookDTO == null) {
                         comicBookDTO = new ComicBookDTO();
@@ -257,65 +265,54 @@ public class ComicManager {
                         comicBookDTO.setBookNumber(volumeNumber);
                     }
                     ComicInfoNFO comicInfoNFO = NFOUtil.toComicInfoNFO(comicSeriesDTO, comicBookDTO);
-                    NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, unzipBookPath, KaleidoConstants.COMIC_INFO);
-                    log.info("== 输出ComicInfo.xml: {}", unzipBookPath.resolve(KaleidoConstants.COMIC_INFO));
-                    Path bookPath = targetPath.resolve(baseName + ".zip");
-                    ZipUtil.zip(unzipBookPath.toString(), bookPath.toString());
-                    log.info("== 输出目标文件: {}", bookPath);
-                    NioFileUtils.deleteIfExists(unzipBookPath);
-                    log.info("== 删除解压文件夹: {}", unzipBookPath);
+                    NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, folderPath, KaleidoConstants.COMIC_INFO);
+                    log.info("== 输出ComicInfo.xml: {}", folderPath.resolve(KaleidoConstants.COMIC_INFO));
+                    Path bookZipPath = comicPath.resolve(baseName + ".zip");
+                    zip(folderPath, bookZipPath, true);
                     Files.delete(s);
-                    log.info("== 删除原文件: {}", s);
+                    log.info("== 删除原压缩文件: {}", s);
                 } catch (Exception e) {
                     ExceptionUtil.wrapAndThrow(e);
                 }
             });
+            //删除空文件夹
+            deletePathIfEmpty(path);
         } catch (IOException e) {
             ExceptionUtil.wrapAndThrow(e);
         }
-        //删除空文件夹
-        deletePathIfEmpty(path);
+
     }
 
-    private void moveExistingFilesToRecycleBin(Path targetPath, Integer volumeNumber) {
-        try {
-            Path recyclePath = KaleidoUtils.getComicRecyclePath();
-            Files.list(targetPath.resolveSibling(targetPath)).forEach(s -> {
-                try {
-                    String fileName = s.getFileName().toString();
-                    Integer number = KaleidoUtils.parseVolumeNumber(fileName, 0);
-                    if (KaleidoUtils.isComicZipFile(fileName) && Objects.equals(number, volumeNumber)) {
-                        Files.move(s, recyclePath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-                        log.info("== 移除待替换漫画文件: {}", s.getFileName());
-                    }
-                } catch (IOException e) {
-                    ExceptionUtil.wrapAndThrow(e);
+    private void moveExistingFilesToRecycleBin(Path comicPath, Integer volumeNumber) throws IOException {
+        Files.list(comicPath).forEach(s -> {
+            try {
+                String fileName = s.getFileName().toString();
+                Integer number = KaleidoUtils.parseVolumeNumber(fileName, 0);
+                if (Objects.equals(number, volumeNumber)) {
+                    Path recyclePath = KaleidoUtils.getComicRecyclePath(comicPath.toString());
+                    KaleidoUtils.createFolderPath(recyclePath);
+                    Files.move(s, recyclePath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                    log.info("== 原漫画文件移至回收站: {}", s);
                 }
-            });
-        } catch (IOException e) {
-            ExceptionUtil.wrapAndThrow(e);
-        }
+            } catch (IOException e) {
+                ExceptionUtil.wrapAndThrow(e);
+            }
+        });
     }
 
-    private Path createFolderPath(ComicSeriesDTO comicSeriesDTO) {
-        try {
-            String folderName = KaleidoUtils.genComicFolder(comicSeriesDTO);
-            Path folderPath = KaleidoUtils.getComicPath(folderName);
-            if (Files.notExists(folderPath)) {
-                Files.createDirectories(folderPath);
-            }
-            return folderPath;
-        } catch (IOException e) {
-            ExceptionUtil.wrapAndThrow(e);
-            return null;
-        }
+    private Path createComicPath(ComicSeriesDTO comicSeriesDTO) throws IOException {
+        String folderName = KaleidoUtils.genComicFolder(comicSeriesDTO);
+        Path folderPath = KaleidoUtils.getComicPath(folderName);
+        KaleidoUtils.createFolderPath(folderPath);
+        log.info("== 创建漫画文件夹: {}", folderPath);
+        return folderPath;
     }
 
     private void deletePathIfEmpty(Path path) {
         try {
             if (Files.list(path).noneMatch(s -> KaleidoUtils.isComicZipFile(s.getFileName().toString()))) {
                 NioFileUtils.deleteIfExists(path);
-                log.info("== 删除源文件夹: {}", path.getFileName());
+                log.info("== 源目录已空，进行删除: {}", path);
             }
         } catch (IOException e) {
             ExceptionUtil.wrapAndThrow(e);
@@ -368,75 +365,71 @@ public class ComicManager {
         }
     }
 
-    private void unzip(Path zipPath, Path folderPath) {
-        try {
-            String extension = FilenameUtils.getExtension(zipPath.getFileName().toString());
-            if (StringUtils.equalsIgnoreCase(extension, "rar")) {
-                Junrar.extract(zipPath.toFile(), folderPath.toFile());
-            } else {
-                Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), zipPath.toFile());
-                extractor.extract(folderPath.toFile());
-                extractor.close();
+    private void unzip(Path zipPath, Path folderPath) throws IOException, RarException {
+        Instant start = Instant.now();
+        String extension = FilenameUtils.getExtension(zipPath.getFileName().toString());
+        if (StringUtils.equalsIgnoreCase(extension, "rar")) {
+            if (Files.notExists(folderPath)) {
+                Files.createDirectories(folderPath);
             }
+            Junrar.extract(zipPath.toFile(), folderPath.toFile());
+        } else {
+            Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), zipPath.toFile());
+            extractor.extract(folderPath.toFile());
+            extractor.close();
+        }
+        Files.list(folderPath).forEach(s -> {
+            try {
+                //删除非法文件
+                if (!StringUtils.equalsAnyIgnoreCase(FilenameUtils.getExtension(s.getFileName().toString()), "jpg", "jpeg", "png", "xml")) {
+                    Files.delete(s);
+                }
+            } catch (IOException e) {
+                ExceptionUtil.wrapAndThrow(e);
+            }
+        });
+        log.info("== 解压漫画文件: {} 耗时: {}ms", zipPath, Duration.between(start, Instant.now()).toMillis());
+    }
+
+    private void zip(Path folderPath, Path zipPath, boolean deleteFolder) throws IOException {
+        Instant start = Instant.now();
+        ZipUtil.zip(folderPath.toString(), zipPath.toString());
+        log.info("== 压缩漫画文件: {} 耗时: {}ms", zipPath, Duration.between(start, Instant.now()).toMillis());
+        if (deleteFolder) {
+            NioFileUtils.deleteIfExists(folderPath);
+            log.info("== 删除源文件夹: {}", folderPath);
+        }
+    }
+
+    private void moveBookImage(Path folderPath, Path tagetPath) throws IOException {
+        if (Files.list(folderPath).filter(Files::isDirectory).count() == 1) {
             Files.list(folderPath).forEach(s -> {
                 try {
-                    //删除非法文件
-                    if (!StringUtils.equalsAnyIgnoreCase(FilenameUtils.getExtension(s.getFileName().toString()), "jpg", "jpeg", "png", "xml")) {
+                    moveBookImage(s, tagetPath);
+                } catch (IOException e) {
+                    ExceptionUtil.wrapAndThrow(e);
+                }
+            });
+        } else {
+            Files.list(folderPath).forEach(s -> {
+                try {
+                    String fileName = s.getFileName().toString();
+                    if (Files.isDirectory(s)) {
+                        NioFileUtils.renameDir(s, tagetPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                    } else if (StringUtils.equalsAnyIgnoreCase(fileName, " thumbs.db", ".DS_Store")) {
                         Files.delete(s);
+                    } else {
+                        Files.move(s, tagetPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
                     }
                 } catch (IOException e) {
                     ExceptionUtil.wrapAndThrow(e);
                 }
             });
-        } catch (Exception e) {
-            ExceptionUtil.wrapAndThrow(e);
         }
-    }
-
-    private void zip(Path folderPath, Path zipPath) {
-        try {
-            ZipUtil.zip(folderPath.toString(), zipPath.toString());
+        if (FileUtils.isEmptyDirectory(folderPath.toFile())) {
             NioFileUtils.deleteIfExists(folderPath);
-        } catch (IOException e) {
-            ExceptionUtil.wrapAndThrow(e);
         }
-    }
-
-    private void unzipBook(Path path, Path folderPath) {
-        Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), path.toFile());
-        extractor.extract(folderPath.toFile(), archiveEntry -> StringUtils.equalsAnyIgnoreCase(FilenameUtils.getExtension(archiveEntry.getName()), "jpg", "jpeg", "png", "xml"));
-        extractor.close();
-        log.info("== 解压文件: {}", folderPath);
-        moveBookImage(folderPath, folderPath);
         log.info("== 移动图片文件: {}", folderPath);
-    }
-
-    private void moveBookImage(Path folderPath, Path tagetPath) {
-        try {
-            if (Files.list(folderPath).filter(Files::isDirectory).count() == 1) {
-                Files.list(folderPath).forEach(s -> moveBookImage(s, tagetPath));
-            } else {
-                Files.list(folderPath).forEach(s -> {
-                    try {
-                        String fileName = s.getFileName().toString();
-                        if (Files.isDirectory(s)) {
-                            NioFileUtils.renameDir(s, tagetPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-                        } else if (StringUtils.equalsAnyIgnoreCase(fileName, " thumbs.db", ".DS_Store")) {
-                            Files.delete(s);
-                        } else {
-                            Files.move(s, tagetPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-                        }
-                    } catch (IOException e) {
-                        log.info("移动图片文件发生错误: {}", ExceptionUtil.getMessage(e));
-                    }
-                });
-            }
-            if (FileUtils.isEmptyDirectory(folderPath.toFile())) {
-                NioFileUtils.deleteIfExists(folderPath);
-            }
-        } catch (IOException e) {
-            ExceptionUtil.wrapAndThrow(e);
-        }
     }
 
 }

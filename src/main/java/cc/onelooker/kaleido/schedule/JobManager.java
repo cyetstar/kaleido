@@ -32,7 +32,7 @@ public class JobManager {
     private MovieAnalyzeRunnable movieAnalyzeRunnable;
 
     @Autowired
-    private MusicSyncPlexRunnable musicSyncPlexRunnable;
+    private MusicSyncRunnable musicSyncPlexRunnable;
 
     @Autowired
     private TvshowSyncRunnable tvshowSyncPlexRunnable;

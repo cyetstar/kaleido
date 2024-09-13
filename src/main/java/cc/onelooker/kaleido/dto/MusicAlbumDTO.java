@@ -96,6 +96,11 @@ public class MusicAlbumDTO implements BaseDTO<String> {
     private String thumb;
 
     /**
+     * 路径
+     */
+    private String path;
+
+    /**
      * 加入时间
      */
     private Long addedAt;

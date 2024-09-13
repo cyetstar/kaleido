@@ -60,6 +60,7 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     @GetMapping("page")
     @ApiOperation(value = "查询漫画系列")
     public CommonResult<PageResult<ComicSeriesPageResp>> page(ComicSeriesPageReq req, PageParam pageParam) {
+        pageParam.setOrderBy("DESC:added_at");
         return super.page(req, pageParam, ComicSeriesConvert.INSTANCE::convertToDTO, ComicSeriesConvert.INSTANCE::convertToPageResp);
     }
 
@@ -101,7 +102,14 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     @ApiOperation(value = "查询信息")
     public CommonResult<List<ComicSeriesSearchInfoResp>> searchInfo(@RequestBody ComicSeriesSearchInfoReq req) {
         List<Comic> comicList = tmmApiService.searchComic(req.getKeyword(), req.getVer());
-        List<ComicSeriesSearchInfoResp> respList = comicList.stream().map(ComicSeriesConvert.INSTANCE::convertToSearchInfoResp).collect(Collectors.toList());
+        List<ComicSeriesSearchInfoResp> respList = comicList.stream().map(s -> {
+            ComicSeriesSearchInfoResp resp = ComicSeriesConvert.INSTANCE.convertToSearchInfoResp(s);
+            ComicSeriesDTO comicSeriesDTO = comicSeriesService.findByBgmId(s.getBgmId());
+            if (comicSeriesDTO != null) {
+                resp.setId(comicSeriesDTO.getId());
+            }
+            return resp;
+        }).collect(Collectors.toList());
         return CommonResult.success(respList);
     }
 

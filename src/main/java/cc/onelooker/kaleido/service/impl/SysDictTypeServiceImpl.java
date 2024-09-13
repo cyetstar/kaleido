@@ -165,6 +165,7 @@ public class SysDictTypeServiceImpl extends KaleidoBaseServiceImpl<SysDictTypeMa
                 if (sysDictTypeDTO == null) {
                     sysDictTypeDTO = new SysDictTypeDTO();
                     sysDictTypeDTO.setType(type);
+                    sysDictTypeDTO.setName(type);
                     sysDictTypeDTO.setIsDeleted(false);
                     sysDictTypeDTO.setCreateTime(new Date());
                     sysDictTypeDTO.setUpdateTime(new Date());

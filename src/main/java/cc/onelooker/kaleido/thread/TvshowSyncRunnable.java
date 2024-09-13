@@ -67,7 +67,7 @@ public class TvshowSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
     @Override
     protected PageResult<Metadata> page(Map<String, String> params, int pageNumber, int pageSize) {
         String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryId);
-        PageResult<Metadata> pageResult = plexApiService.pageEpsiode(libraryId, pageNumber, pageSize);
+        PageResult<Metadata> pageResult = plexApiService.pageMetadata(libraryId, PlexApiService.TYPE_EPISODE, pageNumber, pageSize);
         plexIdList.addAll(pageResult.getRecords().stream().map(Metadata::getRatingKey).collect(Collectors.toList()));
         return pageResult;
     }

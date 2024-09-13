@@ -21,8 +21,6 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     private final MovieManager movieManager;
 
-    private Path importPath;
-
     public MovieUpdateSourceRunnable(MovieManager movieManager) {
         this.movieManager = movieManager;
     }
@@ -33,13 +31,9 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
     }
 
     @Override
-    protected void beforeRun(Map<String, String> params) {
-        importPath = KaleidoUtils.getMovieImportPath();
-    }
-
-    @Override
     protected PageResult<Path> page(Map<String, String> params, int pageNumber, int pageSize) {
         try {
+            Path importPath = KaleidoUtils.getMovieImportPath();
             PageResult<Path> pageResult = new PageResult<>();
             pageResult.setSearchCount(true);
             if (pageNumber == 1) {

@@ -61,8 +61,8 @@ VALUES (8, 7, '', '/music/musicAlbum/page', 'musicAlbumPage', '专辑', '', '', 
 INSERT INTO sys_menu (id, parent_id, type, path, name, title, description, redirect, component, icon, meta,
                       is_show_root, is_hidden, order_num, sub_count, app, is_deleted, create_time, update_time,
                       created_by, updated_by, permission)
-VALUES (9, 7, '', '/music/musicArtist/page', 'musicArtistPage', '艺术家', '', '', '', '', '', 1, 0, 32, 0, '', 0,
-        '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '', 'musicArtist:page');
+VALUES (9, 7, '', '/music/artist/page', 'artistPage', '艺术家', '', '', '', '', '', 1, 0, 32, 0, '', 0,
+        '2024-01-01 00:00:00', '2024-01-01 00:00:00', '', '', 'artist:page');
 INSERT INTO sys_menu (id, parent_id, type, path, name, title, description, redirect, component, icon, meta,
                       is_show_root, is_hidden, order_num, sub_count, app, is_deleted, create_time, update_time,
                       created_by, updated_by, permission)

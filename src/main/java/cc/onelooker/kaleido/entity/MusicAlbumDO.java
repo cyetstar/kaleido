@@ -117,6 +117,12 @@ public class MusicAlbumDO implements IdEntity<String> {
     private String thumb;
 
     /**
+     * 路径
+     */
+    @TableField(value = "path")
+    private String path;
+
+    /**
      * 加入时间
      */
     @TableField(value = "added_at")

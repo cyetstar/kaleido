@@ -2,31 +2,30 @@ server:
   port: 8080
 spring:
   flyway:
-    enabled: true
-    locations: classpath:db/migration
+    enabled: false
   datasource:
     dynamic:
       # 性能分析插件(有性能损耗 不建议生产环境使用)
       primary: auth
       datasource:
         auth:
-          url: jdbc:mysql://192.168.3.100:3306/kaleido_dev?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          url: jdbc:mysql://192.168.3.100:3306/kaleido?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
           username: root
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver
         master:
-          url: jdbc:mysql://192.168.3.100:3306/kaleido_dev?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          url: jdbc:mysql://192.168.3.100:3306/kaleido?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
           username: root
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver
         tmm:
-          url: jdbc:mysql://192.168.3.100:3306/kaleido_dev?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          url: jdbc:mysql://192.168.3.100:3306/kaleido?useUnicode=true&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
           username: root
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
     database: 0
-    host: 192.168.3.100
+    host: 127.0.0.1
     port: 6379
     password:
     timeout: 5000

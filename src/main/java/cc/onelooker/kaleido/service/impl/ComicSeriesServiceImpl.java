@@ -18,6 +18,7 @@ import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -96,4 +97,11 @@ public class ComicSeriesServiceImpl extends AbstractBaseServiceImpl<ComicSeriesM
         return convert.convertToDO(comicSeriesDTO);
     }
 
+    @Override
+    public ComicSeriesDTO findByBgmId(String bgmId) {
+        Validate.notEmpty(bgmId);
+        ComicSeriesDTO param = new ComicSeriesDTO();
+        param.setBgmId(bgmId);
+        return find(param);
+    }
 }

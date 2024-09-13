@@ -1,8 +1,8 @@
 package cc.onelooker.kaleido.service;
 
 import cc.onelooker.kaleido.dto.MusicAlbumDTO;
-import cc.onelooker.kaleido.dto.MusicArtistAlbumDTO;
-import cc.onelooker.kaleido.dto.MusicArtistDTO;
+import cc.onelooker.kaleido.dto.MusicAlbumArtistDTO;
+import cc.onelooker.kaleido.dto.ArtistDTO;
 import cc.onelooker.kaleido.dto.MusicTrackDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.third.netease.Album;
@@ -49,10 +49,10 @@ public class MusicManager {
     private MusicAlbumService musicAlbumService;
 
     @Autowired
-    private MusicArtistService musicArtistService;
+    private ArtistService artistService;
 
     @Autowired
-    private MusicArtistAlbumService musicArtistAlbumService;
+    private MusicAlbumArtistService musicMusicAlbumArtistService;
 
     @Autowired
     private MusicTrackService musicTrackService;
@@ -64,6 +64,13 @@ public class MusicManager {
     private NeteaseApiService neteaseApiService;
 
     @Transactional
+    public void syncAlbum(Metadata metadata) {
+
+//        syncPlexAlbum(libraryPath, metadata);
+//        readAudioTag(metadata.getRatingKey());
+    }
+
+    @Transactional
     public void syncPlexAlbumAndReadAudioTag(String libraryPath, String albumId) {
         Metadata metadata = plexApiService.findAlbumById(albumId);
         syncPlexAlbum(libraryPath, metadata);
@@ -71,7 +78,7 @@ public class MusicManager {
     }
 
     private void syncPlexAlbum(String libraryPath, Metadata metadata) {
-        MusicArtistDTO musicArtistDTO = syncPlexArtist(metadata.getParentRatingKey());
+        ArtistDTO artistDTO = syncPlexArtist(metadata.getParentRatingKey());
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(metadata.getRatingKey());
         if (musicAlbumDTO == null) {
             musicAlbumDTO = new MusicAlbumDTO();
@@ -86,7 +93,7 @@ public class MusicManager {
             musicAlbumDTO.setUpdatedAt(metadata.getUpdatedAt());
             musicAlbumDTO = musicAlbumService.insert(musicAlbumDTO);
 
-            musicArtistAlbumService.insertByArtistIdAndAlbumId(musicArtistDTO.getId(), musicAlbumDTO.getId());
+            musicMusicAlbumArtistService.insertByArtistIdAndAlbumId(artistDTO.getId(), musicAlbumDTO.getId());
         } else {
             musicAlbumDTO.setTitle(metadata.getTitle());
             musicAlbumDTO.setArtists(metadata.getParentTitle());
@@ -96,30 +103,30 @@ public class MusicManager {
             musicAlbumDTO.setUpdatedAt(metadata.getUpdatedAt());
             musicAlbumService.update(musicAlbumDTO);
 
-            MusicArtistAlbumDTO musicArtistAlbumDTO = musicArtistAlbumService.findByArtistIdAndAlbumId(musicArtistDTO.getId(), musicAlbumDTO.getId());
-            if (musicArtistAlbumDTO == null) {
-                musicArtistAlbumService.insertByArtistIdAndAlbumId(musicArtistDTO.getId(), musicAlbumDTO.getId());
+            MusicAlbumArtistDTO musicMusicAlbumArtistDTO = musicMusicAlbumArtistService.findByArtistIdAndAlbumId(artistDTO.getId(), musicAlbumDTO.getId());
+            if (musicMusicAlbumArtistDTO == null) {
+                musicMusicAlbumArtistService.insertByArtistIdAndAlbumId(artistDTO.getId(), musicAlbumDTO.getId());
             }
         }
         // 同步曲目
         syncPlexTrack(libraryPath, musicAlbumDTO.getId());
     }
 
-    private MusicArtistDTO syncPlexArtist(String artistId) {
-        MusicArtistDTO musicArtistDTO = musicArtistService.findById(artistId);
-        if (musicArtistDTO == null) {
+    private ArtistDTO syncPlexArtist(String artistId) {
+        ArtistDTO artistDTO = artistService.findById(artistId);
+        if (artistDTO == null) {
             Metadata artist = plexApiService.findArtistById(artistId);
-            musicArtistDTO = new MusicArtistDTO();
-            musicArtistDTO.setId(artist.getRatingKey());
-            musicArtistDTO.setTitle(artist.getTitle());
-            musicArtistDTO.setTitleSort(artist.getTitleSort());
-            musicArtistDTO.setSummary(artist.getSummary());
-            musicArtistDTO.setThumb(artist.getThumb());
-            musicArtistDTO.setAddedAt(artist.getAddedAt());
-            musicArtistDTO.setUpdatedAt(artist.getUpdatedAt());
-            musicArtistDTO = musicArtistService.insert(musicArtistDTO);
+            artistDTO = new ArtistDTO();
+            artistDTO.setId(artist.getRatingKey());
+            artistDTO.setTitle(artist.getTitle());
+            artistDTO.setTitleSort(artist.getTitleSort());
+            artistDTO.setSummary(artist.getSummary());
+            artistDTO.setThumb(artist.getThumb());
+            artistDTO.setAddedAt(artist.getAddedAt());
+            artistDTO.setUpdatedAt(artist.getUpdatedAt());
+            artistDTO = artistService.insert(artistDTO);
         }
-        return musicArtistDTO;
+        return artistDTO;
     }
 
     private List<MusicTrackDTO> syncPlexTrack(String libraryPath, String albumId) {
@@ -256,12 +263,12 @@ public class MusicManager {
             }
         }
 
-        List<MusicArtistAlbumDTO> musicArtistAlbumDTOList = musicArtistAlbumService.listByAlbumId(musicAlbumDTO.getId());
-        for (MusicArtistAlbumDTO musicArtistAlbumDTO : musicArtistAlbumDTOList) {
-            MusicArtistDTO musicArtistDTO = musicArtistService.findById(musicArtistAlbumDTO.getArtistId());
-            if (StringUtils.equals(artist.getName(), musicArtistDTO.getTitle())) {
-                musicArtistDTO.setNeteaseId(artist.getId());
-                musicArtistService.update(musicArtistDTO);
+        List<MusicAlbumArtistDTO> musicMusicAlbumArtistDTOList = musicMusicAlbumArtistService.listByAlbumId(musicAlbumDTO.getId());
+        for (MusicAlbumArtistDTO musicMusicAlbumArtistDTO : musicMusicAlbumArtistDTOList) {
+            ArtistDTO artistDTO = artistService.findById(musicMusicAlbumArtistDTO.getArtistId());
+            if (StringUtils.equals(artist.getName(), artistDTO.getTitle())) {
+                artistDTO.setNeteaseId(artist.getId());
+                artistService.update(artistDTO);
             }
         }
     }

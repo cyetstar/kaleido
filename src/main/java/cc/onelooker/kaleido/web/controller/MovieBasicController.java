@@ -131,20 +131,22 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     public CommonResult<List<MovieBasicSearchInfoResp>> searchInfo(@RequestBody MovieBasicSearchInfoReq req) {
         List<Movie> movieList = tmmApiService.searchMovie(req.getKeyword(), req.getType());
         List<MovieBasicSearchInfoResp> respList = Lists.newArrayList();
-        for (Movie movie : movieList) {
-            MovieBasicSearchInfoResp resp = MovieBasicConvert.INSTANCE.convertToSearchInfoResp(movie);
-            MovieBasicDTO movieBasicDTO = null;
-            if (StringUtils.isNotEmpty(movie.getDoubanId())) {
-                movieBasicDTO = movieBasicService.findByDoubanId(movie.getDoubanId());
-            } else if (StringUtils.isNotEmpty(movie.getImdbId())) {
-                movieBasicDTO = movieBasicService.findByImdbId(movie.getImdbId());
-            } else if (StringUtils.isNotEmpty(movie.getTmdbId())) {
-                movieBasicDTO = movieBasicService.findByTmdbId(movie.getTmdbId());
-            }
-            if (movieBasicDTO != null) {
-                resp.setMovieId(movieBasicDTO.getId());
-            }
-            respList.add(resp);
+        if (movieList != null) {
+            respList = movieList.stream().map(s -> {
+                MovieBasicSearchInfoResp resp = MovieBasicConvert.INSTANCE.convertToSearchInfoResp(s);
+                MovieBasicDTO movieBasicDTO = null;
+                if (StringUtils.isNotEmpty(s.getDoubanId())) {
+                    movieBasicDTO = movieBasicService.findByDoubanId(s.getDoubanId());
+                } else if (StringUtils.isNotEmpty(s.getImdbId())) {
+                    movieBasicDTO = movieBasicService.findByImdbId(s.getImdbId());
+                } else if (StringUtils.isNotEmpty(s.getTmdbId())) {
+                    movieBasicDTO = movieBasicService.findByTmdbId(s.getTmdbId());
+                }
+                if (movieBasicDTO != null) {
+                    resp.setId(movieBasicDTO.getId());
+                }
+                return resp;
+            }).collect(Collectors.toList());
         }
         return CommonResult.success(respList);
     }

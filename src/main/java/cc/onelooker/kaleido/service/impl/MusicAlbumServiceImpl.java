@@ -2,11 +2,11 @@ package cc.onelooker.kaleido.service.impl;
 
 import cc.onelooker.kaleido.convert.MusicAlbumConvert;
 import cc.onelooker.kaleido.dto.MusicAlbumDTO;
-import cc.onelooker.kaleido.dto.MusicArtistAlbumDTO;
+import cc.onelooker.kaleido.dto.MusicAlbumArtistDTO;
 import cc.onelooker.kaleido.entity.MusicAlbumDO;
 import cc.onelooker.kaleido.mapper.MusicAlbumMapper;
 import cc.onelooker.kaleido.service.MusicAlbumService;
-import cc.onelooker.kaleido.service.MusicArtistAlbumService;
+import cc.onelooker.kaleido.service.MusicAlbumArtistService;
 import cc.onelooker.kaleido.service.MusicTrackService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -34,7 +34,7 @@ public class MusicAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAlbumMap
     MusicAlbumConvert convert = MusicAlbumConvert.INSTANCE;
 
     @Autowired
-    private MusicArtistAlbumService musicArtistAlbumService;
+    private MusicAlbumArtistService musicMusicAlbumArtistService;
 
     @Autowired
     private MusicTrackService musicTrackService;
@@ -79,10 +79,10 @@ public class MusicAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAlbumMap
     @Override
     public List<MusicAlbumDTO> listByArtistId(String artistId) {
         Validate.notNull(artistId);
-        List<MusicArtistAlbumDTO> musicArtistAlbumDTOList = musicArtistAlbumService.listByArtistId(artistId);
+        List<MusicAlbumArtistDTO> musicMusicAlbumArtistDTOList = musicMusicAlbumArtistService.listByArtistId(artistId);
         List<MusicAlbumDTO> musicAlbumDTOList = Lists.newArrayList();
-        for (MusicArtistAlbumDTO musicArtistAlbumDTO : musicArtistAlbumDTOList) {
-            MusicAlbumDTO musicAlbumDTO = findById(musicArtistAlbumDTO.getAlbumId());
+        for (MusicAlbumArtistDTO musicMusicAlbumArtistDTO : musicMusicAlbumArtistDTOList) {
+            MusicAlbumDTO musicAlbumDTO = findById(musicMusicAlbumArtistDTO.getAlbumId());
             if (musicAlbumDTO != null) {
                 musicAlbumDTOList.add(musicAlbumDTO);
             }
@@ -98,7 +98,7 @@ public class MusicAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAlbumMap
     @Override
     @Transactional
     public boolean deleteById(Serializable id) {
-        musicArtistAlbumService.deleteByAlbumId((String) id);
+        musicMusicAlbumArtistService.deleteByAlbumId((String) id);
         musicTrackService.deleteByAlbumId((String) id);
         return super.deleteById(id);
     }

@@ -75,7 +75,8 @@ public class SysConfigDTO implements BaseDTO<Long> {
     public SysConfigDTO() {
     }
 
-    public SysConfigDTO(String configKey, String configValue) {
+    public SysConfigDTO(String configName, String configKey, String configValue) {
+        this.configName = configName;
         this.configKey = configKey;
         this.configValue = configValue;
     }

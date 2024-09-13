@@ -21,7 +21,7 @@ alter table oauth_client_details
 create table sys_config
 (
     id           bigint unsigned  not null auto_increment comment 'id',
-    config_name  varchar(100) comment '配置名称',
+    config_name  varchar(100)     not null comment '配置名称',
     config_key   varchar(100)     not null comment '配置键名',
     config_value varchar(3000)    not null comment '配置键值',
     is_deleted   tinyint unsigned not null default '0' comment '是否已删除1：已删除，0：未删除',

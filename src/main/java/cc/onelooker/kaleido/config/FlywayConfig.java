@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.config;
 
 import org.flywaydb.core.Flyway;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,8 +15,15 @@ import javax.sql.DataSource;
 @Configuration
 public class FlywayConfig {
 
-    @Bean(initMethod = "migrate")
+    @Value("${spring.flyway.enabled:true}")
+    private boolean enabled;
+
+    @Bean
     public Flyway flyway(DataSource dataSource) {
-        return Flyway.configure().dataSource(dataSource).load();
+        Flyway flyway = Flyway.configure().dataSource(dataSource).load();
+        if (enabled) {
+            flyway.migrate();
+        }
+        return flyway;
     }
 }

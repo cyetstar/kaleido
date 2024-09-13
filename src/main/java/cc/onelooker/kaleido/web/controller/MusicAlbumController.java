@@ -2,12 +2,12 @@ package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.convert.MusicAlbumConvert;
 import cc.onelooker.kaleido.dto.MusicAlbumDTO;
-import cc.onelooker.kaleido.dto.MusicArtistDTO;
+import cc.onelooker.kaleido.dto.ArtistDTO;
 import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.dto.resp.*;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.MusicAlbumService;
-import cc.onelooker.kaleido.service.MusicArtistService;
+import cc.onelooker.kaleido.service.ArtistService;
 import cc.onelooker.kaleido.service.MusicManager;
 import cc.onelooker.kaleido.third.netease.Album;
 import cc.onelooker.kaleido.third.netease.NeteaseApiService;
@@ -55,7 +55,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     private MusicAlbumService musicAlbumService;
 
     @Autowired
-    private MusicArtistService musicArtistService;
+    private ArtistService artistService;
 
     @Autowired
     private MusicManager musicManager;
@@ -81,9 +81,9 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @GetMapping("view")
     @ApiOperation(value = "查看专辑详情")
     public CommonResult<MusicAlbumViewResp> view(String id) {
-        List<MusicArtistDTO> musicArtistDTOList = musicArtistService.listByAlbumId(id);
+        List<ArtistDTO> artistDTOList = artistService.listByAlbumId(id);
         MusicAlbumViewResp musicAlbumViewResp = doView(id, MusicAlbumConvert.INSTANCE::convertToViewResp);
-        musicAlbumViewResp.setMusicArtistDTOList(musicArtistDTOList);
+        musicAlbumViewResp.setArtistDTOList(artistDTOList);
         return CommonResult.success(musicAlbumViewResp);
     }
 

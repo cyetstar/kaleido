@@ -12,7 +12,6 @@ import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.SysConfigService;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zjjcnt.common.core.domain.CommonResult;
@@ -58,7 +57,7 @@ public class SysConfigController extends AbstractCrudController<SysConfigDTO> {
     public CommonResult<Boolean> save(@RequestBody Map<String, Object> req) {
         List<SysConfigDTO> sysConfigDTOList = Lists.newArrayList();
         for (String key : req.keySet()) {
-            sysConfigDTOList.add(new SysConfigDTO(key, MapUtils.getString(req, key)));
+            sysConfigDTOList.add(new SysConfigDTO(key, key, MapUtils.getString(req, key)));
         }
         sysConfigService.save(sysConfigDTOList);
         sysConfigDTOList.stream().filter(s -> StringUtils.isNotEmpty(s.getConfigValue())

@@ -18,8 +18,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -47,13 +49,6 @@ public class KaleidoUtils {
     private static final String RECYCLE = "#recycle";
 
     //-----------movie--------------//
-    public static Path getMoviePath(String path) {
-        if (StringUtils.startsWith(path, Constants.SLASH)) {
-            path = StringUtils.removeStart(path, Constants.SLASH);
-        }
-        return getMovieLibraryPath().resolve(path);
-    }
-
     public static Path getMovieBasicPath(String path) {
         String plexLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryPath);
         path = StringUtils.removeStart(path, plexLibraryPath);
@@ -61,6 +56,21 @@ public class KaleidoUtils {
             path = StringUtils.removeStart(path, Constants.SLASH);
         }
         return Paths.get(path);
+    }
+
+    public static Path getMoviePath(String path) {
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        return getMovieLibraryPath().resolve(path);
+    }
+
+    public static Path getMovieRecyclePath(String path) {
+        path = StringUtils.removeStart(path, getMovieLibraryPath().toString());
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        return getMovieRecyclePath().resolve(path);
     }
 
     public static Path getMovieLibraryPath() {
@@ -72,18 +82,11 @@ public class KaleidoUtils {
         return getMovieLibraryPath().resolveSibling(IMPORT);
     }
 
-    public static Path getMovieRecyclePath() {
+    private static Path getMovieRecyclePath() {
         return getMovieLibraryPath().resolveSibling(RECYCLE);
     }
 
     //-----------tvshow--------------//
-    public static Path getTvshowPath(String path) {
-        if (StringUtils.startsWith(path, Constants.SLASH)) {
-            path = StringUtils.removeStart(path, Constants.SLASH);
-        }
-        return getTvshowLibraryPath().resolve(path);
-    }
-
     public static Path getTvshowBasicPath(String path) {
         String plexLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryPath);
         path = StringUtils.removeStart(path, plexLibraryPath);
@@ -91,6 +94,21 @@ public class KaleidoUtils {
             path = StringUtils.removeStart(path, Constants.SLASH);
         }
         return Paths.get(path);
+    }
+
+    public static Path getTvshowPath(String path) {
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        return getTvshowLibraryPath().resolve(path);
+    }
+
+    public static Path getTvshowRecyclePath(String path) {
+        path = StringUtils.removeStart(path, getTvshowLibraryPath().toString());
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        return getTvshowRecyclePath().resolve(path);
     }
 
     public static Path getTvshowLibraryPath() {
@@ -102,7 +120,7 @@ public class KaleidoUtils {
         return getTvshowLibraryPath().resolveSibling(IMPORT);
     }
 
-    public static Path getTvshowRecyclePath() {
+    private static Path getTvshowRecyclePath() {
         return getTvshowLibraryPath().resolveSibling(RECYCLE);
     }
 
@@ -137,13 +155,6 @@ public class KaleidoUtils {
     }
 
     //-----------comic--------------//
-    public static Path getComicPath(String path) {
-        if (StringUtils.startsWith(path, Constants.SLASH)) {
-            path = StringUtils.removeStart(path, Constants.SLASH);
-        }
-        return getComicLibraryPath().resolve(path);
-    }
-
     public static Path getComicBasicPath(String path) {
         String komgaLibraryPath = ConfigUtils.getSysConfig(ConfigKey.komgaComicLibraryPath);
         path = StringUtils.removeStart(path, komgaLibraryPath);
@@ -151,6 +162,21 @@ public class KaleidoUtils {
             path = StringUtils.removeStart(path, Constants.SLASH);
         }
         return Paths.get(path);
+    }
+
+    public static Path getComicPath(String path) {
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        return getComicLibraryPath().resolve(path);
+    }
+
+    public static Path getComicRecyclePath(String path) {
+        path = StringUtils.removeStart(path, getComicLibraryPath().toString());
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        return getComicRecyclePath().resolve(path);
     }
 
     public static Path getComicLibraryPath() {
@@ -162,7 +188,7 @@ public class KaleidoUtils {
         return getComicLibraryPath().resolveSibling(IMPORT);
     }
 
-    public static Path getComicRecyclePath() {
+    private static Path getComicRecyclePath() {
         return getComicLibraryPath().resolveSibling(RECYCLE);
     }
 
@@ -334,7 +360,17 @@ public class KaleidoUtils {
         return defaultValue;
     }
 
+    public static boolean createFolderPath(Path folderPath) throws IOException {
+        if (Files.notExists(folderPath)) {
+            Files.createDirectories(folderPath);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static void main(String[] args) {
         System.out.println(StringUtils.equals(null, null));
     }
+
 }
