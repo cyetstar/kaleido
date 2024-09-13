@@ -79,6 +79,9 @@
         <logger name="cc.onelooker" level="DEBUG" additivity="false">
             <appender-ref ref="CONSOLE"/>
         </logger>
+        <logger name="com.github.junrar" level="ERROR" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
         <root level="INFO">
             <appender-ref ref="INFO_FILE"/>
             <appender-ref ref="WARN_FILE"/>

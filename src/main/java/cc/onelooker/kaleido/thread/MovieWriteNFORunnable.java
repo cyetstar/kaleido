@@ -13,7 +13,6 @@ import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
@@ -31,8 +30,6 @@ public class MovieWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO>
     private final MovieBasicService movieBasicService;
 
     private final TaskService taskService;
-
-    private String title;
 
     public MovieWriteNFORunnable(MovieManager movieManager, MovieBasicService movieBasicService, TaskService taskService) {
         this.movieManager = movieManager;
@@ -79,7 +76,6 @@ public class MovieWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO>
             }
         }
         taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_IGNORE);
-        title = movieBasicDTO.getTitle();
         return IGNORE;
     }
 
@@ -96,6 +92,7 @@ public class MovieWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO>
 
     @Override
     protected String getMessage(TaskDTO taskDTO, Integer state) {
-        return title + StringUtils.SPACE + getStateMessage(state);
+        MovieBasicDTO movieBasicDTO = movieBasicService.findById(taskDTO.getSubjectId());
+        return movieBasicDTO.getTitle() + "<" + getStateMessage(state) + ">";
     }
 }

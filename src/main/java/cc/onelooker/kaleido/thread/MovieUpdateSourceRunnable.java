@@ -3,7 +3,6 @@ package cc.onelooker.kaleido.thread;
 import cc.onelooker.kaleido.service.MovieManager;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.zjjcnt.common.core.domain.PageResult;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -55,6 +54,6 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     @Override
     protected String getMessage(Path path, Integer state) {
-        return path.getFileName().toString() + StringUtils.SPACE + getStateMessage(state);
+        return path.getFileName().toString() + "<" + getStateMessage(state) + ">";
     }
 }

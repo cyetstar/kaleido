@@ -61,6 +61,6 @@ public class TvshowUpdateSourceRunnable extends AbstractEntityActionRunnable<Pat
 
     @Override
     protected String getMessage(Path path, Integer state) {
-        return path.getFileName().toString() + StringUtils.SPACE + getStateMessage(state);
+        return path.getFileName().toString() + "<" + getStateMessage(state)+ ">";
     }
 }

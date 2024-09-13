@@ -378,16 +378,6 @@ public class ComicManager {
             extractor.extract(folderPath.toFile());
             extractor.close();
         }
-        Files.list(folderPath).forEach(s -> {
-            try {
-                //删除非法文件
-                if (!StringUtils.equalsAnyIgnoreCase(FilenameUtils.getExtension(s.getFileName().toString()), "jpg", "jpeg", "png", "xml")) {
-                    Files.delete(s);
-                }
-            } catch (IOException e) {
-                ExceptionUtil.wrapAndThrow(e);
-            }
-        });
         log.info("== 解压漫画文件: {} 耗时: {}ms", zipPath, Duration.between(start, Instant.now()).toMillis());
     }
 
@@ -416,7 +406,7 @@ public class ComicManager {
                     String fileName = s.getFileName().toString();
                     if (Files.isDirectory(s)) {
                         NioFileUtils.renameDir(s, tagetPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-                    } else if (StringUtils.equalsAnyIgnoreCase(fileName, " thumbs.db", ".DS_Store")) {
+                    } else if (!StringUtils.equalsAnyIgnoreCase(FilenameUtils.getExtension(fileName), "jpg", "jpeg", "png", "xml")) {
                         Files.delete(s);
                     } else {
                         Files.move(s, tagetPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);

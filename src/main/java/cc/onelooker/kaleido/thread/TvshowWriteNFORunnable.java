@@ -11,10 +11,7 @@ import cc.onelooker.kaleido.nfo.EpisodeNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.nfo.SeasonNFO;
 import cc.onelooker.kaleido.nfo.TvshowNFO;
-import cc.onelooker.kaleido.service.TaskService;
-import cc.onelooker.kaleido.service.TvshowEpisodeService;
-import cc.onelooker.kaleido.service.TvshowManager;
-import cc.onelooker.kaleido.service.TvshowSeasonService;
+import cc.onelooker.kaleido.service.*;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
@@ -39,6 +36,8 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
 
     private final TvshowManager tvshowManager;
 
+    private final TvshowShowService tvshowShowService;
+
     private final TvshowSeasonService tvshowSeasonService;
 
     private final TvshowEpisodeService tvshowEpisodeService;
@@ -47,10 +46,9 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
 
     private final PlexApiService plexApiService;
 
-    private String title;
-
-    public TvshowWriteNFORunnable(TvshowManager tvshowManager, TvshowSeasonService tvshowSeasonService, TvshowEpisodeService tvshowEpisodeService, TaskService taskService, PlexApiService plexApiService) {
+    public TvshowWriteNFORunnable(TvshowManager tvshowManager, TvshowShowService tvshowShowService, TvshowSeasonService tvshowSeasonService, TvshowEpisodeService tvshowEpisodeService, TaskService taskService, PlexApiService plexApiService) {
         this.tvshowManager = tvshowManager;
+        this.tvshowShowService = tvshowShowService;
         this.tvshowSeasonService = tvshowSeasonService;
         this.tvshowEpisodeService = tvshowEpisodeService;
         this.taskService = taskService;
@@ -92,7 +90,6 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
                 }
                 taskStatus = KaleidoConstants.TASK_STATUS_DONE;
             }
-            title = tvshowShowDTO.getTitle();
         } else if (StringUtils.equals(SubjectType.TvshowSeason.name(), taskDTO.getSubjectType())) {
             TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(taskDTO.getSubjectId());
             String seasonFolder = KaleidoUtils.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
@@ -107,7 +104,6 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
                 }
                 taskStatus = KaleidoConstants.TASK_STATUS_DONE;
             }
-            title = tvshowShowDTO.getTitle() + StringUtils.SPACE + tvshowSeasonDTO.getTitle();
         } else if (StringUtils.equals(SubjectType.TvshowEpisode.name(), taskDTO.getSubjectType())) {
             TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(taskDTO.getSubjectId());
             TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(tvshowEpisodeDTO.getSeasonId());
@@ -124,7 +120,6 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
                 }
                 taskStatus = KaleidoConstants.TASK_STATUS_TODO;
             }
-            title = tvshowShowDTO.getTitle() + StringUtils.SPACE + tvshowSeasonDTO.getTitle() + "(" + tvshowEpisodeDTO.getEpisodeIndex() + ")";
         }
         taskService.updateTaskStatus(taskDTO.getId(), taskStatus);
         return StringUtils.equals(taskStatus, KaleidoConstants.TASK_STATUS_DONE) ? SUCCESS : IGNORE;
@@ -138,6 +133,16 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
 
     @Override
     protected String getMessage(TaskDTO taskDTO, Integer state) {
-        return title + StringUtils.SPACE + getStateMessage(state);
+        String title = null;
+        if (StringUtils.equals(SubjectType.TvshowShow.name(), taskDTO.getSubjectType())) {
+            title = tvshowShowService.findById(taskDTO.getSubjectId()).getTitle();
+        } else if (StringUtils.equals(SubjectType.TvshowSeason.name(), taskDTO.getSubjectType())) {
+            title = tvshowSeasonService.findById(taskDTO.getSubjectId()).getTitle();
+        } else if (StringUtils.equals(SubjectType.TvshowEpisode.name(), taskDTO.getSubjectType())) {
+            TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(taskDTO.getSubjectId());
+            TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(tvshowEpisodeDTO.getSeasonId());
+            title = String.format("第%s集【%s】", tvshowEpisodeDTO.getEpisodeIndex(), tvshowSeasonDTO.getTitle());
+        }
+        return title + "<" + getStateMessage(state) + ">";
     }
 }

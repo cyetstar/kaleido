@@ -21,7 +21,7 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
 
     private int sleepSecond = 0;
 
-    private Map<Integer, String> stateMap = ImmutableMap.of(TODO, "开始处理", SUCCESS, "成功", ERROR, "错误", IGNORE, "忽略");
+    private Map<Integer, String> stateMap = ImmutableMap.of(TODO, "开始处理", SUCCESS, "处理成功", ERROR, "发生错误", IGNORE, "无需处理");
 
     public static final int TODO = 0;
     public static final int SUCCESS = 1;
@@ -38,7 +38,7 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
     protected abstract PageResult<T> page(Map<String, String> params, int pageNumber, int pageSize);
 
     protected String getMessage(T entity, Integer state) {
-        return entity.toString() + " " + getStateMessage(state);
+        return entity.toString() + "<" + getStateMessage(state) + ">";
     }
 
     protected String getStateMessage(Integer state) {
@@ -67,6 +67,7 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
                     if (isStop()) {
                         break;
                     }
+                    updateActionState(getMessage(entity, TODO), total, num++);
                     int state = processEntity(params, entity);
                     updateActionState(getMessage(entity, state), total, num++);
                 } catch (Exception e) {

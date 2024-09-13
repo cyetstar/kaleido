@@ -41,8 +41,6 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
 
     private final ComicSeriesService comicSeriesService;
 
-    private String title;
-
     public ComicWriteComicInfoRunnable(TaskService taskService, ComicManager comicManager, ComicBookService comicBookService, ComicSeriesService comicSeriesService) {
         this.taskService = taskService;
         this.comicManager = comicManager;
@@ -81,7 +79,6 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
             return SUCCESS;
         }
         taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_IGNORE);
-        title = comicSeriesDTO.getTitle() + StringUtils.SPACE + comicBookDTO.getTitle();
         return IGNORE;
     }
 
@@ -102,6 +99,8 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
 
     @Override
     protected String getMessage(TaskDTO taskDTO, Integer state) {
-        return title + StringUtils.SPACE + getStateMessage(state);
+        ComicBookDTO comicBookDTO = comicBookService.findById(taskDTO.getSubjectId());
+        ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(comicBookDTO.getSeriesId());
+        return String.format("%s【%s】<%s>", comicBookDTO.getTitle(), comicSeriesDTO.getTitle(), getStateMessage(state));
     }
 }
