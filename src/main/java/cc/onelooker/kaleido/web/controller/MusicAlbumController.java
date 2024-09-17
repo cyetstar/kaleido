@@ -1,33 +1,29 @@
 package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.convert.MusicAlbumConvert;
-import cc.onelooker.kaleido.dto.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.ArtistDTO;
+import cc.onelooker.kaleido.dto.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.dto.resp.*;
-import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.MusicAlbumService;
 import cc.onelooker.kaleido.service.ArtistService;
+import cc.onelooker.kaleido.service.MusicAlbumService;
 import cc.onelooker.kaleido.service.MusicManager;
 import cc.onelooker.kaleido.third.netease.Album;
 import cc.onelooker.kaleido.third.netease.NeteaseApiService;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cn.hutool.http.HttpUtil;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
-import com.zjjcnt.common.core.exception.ServiceException;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -105,25 +101,6 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
         return super.delete(id);
     }
 
-    @PostMapping("syncPlexById")
-    @ApiOperation(value = "同步资料库")
-    public CommonResult<Boolean> syncPlexById(@RequestBody MusicAlbumSyncPlexReq req) {
-        String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMusicLibraryId);
-        if (StringUtils.isBlank(libraryId)) {
-            throw new ServiceException(2005, "请设置需要同步资料库信息");
-        }
-        String libraryPath = plexApiService.getLibraryPath(libraryId);
-        musicManager.syncPlexAlbumAndReadAudioTag(libraryPath, req.getId());
-        return CommonResult.success(true);
-    }
-
-    //读取封面文件，输出字节流
-    @PostMapping("updateAudioTag")
-    public CommonResult<Boolean> updateAudioTag(@RequestBody MusicAlbumUpdateAudioTagReq req) {
-        int error = musicManager.readAudioTag(req.getId());
-        return CommonResult.success(error == 0);
-    }
-
     @GetMapping("searchNetease")
     public CommonResult<List<MusicAlbumSearchNeteaseResp>> searchNetease(MusicAlbumSearchNeteaseReq req) {
         List<Album> albumList = neteaseApiService.searchAlbum(req.getKeywords(), req.getLimit());
@@ -138,14 +115,8 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
 
     @PostMapping("matchNetease")
     public CommonResult<Boolean> matchNetease(@RequestBody MusicAlbumMatchNeteaseReq req) {
-        musicManager.matchNetease(req.getId(), req.getNeteaseId());
+        musicManager.matchInfo(req.getId(), req.getNeteaseId());
         return CommonResult.success(true);
-    }
-
-    @PostMapping("downloadLyric")
-    public CommonResult<Boolean> downloadLyric(@RequestBody MusicAlbumDownloadLyricReq req) {
-        int error = musicManager.downloadLyric(req.getId());
-        return CommonResult.success(error == 0);
     }
 
     @GetMapping("listByArtistId")
@@ -162,10 +133,9 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @GetMapping("viewPath")
     @ApiOperation(value = "获取目录")
     public CommonResult<String> viewPath(String id) {
-        List<Metadata> metadataList = plexApiService.listTrackByAlbumId(id);
-        Metadata metadata = metadataList.get(0);
-        Path filePath = KaleidoUtils.getMusicPath(metadata.getMedia().getPart().getFile());
-        return CommonResult.success(filePath.getParent().toString());
+        MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(id);
+        Path filePath = KaleidoUtils.getMusicPath(musicAlbumDTO.getPath());
+        return CommonResult.success(filePath.toString());
     }
 
     @GetMapping("viewNetease")

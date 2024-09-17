@@ -16,4 +16,6 @@ public class MovieBasicMatchPathReq {
 
     private String tmdbId;
 
+    private String title;
+
 }

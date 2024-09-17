@@ -16,7 +16,6 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,15 +80,13 @@ public class ActorServiceImpl extends AbstractBaseServiceImpl<ActorMapper, Actor
 
     @Override
     public List<ActorDTO> listBySeasonId(String seasonId) {
-        List<ActorDTO> actorDTOList = Lists.newArrayList();
         List<TvshowSeasonActorDTO> tvshowSeasonActorDTOList = tvshowSeasonActorService.listBySeasonId(seasonId);
-        tvshowSeasonActorDTOList.stream().map(s -> {
+        return tvshowSeasonActorDTOList.stream().map(s -> {
             ActorDTO actorDTO = findById(s.getActorId());
             actorDTO.setRole(s.getRole());
             actorDTO.setPlayRole(s.getPlayRole());
             return actorDTO;
-        });
-        return actorDTOList;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -125,9 +122,14 @@ public class ActorServiceImpl extends AbstractBaseServiceImpl<ActorMapper, Actor
         actorDTOList.stream().forEach(s -> {
             TvshowSeasonActorDTO tvshowShowActorDTO = new TvshowSeasonActorDTO();
             tvshowShowActorDTO.setSeasonId(seasonId);
-            tvshowShowActorDTO.setActorId(s.getId());
             tvshowShowActorDTO.setRole(actorRole.name());
             tvshowShowActorDTO.setPlayRole(s.getPlayRole());
+            if (StringUtils.isEmpty(s.getId())) {
+                ActorDTO actorDTO = findOrSave(s);
+                tvshowShowActorDTO.setActorId(actorDTO.getId());
+            } else {
+                tvshowShowActorDTO.setActorId(s.getId());
+            }
             tvshowSeasonActorService.insert(tvshowShowActorDTO);
         });
     }
@@ -139,7 +141,7 @@ public class ActorServiceImpl extends AbstractBaseServiceImpl<ActorMapper, Actor
             return;
         }
         baseMapper.deleteByMovieIdAndRole(movieId, actorRole.name());
-        actorDTOList.stream().forEach(s -> {
+        actorDTOList.forEach(s -> {
             MovieBasicActorDTO movieBasicActorDTO = new MovieBasicActorDTO();
             movieBasicActorDTO.setMovieId(movieId);
             movieBasicActorDTO.setRole(actorRole.name());
@@ -154,29 +156,29 @@ public class ActorServiceImpl extends AbstractBaseServiceImpl<ActorMapper, Actor
         });
     }
 
-    private ActorDTO findOrSave(ActorDTO s) {
+    private ActorDTO findOrSave(ActorDTO dto) {
         ActorDTO actorDTO = null;
-        if (StringUtils.isNotEmpty(s.getDoubanId())) {
-            actorDTO = findByDoubanId(s.getDoubanId());
+        if (StringUtils.isNotEmpty(dto.getDoubanId())) {
+            actorDTO = findByDoubanId(dto.getDoubanId());
         }
-        if (actorDTO == null && StringUtils.isNotEmpty(s.getThumb()) && !StringUtils.endsWith(s.getThumb(), KaleidoConstants.SUFFIX_PNG)) {
-            actorDTO = findByThumb(s.getThumb());
+        if (actorDTO == null && StringUtils.isNotEmpty(dto.getThumb()) && !StringUtils.endsWith(dto.getThumb(), KaleidoConstants.SUFFIX_PNG)) {
+            actorDTO = findByThumb(dto.getThumb());
         }
-        if (actorDTO == null && StringUtils.isNotEmpty(s.getName())) {
-            actorDTO = findByName(s.getName());
+        if (actorDTO == null && StringUtils.isNotEmpty(dto.getName())) {
+            actorDTO = findByName(dto.getName());
         }
         if (actorDTO == null) {
             actorDTO = new ActorDTO();
-            actorDTO.setName(StringUtils.defaultString(s.getName(), s.getOriginalName()));
-            actorDTO.setOriginalName(s.getOriginalName());
-            actorDTO.setThumb(s.getThumb());
-            actorDTO.setDoubanId(s.getDoubanId());
+            actorDTO.setName(StringUtils.defaultString(dto.getName(), dto.getOriginalName()));
+            actorDTO.setOriginalName(dto.getOriginalName());
+            actorDTO.setThumb(dto.getThumb());
+            actorDTO.setDoubanId(dto.getDoubanId());
             actorDTO = insert(actorDTO);
         } else {
-            actorDTO.setName(StringUtils.defaultString(s.getName(), s.getOriginalName()));
-            actorDTO.setOriginalName(s.getOriginalName());
-            actorDTO.setThumb(s.getThumb());
-            actorDTO.setDoubanId(s.getDoubanId());
+            actorDTO.setName(StringUtils.defaultString(dto.getName(), dto.getOriginalName()));
+            actorDTO.setOriginalName(dto.getOriginalName());
+            actorDTO.setThumb(StringUtils.defaultString(dto.getThumb(), actorDTO.getThumb()));
+            actorDTO.setDoubanId(StringUtils.defaultString(dto.getDoubanId(), actorDTO.getDoubanId()));
             update(actorDTO);
         }
         return actorDTO;

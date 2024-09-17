@@ -102,7 +102,7 @@ public class NFOUtil {
         return movieNFO;
     }
 
-    public static TvshowNFO toTvshowNFO(TvshowShowDTO tvshowShowDTO) {
+    public static TvshowNFO toTvshowNFO(TvshowShowDTO tvshowShowDTO, TvshowSeasonDTO tvshowSeasonDTO) {
         TvshowNFO tvshowNFO = new TvshowNFO();
         tvshowNFO.setDoubanId(tvshowShowDTO.getDoubanId());
         tvshowNFO.setImdbId(tvshowShowDTO.getImdbId());
@@ -127,7 +127,6 @@ public class NFOUtil {
         if (StringUtils.isNotEmpty(tvshowShowDTO.getStudio())) {
             tvshowNFO.setStudios(Lists.newArrayList(tvshowShowDTO.getStudio()));
         }
-        TvshowSeasonDTO tvshowSeasonDTO = tvshowShowDTO.getFirstSeason();
         if (CollectionUtils.isNotEmpty(tvshowSeasonDTO.getDirectorList())) {
             tvshowNFO.setDirectors(tvshowSeasonDTO.getDirectorList().stream().map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName())).collect(Collectors.toList()));
         }

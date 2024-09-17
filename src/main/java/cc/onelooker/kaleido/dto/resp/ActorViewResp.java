@@ -25,4 +25,11 @@ public class ActorViewResp {
 
     @ApiModelProperty("原名")
     private String originalName;
+
+    @ApiModelProperty("头像")
+    private String thumb;
+
+    @ApiModelProperty("饰演角色")
+    private String playRole;
+
 }

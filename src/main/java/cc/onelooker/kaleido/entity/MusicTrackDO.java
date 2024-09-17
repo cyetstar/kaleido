@@ -81,10 +81,10 @@ public class MusicTrackDO implements IdEntity<String> {
     private Integer discIndex;
 
     /**
-     * 路径
+     * 文件名
      */
-    @TableField(value = "path")
-    private String path;
+    @TableField(value = "filename")
+    private String filename;
 
     /**
      * 加入时间

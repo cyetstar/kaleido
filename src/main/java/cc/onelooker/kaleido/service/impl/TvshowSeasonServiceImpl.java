@@ -36,6 +36,7 @@ public class TvshowSeasonServiceImpl extends AbstractBaseServiceImpl<TvshowSeaso
     @Override
     protected Wrapper<TvshowSeasonDO> genQueryWrapper(TvshowSeasonDTO dto) {
         LambdaQueryWrapper<TvshowSeasonDO> query = new LambdaQueryWrapper<>();
+        query.eq(StringUtils.isNotEmpty(dto.getId()), TvshowSeasonDO::getId, dto.getId());
         query.eq(StringUtils.isNotEmpty(dto.getShowId()), TvshowSeasonDO::getShowId, dto.getShowId());
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), TvshowSeasonDO::getTitle, dto.getTitle());
         query.eq(StringUtils.isNotEmpty(dto.getSummary()), TvshowSeasonDO::getSummary, dto.getSummary());

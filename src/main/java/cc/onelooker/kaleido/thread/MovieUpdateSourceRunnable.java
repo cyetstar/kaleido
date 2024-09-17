@@ -54,6 +54,6 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     @Override
     protected String getMessage(Path path, Integer state) {
-        return path.getFileName().toString() + "<" + getStateMessage(state) + ">";
+        return formatMessage(path.getFileName().toString(), state);
     }
 }

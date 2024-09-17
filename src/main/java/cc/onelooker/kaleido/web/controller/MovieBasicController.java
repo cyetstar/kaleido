@@ -100,11 +100,11 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @ApiOperation(value = "编辑电影")
     public CommonResult<Boolean> update(@RequestBody MovieBasicUpdateReq req) {
         MovieBasicDTO dto = MovieBasicConvert.INSTANCE.convertToDTO(req);
-        if (req.getDirectorIdList() != null) {
-            dto.setDirectorList(req.getDirectorIdList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
+        if (req.getDirectorList() != null) {
+            dto.setDirectorList(req.getDirectorList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
         }
-        if (req.getWriterIdList() != null) {
-            dto.setWriterList(req.getWriterIdList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
+        if (req.getWriterList() != null) {
+            dto.setWriterList(req.getWriterList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
         }
         if (req.getActorList() != null) {
             dto.setActorList(req.getActorList().stream().map(s -> {
@@ -205,7 +205,11 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("matchPath")
     @ApiOperation(value = "匹配文件信息")
     public CommonResult<Boolean> matchPath(@RequestBody MovieBasicMatchPathReq req) {
-        movieManager.matchPath(Paths.get(req.getPath()), req.getDoubanId(), req.getTmdbId());
+        Movie movie = new Movie();
+        movie.setDoubanId(req.getDoubanId());
+        movie.setTmdbId(req.getTmdbId());
+        movie.setTitle(req.getTitle());
+        movieManager.matchPath(Paths.get(req.getPath()), movie);
         return CommonResult.success(true);
     }
 

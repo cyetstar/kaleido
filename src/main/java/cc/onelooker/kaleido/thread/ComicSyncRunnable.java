@@ -50,15 +50,15 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
 
     @Override
     protected PageResult<Book> page(Map<String, String> params, int pageNumber, int pageSize) {
-        String seriesId = MapUtils.getString(params, "id");
+        String seriesId = MapUtils.getString(params, "seriesId");
         PageResult<Book> pageResult = new PageResult<>();
-        pageResult.setSearchCount(true);
         if (StringUtils.isEmpty(seriesId)) {
             pageResult = komgaApiService.pageBook(pageNumber - 1, pageSize);
             bookIdList.addAll(pageResult.getRecords().stream().map(Book::getId).collect(Collectors.toList()));
         } else if (pageNumber == 1) {
             List<Book> records = komgaApiService.listBookBySeries(seriesId);
-            pageResult.setTotal(1L);
+            pageResult.setTotal((long) CollectionUtils.size(records));
+            pageResult.setSearchCount(true);
             pageResult.setRecords(records);
         }
         return pageResult;
@@ -80,18 +80,14 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
 
     @Override
     protected void afterRun(Map<String, String> params) {
-        String seriesId = MapUtils.getString(params, "id");
-        if (StringUtils.isNotEmpty(seriesId)) {
-            //单条记录同步，不做后续处理
-            return;
-        }
-        ComicBookDTO param = ComicBookConvert.INSTANCE.convertToDTO(params);
-        List<ComicBookDTO> comicBookDTOList = comicBookService.list(param);
-        List<String> idList = comicBookDTOList.stream().map(ComicBookDTO::getId).collect(Collectors.toList());
-        Collection<String> deleteIdList = CollectionUtils.subtract(idList, bookIdList);
-        if (CollectionUtils.isNotEmpty(deleteIdList)) {
-            for (String deleteId : deleteIdList) {
-                comicBookService.deleteById(deleteId);
+        String seriesId = MapUtils.getString(params, "seriesId");
+        if (StringUtils.isEmpty(seriesId)) {
+            ComicBookDTO param = ComicBookConvert.INSTANCE.convertToDTO(params);
+            List<ComicBookDTO> comicBookDTOList = comicBookService.list(param);
+            List<String> idList = comicBookDTOList.stream().map(ComicBookDTO::getId).collect(Collectors.toList());
+            Collection<String> deleteIdList = CollectionUtils.subtract(idList, bookIdList);
+            if (CollectionUtils.isNotEmpty(deleteIdList)) {
+                deleteIdList.forEach(comicBookService::deleteById);
             }
         }
         seriesIdCache.clear();

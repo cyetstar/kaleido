@@ -93,6 +93,6 @@ public class MovieWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO>
     @Override
     protected String getMessage(TaskDTO taskDTO, Integer state) {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(taskDTO.getSubjectId());
-        return movieBasicDTO.getTitle() + "<" + getStateMessage(state) + ">";
+        return formatMessage(movieBasicDTO.getTitle(), state);
     }
 }

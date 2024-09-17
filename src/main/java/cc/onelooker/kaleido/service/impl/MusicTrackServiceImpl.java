@@ -34,7 +34,7 @@ public class MusicTrackServiceImpl extends AbstractBaseServiceImpl<MusicTrackMap
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), MusicTrackDO::getTitle, dto.getTitle());
         query.eq(StringUtils.isNotEmpty(dto.getArtists()), MusicTrackDO::getArtists, dto.getArtists());
         query.eq(StringUtils.isNotEmpty(dto.getFormat()), MusicTrackDO::getFormat, dto.getFormat());
-        query.eq(StringUtils.isNotEmpty(dto.getPath()), MusicTrackDO::getPath, dto.getPath());
+        query.eq(StringUtils.isNotEmpty(dto.getFilename()), MusicTrackDO::getFilename, dto.getFilename());
         query.eq(Objects.nonNull(dto.getAlbumId()), MusicTrackDO::getAlbumId, dto.getAlbumId());
         query.eq(Objects.nonNull(dto.getDuration()), MusicTrackDO::getDuration, dto.getDuration());
         query.eq(Objects.nonNull(dto.getTrackIndex()), MusicTrackDO::getTrackIndex, dto.getTrackIndex());

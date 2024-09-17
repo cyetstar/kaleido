@@ -79,10 +79,10 @@ public class MovieBasicUpdateReq {
     private List<String> tagList;
 
     @ApiModelProperty("导演主键列表")
-    private List<String> directorIdList;
+    private List<String> directorList;
 
     @ApiModelProperty("编剧主键列表")
-    private List<String> writerIdList;
+    private List<String> writerList;
 
     @ApiModelProperty("演员主键列表")
     private List<Actor> actorList;

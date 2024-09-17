@@ -33,5 +33,7 @@ public enum ConfigKey {
 
     writeComicInfo,
     writeMovieNFO,
-    refreshMetadata, videoExtension, comicZipExtension,
+    writeAudioTag,
+    writeTvshowNFO,
+    refreshMetadata, videoExtension, comicZipExtension, audioExtension,
 }

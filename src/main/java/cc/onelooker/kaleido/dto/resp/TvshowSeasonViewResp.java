@@ -1,8 +1,13 @@
 package cc.onelooker.kaleido.dto.resp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 单季响应对象
@@ -25,6 +30,9 @@ public class TvshowSeasonViewResp {
 
     @ApiModelProperty("原标题")
     private String originalTitle;
+
+    @ApiModelProperty("排序名")
+    private String sortTitle;
 
     @ApiModelProperty("简介")
     private String summary;
@@ -61,4 +69,19 @@ public class TvshowSeasonViewResp {
 
     @ApiModelProperty("更新时间")
     private Long updatedAt;
+
+    @ApiModelProperty("导演")
+    private List<ActorViewResp> directorList;
+
+    @ApiModelProperty("编剧")
+    private List<ActorViewResp> writerList;
+
+    @ApiModelProperty("主演")
+    private List<ActorViewResp> actorList;
+
+    @JsonProperty
+    public List<String> summaryList() {
+        return Arrays.asList(StringUtils.split(summary, "\n"));
+    }
+
 }

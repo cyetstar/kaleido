@@ -1,14 +1,12 @@
 package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.convert.TvshowSeasonConvert;
-import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.dto.SysConfigDTO;
 import cc.onelooker.kaleido.dto.TvshowSeasonDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.SysConfigService;
 import cc.onelooker.kaleido.service.TvshowManager;
 import cc.onelooker.kaleido.service.TvshowSeasonService;
-import cc.onelooker.kaleido.third.tmm.Season;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.third.tmm.Tvshow;
 import cc.onelooker.kaleido.utils.ConfigUtils;
@@ -16,10 +14,12 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -76,16 +76,19 @@ public class TvshowMatchInfoRunnable extends AbstractEntityActionRunnable<Tvshow
     @Override
     protected PageResult<TvshowSeasonDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
         TvshowSeasonDTO param = TvshowSeasonConvert.INSTANCE.convertToDTO(params);
-        Page<MovieBasicDTO> page = Page.of(pageNumber, pageSize, true);
+        Page<TvshowSeasonDTO> page = Page.of(pageNumber, pageSize, true);
         page.addOrder(OrderItem.asc("updated_at"));
         return tvshowSeasonService.page(param, page);
     }
 
     @Override
     protected int processEntity(Map<String, String> params, TvshowSeasonDTO dto) throws Exception {
-        long updatedAt = dto.getUpdatedAt();
+        long updatedAt = ObjectUtils.defaultIfNull(dto.getUpdatedAt(), dto.getAddedAt());
         if (updatedAt > lastUpdatedAt || MapUtils.getBooleanValue(params, "force")) {
             Tvshow tvshow = tmmApiService.findTvshow(dto.getDoubanId(), dto.getImdbId(), dto.getTmdbId());
+            if (tvshow == null) {
+                return IGNORE;
+            }
             tvshowManager.matchInfo(dto.getId(), tvshow);
             maxUpdatedAt = updatedAt > maxUpdatedAt ? updatedAt : maxUpdatedAt;
             return SUCCESS;

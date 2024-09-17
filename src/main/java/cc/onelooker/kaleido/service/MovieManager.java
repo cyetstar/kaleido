@@ -140,19 +140,18 @@ public class MovieManager {
      * 将path与信息关系记录在nfo文件中
      *
      * @param path
-     * @param doubanId
-     * @param tmdbId
+     * @param movie
      */
     @Transactional
-    public void matchPath(Path path, String doubanId, String tmdbId) {
+    public void matchPath(Path path, Movie movie) {
         try {
             NioFileUtils.deleteByFilter(path, "nfo");
             MovieNFO movieNFO = new MovieNFO();
-            movieNFO.setDoubanId(doubanId);
-            movieNFO.setTmdbId(tmdbId);
-            String filename = FilenameUtils.getBaseName(path.getFileName().toString());
+            movieNFO.setDoubanId(movie.getDoubanId());
+            movieNFO.setTmdbId(movie.getTmdbId());
             Path importPath = KaleidoUtils.getMovieImportPath();
-            Path newPath = importPath.resolve(StringUtils.defaultIfEmpty(StringUtils.defaultIfEmpty(doubanId, tmdbId), filename));
+            String filename = movie.getTitle() + "(" + StringUtils.defaultIfEmpty(movie.getDoubanId(), movie.getTmdbId()) + ")";
+            Path newPath = importPath.resolve(StringUtils.defaultIfEmpty(filename, FilenameUtils.getBaseName(path.getFileName().toString())));
             if (Files.isDirectory(path)) {
                 if (!StringUtils.equals(newPath.toString(), path.toString())) {
                     NioFileUtils.renameDir(path, newPath, StandardCopyOption.REPLACE_EXISTING);

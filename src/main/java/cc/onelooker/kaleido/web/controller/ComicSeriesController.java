@@ -116,7 +116,10 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     @PostMapping("matchPath")
     @ApiOperation(value = "匹配文件信息")
     public CommonResult<Boolean> matchPath(@RequestBody ComicSeriesMatchPathReq req) {
-        comicManager.matchPath(Paths.get(req.getPath()), req.getBgmId());
+        Comic comic = new Comic();
+        comic.setBgmId(req.getBgmId());
+        comic.setSeries(req.getSeries());
+        comicManager.matchPath(Paths.get(req.getPath()), comic);
         return CommonResult.success(true);
     }
 

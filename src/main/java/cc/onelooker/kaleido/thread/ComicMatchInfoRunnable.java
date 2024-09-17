@@ -2,7 +2,6 @@ package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.convert.ComicSeriesConvert;
 import cc.onelooker.kaleido.dto.ComicSeriesDTO;
-import cc.onelooker.kaleido.dto.MovieBasicDTO;
 import cc.onelooker.kaleido.dto.SysConfigDTO;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.ComicManager;
@@ -15,6 +14,7 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -71,16 +71,19 @@ public class ComicMatchInfoRunnable extends AbstractEntityActionRunnable<ComicSe
     @Override
     protected PageResult<ComicSeriesDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
         ComicSeriesDTO param = ComicSeriesConvert.INSTANCE.convertToDTO(params);
-        Page<MovieBasicDTO> page = Page.of(pageNumber, pageSize, true);
+        Page<ComicSeriesDTO> page = Page.of(pageNumber, pageSize, true);
         page.addOrder(OrderItem.asc("updated_at"));
         return comicSeriesService.page(param, page);
     }
 
     @Override
     protected int processEntity(Map<String, String> params, ComicSeriesDTO dto) throws Exception {
-        long updatedAt = dto.getUpdatedAt();
+        long updatedAt = ObjectUtils.defaultIfNull(dto.getUpdatedAt(), dto.getAddedAt());
         if (updatedAt > lastUpdatedAt || MapUtils.getBooleanValue(params, "force")) {
             Comic comic = tmmApiService.findComic(dto.getBgmId());
+            if (comic == null) {
+                return IGNORE;
+            }
             comicManager.matchInfo(dto.getId(), comic);
             maxUpdatedAt = updatedAt > maxUpdatedAt ? updatedAt : maxUpdatedAt;
             return SUCCESS;

@@ -55,9 +55,7 @@ public class MovieSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
         List<String> idList = movieBasicDTOList.stream().map(MovieBasicDTO::getId).collect(Collectors.toList());
         Collection<String> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
         if (CollectionUtils.isNotEmpty(deleteIdList)) {
-            for (String deleteId : deleteIdList) {
-                movieBasicService.deleteById(deleteId);
-            }
+            deleteIdList.forEach(movieBasicService::deleteById);
         }
         plexIdList.clear();
     }
@@ -83,8 +81,7 @@ public class MovieSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
     protected int processEntity(Map<String, String> params, Metadata metadata) throws Exception {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
         if (movieBasicDTO == null || MapUtils.getBooleanValue(params, "force")) {
-            metadata = plexApiService.findMetadata(metadata.getRatingKey());
-            movieManager.syncMovie(metadata);
+            movieManager.syncMovie(plexApiService.findMetadata(metadata.getRatingKey()));
             return SUCCESS;
         }
         return IGNORE;

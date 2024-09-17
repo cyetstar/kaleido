@@ -32,3 +32,12 @@ values (1, 'sfbz', '是', '1', 1, 1, 0, now(), now(), 'system', 'system');
 insert into sys_dict (id, dict_type, label, value, sort, is_enabled, is_deleted, create_time, update_time, created_by,
                       updated_by)
 values (2, 'sfbz', '否', '0', 2, 1, 0, now(), now(), 'system', 'system');
+
+insert into sys_dict_type (id, type, name, is_deleted, create_time, update_time, created_by, updated_by)
+values (1, 'wjzt', '完结状态', 0, now(), now(), 'system', 'system');
+
+values (1, 'wjzt', '已完结', 'ENDED', 1, 1, 0, now(), now(), 'system', 'system');
+
+insert into sys_dict (id, dict_type, label, value, sort, is_enabled, is_deleted, create_time, update_time, created_by,
+                      updated_by)
+values (2, 'wjzt', '未完结', 'ONGOING', 2, 1, 0, now(), now(), 'system', 'system');

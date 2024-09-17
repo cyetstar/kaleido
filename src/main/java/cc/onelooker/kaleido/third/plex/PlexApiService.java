@@ -5,6 +5,7 @@ import cc.onelooker.kaleido.utils.ConfigUtils;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zjjcnt.common.core.domain.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -31,7 +33,9 @@ public class PlexApiService {
     public static final String TYPE_SHOW = "2";
     public static final String TYPE_SEASON = "3";
     public static final String TYPE_EPISODE = "4";
+    public static final String TYPE_ARTIST = "8";
     public static final String TYPE_ALBUM = "9";
+    public static final String TYPE_TRACK = "10";
 
     private String plexToken;
     private String plexUrl;
@@ -63,7 +67,7 @@ public class PlexApiService {
     private final static String API_COLLECTION_CHILDREN = "/library/collections/{collectionId}/children?X-Plex-Token={plexToken}";
 
     private final static String API_LIBRARY_LIST = "/library/sections/?X-Plex-Token={plexToken}";
-    private final static String API_METADATA_LIST = "/library/sections/{libraryId}/all?type={type}&X-Plex-Token={plexToken}&X-Plex-Container-Start={start}&X-Plex-Container-Size={size}";
+    private final static String API_METADATA_LIST = "/library/sections/{libraryId}/all?type={type}&X-Plex-Token={token}&X-Plex-Container-Start={start}&X-Plex-Container-Size={size}";
     private final static String API_METADATA = "/library/metadata/{metadataId}?X-Plex-Token={plexToken}";
     private final static String API_METADATA_CHILDREN = "/library/metadata/{metadataId}/children?X-Plex-Token={plexToken}";
     private final static String API_METADATA_REFRESH = "/library/metadata/{metadataId}/refresh?force=1&X-Plex-Token={plexToken}";
@@ -98,7 +102,13 @@ public class PlexApiService {
 
     public PageResult<Metadata> pageMetadata(String libraryId, String type, Integer pageNumber, Integer pageSize) {
         return doRequest(() -> {
-            String uri = UriComponentsBuilder.fromHttpUrl(plexUrl + API_METADATA_LIST).queryParam("libraryId", libraryId).queryParam("type", type).queryParam("X-Plex-Token", plexToken).queryParam("start", (pageNumber - 1) * pageSize).queryParam("size", pageSize).toUriString();
+            Map<String, Object> urlParams = Maps.newHashMap();
+            urlParams.put("libraryId", libraryId);
+            urlParams.put("type", type);
+            urlParams.put("token", plexToken);
+            urlParams.put("start", (pageNumber - 1) * pageSize);
+            urlParams.put("size", pageSize);
+            String uri = UriComponentsBuilder.fromUriString(plexUrl + API_METADATA_LIST).buildAndExpand(urlParams).toUriString();
             PlexResult plexResult = restTemplate.getForObject(uri, PlexResult.class);
             Validate.notNull(plexResult);
             MediaContainer mediaContainer = plexResult.getMediaContainer();

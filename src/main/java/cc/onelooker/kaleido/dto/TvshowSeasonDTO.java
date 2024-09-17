@@ -142,4 +142,9 @@ public class TvshowSeasonDTO implements BaseDTO<String> {
         return episodeList.stream().filter(s -> episodeIndex.equals(s.getEpisodeIndex())).findFirst().orElse(null);
     }
 
+    @Override
+    public String toString() {
+        return title;
+    }
+
 }

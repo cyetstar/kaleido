@@ -52,6 +52,10 @@ public class Metadata {
     private Long updatedAt;
     @JsonProperty("Genre")
     private List<Tag> genreList;
+    @JsonProperty("Style")
+    private List<Tag> styleList;
+    @JsonProperty("Mood")
+    private List<Tag> moodList;
     @JsonProperty("Role")
     private List<Tag> roleList;
     @JsonProperty("Country")

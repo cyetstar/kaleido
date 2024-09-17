@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.service;
 
 import cc.onelooker.kaleido.dto.ActorDTO;
-import cc.onelooker.kaleido.dto.TvshowSeasonActorDTO;
 import cc.onelooker.kaleido.enums.ActorRole;
 import com.zjjcnt.common.core.service.IBaseService;
 

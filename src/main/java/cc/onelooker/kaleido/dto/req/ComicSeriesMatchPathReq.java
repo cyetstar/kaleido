@@ -11,5 +11,6 @@ import lombok.Data;
 public class ComicSeriesMatchPathReq {
 
     private String bgmId;
+    private String series;
     private String path;
 }

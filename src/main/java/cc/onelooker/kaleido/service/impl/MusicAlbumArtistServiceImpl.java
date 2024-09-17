@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -78,6 +79,7 @@ public class MusicAlbumArtistServiceImpl extends AbstractBaseServiceImpl<MusicAl
     }
 
     @Override
+    @Transactional
     public boolean deleteByAlbumId(String albumId) {
         Validate.notEmpty(albumId);
         MusicAlbumArtistDTO param = new MusicAlbumArtistDTO();

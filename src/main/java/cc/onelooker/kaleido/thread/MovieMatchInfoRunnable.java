@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -81,9 +82,12 @@ public class MovieMatchInfoRunnable extends AbstractEntityActionRunnable<MovieBa
 
     @Override
     protected int processEntity(Map<String, String> params, MovieBasicDTO dto) throws Exception {
-        long updatedAt = dto.getUpdatedAt();
+        long updatedAt = ObjectUtils.defaultIfNull(dto.getUpdatedAt(), dto.getAddedAt());
         if (updatedAt > lastUpdatedAt || MapUtils.getBooleanValue(params, "force")) {
             Movie movie = tmmApiService.findMovie(dto.getDoubanId(), dto.getImdbId(), dto.getTmdbId());
+            if (movie == null) {
+                return IGNORE;
+            }
             movieManager.matchInfo(dto.getId(), movie);
             maxUpdatedAt = updatedAt > maxUpdatedAt ? updatedAt : maxUpdatedAt;
             return SUCCESS;

@@ -23,7 +23,6 @@ public class KomgaUtil {
         comicSeriesDTO.setId(series.getId());
         comicSeriesDTO.setTitle(metadata.getTitle());
         comicSeriesDTO.setSummary(booksMetadata.getSummary());
-        comicSeriesDTO.setBookCount(metadata.getTotalBookCount());
         comicSeriesDTO.setBgmId(getBgmId(metadata.getLinks()));
         comicSeriesDTO.setPublisher(metadata.getPublisher());
         Path path = KaleidoUtils.getComicBasicPath(series.getUrl());

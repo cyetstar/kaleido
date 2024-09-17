@@ -67,9 +67,9 @@ public class MusicTrackDTO implements BaseDTO<String> {
     private Integer discIndex;
 
     /**
-     * 文件路径
+     * 文件名
      */
-    private String path;
+    private String filename;
 
     /**
      * 加入时间

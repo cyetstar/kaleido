@@ -12,6 +12,7 @@ import com.zjjcnt.common.core.domain.PageResult;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -51,38 +52,58 @@ public class TvshowSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
 
     @Override
     protected void afterRun(Map<String, String> params) {
-        List<TvshowEpisodeDTO> tvshowEpisodeDTOList = tvshowEpisodeService.list(null);
-        List<String> idList = tvshowEpisodeDTOList.stream().map(TvshowEpisodeDTO::getId).collect(Collectors.toList());
-        Collection<String> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
-        if (CollectionUtils.isNotEmpty(deleteIdList)) {
-            for (String deleteId : deleteIdList) {
-                tvshowEpisodeService.deleteById(deleteId);
+        String showId = MapUtils.getString(params, "showId");
+        String seasonId = MapUtils.getString(params, "seasonId");
+        if (StringUtils.isEmpty(showId) && StringUtils.isNotEmpty(seasonId)) {
+            List<TvshowEpisodeDTO> tvshowEpisodeDTOList = tvshowEpisodeService.list(null);
+            List<String> idList = tvshowEpisodeDTOList.stream().map(TvshowEpisodeDTO::getId).collect(Collectors.toList());
+            Collection<String> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
+            if (CollectionUtils.isNotEmpty(deleteIdList)) {
+                deleteIdList.forEach(tvshowEpisodeService::deleteById);
             }
         }
-        seasonIdCache.clear();
         showIdCache.clear();
+        seasonIdCache.clear();
         plexIdList.clear();
     }
 
     @Override
     protected PageResult<Metadata> page(Map<String, String> params, int pageNumber, int pageSize) {
-        String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryId);
-        PageResult<Metadata> pageResult = plexApiService.pageMetadata(libraryId, PlexApiService.TYPE_EPISODE, pageNumber, pageSize);
-        plexIdList.addAll(pageResult.getRecords().stream().map(Metadata::getRatingKey).collect(Collectors.toList()));
+        String showId = MapUtils.getString(params, "showId");
+        String seasonId = MapUtils.getString(params, "seasonId");
+        PageResult<Metadata> pageResult = new PageResult<>();
+        if (StringUtils.isEmpty(showId) && StringUtils.isEmpty(seasonId)) {
+            String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryId);
+            pageResult = plexApiService.pageMetadata(libraryId, PlexApiService.TYPE_EPISODE, pageNumber, pageSize);
+            plexIdList.addAll(pageResult.getRecords().stream().map(Metadata::getRatingKey).collect(Collectors.toList()));
+        } else if (pageNumber == 1) {
+            List<Metadata> records = Lists.newArrayList();
+            if (StringUtils.isNotEmpty(showId)) {
+                List<Metadata> metadataList = plexApiService.listMetadataChildren(showId);
+                for (Metadata metadata : metadataList) {
+                    records.addAll(plexApiService.listMetadataChildren(metadata.getRatingKey()));
+                }
+            } else if (StringUtils.isNotEmpty(seasonId)) {
+                records = plexApiService.listMetadataChildren(seasonId);
+            }
+            pageResult.setTotal((long) CollectionUtils.size(records));
+            pageResult.setSearchCount(true);
+            pageResult.setRecords(records);
+        }
         return pageResult;
     }
 
     @Override
     protected int processEntity(Map<String, String> params, Metadata metadata) throws Exception {
         TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(metadata.getRatingKey());
-        if (tvshowEpisodeDTO == null || metadata.getUpdatedAt().compareTo(tvshowEpisodeDTO.getUpdatedAt()) > 0 || MapUtils.getBooleanValue(params, "force")) {
+        if (tvshowEpisodeDTO == null || MapUtils.getBooleanValue(params, "force")) {
             if (showIdCache.add(metadata.getGrandparentRatingKey())) {
                 tvshowManager.syncShow(plexApiService.findMetadata(metadata.getGrandparentRatingKey()));
             }
             if (seasonIdCache.add(metadata.getParentRatingKey())) {
                 tvshowManager.syncSeason(plexApiService.findMetadata(metadata.getParentRatingKey()));
             }
-            tvshowManager.syncEpisode(metadata);
+            tvshowManager.syncEpisode(plexApiService.findMetadata(metadata.getRatingKey()));
             return SUCCESS;
         }
         return IGNORE;

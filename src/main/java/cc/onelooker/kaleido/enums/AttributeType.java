@@ -8,5 +8,6 @@ package cc.onelooker.kaleido.enums;
 public enum AttributeType {
 
     Genre, Language, Country, Tag,
-    ;
+    Style,
+    Mood;
 }

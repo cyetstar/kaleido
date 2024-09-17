@@ -1,9 +1,6 @@
 package cc.onelooker.kaleido.utils;
 
-import cc.onelooker.kaleido.dto.AuthorDTO;
-import cc.onelooker.kaleido.dto.ComicSeriesDTO;
-import cc.onelooker.kaleido.dto.MovieBasicDTO;
-import cc.onelooker.kaleido.dto.TvshowShowDTO;
+import cc.onelooker.kaleido.dto.*;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.nfo.MovieNFO;
 import cc.onelooker.kaleido.third.plex.Media;
@@ -11,12 +8,19 @@ import cc.onelooker.kaleido.third.tmm.Tvshow;
 import cn.hutool.extra.pinyin.PinyinUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zjjcnt.common.util.constant.Constants;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.flac.FlacTag;
+import org.jaudiotagger.tag.id3.ID3v23FieldKey;
+import org.jaudiotagger.tag.id3.ID3v23Tag;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -25,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -40,6 +45,7 @@ public class KaleidoUtils {
     private static String[] noMainVideos = new String[]{"-other", "-CD2", "-CD3", "-CD4", "-CD5", "-CD6", "Part.2"};
     public static final String VIDEO_EXTENSION = "mkv,mp4,mpeg,mov,avi,wmv,rmvb,ts,m2ts";
     public static final String COMIC_ZIP_EXTENSION = "zip,rar,cbz";
+    public static final String AUDIO_ZIP_EXTENSION = "mp3,wav,flac";
     public static String[] lowQualityExtensions = new String[]{"avi", "wmv", "rmvb", "mp4"};
 
     private static final Pattern seasonIndexPattern = Pattern.compile("S_?(\\d+)E");
@@ -125,11 +131,19 @@ public class KaleidoUtils {
     }
 
     //-----------music--------------//
+    public static Path getMusicFilePath(String path, String filename) {
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        path = FilenameUtils.concat(path, filename);
+        return getMusicLibraryPath().resolve(path);
+    }
+
     public static Path getMusicPath(String path) {
-        String plexLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexMusicLibraryPath);
-        String libraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
-        path = StringUtils.replace(path, plexLibraryPath, libraryPath);
-        return Paths.get(path);
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        return getMusicLibraryPath().resolve(path);
     }
 
     public static Path getMusicBasicPath(String path) {
@@ -150,7 +164,7 @@ public class KaleidoUtils {
         return getMusicLibraryPath().resolveSibling(IMPORT);
     }
 
-    public static Path getMusicRecyclePath() {
+    private static Path getMusicRecyclePath() {
         return getMusicLibraryPath().resolveSibling(RECYCLE);
     }
 
@@ -245,22 +259,15 @@ public class KaleidoUtils {
         return StringUtils.EMPTY;
     }
 
-    public static String genComicFolder(ComicSeriesDTO comicSeriesDTO) {
-        Optional<String> writerOptional = comicSeriesDTO.getWriterList().stream().map(AuthorDTO::getName).findFirst();
-        Optional<String> pencillerOptional = comicSeriesDTO.getPencillerList().stream().map(AuthorDTO::getName).findFirst();
-        Set<String> authors = Sets.newLinkedHashSet();
-        CollectionUtils.addIgnoreNull(authors, writerOptional.orElse(null));
-        CollectionUtils.addIgnoreNull(authors, pencillerOptional.orElse(null));
-        String authorName = StringUtils.join(authors, "×");
-        return String.format("%s [%s]", sanitizeFileName(comicSeriesDTO.getTitle()), sanitizeFileName(authorName));
-    }
-
     public static String genMovieFolder(MovieBasicDTO movieBasicDTO) {
         String decade = movieBasicDTO.getDecade();
         if (StringUtils.isEmpty(decade) && StringUtils.isNotEmpty(movieBasicDTO.getYear())) {
             decade = StringUtils.substring(movieBasicDTO.getYear(), 0, 3) + "0s";
         }
-        return String.format("%s/%s (%s)", StringUtils.defaultIfEmpty(decade, "0000s"), sanitizeFileName(movieBasicDTO.getTitle()), movieBasicDTO.getYear());
+        decade = StringUtils.defaultIfEmpty(decade, "0000s");
+        String title = sanitizeFileName(movieBasicDTO.getTitle());
+        String year = StringUtils.defaultString(movieBasicDTO.getYear(), "0000");
+        return String.format("%s/%s (%s)", decade, title, year);
     }
 
     public static String genTvshowFolder(TvshowShowDTO tvshowShowDTO) {
@@ -271,20 +278,49 @@ public class KaleidoUtils {
         return "Season " + StringUtils.leftPad(String.valueOf(seasonIndex), 2, "0");
     }
 
+    public static String genMusicFolder(MusicAlbumDTO musicAlbumDTO) {
+        String year = StringUtils.defaultString(musicAlbumDTO.getYear(), "0000");
+        String artist = sanitizeFileName(musicAlbumDTO.getArtists());
+        String title = sanitizeFileName(musicAlbumDTO.getTitle());
+        return String.format("%s/%s - %s (%s)", artist, artist, title, year);
+    }
+
+    public static String genComicFolder(ComicSeriesDTO comicSeriesDTO) {
+        Optional<String> writerOptional = comicSeriesDTO.getWriterList().stream().map(AuthorDTO::getName).findFirst();
+        Optional<String> pencillerOptional = comicSeriesDTO.getPencillerList().stream().map(AuthorDTO::getName).findFirst();
+        Set<String> authors = Sets.newLinkedHashSet();
+        CollectionUtils.addIgnoreNull(authors, writerOptional.orElse(null));
+        CollectionUtils.addIgnoreNull(authors, pencillerOptional.orElse(null));
+        String authorName = StringUtils.join(authors, "×");
+        return String.format("%s [%s]", sanitizeFileName(comicSeriesDTO.getTitle()), sanitizeFileName(authorName));
+    }
+
+    public static String genMusicFile(MusicTrackDTO musicTrackDTO) {
+        String index = StringUtils.leftPad(String.valueOf(musicTrackDTO.getTrackIndex()), 2, "0");
+        String title = sanitizeFileName(musicTrackDTO.getTitle());
+        String extension = FilenameUtils.getExtension(musicTrackDTO.getFilename());
+        return String.format("%s - %s.%s", index, title, extension);
+    }
+
     public static boolean isVideoFile(String filename) {
         String extension = ConfigUtils.getSysConfig(ConfigKey.videoExtension, VIDEO_EXTENSION);
         String[] extensions = StringUtils.split(extension, Constants.COMMA);
-        return FilenameUtils.isExtension(filename, extensions);
+        String fileExtension = FilenameUtils.getExtension(filename);
+        return StringUtils.equalsAnyIgnoreCase(fileExtension, extensions);
     }
 
     public static boolean isComicZipFile(String filename) {
         String extension = ConfigUtils.getSysConfig(ConfigKey.comicZipExtension, COMIC_ZIP_EXTENSION);
         String[] extensions = StringUtils.split(extension, Constants.COMMA);
-        return FilenameUtils.isExtension(filename, extensions);
+        String fileExtension = FilenameUtils.getExtension(filename);
+        return StringUtils.equalsAnyIgnoreCase(fileExtension, extensions);
     }
 
-    public static boolean isNfoFile(String filename) {
-        return FilenameUtils.isExtension(filename, "nfo");
+    public static boolean isAudioFile(String filename) {
+        String extension = ConfigUtils.getSysConfig(ConfigKey.audioExtension, AUDIO_ZIP_EXTENSION);
+        String[] extensions = StringUtils.split(extension, Constants.COMMA);
+        String fileExtension = FilenameUtils.getExtension(filename);
+        return StringUtils.equalsAnyIgnoreCase(fileExtension, extensions);
     }
 
     public static boolean isChineseStream(Media.Stream stream) {
@@ -366,6 +402,38 @@ public class KaleidoUtils {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public static Map<FieldKey, ID3v23FieldKey> fieldKeyMap = Maps.newHashMap();
+
+    static {
+        fieldKeyMap.put(FieldKey.MUSICBRAINZ_TRACK_ID, ID3v23FieldKey.MUSICBRAINZ_TRACK_ID);
+        fieldKeyMap.put(FieldKey.MUSICBRAINZ_RELEASEID, ID3v23FieldKey.MUSICBRAINZ_RELEASEID);
+        fieldKeyMap.put(FieldKey.ALBUM_ARTIST, ID3v23FieldKey.ALBUM_ARTIST);
+        fieldKeyMap.put(FieldKey.MUSICBRAINZ_RELEASE_TYPE, ID3v23FieldKey.MUSICBRAINZ_RELEASE_TYPE);
+        fieldKeyMap.put(FieldKey.GENRE, ID3v23FieldKey.GENRE);
+        fieldKeyMap.put(FieldKey.MUSICBRAINZ_RELEASE_COUNTRY, ID3v23FieldKey.MUSICBRAINZ_RELEASE_COUNTRY);
+        fieldKeyMap.put(FieldKey.YEAR, ID3v23FieldKey.YEAR);
+        fieldKeyMap.put(FieldKey.RECORD_LABEL, ID3v23FieldKey.RECORD_LABEL);
+        fieldKeyMap.put(FieldKey.ORIGINALRELEASEDATE, ID3v23FieldKey.ORIGINALRELEASEDATE);
+        fieldKeyMap.put(FieldKey.MEDIA, ID3v23FieldKey.MEDIA);
+    }
+
+    public static String getTagValue(Tag tag, FieldKey fieldKey) {
+        if (tag instanceof FlacTag) {
+            FlacTag flacTag = (FlacTag) tag;
+            return flacTag.getFirst(fieldKey);
+        } else if (tag instanceof ID3v23Tag) {
+            ID3v23Tag id3v2Tag = (ID3v23Tag) tag;
+            ID3v23FieldKey id3v23FieldKey = MapUtils.getObject(fieldKeyMap, fieldKey);
+            if (id3v23FieldKey != null) {
+                return id3v2Tag.getFirst(id3v23FieldKey);
+            } else {
+                return id3v2Tag.getFirst(fieldKey);
+            }
+        } else {
+            throw new IllegalArgumentException();
         }
     }
 

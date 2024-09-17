@@ -93,48 +93,42 @@ public class MovieBasicViewResp {
     @ApiModelProperty("低质量")
     private String lowQuality;
 
+    @ApiModelProperty("路径")
+    private String path;
+
     @ApiModelProperty("加入时间")
     private Long addedAt;
 
     @ApiModelProperty("更新时间")
     private Long updatedAt;
 
+    @ApiModelProperty("国家地区")
     private List<String> countryList;
 
+    @ApiModelProperty("语言")
     private List<String> languageList;
 
+    @ApiModelProperty("类型")
     private List<String> genreList;
 
+    @ApiModelProperty("别名")
     private List<String> akaList;
 
+    @ApiModelProperty("标签")
     private List<String> tagList;
 
-    private List<Actor> directorList;
+    @ApiModelProperty("导演")
+    private List<ActorViewResp> directorList;
 
-    private List<Actor> writerList;
+    @ApiModelProperty("编剧")
+    private List<ActorViewResp> writerList;
 
-    private List<Actor> actorList;
+    @ApiModelProperty("主演")
+    private List<ActorViewResp> actorList;
 
     @JsonProperty
     public List<String> summaryList() {
         return Arrays.asList(StringUtils.split(summary, "\n"));
-    }
-
-    @Data
-    public static class Actor {
-
-        private String id;
-
-        private String name;
-
-        private String cnName;
-
-        private String thumb;
-
-        private String role;
-
-        private String playRole;
-
     }
 
 }

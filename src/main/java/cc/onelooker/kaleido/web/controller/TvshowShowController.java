@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.web.controller;
 
+import cc.onelooker.kaleido.convert.ActorConvert;
 import cc.onelooker.kaleido.convert.TvshowShowConvert;
 import cc.onelooker.kaleido.dto.TvshowSeasonDTO;
 import cc.onelooker.kaleido.dto.TvshowShowDTO;
@@ -13,6 +14,7 @@ import cc.onelooker.kaleido.service.TvshowSeasonService;
 import cc.onelooker.kaleido.service.TvshowShowService;
 import cc.onelooker.kaleido.third.tmm.Movie;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
+import cc.onelooker.kaleido.third.tmm.Tvshow;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cn.hutool.http.HttpUtil;
@@ -75,7 +77,17 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @ApiOperation(value = "查看剧集详情")
     public CommonResult<TvshowShowViewResp> view(String id) {
         TvshowShowDTO tvshowShowDTO = tvshowManager.findTvshowShow(id);
+        TvshowSeasonDTO tvshowSeason = tvshowManager.findTvshowSeason(tvshowShowDTO.getFirstSeason().getId());
         TvshowShowViewResp resp = TvshowShowConvert.INSTANCE.convertToViewResp(tvshowShowDTO);
+        if (tvshowSeason.getDirectorList() != null) {
+            resp.setDirectorList(tvshowSeason.getDirectorList().stream().map(ActorConvert.INSTANCE::convertToViewResp).collect(Collectors.toList()));
+        }
+        if (tvshowSeason.getWriterList() != null) {
+            resp.setWriterList(tvshowSeason.getWriterList().stream().map(ActorConvert.INSTANCE::convertToViewResp).collect(Collectors.toList()));
+        }
+        if (tvshowSeason.getActorList() != null) {
+            resp.setActorList(tvshowSeason.getActorList().stream().map(ActorConvert.INSTANCE::convertToViewResp).collect(Collectors.toList()));
+        }
         return CommonResult.success(resp);
     }
 
@@ -130,7 +142,10 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @PostMapping("matchPath")
     @ApiOperation(value = "匹配文件信息")
     public CommonResult<Boolean> matchPath(@RequestBody TvshowShowMatchPathReq req) {
-        tvshowManager.matchPath(Paths.get(req.getPath()), req.getDoubanId());
+        Tvshow tvshow = new Tvshow();
+        tvshow.setDoubanId(req.getDoubanId());
+        tvshow.setTitle(req.getTitle());
+        tvshowManager.matchPath(Paths.get(req.getPath()), tvshow);
         return CommonResult.success(true);
     }
 

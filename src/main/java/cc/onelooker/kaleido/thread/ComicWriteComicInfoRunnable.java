@@ -101,6 +101,7 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
     protected String getMessage(TaskDTO taskDTO, Integer state) {
         ComicBookDTO comicBookDTO = comicBookService.findById(taskDTO.getSubjectId());
         ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(comicBookDTO.getSeriesId());
-        return String.format("%s【%s】<%s>", comicBookDTO.getTitle(), comicSeriesDTO.getTitle(), getStateMessage(state));
+        String title = String.format("%s【%s】", comicBookDTO.getTitle(), comicSeriesDTO.getTitle());
+        return formatMessage(title, state);
     }
 }

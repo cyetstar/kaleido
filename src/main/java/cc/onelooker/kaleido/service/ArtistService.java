@@ -16,4 +16,12 @@ public interface ArtistService extends IBaseService<ArtistDTO> {
     List<ArtistDTO> listByAlbumId(String albumId);
 
     Boolean updateNeteaseId(String id, String neteaseId);
+
+    ArtistDTO findByNeteaseId(String neteaseId);
+
+    ArtistDTO findByMusicbrainzId(String musicbrainzId);
+
+    ArtistDTO findByTitle(String title);
+
+    void updateArtists(List<ArtistDTO> artistList, String albumId);
 }

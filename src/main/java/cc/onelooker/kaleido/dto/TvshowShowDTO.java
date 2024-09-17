@@ -156,21 +156,6 @@ public class TvshowShowDTO implements BaseDTO<String> {
     private List<String> countryList;
 
     /**
-     * 导演列表
-     */
-    private List<ActorDTO> directorList;
-
-    /**
-     * 编剧列表
-     */
-    private List<ActorDTO> writerList;
-
-    /**
-     * 演员列表
-     */
-    private List<ActorDTO> actorList;
-
-    /**
      * 主键队列
      */
     private List<String> idList;

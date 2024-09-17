@@ -209,4 +209,9 @@ public class TempTest {
         ops.close();
     }
 
+    @Test
+    public void listDir() throws IOException {
+        Files.list(Paths.get("/Volumes/comic/import/")).forEach(System.out::println);
+    }
+
 }

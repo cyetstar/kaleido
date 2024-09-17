@@ -7,5 +7,5 @@ package cc.onelooker.kaleido.enums;
  */
 public enum SubjectType {
 
-    MovieBasic, ComicSeries, ComicBook, TvshowShow, TvshowSeason, TvshowEpisode
+    MovieBasic, ComicSeries, ComicBook, TvshowShow, TvshowSeason, MusicAlbum, MusicTrack, TvshowEpisode
 }

@@ -19,4 +19,6 @@ public class TvshowShowMatchPathReq {
     private String tmdbId;
 
     private String tvdbId;
+
+    private String title;
 }

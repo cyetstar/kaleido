@@ -1,9 +1,12 @@
 package cc.onelooker.kaleido.dto.resp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,6 +27,9 @@ public class TvshowShowViewResp {
 
     @ApiModelProperty("原剧集名")
     private String originalTitle;
+
+    @ApiModelProperty("排序名")
+    private String sortTitle;
 
     @ApiModelProperty("制片公司")
     private String studio;
@@ -61,31 +67,42 @@ public class TvshowShowViewResp {
     @ApiModelProperty("TMDB编号")
     private String tmdbId;
 
+    @ApiModelProperty("路径")
+    private String path;
+
     @ApiModelProperty("加入时间")
     private Long addedAt;
 
     @ApiModelProperty("更新时间")
     private Long updatedAt;
 
+    @ApiModelProperty("国家地区")
+    private List<String> countryList;
+
+    @ApiModelProperty("语言")
+    private List<String> languageList;
+
+    @ApiModelProperty("类型")
     private List<String> genreList;
 
-    private List<Actor> actorList;
+    @ApiModelProperty("别名")
+    private List<String> akaList;
 
-    @Data
-    public static class Actor {
+    @ApiModelProperty("标签")
+    private List<String> tagList;
 
-        private String id;
+    @ApiModelProperty("导演")
+    private List<ActorViewResp> directorList;
 
-        private String name;
+    @ApiModelProperty("编剧")
+    private List<ActorViewResp> writerList;
 
-        private String cnName;
+    @ApiModelProperty("主演")
+    private List<ActorViewResp> actorList;
 
-        private String thumb;
-
-        private String role;
-
-        private String playRole;
-
+    @JsonProperty
+    public List<String> summaryList() {
+        return Arrays.asList(StringUtils.split(summary, "\n"));
     }
 
 }

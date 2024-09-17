@@ -1,20 +1,22 @@
 package cc.onelooker.kaleido.service.impl;
 
 import cc.onelooker.kaleido.convert.ArtistConvert;
-import cc.onelooker.kaleido.dto.MusicAlbumArtistDTO;
 import cc.onelooker.kaleido.dto.ArtistDTO;
+import cc.onelooker.kaleido.dto.MusicAlbumArtistDTO;
 import cc.onelooker.kaleido.entity.ArtistDO;
 import cc.onelooker.kaleido.mapper.ArtistMapper;
-import cc.onelooker.kaleido.service.MusicAlbumArtistService;
 import cc.onelooker.kaleido.service.ArtistService;
+import cc.onelooker.kaleido.service.MusicAlbumArtistService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -68,10 +70,85 @@ public class ArtistServiceImpl extends AbstractBaseServiceImpl<ArtistMapper, Art
     }
 
     @Override
+    public ArtistDTO findByNeteaseId(String neteaseId) {
+        Validate.notEmpty(neteaseId);
+        ArtistDTO param = new ArtistDTO();
+        param.setNeteaseId(neteaseId);
+        return find(param);
+    }
+
+    @Override
+    public ArtistDTO findByMusicbrainzId(String musicbrainzId) {
+        Validate.notEmpty(musicbrainzId);
+        ArtistDTO param = new ArtistDTO();
+        param.setMusicbrainzId(musicbrainzId);
+        return find(param);
+    }
+
+    @Override
+    public ArtistDTO findByTitle(String title) {
+        Validate.notEmpty(title);
+        ArtistDTO param = new ArtistDTO();
+        param.setTitle(title);
+        return find(param);
+    }
+
+    @Override
+    @Transactional
     public Boolean updateNeteaseId(String id, String neteaseId) {
         ArtistDO artistDO = new ArtistDO();
         artistDO.setId(id);
         artistDO.setNeteaseId(neteaseId);
         return SqlHelper.retBool(baseMapper.updateById(artistDO));
+    }
+
+    @Override
+    @Transactional
+    public void updateArtists(List<ArtistDTO> artistDTOList, String albumId) {
+        if (artistDTOList == null) {
+            return;
+        }
+        musicMusicAlbumArtistService.deleteByAlbumId(albumId);
+        artistDTOList.forEach(s -> {
+            MusicAlbumArtistDTO musicAlbumArtistDTO = new MusicAlbumArtistDTO();
+            musicAlbumArtistDTO.setAlbumId(albumId);
+            if (StringUtils.isEmpty(s.getId())) {
+                ArtistDTO artistDTO = findOrSave(s);
+                musicAlbumArtistDTO.setArtistId(artistDTO.getId());
+            } else {
+                musicAlbumArtistDTO.setArtistId(s.getId());
+            }
+            musicMusicAlbumArtistService.insert(musicAlbumArtistDTO);
+        });
+
+    }
+
+    private ArtistDTO findOrSave(ArtistDTO dto) {
+        ArtistDTO artistDTO = null;
+        if (StringUtils.isNotEmpty(dto.getNeteaseId())) {
+            artistDTO = findByNeteaseId(dto.getNeteaseId());
+        }
+        if (artistDTO == null && StringUtils.isNotEmpty(dto.getMusicbrainzId())) {
+            artistDTO = findByMusicbrainzId(dto.getMusicbrainzId());
+        }
+        if (artistDTO == null && StringUtils.isNotEmpty(dto.getTitle())) {
+            artistDTO = findByTitle(dto.getTitle());
+        }
+        if (artistDTO == null) {
+            artistDTO = new ArtistDTO();
+            artistDTO.setTitle(dto.getTitle());
+            artistDTO.setSummary(dto.getSummary());
+            artistDTO.setThumb(dto.getThumb());
+            artistDTO.setNeteaseId(dto.getNeteaseId());
+            artistDTO.setMusicbrainzId(dto.getMusicbrainzId());
+            artistDTO = insert(artistDTO);
+        } else {
+            artistDTO.setTitle(dto.getTitle());
+            artistDTO.setThumb(StringUtils.defaultString(dto.getThumb(), artistDTO.getThumb()));
+            artistDTO.setNeteaseId(StringUtils.defaultString(dto.getNeteaseId(), artistDTO.getNeteaseId()));
+            artistDTO.setMusicbrainzId(StringUtils.defaultString(dto.getMusicbrainzId(), artistDTO.getMusicbrainzId()));
+            update(artistDTO);
+        }
+        return artistDTO;
     }
 }

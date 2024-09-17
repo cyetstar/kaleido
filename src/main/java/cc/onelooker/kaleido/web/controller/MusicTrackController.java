@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.convert.MusicTrackConvert;
+import cc.onelooker.kaleido.dto.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.MusicTrackDTO;
 import cc.onelooker.kaleido.dto.req.MusicTrackCreateReq;
 import cc.onelooker.kaleido.dto.req.MusicTrackDownloadLyricReq;
@@ -10,10 +11,10 @@ import cc.onelooker.kaleido.dto.resp.MusicTrackCreateResp;
 import cc.onelooker.kaleido.dto.resp.MusicTrackListByAlbumIdResp;
 import cc.onelooker.kaleido.dto.resp.MusicTrackPageResp;
 import cc.onelooker.kaleido.dto.resp.MusicTrackViewResp;
-import cc.onelooker.kaleido.enums.ConfigKey;
+import cc.onelooker.kaleido.service.MusicAlbumService;
 import cc.onelooker.kaleido.service.MusicManager;
 import cc.onelooker.kaleido.service.MusicTrackService;
-import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
@@ -31,7 +32,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,6 +49,9 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
 
     @Autowired
     private MusicTrackService musicTrackService;
+
+    @Autowired
+    private MusicAlbumService musicAlbumService;
 
     @Autowired
     private MusicManager musicManager;
@@ -90,11 +93,11 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
 
     @GetMapping("listByAlbumId")
     public CommonResult<Collection<List<MusicTrackListByAlbumIdResp>>> listByAlbumId(String albumId) {
+        MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(albumId);
         List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(albumId);
-        String musicLibraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
         List<MusicTrackListByAlbumIdResp> respList = Lists.newArrayList();
         for (MusicTrackDTO musicTrackDTO : musicTrackDTOList) {
-            File file = Paths.get(musicLibraryPath, FilenameUtils.removeExtension(musicTrackDTO.getPath()) + ".lrc").toFile();
+            File file = KaleidoUtils.getMusicFilePath(musicAlbumDTO.getPath(), FilenameUtils.getBaseName(musicTrackDTO.getFilename()) + ".lrc").toFile();
             MusicTrackListByAlbumIdResp resp = MusicTrackConvert.INSTANCE.convertToListByAlbumIdResp(musicTrackDTO);
             resp.setHasLyric(file.exists() && file.length() > 0 ? Constants.YES : Constants.NO);
             respList.add(resp);
@@ -106,17 +109,17 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
     @GetMapping("viewLyric")
     public CommonResult<List<String>> viewLyric(String id) throws IOException {
         MusicTrackDTO musicTrackDTO = musicTrackService.findById(id);
-        String musicLibraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
-        File file = Paths.get(musicLibraryPath, FilenameUtils.removeExtension(musicTrackDTO.getPath()) + ".lrc").toFile();
+        MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(musicTrackDTO.getAlbumId());
+        File file = KaleidoUtils.getMusicFilePath(musicAlbumDTO.getPath(), FilenameUtils.getBaseName(musicTrackDTO.getFilename()) + ".lrc").toFile();
         String content = FileUtils.readFileToString(file);
         List<String> result = Arrays.asList(StringUtils.split(content, "\n"));
         return CommonResult.success(result);
     }
 
-    @PostMapping("downloadLyric")
-    public CommonResult<Boolean> downloadLyric(@RequestBody MusicTrackDownloadLyricReq req) {
-        musicManager.downloadTrackLyric(req.getId(), req.getNeteaseId());
-        return CommonResult.success(true);
-    }
+//    @PostMapping("downloadLyric")
+//    public CommonResult<Boolean> downloadLyric(@RequestBody MusicTrackDownloadLyricReq req) {
+//        musicManager.downloadTrackLyric(req.getId(), req.getNeteaseId());
+//        return CommonResult.success(true);
+//    }
 
 }

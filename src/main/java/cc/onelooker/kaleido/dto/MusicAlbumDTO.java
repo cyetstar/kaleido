@@ -4,6 +4,8 @@ import cc.onelooker.kaleido.entity.MusicAlbumDO;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 专辑DTO
  *
@@ -121,6 +123,14 @@ public class MusicAlbumDTO implements BaseDTO<String> {
      * 首发年代
      */
     private String decade;
+
+    private List<String> styleList;
+
+    private List<String> genreList;
+
+    private List<String> moodList;
+
+    private List<ArtistDTO> artistList;
 
     @Override
     public String getId() {

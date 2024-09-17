@@ -137,13 +137,13 @@ public class ComicManager {
     }
 
     @Transactional
-    public void matchPath(Path path, String bgmId) {
+    public void matchPath(Path path, Comic comic) {
         try {
             ComicInfoNFO comicInfoNFO = new ComicInfoNFO();
-            comicInfoNFO.setSeriesBgmId(bgmId);
+            comicInfoNFO.setSeriesBgmId(comic.getBgmId());
             Path importPath = KaleidoUtils.getComicImportPath();
-            String filename = FilenameUtils.getBaseName(path.getFileName().toString());
-            Path newPath = importPath.resolve(StringUtils.defaultIfEmpty(bgmId, filename));
+            String filename = StringUtils.defaultString(comic.getSeries(), StringUtils.EMPTY) + "(" + comic.getBgmId() + ")";
+            Path newPath = importPath.resolve(StringUtils.defaultIfEmpty(filename, FilenameUtils.getBaseName(path.getFileName().toString())));
             if (Files.isDirectory(path)) {
                 if (!StringUtils.equals(newPath.toString(), path.toString())) {
                     NioFileUtils.renameDir(path, newPath, StandardCopyOption.REPLACE_EXISTING);
@@ -339,14 +339,12 @@ public class ComicManager {
     private void readComicInfo(ComicSeriesDTO comicSeriesDTO) {
         try {
             Path path = KaleidoUtils.getComicPath(comicSeriesDTO.getPath());
-            Path zipPath = Files.list(path).filter(s -> StringUtils.equalsAny(FilenameUtils.getExtension(s.getFileName().toString()), "zip", "cbz")).findFirst().orElse(null);
+            Path zipPath = Files.list(path).filter(s -> KaleidoUtils.isComicZipFile(s.getFileName().toString())).findFirst().orElse(null);
             if (zipPath == null) {
                 return;
             }
-            Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), zipPath.toFile());
             Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), "kaleido");
-            extractor.extract(tempPath.toFile(), f -> StringUtils.equals(f.getName(), KaleidoConstants.COMIC_INFO));
-            extractor.close();
+            unzip(zipPath, tempPath);
             if (Files.notExists(tempPath.resolve(KaleidoConstants.COMIC_INFO))) {
                 return;
             }
@@ -355,11 +353,12 @@ public class ComicManager {
                 return;
             }
             comicSeriesDTO.setYear(comicInfoNFO.getYear());
+            comicSeriesDTO.setBookCount(comicInfoNFO.getCount());
             comicSeriesDTO.setStatus(comicInfoNFO.getSeriesStatus());
             comicSeriesDTO.setBgmId(StringUtils.defaultIfEmpty(comicSeriesDTO.getBgmId(), comicInfoNFO.getSeriesBgmId()));
             comicSeriesDTO.setRating(NumberUtil.parseFloat(comicInfoNFO.getCommunityRating(), null));
             comicSeriesDTO.setAlternateTitleList(comicInfoNFO.getAkas());
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("== 读取漫画信息异常: {}", ExceptionUtil.getMessage(e));
             ExceptionUtil.wrapAndThrow(e);
         }

@@ -67,7 +67,9 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
     @GetMapping("view")
     @ApiOperation(value = "查看单季详情")
     public CommonResult<TvshowSeasonViewResp> view(String id) {
-        return super.view(id, TvshowSeasonConvert.INSTANCE::convertToViewResp);
+        TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(id);
+        TvshowSeasonViewResp resp = TvshowSeasonConvert.INSTANCE.convertToViewResp(tvshowSeasonDTO);
+        return CommonResult.success(resp);
     }
 
     @PostMapping("create")

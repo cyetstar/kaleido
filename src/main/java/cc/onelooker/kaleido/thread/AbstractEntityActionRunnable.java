@@ -38,14 +38,14 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
     protected abstract PageResult<T> page(Map<String, String> params, int pageNumber, int pageSize);
 
     protected String getMessage(T entity, Integer state) {
-        return entity.toString() + "<" + getStateMessage(state) + ">";
+        return formatMessage(entity.toString(), state);
     }
 
-    protected String getStateMessage(Integer state) {
+    protected String formatMessage(String title, Integer state) {
         if (state == null) {
             state = 1;
         }
-        return "[" + MapUtils.getString(stateMap, state, "异常") + "]";
+        return String.format("%s <%s>", title, MapUtils.getString(stateMap, state, "异常"));
     }
 
     @Override

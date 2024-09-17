@@ -4,6 +4,8 @@ import cc.onelooker.kaleido.entity.ArtistDO;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 艺术家DTO
  *
@@ -68,6 +70,10 @@ public class ArtistDTO implements BaseDTO<String> {
     // ------ 非数据库表字段 -------
 
     private String keyword;
+
+    private List<String> styleList;
+
+    private List<String> genreList;
 
     @Override
     public String getId() {
