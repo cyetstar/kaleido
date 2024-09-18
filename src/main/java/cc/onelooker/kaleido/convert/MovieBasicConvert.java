@@ -35,6 +35,11 @@ public interface MovieBasicConvert {
 
     MovieBasicDTO convertToDTO(MovieBasicCreateReq req);
 
+    @Mappings({
+            @Mapping(target = "directorList", ignore = true),
+            @Mapping(target = "writerList", ignore = true),
+            @Mapping(target = "actorList", ignore = true),
+    })
     MovieBasicDTO convertToDTO(MovieBasicUpdateReq req);
 
     MovieBasicPageResp convertToPageResp(MovieBasicDTO dto);

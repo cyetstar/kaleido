@@ -101,21 +101,22 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
         return super.delete(id);
     }
 
-    @GetMapping("searchNetease")
-    public CommonResult<List<MusicAlbumSearchNeteaseResp>> searchNetease(MusicAlbumSearchNeteaseReq req) {
-        List<Album> albumList = neteaseApiService.searchAlbum(req.getKeywords(), req.getLimit());
-        List<MusicAlbumSearchNeteaseResp> respList = Lists.newArrayList();
+    @GetMapping("searchInfo")
+    public CommonResult<List<MusicAlbumSearchInfoResp>> searchInfo(MusicAlbumSearchInfoReq req) {
+        List<Album> albumList = neteaseApiService.searchAlbum(req.getKeyword());
+        List<MusicAlbumSearchInfoResp> respList = Lists.newArrayList();
         for (Album album : albumList) {
-            MusicAlbumSearchNeteaseResp resp = MusicAlbumConvert.INSTANCE.convertToSearchNeteaseResp(album);
+            MusicAlbumSearchInfoResp resp = MusicAlbumConvert.INSTANCE.convertToSearchNeteaseResp(album);
             resp.setPublishTime(DateTimeUtils.parseTimestamp(album.getPublishTime()));
             respList.add(resp);
         }
         return CommonResult.success(respList);
     }
 
-    @PostMapping("matchNetease")
-    public CommonResult<Boolean> matchNetease(@RequestBody MusicAlbumMatchNeteaseReq req) {
-        musicManager.matchInfo(req.getId(), req.getNeteaseId());
+    @PostMapping("matchInfo")
+    public CommonResult<Boolean> matchInfo(@RequestBody MusicAlbumMatchInfoReq req) {
+        Album album = neteaseApiService.getAlbum(req.getNeteaseId());
+        musicManager.matchInfo(req.getId(),album);
         return CommonResult.success(true);
     }
 

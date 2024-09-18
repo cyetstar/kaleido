@@ -71,10 +71,10 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
     protected int processEntity(Map<String, String> params, TaskDTO taskDTO) throws Exception {
         ComicBookDTO comicBookDTO = comicBookService.findById(taskDTO.getSubjectId());
         ComicSeriesDTO comicSeriesDTO = comicManager.findSeriesById(comicBookDTO.getSeriesId());
-        ComicInfoNFO comicInfoNFO = readComicInfoNFO(comicBookDTO);
+        ComicInfoNFO comicInfoNFO = readComicInfoNFO(comicSeriesDTO, comicBookDTO);
         ComicInfoNFO newComicInfoNFO = NFOUtil.toComicInfoNFO(comicSeriesDTO, comicBookDTO);
         if (comicInfoNFO == null || !Objects.equals(comicInfoNFO, newComicInfoNFO)) {
-            comicManager.writeComicInfo(comicBookDTO, newComicInfoNFO);
+            comicManager.writeComicInfo(comicSeriesDTO, comicBookDTO, newComicInfoNFO);
             taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
             return SUCCESS;
         }
@@ -88,9 +88,9 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
         taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_ERROR);
     }
 
-    private ComicInfoNFO readComicInfoNFO(ComicBookDTO comicBookDTO) {
-        Path path = KaleidoUtils.getComicPath(comicBookDTO.getPath());
-        Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), path.toFile());
+    private ComicInfoNFO readComicInfoNFO(ComicSeriesDTO comicSeriesDTO, ComicBookDTO comicBookDTO) {
+        Path comicFilePath = KaleidoUtils.getComicFilePath(comicSeriesDTO.getPath(), comicBookDTO.getFilename());
+        Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), comicFilePath.toFile());
         Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), "kaleido");
         extractor.extract(tempPath.toFile(), f -> StringUtils.equals(f.getName(), KaleidoConstants.COMIC_INFO));
         extractor.close();

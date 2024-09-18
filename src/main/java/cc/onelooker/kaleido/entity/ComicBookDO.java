@@ -63,10 +63,10 @@ public class ComicBookDO implements IdEntity<String> {
     private Integer pageCount;
 
     /**
-     * 路径
+     * 文件名
      */
-    @TableField(value = "path")
-    private String path;
+    @TableField(value = "filename")
+    private String filename;
 
     /**
      * 文件大小

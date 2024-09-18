@@ -51,9 +51,9 @@ public class ComicBookDTO implements BaseDTO<String> {
     private Integer pageCount;
 
     /**
-     * 路径
+     * 文件名
      */
-    private String path;
+    private String filename;
 
     /**
      * 文件大小

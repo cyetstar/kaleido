@@ -48,7 +48,7 @@ public interface MusicAlbumConvert {
             @Mapping(source = "name", target = "title"),
             @Mapping(source = "artist.name", target = "artist"),
     })
-    MusicAlbumSearchNeteaseResp convertToSearchNeteaseResp(Album album);
+    MusicAlbumSearchInfoResp convertToSearchNeteaseResp(Album album);
 
     MusicAlbumListByArtistIdResp convertToListByArtistIdResp(MusicAlbumDTO musicAlbumDTO);
 

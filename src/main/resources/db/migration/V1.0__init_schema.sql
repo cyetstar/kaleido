@@ -279,6 +279,39 @@ create index subject_id on alternate_title
      subject_id
         );
 
+create table artist
+(
+    id             varchar(36) not null comment '主键',
+    title          varchar(500) comment '名称',
+    title_sort     varchar(500) comment '排序名称',
+    area           varchar(100) comment '国家地区',
+    summary        text comment '简介',
+    thumb          varchar(500) comment '封面图',
+    musicbrainz_id varchar(36) comment 'MusicBrainz编号',
+    netease_id     varchar(36) comment '网易云音乐编号',
+    added_at       bigint comment '加入时间',
+    updated_at     bigint comment '更新时间',
+    primary key (id)
+);
+
+alter table artist
+    comment '艺术家';
+
+create index title on artist
+    (
+     title
+        );
+
+create index musicbrainz_id on artist
+    (
+     musicbrainz_id
+        );
+
+create index netease_id on artist
+    (
+     netease_id
+        );
+
 create table attribute
 (
     id    varchar(36) not null comment '主键',
@@ -315,7 +348,7 @@ create table comic_book
     book_number       int comment '卷号',
     sort_number       int comment '排序号',
     page_count        int comment '页数',
-    path              varchar(500) comment '路径',
+    filename          varchar(500) comment '路径',
     file_size         bigint comment '文件大小',
     bgm_id            varchar(36) comment '番组计划编号',
     cover_page_number int comment '封面页码',
@@ -344,7 +377,7 @@ create table comic_series
     book_count     int comment '卷数',
     rating         decimal(8, 2) comment '评分',
     status         varchar(10) comment '状态',
-    path           varchar(500) comment '路径',
+    filename       varchar(500) comment '路径',
     bgm_id         varchar(36) comment '番组计划编号',
     added_at       bigint comment '加入时间',
     updated_at     bigint comment '更新时间',
@@ -396,7 +429,7 @@ create table movie_basic
     id                      varchar(36)  not null comment '主键',
     title                   varchar(500) not null comment '电影名',
     original_title          varchar(500) comment '原片名',
-    title_sort              varchar(500) comment '排序名',
+    sort_title              varchar(500) comment '排序名',
     year                    varchar(10) comment '首映年份',
     thumb                   varchar(500) comment '海报',
     art                     varchar(500) comment '艺术图',
@@ -554,13 +587,16 @@ create table music_album
     artists                 varchar(500) comment '艺术家',
     summary                 text comment '简介',
     type                    varchar(50) comment '专辑类型',
+    genre                   varchar(50) comment '音乐流派',
     release_country         varchar(100) comment '发行国家',
     label                   varchar(200) comment '唱片公司',
     year                    varchar(4) comment '首发年份',
     originally_available_at varchar(10) comment '首发日期',
-    disc_count              int comment '碟数',
-    track_count             int comment '音轨数',
+    total_discs             int comment '碟数',
+    total_tracks            int comment '音轨数',
+    media                   varchar(50) comment '媒体',
     thumb                   varchar(500) comment '封面图',
+    path                    varchar(500) comment '路径',
     musicbrainz_id          varchar(36) comment 'MusicBrainz编号',
     netease_id              varchar(36) comment '网易云音乐编号',
     added_at                bigint comment '加入时间',
@@ -571,40 +607,7 @@ create table music_album
 alter table music_album
     comment '专辑';
 
-create table music_artist
-(
-    id             varchar(36) not null comment '主键',
-    title          varchar(500) comment '名称',
-    title_sort     varchar(500) comment '排序名称',
-    area           varchar(100) comment '国家地区',
-    summary        text comment '简介',
-    thumb          varchar(500) comment '封面图',
-    musicbrainz_id varchar(36) comment 'MusicBrainz编号',
-    netease_id     varchar(36) comment '网易云音乐编号',
-    added_at       bigint comment '加入时间',
-    updated_at     bigint comment '更新时间',
-    primary key (id)
-);
-
-alter table music_artist
-    comment '艺术家';
-
-create index title on music_artist
-    (
-     title
-        );
-
-create index musicbrainz_id on music_artist
-    (
-     musicbrainz_id
-        );
-
-create index netease_id on music_artist
-    (
-     netease_id
-        );
-
-create table music_artist_album
+create table music_album_artist
 (
     id        varchar(36) not null comment '主键',
     album_id  varchar(36) comment '专辑id',
@@ -612,15 +615,15 @@ create table music_artist_album
     primary key (id)
 );
 
-alter table music_artist_album
+alter table music_album_artist
     comment '艺术家专辑关联表';
 
-create index album_id on music_artist_album
+create index album_id on music_album_artist
     (
      album_id
         );
 
-create index artist_id on music_artist_album
+create index artist_id on music_album_artist
     (
      artist_id
         );
@@ -632,10 +635,10 @@ create table music_track
     title          varchar(500) comment '标题',
     artists        varchar(500) comment '艺术家',
     duration       int comment '曲长(毫秒)',
-    track_number   int comment '曲号',
-    disc_number    int comment '碟号',
+    track_index    int comment '曲号',
+    disc_index     int comment '碟号',
     format         varchar(20) comment '文件格式',
-    path           varchar(500) comment '文件路径',
+    filename       varchar(500) comment '文件名',
     musicbrainz_id varchar(36) comment 'MusicBrainz编号',
     netease_id     varchar(36) comment '网易云音乐编号',
     added_at       bigint comment '加入时间',
@@ -702,17 +705,20 @@ create table tvshow_episode
     show_id                 varchar(36) comment '剧集id',
     season_id               varchar(36) comment '单季id',
     title                   varchar(500) comment '标题',
+    original_title          varchar(500) comment '原标题',
     studio                  varchar(200) comment '制片公司',
     content_rating          varchar(10) comment '剧集评级',
     summary                 text comment '简介',
     year                    varchar(10) comment '首播年份',
     originally_available_at varchar(10) comment '首播日期',
-    season_number           int comment '季号',
-    episode_number          int comment '集号',
+    episode_index           int comment '集号',
+    season_index            int comment '季号',
     rating                  decimal(8, 2) comment '评分',
     duration                int comment '片长(秒)',
     thumb                   varchar(500) comment '海报',
     art                     varchar(500) comment '艺术图',
+    filename                varchar(500) comment '文件名',
+    tmdb_id                 varchar(36) comment 'TMDB编号',
     added_at                bigint comment '加入时间',
     updated_at              bigint comment '更新时间',
     primary key (id)
@@ -737,11 +743,12 @@ create table tvshow_season
     show_id                 varchar(36) comment '剧集id',
     title                   varchar(500) comment '标题',
     original_title          varchar(500) comment '原标题',
+    sort_title              varchar(500) comment '排序名',
     summary                 text comment '简介',
     year                    varchar(10) comment '首映年份',
     originally_available_at varchar(10) comment '首播日期',
     rating                  decimal(8, 2) comment '评分',
-    season_number           int comment '季号',
+    season_index            int comment '季号',
     thumb                   varchar(500) comment '海报',
     art                     varchar(500) comment '艺术图',
     imdb_id                 varchar(36) comment 'IMDb编号',
@@ -773,7 +780,6 @@ create table tvshow_season_actor
 alter table tvshow_season_actor
     comment '单季演职员关联表';
 
-
 create index season_id on tvshow_season_actor
     (
      season_id
@@ -784,12 +790,12 @@ create index actor_id on tvshow_season_actor
      actor_id
         );
 
-
 create table tvshow_show
 (
     id                      varchar(36) not null comment '主键',
     title                   varchar(500) comment '剧集名',
     original_title          varchar(500) comment '原剧集名',
+    sort_title              varchar(500) comment '排序名',
     studio                  varchar(200) comment '制片公司',
     content_rating          varchar(10) comment '剧集评级',
     summary                 text comment '简介',
@@ -799,7 +805,7 @@ create table tvshow_show
     thumb                   varchar(500) comment '海报',
     art                     varchar(500) comment '艺术图',
     path                    varchar(500) comment '路径',
-    season_count            int comment '季数',
+    total_seasons           int comment '季数',
     imdb_id                 varchar(36) comment 'IMDb编号',
     douban_id               varchar(36) comment '豆瓣编号',
     tmdb_id                 varchar(36) comment 'TMDB编号',

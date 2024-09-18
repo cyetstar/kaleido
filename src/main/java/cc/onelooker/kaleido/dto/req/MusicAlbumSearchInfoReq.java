@@ -8,10 +8,11 @@ import lombok.Data;
  * @Description TODO
  */
 @Data
-public class MusicAlbumSearchNeteaseReq {
+public class MusicAlbumSearchInfoReq {
 
-    private String keywords;
+    private String keyword;
 
-    private Integer limit = 30;
+    private String type;
+
 }
 

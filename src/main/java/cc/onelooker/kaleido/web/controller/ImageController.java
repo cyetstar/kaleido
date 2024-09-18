@@ -5,8 +5,8 @@ import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.service.ComicBookService;
 import cc.onelooker.kaleido.service.ComicSeriesService;
 import cc.onelooker.kaleido.third.komga.KomgaApiService;
+import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
@@ -46,13 +46,12 @@ public class ImageController {
         Path coverPath = null;
         if (StringUtils.equals(type, "book")) {
             ComicBookDTO comicBookDTO = comicBookService.findById(id);
-            Path path = KaleidoUtils.getComicPath(comicBookDTO.getPath());
-            String fileName = FilenameUtils.getBaseName(path.getFileName().toString());
-            coverPath = path.resolveSibling(fileName + ".jpg");
+            ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(comicBookDTO.getSeriesId());
+            coverPath = KaleidoUtils.getComicBookCoverPath(comicSeriesDTO.getPath(), comicBookDTO.getFilename());
         } else {
             ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(id);
             Path path = KaleidoUtils.getComicPath(comicSeriesDTO.getPath());
-            coverPath = path.resolve("cover.jpg");
+            coverPath = path.resolve(KaleidoConstants.COMIC_COVER);
         }
         if (Files.exists(coverPath)) {
             content = Files.readAllBytes(coverPath);

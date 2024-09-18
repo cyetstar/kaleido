@@ -9,7 +9,7 @@ import lombok.Data;
  * @Description TODO
  */
 @Data
-public class MusicAlbumSearchNeteaseResp {
+public class MusicAlbumSearchInfoResp {
 
     private String neteaseId;
 

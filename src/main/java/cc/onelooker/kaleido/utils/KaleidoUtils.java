@@ -169,6 +169,19 @@ public class KaleidoUtils {
     }
 
     //-----------comic--------------//
+    public static Path getComicFilePath(String path, String filename) {
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        path = FilenameUtils.concat(path, filename);
+        return getComicLibraryPath().resolve(path);
+    }
+
+    public static Path getComicBookCoverPath(String path, String filename) {
+        filename = FilenameUtils.getBaseName(filename) + ".jpg";
+        return getComicFilePath(path, filename);
+    }
+
     public static Path getComicBasicPath(String path) {
         String komgaLibraryPath = ConfigUtils.getSysConfig(ConfigKey.komgaComicLibraryPath);
         path = StringUtils.removeStart(path, komgaLibraryPath);

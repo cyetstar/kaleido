@@ -8,7 +8,7 @@ import lombok.Data;
  * @Description TODO
  */
 @Data
-public class MusicAlbumMatchNeteaseReq {
+public class MusicAlbumMatchInfoReq {
 
     private String id;
 

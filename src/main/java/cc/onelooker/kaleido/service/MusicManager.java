@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -65,9 +64,6 @@ public class MusicManager {
 
     @Autowired
     private TaskService taskService;
-
-    @Autowired
-    private PlexApiService plexApiService;
 
     @Autowired
     private NeteaseApiService neteaseApiService;
@@ -205,8 +201,7 @@ public class MusicManager {
 
     private void readAudioTag(MusicTrackDTO musicTrackDTO) throws Exception {
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(musicTrackDTO.getAlbumId());
-        Path path = Paths.get(musicAlbumDTO.getPath(), musicTrackDTO.getFilename());
-        Path audioPath = KaleidoUtils.getMusicPath(path.toString());
+        Path audioPath = KaleidoUtils.getMusicFilePath(musicAlbumDTO.getPath(), musicTrackDTO.getFilename());
         AudioFile audioFile = AudioFileIO.read(audioPath.toFile());
         Tag tag = audioFile.getTag();
         musicTrackDTO.setArtists(KaleidoUtils.getTagValue(tag, FieldKey.ARTIST));
@@ -249,13 +244,15 @@ public class MusicManager {
     }
 
     @Transactional
-    public void matchInfo(String albumId, String neteaseId) {
-        Album album = neteaseApiService.getAlbum(neteaseId);
+    public void matchInfo(String albumId, Album album) {
+        if (album == null) {
+            return;
+        }
         List<Song> songs = album.getSongs();
         Artist artist = album.getArtist();
 
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(albumId);
-        musicAlbumDTO.setNeteaseId(neteaseId);
+        musicAlbumDTO.setNeteaseId(album.getId());
         musicAlbumDTO.setSummary(album.getDescription());
         musicAlbumService.update(musicAlbumDTO);
 

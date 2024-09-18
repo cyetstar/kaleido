@@ -47,7 +47,7 @@ public class ComicBookServiceImpl extends AbstractBaseServiceImpl<ComicBookMappe
         query.eq(StringUtils.isNotEmpty(dto.getOriginalTitle()), ComicBookDO::getOriginalTitle, dto.getOriginalTitle());
         query.eq(Objects.nonNull(dto.getBookNumber()), ComicBookDO::getBookNumber, dto.getBookNumber());
         query.eq(Objects.nonNull(dto.getPageCount()), ComicBookDO::getPageCount, dto.getPageCount());
-        query.eq(StringUtils.isNotEmpty(dto.getPath()), ComicBookDO::getPath, dto.getPath());
+        query.eq(StringUtils.isNotEmpty(dto.getFilename()), ComicBookDO::getFilename, dto.getFilename());
         query.eq(Objects.nonNull(dto.getFileSize()), ComicBookDO::getFileSize, dto.getFileSize());
         query.eq(StringUtils.isNotEmpty(dto.getBgmId()), ComicBookDO::getBgmId, dto.getBgmId());
         query.eq(Objects.nonNull(dto.getAddedAt()), ComicBookDO::getAddedAt, dto.getAddedAt());

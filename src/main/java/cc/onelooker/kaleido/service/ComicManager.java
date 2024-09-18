@@ -1,10 +1,7 @@
 package cc.onelooker.kaleido.service;
 
 import cc.onelooker.kaleido.dto.*;
-import cc.onelooker.kaleido.enums.AttributeType;
-import cc.onelooker.kaleido.enums.AuthorRole;
-import cc.onelooker.kaleido.enums.SubjectType;
-import cc.onelooker.kaleido.enums.TaskType;
+import cc.onelooker.kaleido.enums.*;
 import cc.onelooker.kaleido.nfo.ComicInfoNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.third.komga.Book;
@@ -13,6 +10,7 @@ import cc.onelooker.kaleido.third.komga.Series;
 import cc.onelooker.kaleido.third.tmm.Comic;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.third.tmm.TmmUtil;
+import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
@@ -81,7 +79,9 @@ public class ComicManager {
         } else {
             comicBookService.update(comicBookDTO);
         }
-        taskService.newTask(comicBookDTO.getId(), SubjectType.ComicBook, TaskType.writeComicInfo);
+        if (ConfigUtils.isEnabled(ConfigKey.writeComicInfo)) {
+            taskService.newTask(comicBookDTO.getId(), SubjectType.ComicBook, TaskType.writeComicInfo);
+        }
     }
 
     @Transactional
@@ -91,7 +91,6 @@ public class ComicManager {
             alternateTitleService.updateTitles(comicSeriesDTO.getAlternateTitleList(), comicSeriesDTO.getId(), SubjectType.ComicSeries);
             authorService.updateAuthors(comicSeriesDTO.getWriterList(), comicSeriesDTO.getId(), AuthorRole.Writer);
             authorService.updateAuthors(comicSeriesDTO.getPencillerList(), comicSeriesDTO.getId(), AuthorRole.Penciller);
-            String oldPath = comicSeriesDTO.getPath();
             renameDirIfChanged(comicSeriesDTO);
             ComicSeriesDTO existComicSeriesDTO = comicSeriesService.findById(comicSeriesDTO.getId());
             if (existComicSeriesDTO == null) {
@@ -99,16 +98,12 @@ public class ComicManager {
             } else {
                 comicSeriesService.update(comicSeriesDTO);
             }
-            List<ComicBookDTO> comicBookDTOList = comicBookService.listBySeriesId(comicSeriesDTO.getId());
-            comicBookDTOList.forEach(s -> {
-                if (!StringUtils.equals(oldPath, comicSeriesDTO.getPath())) {
-                    //如果路径变化
-                    s.setPath(StringUtils.replaceOnce(s.getPath(), oldPath, comicSeriesDTO.getPath()));
-                    comicBookService.update(s);
-                }
-                //生成重写ComicInfo任务
-                taskService.newTask(s.getId(), SubjectType.ComicBook, TaskType.writeComicInfo);
-            });
+            if (ConfigUtils.isEnabled(ConfigKey.writeComicInfo)) {
+                List<ComicBookDTO> comicBookDTOList = comicBookService.listBySeriesId(comicSeriesDTO.getId());
+                comicBookDTOList.forEach(s -> {
+                    taskService.newTask(s.getId(), SubjectType.ComicBook, TaskType.writeComicInfo);
+                });
+            }
         } catch (Exception e) {
             ExceptionUtil.wrapAndThrow(e);
         }
@@ -219,10 +214,10 @@ public class ComicManager {
     }
 
     @Transactional
-    public void writeComicInfo(ComicBookDTO comicBookDTO, ComicInfoNFO comicInfoNFO) {
+    public void writeComicInfo(ComicSeriesDTO comicSeriesDTO, ComicBookDTO comicBookDTO, ComicInfoNFO comicInfoNFO) {
         try {
-            String baseName = FilenameUtils.getBaseName(comicBookDTO.getPath());
-            Path zipPath = KaleidoUtils.getComicPath(comicBookDTO.getPath());
+            String baseName = FilenameUtils.getBaseName(comicBookDTO.getFilename());
+            Path zipPath = KaleidoUtils.getComicFilePath(comicSeriesDTO.getPath(), comicBookDTO.getFilename());
             Path folderPath = zipPath.resolveSibling(baseName);
             unzip(zipPath, folderPath);
             NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, folderPath, KaleidoConstants.COMIC_INFO);

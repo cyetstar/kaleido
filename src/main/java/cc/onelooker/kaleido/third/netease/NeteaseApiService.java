@@ -21,7 +21,7 @@ public class NeteaseApiService {
 
     private String url;
 
-    private final static String API_CLOUDSEARCH = "/cloudsearch?keywords={keywords}&type={type}&limit={limit}";
+    private final static String API_CLOUDSEARCH = "/cloudsearch?keywords={keywords}&type={type}&limit=30";
     private final static String API_ALBUM = "/album?id={id}";
     private final static String API_LYRIC = "/lyric?id={id}";
 
@@ -32,9 +32,9 @@ public class NeteaseApiService {
         this.url = ConfigUtils.getSysConfig(ConfigKey.neteaseUrl);
     }
 
-    public List<Album> searchAlbum(String keywords, Integer limit) {
+    public List<Album> searchAlbum(String keywords) {
         getConfigInfo();
-        JSONObject jsonObject = restTemplate.getForObject(url + API_CLOUDSEARCH, JSONObject.class, keywords, "10", limit);
+        JSONObject jsonObject = restTemplate.getForObject(url + API_CLOUDSEARCH, JSONObject.class, keywords, "10");
         JSONObject resultJsonObject = jsonObject.getJSONObject("result");
         Integer albumCount = resultJsonObject.getInteger("albumCount");
         if (albumCount != null && albumCount > 0) {

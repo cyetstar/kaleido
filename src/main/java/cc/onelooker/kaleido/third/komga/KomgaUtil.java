@@ -5,6 +5,7 @@ import cc.onelooker.kaleido.dto.ComicBookDTO;
 import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.enums.AuthorRole;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
@@ -45,8 +46,8 @@ public class KomgaUtil {
         comicBookDTO.setBookNumber(metadata.getNumber());
         comicBookDTO.setSortNumber(metadata.getNumberSort());
         comicBookDTO.setPageCount(media.getPagesCount());
-        Path path = KaleidoUtils.getComicBasicPath(book.getUrl());
-        comicBookDTO.setPath(path.toString());
+        String filename = FilenameUtils.getName(book.getUrl());
+        comicBookDTO.setFilename(filename);
         comicBookDTO.setBgmId(getBgmId(metadata.getLinks()));
         comicBookDTO.setFileSize(book.getSizeBytes());
         comicBookDTO.setAddedAt(book.getAddedAt());

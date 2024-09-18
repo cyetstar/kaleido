@@ -8,32 +8,46 @@ package cc.onelooker.kaleido.enums;
 public enum ConfigKey {
 
     movieLibraryPath,
-
     tvshowLibraryPath,
-
     musicLibraryPath,
-
     comicLibraryPath,
 
-    plexUrl, plexToken, plexRetries, plexMovieLibraryId, plexMovieLibraryPath,
+    plexUrl,
+    plexToken,
+    plexMovieLibraryId,
+    plexTvshowLibraryId,
+    plexMusicLibraryId,
+    plexMovieLibraryPath,
+    plexTvshowLibraryPath,
+    plexMusicLibraryPath,
 
-    plexTvshowLibraryId, plexTvshowLibraryPath, plexMusicLibraryId, plexMusicLibraryPath,
+    komgaUrl,
+    komgaUsername,
+    komgaPassword,
+    komgaComicLibraryPath,
 
-    neteaseUrl, tmmUrl, doubanApikey, doubanCookie, tmdbApikey,
+    tmmUrl,
+    neteaseUrl,
+    doubanApikey,
+    doubanCookie,
 
-    lastMovieAnalyzeTime, matchInfoSleepSecond, downloadLyricSleepSecond,
-
-    komgaUrl, komgaUsername, komgaPassword, komgaComicLibraryPath,
-
+    lastMovieAnalyzeTime,
     lastMovieMatchInfo,
     lastTvshowMatchInfo,
+    lastMusicMatchInfo,
     lastComicMatchInfo,
-
-    legalSuffix,
 
     writeComicInfo,
     writeMovieNFO,
     writeAudioTag,
     writeTvshowNFO,
-    refreshMetadata, videoExtension, comicZipExtension, audioExtension,
+    refreshMetadata,
+
+    videoExtension,
+    comicZipExtension,
+    audioExtension,
+
+    plexRetries,
+    matchInfoSleepSecond,
+    downloadLyricSleepSecond,
 }

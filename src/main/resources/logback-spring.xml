@@ -82,7 +82,7 @@
         <logger name="com.github.junrar" level="ERROR" additivity="false">
             <appender-ref ref="CONSOLE"/>
         </logger>
-        <logger name="org.jaudiotagger.audio" level="ERROR" additivity="false">
+        <logger name="org.jaudiotagger" level="ERROR" additivity="false">
             <appender-ref ref="CONSOLE"/>
         </logger>
         <root level="INFO">
