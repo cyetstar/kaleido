@@ -348,7 +348,7 @@ create table comic_book
     book_number       int comment '卷号',
     sort_number       int comment '排序号',
     page_count        int comment '页数',
-    filename          varchar(500) comment '路径',
+    filename          varchar(500) comment '文件名',
     file_size         bigint comment '文件大小',
     bgm_id            varchar(36) comment '番组计划编号',
     cover_page_number int comment '封面页码',
@@ -377,7 +377,7 @@ create table comic_series
     book_count     int comment '卷数',
     rating         decimal(8, 2) comment '评分',
     status         varchar(10) comment '状态',
-    filename       varchar(500) comment '路径',
+    path           varchar(500) comment '路径',
     bgm_id         varchar(36) comment '番组计划编号',
     added_at       bigint comment '加入时间',
     updated_at     bigint comment '更新时间',
@@ -616,7 +616,7 @@ create table music_album_artist
 );
 
 alter table music_album_artist
-    comment '艺术家专辑关联表';
+    comment '专辑艺术家关联表';
 
 create index album_id on music_album_artist
     (

@@ -28,6 +28,7 @@ public enum ConfigKey {
 
     tmmUrl,
     neteaseUrl,
+    bgmAccessToken,
     doubanApikey,
     doubanCookie,
 

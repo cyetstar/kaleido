@@ -12,6 +12,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -212,6 +214,12 @@ public class TempTest {
     @Test
     public void listDir() throws IOException {
         Files.list(Paths.get("/Volumes/comic/import/")).forEach(System.out::println);
+    }
+
+    @Test
+    public void encodePassword() {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        System.out.println(passwordEncoder.encode("lenovot430"));
     }
 
 }
