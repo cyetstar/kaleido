@@ -57,7 +57,7 @@ public class MovieCollectionSyncDoubanRunnable extends AbstractEntityActionRunna
             if (start > movieCollectionDTO.getChildCount()) {
                 return new PageResult<>();
             }
-            List<Movie> records = tmmApiService.listDoulistMovie(movieCollectionDTO.getDoubanId(), start);
+            List<Movie> records = tmmApiService.listMovieByDoulist(movieCollectionDTO.getDoubanId(), start);
             PageResult<Movie> pageResult = new PageResult<>();
             pageResult.setTotal((long) movieCollectionDTO.getChildCount());
             pageResult.setSearchCount(true);

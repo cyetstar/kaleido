@@ -110,11 +110,11 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
             TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(tvshowEpisodeDTO.getSeasonId());
             String seasonFolder = KaleidoUtils.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
             Path seasonPath = path.resolve(seasonFolder);
-            String nfoName = FilenameUtils.getBaseName(tvshowEpisodeDTO.getFilename()) + ".nfo";
-            EpisodeNFO episodeNFO = NFOUtil.read(EpisodeNFO.class, seasonPath, nfoName);
+            Path nfoPath = KaleidoUtils.getTvshowEpisodeNFOPath(seasonPath.toString(), tvshowEpisodeDTO.getFilename());
+            EpisodeNFO episodeNFO = NFOUtil.read(EpisodeNFO.class, nfoPath);
             EpisodeNFO newEpisodeNFO = NFOUtil.toEpisodeNFO(tvshowShowDTO, tvshowSeasonDTO, tvshowEpisodeDTO);
             if (episodeNFO == null || !Objects.equals(episodeNFO, newEpisodeNFO)) {
-                NFOUtil.write(episodeNFO, EpisodeNFO.class, path, nfoName);
+                NFOUtil.write(episodeNFO, EpisodeNFO.class, path);
                 if (ConfigUtils.isEnabled(ConfigKey.refreshMetadata)) {
                     //如果大量刷新，否则可能会给Plex带来性能灾难
                     plexApiService.refreshMetadata(tvshowEpisodeDTO.getId());

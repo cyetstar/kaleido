@@ -250,7 +250,7 @@ public class NFOUtil {
         return actorDTO;
     }
 
-    public static <T> void write(T object, Class<T> clazz, Path path, String filename) {
+    public static <T> void write(T object, Class<T> clazz, Path path) {
         try {
             StringWriter writer = new StringWriter();
             XMLStreamWriter streamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
@@ -262,10 +262,14 @@ public class NFOUtil {
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, false);
             marshaller.marshal(object, cdataStreamWriter);
             String content = indentFormat(writer.toString());
-            Files.write(path.resolve(filename), content.getBytes());
+            Files.write(path, content.getBytes());
         } catch (Exception e) {
             throw ExceptionUtil.wrapRuntime(e);
         }
+    }
+
+    public static <T> void write(T object, Class<T> clazz, Path path, String filename) {
+        write(object, clazz, path.resolve(filename));
     }
 
     public static <T> T read(Class<T> clazz, Path path, String filename) {
@@ -274,23 +278,12 @@ public class NFOUtil {
 
     public static <T> T read(Class<T> clazz, Path filePath) {
         try {
+            if (Files.notExists(filePath)) {
+                return null;
+            }
             JAXBContext context = JAXBContext.newInstance(clazz);
             unmarshaller = context.createUnmarshaller();
-
             return clazz.cast(unmarshaller.unmarshal(new InputStreamReader(Files.newInputStream(filePath.toFile().toPath()), StandardCharsets.UTF_8)));
-//            File file = filePath.toFile();
-//            BOMInputStream bis = BOMInputStream.builder().setInputStream(Files.newInputStream(file.toPath()))
-//                    .setInclude(false)
-//                    .setByteOrderMarks(ByteOrderMark.UTF_8, ByteOrderMark.UTF_16LE, ByteOrderMark.UTF_16BE)
-//                    .get();
-//            String charset = "UTF-8";
-//            // 若检测到bom，则使用bom对应的编码
-//            if (bis.hasBOM()) {
-//                charset = bis.getBOMCharsetName();
-//            }
-//            try (InputStreamReader reader = new InputStreamReader(bis, charset)) {
-//                return clazz.cast(unmarshaller.unmarshal(reader));
-//            }
         } catch (Exception e) {
             ExceptionUtil.wrapAndThrow(e);
         }

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -85,7 +84,7 @@ public class TvshowMatchInfoRunnable extends AbstractEntityActionRunnable<Tvshow
     protected int processEntity(Map<String, String> params, TvshowSeasonDTO dto) throws Exception {
         long updatedAt = ObjectUtils.defaultIfNull(dto.getUpdatedAt(), dto.getAddedAt());
         if (updatedAt > lastUpdatedAt || MapUtils.getBooleanValue(params, "force")) {
-            Tvshow tvshow = tmmApiService.findTvshow(dto.getDoubanId(), dto.getImdbId(), dto.getTmdbId());
+            Tvshow tvshow = tmmApiService.findShow(dto.getDoubanId(), dto.getImdbId(), dto.getTmdbId());
             if (tvshow == null) {
                 return IGNORE;
             }

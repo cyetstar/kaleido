@@ -12,7 +12,7 @@ public class MusicAlbumSearchInfoReq {
 
     private String keyword;
 
-    private String type;
+    private String source;
 
 }
 

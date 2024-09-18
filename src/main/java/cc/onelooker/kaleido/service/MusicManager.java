@@ -8,13 +8,12 @@ import cc.onelooker.kaleido.enums.AttributeType;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.enums.TaskType;
-import cc.onelooker.kaleido.third.netease.Album;
-import cc.onelooker.kaleido.third.netease.Artist;
-import cc.onelooker.kaleido.third.netease.NeteaseApiService;
-import cc.onelooker.kaleido.third.netease.Song;
+import cc.onelooker.kaleido.third.tmm.Album;
+import cc.onelooker.kaleido.third.tmm.Artist;
+import cc.onelooker.kaleido.third.tmm.Song;
 import cc.onelooker.kaleido.third.plex.Metadata;
-import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.third.plex.PlexUtil;
+import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
@@ -66,7 +65,7 @@ public class MusicManager {
     private TaskService taskService;
 
     @Autowired
-    private NeteaseApiService neteaseApiService;
+    private TmmApiService tmmApiService;
 
     @Transactional
     public void saveArtist(ArtistDTO artistDTO) {
@@ -231,7 +230,7 @@ public class MusicManager {
         List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(musicAlbumDTO.getId());
         musicTrackDTOList.forEach(s -> {
             try {
-                String lyric = neteaseApiService.getLyric(s.getNeteaseId());
+                String lyric = tmmApiService.findLyric(s.getNeteaseId());
                 if (StringUtils.isNotEmpty(lyric)) {
                     Path musicFilePath = KaleidoUtils.getMusicFilePath(musicAlbumDTO.getPath(), s.getFilename());
                     File lyricFile = musicFilePath.resolveSibling(FilenameUtils.getBaseName(s.getFilename()) + ".lrc").toFile();

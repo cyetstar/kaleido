@@ -8,10 +8,10 @@ import cc.onelooker.kaleido.dto.resp.*;
 import cc.onelooker.kaleido.service.ArtistService;
 import cc.onelooker.kaleido.service.MusicAlbumService;
 import cc.onelooker.kaleido.service.MusicManager;
-import cc.onelooker.kaleido.third.netease.Album;
-import cc.onelooker.kaleido.third.netease.NeteaseApiService;
+import cc.onelooker.kaleido.third.tmm.Album;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cn.hutool.http.HttpUtil;
 import com.google.common.collect.Lists;
@@ -57,7 +57,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     private MusicManager musicManager;
 
     @Autowired
-    private NeteaseApiService neteaseApiService;
+    private TmmApiService tmmApiService;
 
     @Autowired
     private PlexApiService plexApiService;
@@ -103,7 +103,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
 
     @GetMapping("searchInfo")
     public CommonResult<List<MusicAlbumSearchInfoResp>> searchInfo(MusicAlbumSearchInfoReq req) {
-        List<Album> albumList = neteaseApiService.searchAlbum(req.getKeyword());
+        List<Album> albumList = tmmApiService.searchAlbum(req.getKeyword(), req.getSource());
         List<MusicAlbumSearchInfoResp> respList = Lists.newArrayList();
         for (Album album : albumList) {
             MusicAlbumSearchInfoResp resp = MusicAlbumConvert.INSTANCE.convertToSearchNeteaseResp(album);
@@ -115,8 +115,8 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
 
     @PostMapping("matchInfo")
     public CommonResult<Boolean> matchInfo(@RequestBody MusicAlbumMatchInfoReq req) {
-        Album album = neteaseApiService.getAlbum(req.getNeteaseId());
-        musicManager.matchInfo(req.getId(),album);
+        Album album = tmmApiService.findAlbum(req.getNeteaseId());
+        musicManager.matchInfo(req.getId(), album);
         return CommonResult.success(true);
     }
 
@@ -143,7 +143,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @ApiOperation(value = "查询网易云专辑")
     public CommonResult<MusicAlbumViewNeteaseResp> viewNetease(String id) {
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(id);
-        Album album = neteaseApiService.getAlbum(musicAlbumDTO.getNeteaseId());
+        Album album = tmmApiService.findAlbum(musicAlbumDTO.getNeteaseId());
         MusicAlbumViewNeteaseResp resp = MusicAlbumConvert.INSTANCE.convertToViewNeteaseResp(album);
         return CommonResult.success(resp);
     }

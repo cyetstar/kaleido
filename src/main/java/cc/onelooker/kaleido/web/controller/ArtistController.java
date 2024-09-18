@@ -9,8 +9,8 @@ import cc.onelooker.kaleido.dto.resp.ArtistViewResp;
 import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.service.ArtistService;
 import cc.onelooker.kaleido.service.MusicManager;
-import cc.onelooker.kaleido.third.netease.Artist;
-import cc.onelooker.kaleido.third.netease.NeteaseApiService;
+import cc.onelooker.kaleido.third.tmm.Artist;
+import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
@@ -43,7 +43,7 @@ public class ArtistController extends AbstractCrudController<ArtistDTO> {
     private MusicManager musicManager;
 
     @Autowired
-    private NeteaseApiService neteaseApiService;
+    private TmmApiService tmmApiService;
 
     @Override
     protected IBaseService getService() {
@@ -82,7 +82,7 @@ public class ArtistController extends AbstractCrudController<ArtistDTO> {
 
     @GetMapping("searchNetease")
     public CommonResult<List<ArtistSearchNeteaseResp>> searchNetease(ArtistSearchNeteaseReq req) {
-        List<Artist> artistList = neteaseApiService.searchArtist(req.getKeywords(), req.getLimit());
+        List<Artist> artistList = tmmApiService.searchArtist(req.getKeyword(), req.getSource());
         List<ArtistSearchNeteaseResp> respList = Lists.newArrayList();
         for (Artist artist : artistList) {
             respList.add(ArtistConvert.INSTANCE.convertToSearchNeteaseResp(artist));

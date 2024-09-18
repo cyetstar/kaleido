@@ -54,7 +54,7 @@ public class TmmApiServiceTest {
 
     @Test
     public void listDoulistMovie() {
-        List<Movie> movieList = tmmApiService.listDoulistMovie("136414497", 0);
+        List<Movie> movieList = tmmApiService.listMovieByDoulist("136414497", 0);
         Assertions.assertNotNull(movieList.get(0).getTitle());
     }
 

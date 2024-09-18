@@ -10,8 +10,8 @@ import lombok.Data;
 @Data
 public class ArtistSearchNeteaseReq {
 
-    private String keywords;
+    private String keyword;
 
-    private Integer limit = 30;
+    private String source;
 }
 

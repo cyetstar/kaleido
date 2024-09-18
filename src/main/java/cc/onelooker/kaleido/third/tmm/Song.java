@@ -1,4 +1,4 @@
-package cc.onelooker.kaleido.third.netease;
+package cc.onelooker.kaleido.third.tmm;
 
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import lombok.Data;

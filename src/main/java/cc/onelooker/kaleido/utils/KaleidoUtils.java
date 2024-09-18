@@ -93,6 +93,15 @@ public class KaleidoUtils {
     }
 
     //-----------tvshow--------------//
+
+    public static Path getTvshowFilePath(String path, String filename) {
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        path = FilenameUtils.concat(path, filename);
+        return getTvshowLibraryPath().resolve(path);
+    }
+
     public static Path getTvshowBasicPath(String path) {
         String plexLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryPath);
         path = StringUtils.removeStart(path, plexLibraryPath);
@@ -124,6 +133,11 @@ public class KaleidoUtils {
 
     public static Path getTvshowImportPath() {
         return getTvshowLibraryPath().resolveSibling(IMPORT);
+    }
+
+    public static Path getTvshowEpisodeNFOPath(String path, String filename) {
+        filename = FilenameUtils.getBaseName(filename) + ".nfo";
+        return getTvshowFilePath(path, filename);
     }
 
     private static Path getTvshowRecyclePath() {

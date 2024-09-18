@@ -1,6 +1,6 @@
 package cc.onelooker.kaleido.dto.resp;
 
-import cc.onelooker.kaleido.third.netease.Song;
+import cc.onelooker.kaleido.third.tmm.Song;
 import lombok.Data;
 
 import java.util.List;

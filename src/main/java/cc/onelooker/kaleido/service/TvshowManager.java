@@ -293,10 +293,10 @@ public class TvshowManager {
 
     private void readNFO(TvshowShowDTO tvshowShowDTO) {
         Path filePath = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
-        if (Files.notExists(filePath.resolve(KaleidoConstants.TVSHOW_SHOW_NFO))) {
+        TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, filePath, KaleidoConstants.TVSHOW_SHOW_NFO);
+        if (tvshowNFO == null) {
             return;
         }
-        TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, filePath, KaleidoConstants.TVSHOW_SHOW_NFO);
         String doubanId = NFOUtil.getUniqueid(tvshowNFO.getUniqueids(), SourceType.douban);
         String imdb = NFOUtil.getUniqueid(tvshowNFO.getUniqueids(), SourceType.imdb);
         String tmdb = NFOUtil.getUniqueid(tvshowNFO.getUniqueids(), SourceType.tmdb);
@@ -319,10 +319,10 @@ public class TvshowManager {
         TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowSeasonDTO.getShowId());
         Path folderPath = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
         Path seasonPath = folderPath.resolve(seasonFolder);
-        if (Files.notExists(seasonPath.resolve(KaleidoConstants.TVSHOW_SEASON_NFO))) {
+        SeasonNFO seasonNFO = NFOUtil.read(SeasonNFO.class, seasonPath, KaleidoConstants.TVSHOW_SEASON_NFO);
+        if (seasonNFO == null) {
             return;
         }
-        SeasonNFO seasonNFO = NFOUtil.read(SeasonNFO.class, seasonPath, KaleidoConstants.TVSHOW_SEASON_NFO);
         String doubanId = NFOUtil.getUniqueid(seasonNFO.getUniqueids(), SourceType.douban);
         String imdbId = NFOUtil.getUniqueid(seasonNFO.getUniqueids(), SourceType.imdb);
         String tmdbId = NFOUtil.getUniqueid(seasonNFO.getUniqueids(), SourceType.tmdb);
@@ -350,7 +350,7 @@ public class TvshowManager {
     private Tvshow findTmmTvshowByNFO(Path path) {
         try {
             TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, path, KaleidoConstants.TVSHOW_SHOW_NFO);
-            return tmmApiService.findTvshow(tvshowNFO.getDoubanId(), tvshowNFO.getImdbId(), tvshowNFO.getTmdbId());
+            return tmmApiService.findShow(tvshowNFO.getDoubanId(), tvshowNFO.getImdbId(), tvshowNFO.getTmdbId());
         } catch (Exception e) {
             log.info("== NFO文件无法读取: {}", path.resolve(KaleidoConstants.TVSHOW_SHOW_NFO).toString());
         }

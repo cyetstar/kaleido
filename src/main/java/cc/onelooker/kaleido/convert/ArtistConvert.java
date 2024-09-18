@@ -9,7 +9,7 @@ import cc.onelooker.kaleido.dto.resp.ArtistPageResp;
 import cc.onelooker.kaleido.dto.resp.ArtistSearchNeteaseResp;
 import cc.onelooker.kaleido.dto.resp.ArtistViewResp;
 import cc.onelooker.kaleido.entity.ArtistDO;
-import cc.onelooker.kaleido.third.netease.Artist;
+import cc.onelooker.kaleido.third.tmm.Artist;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

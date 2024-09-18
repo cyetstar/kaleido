@@ -4,8 +4,6 @@ import cc.onelooker.kaleido.dto.*;
 import cc.onelooker.kaleido.enums.*;
 import cc.onelooker.kaleido.nfo.MovieNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
-import cc.onelooker.kaleido.third.douban.DoubanApiService;
-import cc.onelooker.kaleido.third.douban.Subject;
 import cc.onelooker.kaleido.third.plex.Media;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
@@ -79,9 +77,6 @@ public class MovieManager {
 
     @Autowired
     private PlexApiService plexApiService;
-
-    @Autowired
-    private DoubanApiService doubanApiService;
 
     @Autowired
     private TmmApiService tmmApiService;
@@ -237,66 +232,25 @@ public class MovieManager {
         int days = (dayOfWeekValue > 5 ? dayOfWeekValue : (7 + dayOfWeekValue)) - 5;
         LocalDate localDate = today.minusDays(days);
         String listingDate = localDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        List<Subject> subjectList = doubanApiService.listMovieWeekly();
+        List<Movie> movieList = tmmApiService.listMovieWeekly();
         List<String> doubanIdList = Lists.newArrayList();
-        for (Subject subject : subjectList) {
-            cc.onelooker.kaleido.third.douban.Movie movie = subject.getMovie();
-            doubanIdList.add(movie.getId());
-            MovieDoubanWeeklyDTO movieDoubanWeeklyDTO = movieDoubanWeeklyService.findByDoubanId(movie.getId());
+        for (Movie movie : movieList) {
+            doubanIdList.add(movie.getDoubanId());
+            MovieDoubanWeeklyDTO movieDoubanWeeklyDTO = movieDoubanWeeklyService.findByDoubanId(movie.getDoubanId());
             if (movieDoubanWeeklyDTO != null) {
-                movieDoubanWeeklyDTO.setTop(subject.getRank());
-                movieDoubanWeeklyDTO.addListingDetail(listingDate, subject.getRank());
+                movieDoubanWeeklyDTO.setTop(movie.getPos());
+                movieDoubanWeeklyDTO.addListingDetail(listingDate, movie.getPos());
                 movieDoubanWeeklyDTO.setStatus(Constants.YES);
                 movieDoubanWeeklyService.update(movieDoubanWeeklyDTO);
             } else {
                 movieDoubanWeeklyDTO = new MovieDoubanWeeklyDTO();
-                movieDoubanWeeklyDTO.setDoubanId(movie.getId());
+                movieDoubanWeeklyDTO.setDoubanId(movie.getDoubanId());
                 movieDoubanWeeklyDTO.setTitle(movie.getTitle());
                 movieDoubanWeeklyDTO.setOriginalTitle(movie.getOriginalTitle());
                 movieDoubanWeeklyDTO.setYear(movie.getYear());
-                movieDoubanWeeklyDTO.addListingDetail(listingDate, subject.getRank());
-                movieDoubanWeeklyDTO.setTop(subject.getRank());
-                movieDoubanWeeklyDTO.setThumb(movie.getImages().getSmall());
-                movieDoubanWeeklyDTO.setStatus(Constants.YES);
-                movieDoubanWeeklyService.insert(movieDoubanWeeklyDTO);
-            }
-        }
-        List<MovieDoubanWeeklyDTO> movieDoubanWeeklyDTOList = movieDoubanWeeklyService.list(null);
-        for (MovieDoubanWeeklyDTO movieDoubanWeeklyDTO : movieDoubanWeeklyDTOList) {
-            if (StringUtils.equals(movieDoubanWeeklyDTO.getStatus(), Constants.YES) && !doubanIdList.contains(movieDoubanWeeklyDTO.getDoubanId())) {
-                //未下榜，但不在本期榜单上
-                movieDoubanWeeklyDTO.setTop(movieDoubanWeeklyDTO.getBestTop());
-                movieDoubanWeeklyDTO.setStatus(Constants.NO);
-                movieDoubanWeeklyService.update(movieDoubanWeeklyDTO);
-            }
-        }
-    }
-
-    public void syncDoubanWeekly(LocalDate localDate, String filePath) {
-        int dayOfWeekValue = localDate.getDayOfWeek().getValue();
-        int days = (dayOfWeekValue > 5 ? dayOfWeekValue : (7 + dayOfWeekValue)) - 5;
-        LocalDate minusLocalDate = localDate.minusDays(days);
-        String listingDate = minusLocalDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        List<Subject> subjectList = doubanApiService.listMovieWeeklyFromJSON(filePath);
-        List<String> doubanIdList = Lists.newArrayList();
-        for (Subject subject : subjectList) {
-            cc.onelooker.kaleido.third.douban.Movie movie = subject.getMovie();
-            doubanIdList.add(movie.getId());
-            MovieDoubanWeeklyDTO movieDoubanWeeklyDTO = movieDoubanWeeklyService.findByDoubanId(movie.getId());
-            if (movieDoubanWeeklyDTO != null) {
-                movieDoubanWeeklyDTO.setTop(subject.getRank());
-                movieDoubanWeeklyDTO.addListingDetail(listingDate, subject.getRank());
-                movieDoubanWeeklyDTO.setStatus(Constants.YES);
-                movieDoubanWeeklyService.update(movieDoubanWeeklyDTO);
-            } else {
-                movieDoubanWeeklyDTO = new MovieDoubanWeeklyDTO();
-                movieDoubanWeeklyDTO.setDoubanId(movie.getId());
-                movieDoubanWeeklyDTO.setTitle(movie.getTitle());
-                movieDoubanWeeklyDTO.setOriginalTitle(movie.getOriginalTitle());
-                movieDoubanWeeklyDTO.setYear(movie.getYear());
-                movieDoubanWeeklyDTO.addListingDetail(listingDate, subject.getRank());
-                movieDoubanWeeklyDTO.setTop(subject.getRank());
-                movieDoubanWeeklyDTO.setThumb(movie.getImages().getSmall());
+                movieDoubanWeeklyDTO.addListingDetail(listingDate, movie.getPos());
+                movieDoubanWeeklyDTO.setTop(movie.getPos());
+                movieDoubanWeeklyDTO.setThumb(movie.getPoster());
                 movieDoubanWeeklyDTO.setStatus(Constants.YES);
                 movieDoubanWeeklyService.insert(movieDoubanWeeklyDTO);
             }
@@ -449,10 +403,10 @@ public class MovieManager {
     private void readNFO(MovieBasicDTO movieBasicDTO) {
         try {
             Path filePath = KaleidoUtils.getMoviePath(movieBasicDTO.getPath());
-            if (Files.notExists(filePath.resolve(KaleidoConstants.MOVIE_NFO))) {
+            MovieNFO movieNFO = NFOUtil.read(MovieNFO.class, filePath, KaleidoConstants.MOVIE_NFO);
+            if (movieNFO == null) {
                 return;
             }
-            MovieNFO movieNFO = NFOUtil.read(MovieNFO.class, filePath, KaleidoConstants.MOVIE_NFO);
             String doubanId = NFOUtil.getUniqueid(movieNFO.getUniqueids(), SourceType.douban);
             String imdb = NFOUtil.getUniqueid(movieNFO.getUniqueids(), SourceType.imdb);
             String tmdb = NFOUtil.getUniqueid(movieNFO.getUniqueids(), SourceType.tmdb);

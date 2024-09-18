@@ -6,7 +6,7 @@ import cc.onelooker.kaleido.dto.req.MusicAlbumPageReq;
 import cc.onelooker.kaleido.dto.req.MusicAlbumUpdateReq;
 import cc.onelooker.kaleido.dto.resp.*;
 import cc.onelooker.kaleido.entity.MusicAlbumDO;
-import cc.onelooker.kaleido.third.netease.Album;
+import cc.onelooker.kaleido.third.tmm.Album;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

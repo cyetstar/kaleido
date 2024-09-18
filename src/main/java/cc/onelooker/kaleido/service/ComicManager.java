@@ -340,9 +340,6 @@ public class ComicManager {
             }
             Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), "kaleido");
             unzip(zipPath, tempPath);
-            if (Files.notExists(tempPath.resolve(KaleidoConstants.COMIC_INFO))) {
-                return;
-            }
             ComicInfoNFO comicInfoNFO = NFOUtil.read(ComicInfoNFO.class, tempPath, KaleidoConstants.COMIC_INFO);
             if (comicInfoNFO == null) {
                 return;

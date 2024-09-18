@@ -1,4 +1,4 @@
-package cc.onelooker.kaleido.third.douban;
+package cc.onelooker.kaleido.service.movie;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
