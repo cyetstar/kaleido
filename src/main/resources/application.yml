@@ -127,7 +127,7 @@ knife4j:
 logging:
   config: classpath:logback-spring.xml
   file:
-    path: /Users/cyetstar/logs
+    path: /logs
 # 全局线程池相关配置
 thread-pool:
   # 是否开启线程池
