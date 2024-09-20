@@ -143,7 +143,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
                     movieBasicDTO = movieBasicService.findByTmdbId(s.getTmdbId());
                 }
                 if (movieBasicDTO != null) {
-                    resp.setId(movieBasicDTO.getId());
+                    resp.setExistId(movieBasicDTO.getId());
                 }
                 return resp;
             }).collect(Collectors.toList());

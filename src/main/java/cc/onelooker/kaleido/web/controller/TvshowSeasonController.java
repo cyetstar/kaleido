@@ -4,10 +4,7 @@ import cc.onelooker.kaleido.convert.TvshowSeasonConvert;
 import cc.onelooker.kaleido.dto.ActorDTO;
 import cc.onelooker.kaleido.dto.TvshowSeasonDTO;
 import cc.onelooker.kaleido.dto.TvshowShowDTO;
-import cc.onelooker.kaleido.dto.req.TvshowSeasonCreateReq;
-import cc.onelooker.kaleido.dto.req.TvshowSeasonDownloadPosterReq;
-import cc.onelooker.kaleido.dto.req.TvshowSeasonPageReq;
-import cc.onelooker.kaleido.dto.req.TvshowSeasonUpdateReq;
+import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.dto.resp.TvshowSeasonCreateResp;
 import cc.onelooker.kaleido.dto.resp.TvshowSeasonPageResp;
 import cc.onelooker.kaleido.dto.resp.TvshowSeasonViewResp;
@@ -15,6 +12,8 @@ import cc.onelooker.kaleido.service.ActorService;
 import cc.onelooker.kaleido.service.TvshowManager;
 import cc.onelooker.kaleido.service.TvshowSeasonService;
 import cc.onelooker.kaleido.service.TvshowShowService;
+import cc.onelooker.kaleido.third.tmm.TmmApiService;
+import cc.onelooker.kaleido.third.tmm.Tvshow;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cn.hutool.http.HttpUtil;
@@ -58,6 +57,9 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
 
     @Autowired
     private TvshowManager tvshowManager;
+
+    @Autowired
+    private TmmApiService tmmApiService;
 
     @Override
     protected IBaseService getService() {
@@ -121,6 +123,14 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
         Path folderPath = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
         Path seasonPath = folderPath.resolve("Season " + StringUtils.leftPad(String.valueOf(tvshowSeasonDTO.getSeasonIndex()), 2, '0'));
         return CommonResult.success(seasonPath.toString());
+    }
+
+    @PostMapping("matchInfo")
+    @ApiOperation(value = "匹配信息")
+    public CommonResult<Boolean> matchInfo(@RequestBody TvshowSeasonMatchInfoReq req) {
+        Tvshow tvshow = tmmApiService.findShow(req.getDoubanId(), req.getImdbId(), req.getTmdbId());
+        tvshowManager.matchInfo(req.getId(), tvshow);
+        return CommonResult.success(true);
     }
 
     @PostMapping("downloadPoster")

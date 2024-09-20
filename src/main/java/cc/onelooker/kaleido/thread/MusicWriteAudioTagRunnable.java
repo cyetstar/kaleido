@@ -1,9 +1,6 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.dto.TaskDTO;
-import cc.onelooker.kaleido.dto.TvshowEpisodeDTO;
-import cc.onelooker.kaleido.dto.TvshowSeasonDTO;
-import cc.onelooker.kaleido.dto.TvshowShowDTO;
+import cc.onelooker.kaleido.dto.*;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.enums.TaskType;
@@ -12,27 +9,32 @@ import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.nfo.SeasonNFO;
 import cc.onelooker.kaleido.nfo.TvshowNFO;
 import cc.onelooker.kaleido.service.*;
+import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.zjjcnt.common.core.domain.PageResult;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * Created by cyetstar on 2021/1/7.
+ * @Author xiadawei
+ * @Date 2024-02-01 14:06:00
+ * @Description TODO
  */
-@Slf4j
 @Component
-public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO> {
+public class MusicWriteAudioTagRunnable extends AbstractEntityActionRunnable<TaskDTO> {
 
     private final TvshowManager tvshowManager;
 
@@ -46,7 +48,7 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
 
     private final PlexApiService plexApiService;
 
-    public TvshowWriteNFORunnable(TvshowManager tvshowManager, TvshowShowService tvshowShowService, TvshowSeasonService tvshowSeasonService, TvshowEpisodeService tvshowEpisodeService, TaskService taskService, PlexApiService plexApiService) {
+    public MusicWriteAudioTagRunnable(TvshowManager tvshowManager, TvshowShowService tvshowShowService, TvshowSeasonService tvshowSeasonService, TvshowEpisodeService tvshowEpisodeService, TaskService taskService, PlexApiService plexApiService) {
         this.tvshowManager = tvshowManager;
         this.tvshowShowService = tvshowShowService;
         this.tvshowSeasonService = tvshowSeasonService;
@@ -62,8 +64,7 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
 
     @Override
     public boolean isNeedRun() {
-        PageResult<TaskDTO> pageResult = page(null, 1, 1);
-        return !pageResult.isEmpty();
+        return false;
     }
 
     @Override
@@ -76,15 +77,15 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
 
     @Override
     protected int processEntity(Map<String, String> params, TaskDTO taskDTO) throws Exception {
+        TvshowShowDTO tvshowShowDTO = tvshowManager.findTvshowShow(taskDTO.getSubjectId());
+        Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
         String taskStatus = KaleidoConstants.TASK_STATUS_IGNORE;
         if (StringUtils.equals(SubjectType.TvshowShow.name(), taskDTO.getSubjectType())) {
-            TvshowShowDTO tvshowShowDTO = tvshowManager.findTvshowShow(taskDTO.getSubjectId());
-            Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
             TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(tvshowShowDTO.getFirstSeason().getId());
             TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, path, KaleidoConstants.TVSHOW_SHOW_NFO);
             TvshowNFO newTvshowNFO = NFOUtil.toTvshowNFO(tvshowShowDTO, tvshowSeasonDTO);
             if (tvshowNFO == null || !Objects.equals(tvshowNFO, newTvshowNFO)) {
-                NFOUtil.write(newTvshowNFO, TvshowNFO.class, path, KaleidoConstants.TVSHOW_SHOW_NFO);
+                NFOUtil.write(tvshowNFO, TvshowNFO.class, path, KaleidoConstants.TVSHOW_SHOW_NFO);
                 if (ConfigUtils.isEnabled(ConfigKey.refreshMetadata)) {
                     //如果大量刷新，否则可能会给Plex带来性能灾难
                     plexApiService.refreshMetadata(tvshowShowDTO.getId());
@@ -93,8 +94,6 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
             }
         } else if (StringUtils.equals(SubjectType.TvshowSeason.name(), taskDTO.getSubjectType())) {
             TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(taskDTO.getSubjectId());
-            TvshowShowDTO tvshowShowDTO = tvshowManager.findTvshowShow(tvshowSeasonDTO.getShowId());
-            Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
             String seasonFolder = KaleidoUtils.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
             Path seasonPath = path.resolve(seasonFolder);
             SeasonNFO seasonNFO = NFOUtil.read(SeasonNFO.class, seasonPath, KaleidoConstants.TVSHOW_SEASON_NFO);
@@ -110,15 +109,13 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
         } else if (StringUtils.equals(SubjectType.TvshowEpisode.name(), taskDTO.getSubjectType())) {
             TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(taskDTO.getSubjectId());
             TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(tvshowEpisodeDTO.getSeasonId());
-            TvshowShowDTO tvshowShowDTO = tvshowManager.findTvshowShow(tvshowSeasonDTO.getShowId());
-            Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
             String seasonFolder = KaleidoUtils.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
             Path seasonPath = path.resolve(seasonFolder);
-            String filename = KaleidoUtils.genNfoFilename(tvshowEpisodeDTO.getFilename());
-            EpisodeNFO episodeNFO = NFOUtil.read(EpisodeNFO.class, seasonPath, filename);
+            Path nfoPath = null;
+            EpisodeNFO episodeNFO = NFOUtil.read(EpisodeNFO.class, nfoPath);
             EpisodeNFO newEpisodeNFO = NFOUtil.toEpisodeNFO(tvshowShowDTO, tvshowSeasonDTO, tvshowEpisodeDTO);
             if (episodeNFO == null || !Objects.equals(episodeNFO, newEpisodeNFO)) {
-                NFOUtil.write(newEpisodeNFO, EpisodeNFO.class, seasonPath, filename);
+                NFOUtil.write(episodeNFO, EpisodeNFO.class, path);
                 if (ConfigUtils.isEnabled(ConfigKey.refreshMetadata)) {
                     //如果大量刷新，否则可能会给Plex带来性能灾难
                     plexApiService.refreshMetadata(tvshowEpisodeDTO.getId());
@@ -150,4 +147,5 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
         }
         return formatMessage(title, state);
     }
+
 }

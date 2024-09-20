@@ -11,6 +11,8 @@ import lombok.Data;
 @Data
 public class MusicAlbumSearchInfoResp {
 
+    private String existId;
+
     private String neteaseId;
 
     private String title;

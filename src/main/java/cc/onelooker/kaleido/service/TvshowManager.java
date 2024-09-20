@@ -217,6 +217,9 @@ public class TvshowManager {
     @Transactional
     public void matchInfo(String seasonId, Tvshow tvshow) {
         try {
+            if (tvshow == null) {
+                return;
+            }
             TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(seasonId);
             TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowSeasonDTO.getShowId());
             TmmUtil.toTvshowShow(tvshowShowDTO, tvshow);
@@ -455,8 +458,8 @@ public class TvshowManager {
         if (StringUtils.isEmpty(tvshowSeasonDTO.getThumb())) {
             return;
         }
-        String fileName = StringUtils.joinWith("-", "season", tvshowSeasonDTO.getSeasonIndex(), KaleidoConstants.TVSHOW_POSTER);
-        HttpUtil.downloadFile(tvshowSeasonDTO.getThumb(), seasonPath.resolveSibling(fileName).toFile());
+        String filename = KaleidoUtils.genSeasonPosterFilename(tvshowSeasonDTO.getSeasonIndex());
+        HttpUtil.downloadFile(tvshowSeasonDTO.getThumb(), seasonPath.resolveSibling(filename).toFile());
         log.info("== 下载单季海报: {}", tvshowSeasonDTO.getThumb());
     }
 
@@ -464,8 +467,7 @@ public class TvshowManager {
         if (tvshowEpisodeDTO != null && StringUtils.isEmpty(tvshowEpisodeDTO.getThumb())) {
             return;
         }
-        String fileName = videoPath.getFileName().toString();
-        String thumbFileName = FilenameUtils.getBaseName(fileName) + "-thumb.jpg";
+        String thumbFileName = KaleidoUtils.genThumbFilename(videoPath.getFileName().toString());
         HttpUtil.downloadFile(tvshowEpisodeDTO.getThumb(), videoPath.resolveSibling(thumbFileName).toFile());
         log.info("== 下载单集图片: {}", tvshowEpisodeDTO.getThumb());
     }

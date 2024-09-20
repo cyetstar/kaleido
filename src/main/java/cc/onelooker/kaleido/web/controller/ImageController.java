@@ -47,7 +47,7 @@ public class ImageController {
         if (StringUtils.equals(type, "book")) {
             ComicBookDTO comicBookDTO = comicBookService.findById(id);
             ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(comicBookDTO.getSeriesId());
-            coverPath = KaleidoUtils.getComicBookCoverPath(comicSeriesDTO.getPath(), comicBookDTO.getFilename());
+            coverPath = KaleidoUtils.getComicPath(comicSeriesDTO.getPath()).resolve(KaleidoUtils.genCoverFilename(comicBookDTO.getFilename()));
         } else {
             ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(id);
             Path path = KaleidoUtils.getComicPath(comicSeriesDTO.getPath());

@@ -8,7 +8,7 @@ import lombok.Data;
  * @Description TODO
  */
 @Data
-public class TvshowShowMatchInfoReq {
+public class TvshowSeasonMatchInfoReq {
 
     private String id;
 

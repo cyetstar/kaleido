@@ -124,7 +124,7 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
                 TvshowShowSearchInfoResp resp = TvshowShowConvert.INSTANCE.convertToSearchInfoResp(s);
                 TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findByDoubanId(s.getDoubanId());
                 if (tvshowSeasonDTO != null) {
-                    resp.setId(tvshowSeasonDTO.getId());
+                    resp.setExistId(tvshowSeasonDTO.getId());
                 }
                 return resp;
             }).collect(Collectors.toList());

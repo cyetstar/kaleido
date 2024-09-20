@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class TvshowShowSearchInfoResp {
 
-    private String id;
+    private String existId;
 
     private String doubanId;
 

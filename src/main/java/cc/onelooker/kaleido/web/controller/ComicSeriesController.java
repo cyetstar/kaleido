@@ -106,7 +106,7 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
             ComicSeriesSearchInfoResp resp = ComicSeriesConvert.INSTANCE.convertToSearchInfoResp(s);
             ComicSeriesDTO comicSeriesDTO = comicSeriesService.findByBgmId(s.getBgmId());
             if (comicSeriesDTO != null) {
-                resp.setId(comicSeriesDTO.getId());
+                resp.setExistId(comicSeriesDTO.getId());
             }
             return resp;
         }).collect(Collectors.toList());

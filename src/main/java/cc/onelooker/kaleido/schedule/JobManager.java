@@ -47,10 +47,16 @@ public class JobManager {
     private SysDictTypeService sysDictTypeService;
 
     @Autowired
-    private ComicWriteComicInfoRunnable comicWriteComicInfoRunnable;
+    private MovieWriteNFORunnable movieWriteNFORunnable;
 
     @Autowired
-    private MovieWriteNFORunnable movieWriteNFORunnable;
+    private TvshowWriteNFORunnable tvshowWriteNFORunnable;
+
+    @Autowired
+    private MusicWriteAudioTagRunnable musicWriteAudioTagRunnable;
+
+    @Autowired
+    private ComicWriteComicInfoRunnable comicWriteComicInfoRunnable;
 
     @Scheduled(cron = "0 0 2 * * ?")
     public void syncPlexMovie() {
@@ -101,16 +107,30 @@ public class JobManager {
     }
 
     @Scheduled(cron = "0 * * * * ?")
-    public void executeWriteComicInfo() {
-        if (ConfigUtils.isEnabled(ConfigKey.writeComicInfo) && comicWriteComicInfoRunnable.isNeedRun()) {
-            comicWriteComicInfoRunnable.run();
+    public void executeWriteMovieNFO() {
+        if (ConfigUtils.isEnabled(ConfigKey.writeMovieNFO) && movieWriteNFORunnable.isNeedRun()) {
+            movieWriteNFORunnable.run();
         }
     }
 
     @Scheduled(cron = "0 * * * * ?")
-    public void executeWriteMovieNFO() {
-        if (ConfigUtils.isEnabled(ConfigKey.writeMovieNFO) && movieWriteNFORunnable.isNeedRun()) {
-            movieWriteNFORunnable.run();
+    public void executeWriteTvshowNFO() {
+        if (ConfigUtils.isEnabled(ConfigKey.writeTvshowNFO) && tvshowWriteNFORunnable.isNeedRun()) {
+            tvshowWriteNFORunnable.run();
+        }
+    }
+
+    @Scheduled(cron = "0 * * * * ?")
+    public void executeWriteAudioTag() {
+        if (ConfigUtils.isEnabled(ConfigKey.writeAudioTag) && musicWriteAudioTagRunnable.isNeedRun()) {
+            musicWriteAudioTagRunnable.run();
+        }
+    }
+
+    @Scheduled(cron = "0 * * * * ?")
+    public void executeWriteComicInfo() {
+        if (ConfigUtils.isEnabled(ConfigKey.writeComicInfo) && comicWriteComicInfoRunnable.isNeedRun()) {
+            comicWriteComicInfoRunnable.run();
         }
     }
 

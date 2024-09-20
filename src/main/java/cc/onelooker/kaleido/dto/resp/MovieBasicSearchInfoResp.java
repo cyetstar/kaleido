@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class MovieBasicSearchInfoResp {
 
-    private String id;
+    private String existId;
 
     private String doubanId;
 

@@ -94,14 +94,6 @@ public class KaleidoUtils {
 
     //-----------tvshow--------------//
 
-    public static Path getTvshowFilePath(String path, String filename) {
-        if (StringUtils.startsWith(path, Constants.SLASH)) {
-            path = StringUtils.removeStart(path, Constants.SLASH);
-        }
-        path = FilenameUtils.concat(path, filename);
-        return getTvshowLibraryPath().resolve(path);
-    }
-
     public static Path getTvshowBasicPath(String path) {
         String plexLibraryPath = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryPath);
         path = StringUtils.removeStart(path, plexLibraryPath);
@@ -116,12 +108,6 @@ public class KaleidoUtils {
             path = StringUtils.removeStart(path, Constants.SLASH);
         }
         return getTvshowLibraryPath().resolve(path);
-    }
-
-    public static Path getSeasonPath(String path, Integer seasonIndex) {
-        Path showPath = getTvshowPath(path);
-        String folderName = genSeasonFolder(seasonIndex);
-        return showPath.resolve(folderName);
     }
 
     public static Path getTvshowRecyclePath(String path) {
@@ -139,11 +125,6 @@ public class KaleidoUtils {
 
     public static Path getTvshowImportPath() {
         return getTvshowLibraryPath().resolveSibling(IMPORT);
-    }
-
-    public static Path getTvshowEpisodeNFOPath(String path, String filename) {
-        filename = FilenameUtils.getBaseName(filename) + ".nfo";
-        return getTvshowFilePath(path, filename);
     }
 
     private static Path getTvshowRecyclePath() {
@@ -195,11 +176,6 @@ public class KaleidoUtils {
         }
         path = FilenameUtils.concat(path, filename);
         return getComicLibraryPath().resolve(path);
-    }
-
-    public static Path getComicBookCoverPath(String path, String filename) {
-        filename = FilenameUtils.getBaseName(filename) + ".jpg";
-        return getComicFilePath(path, filename);
     }
 
     public static Path getComicBasicPath(String path) {
@@ -328,11 +304,27 @@ public class KaleidoUtils {
         return String.format("%s [%s]", sanitizeFileName(comicSeriesDTO.getTitle()), sanitizeFileName(authorName));
     }
 
-    public static String genMusicFile(MusicTrackDTO musicTrackDTO) {
+    public static String genMusicFilename(MusicTrackDTO musicTrackDTO) {
         String index = StringUtils.leftPad(String.valueOf(musicTrackDTO.getTrackIndex()), 2, "0");
         String title = sanitizeFileName(musicTrackDTO.getTitle());
         String extension = FilenameUtils.getExtension(musicTrackDTO.getFilename());
         return String.format("%s - %s.%s", index, title, extension);
+    }
+
+    public static String genNfoFilename(String filename) {
+        return FilenameUtils.getBaseName(filename) + ".nfo";
+    }
+
+    public static String genCoverFilename(String filename) {
+        return FilenameUtils.getBaseName(filename) + ".jpg";
+    }
+
+    public static String genSeasonPosterFilename(Integer seasonIndex) {
+        return "season-" + seasonIndex + KaleidoConstants.TVSHOW_POSTER;
+    }
+
+    public static String genThumbFilename(String filename) {
+        return FilenameUtils.getBaseName(filename) + "-thumb.jpg";
     }
 
     public static boolean isVideoFile(String filename) {
@@ -473,5 +465,7 @@ public class KaleidoUtils {
     public static void main(String[] args) {
         System.out.println(StringUtils.equals(null, null));
     }
+
+
 
 }

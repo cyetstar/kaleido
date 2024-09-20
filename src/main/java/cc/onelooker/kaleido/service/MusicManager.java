@@ -185,7 +185,7 @@ public class MusicManager {
     }
 
     private void renameFileIfChanged(MusicTrackDTO musicTrackDTO) throws IOException {
-        String filename = KaleidoUtils.genMusicFile(musicTrackDTO);
+        String filename = KaleidoUtils.genMusicFilename(musicTrackDTO);
         if (!StringUtils.equals(filename, musicTrackDTO.getFilename())) {
             MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(musicTrackDTO.getAlbumId());
             Path path = KaleidoUtils.getMusicFilePath(musicAlbumDTO.getPath(), musicTrackDTO.getFilename());

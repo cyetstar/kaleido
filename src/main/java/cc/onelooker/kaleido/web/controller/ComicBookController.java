@@ -120,7 +120,8 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
         comicBookService.update(comicBookDTO);
 
         ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(comicBookDTO.getSeriesId());
-        Path bookCoverPath = KaleidoUtils.getComicBookCoverPath(comicSeriesDTO.getPath(), comicBookDTO.getFilename());
+        Path comicPath = KaleidoUtils.getComicPath(comicSeriesDTO.getPath());
+        Path bookCoverPath = comicPath.resolve(KaleidoUtils.genCoverFilename(comicBookDTO.getFilename()));
         byte[] data = Base64.decode(RegExUtils.removeFirst(req.getData(), "data:image/.+;base64,"));
         if (comicBookDTO.getBookNumber() == null || comicBookDTO.getBookNumber() <= 1) {
             Files.write(bookCoverPath.resolveSibling(KaleidoConstants.COMIC_COVER), data);
