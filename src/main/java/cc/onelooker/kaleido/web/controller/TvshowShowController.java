@@ -114,10 +114,10 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @PostMapping("searchInfo")
     @ApiOperation(value = "查询信息")
     public CommonResult<List<TvshowShowSearchInfoResp>> searchInfo(@RequestBody TvshowShowSearchInfoReq req) {
-        List<Movie> movieList = tmmApiService.searchMovie(req.getKeyword(), req.getType());
+        List<Tvshow> tvshowList = tmmApiService.searchShow(req.getKeyword(), req.getSource());
         List<TvshowShowSearchInfoResp> respList = Lists.newArrayList();
-        if (movieList != null) {
-            respList = movieList.stream().map(s -> {
+        if (tvshowList != null) {
+            respList = tvshowList.stream().map(s -> {
                 TvshowShowSearchInfoResp resp = TvshowShowConvert.INSTANCE.convertToSearchInfoResp(s);
                 TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findByDoubanId(s.getDoubanId());
                 if (tvshowSeasonDTO != null) {

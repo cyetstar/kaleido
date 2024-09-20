@@ -12,5 +12,5 @@ public class ComicSeriesSearchInfoReq {
 
     private String keyword;
 
-    private String ver;
+    private String source;
 }

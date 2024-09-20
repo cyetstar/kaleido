@@ -67,9 +67,10 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
                     if (isStop()) {
                         break;
                     }
-                    updateActionState(getMessage(entity, TODO), total, num++);
+                    num++;
+                    updateActionState(getMessage(entity, TODO), total, num);
                     int state = processEntity(params, entity);
-                    updateActionState(getMessage(entity, state), total, num++);
+                    updateActionState(getMessage(entity, state), total, num);
                 } catch (Exception e) {
                     processError(params, entity, e);
                 } finally {

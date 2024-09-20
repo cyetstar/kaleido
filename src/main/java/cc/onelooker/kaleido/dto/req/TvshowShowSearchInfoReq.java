@@ -12,5 +12,5 @@ public class TvshowShowSearchInfoReq {
 
     private String keyword;
 
-    private String type;
+    private String source;
 }

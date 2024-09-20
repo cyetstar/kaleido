@@ -251,7 +251,7 @@ public class MusicManager {
         Artist artist = album.getArtist();
 
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(albumId);
-        musicAlbumDTO.setNeteaseId(album.getId());
+        musicAlbumDTO.setNeteaseId(album.getNeteaseId());
         musicAlbumDTO.setSummary(album.getDescription());
         musicAlbumService.update(musicAlbumDTO);
 

@@ -10,6 +10,7 @@ import cc.onelooker.kaleido.dto.resp.TvshowShowSearchInfoResp;
 import cc.onelooker.kaleido.dto.resp.TvshowShowViewResp;
 import cc.onelooker.kaleido.entity.TvshowShowDO;
 import cc.onelooker.kaleido.third.tmm.Movie;
+import cc.onelooker.kaleido.third.tmm.Tvshow;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -32,9 +33,7 @@ public interface TvshowShowConvert {
     @InheritInverseConfiguration(name = "convert")
     TvshowShowDO convertToDO(TvshowShowDTO dto);
 
-    @Mappings({
-            @Mapping(source = "genre", target = "genreId")
-    })
+    @Mappings({@Mapping(source = "genre", target = "genreId")})
     TvshowShowDTO convertToDTO(TvshowShowPageReq req);
 
     TvshowShowDTO convertToDTO(TvshowShowCreateReq req);
@@ -47,5 +46,5 @@ public interface TvshowShowConvert {
 
     TvshowShowCreateResp convertToCreateResp(TvshowShowDTO dto);
 
-    TvshowShowSearchInfoResp convertToSearchInfoResp(Movie movie);
+    TvshowShowSearchInfoResp convertToSearchInfoResp(Tvshow tvshow);
 }

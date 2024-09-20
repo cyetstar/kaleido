@@ -101,7 +101,7 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     @PostMapping("searchInfo")
     @ApiOperation(value = "查询信息")
     public CommonResult<List<ComicSeriesSearchInfoResp>> searchInfo(@RequestBody ComicSeriesSearchInfoReq req) {
-        List<Comic> comicList = tmmApiService.searchComic(req.getKeyword(), req.getVer());
+        List<Comic> comicList = tmmApiService.searchComic(req.getKeyword(), req.getSource());
         List<ComicSeriesSearchInfoResp> respList = comicList.stream().map(s -> {
             ComicSeriesSearchInfoResp resp = ComicSeriesConvert.INSTANCE.convertToSearchInfoResp(s);
             ComicSeriesDTO comicSeriesDTO = comicSeriesService.findByBgmId(s.getBgmId());

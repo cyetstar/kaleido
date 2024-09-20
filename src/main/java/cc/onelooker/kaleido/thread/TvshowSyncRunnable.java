@@ -54,7 +54,7 @@ public class TvshowSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
     protected void afterRun(Map<String, String> params) {
         String showId = MapUtils.getString(params, "showId");
         String seasonId = MapUtils.getString(params, "seasonId");
-        if (StringUtils.isEmpty(showId) && StringUtils.isNotEmpty(seasonId)) {
+        if (StringUtils.isAllEmpty(showId, seasonId)) {
             List<TvshowEpisodeDTO> tvshowEpisodeDTOList = tvshowEpisodeService.list(null);
             List<String> idList = tvshowEpisodeDTOList.stream().map(TvshowEpisodeDTO::getId).collect(Collectors.toList());
             Collection<String> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
@@ -72,7 +72,7 @@ public class TvshowSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
         String showId = MapUtils.getString(params, "showId");
         String seasonId = MapUtils.getString(params, "seasonId");
         PageResult<Metadata> pageResult = new PageResult<>();
-        if (StringUtils.isEmpty(showId) && StringUtils.isEmpty(seasonId)) {
+        if (StringUtils.isAllEmpty(showId, seasonId)) {
             String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryId);
             pageResult = plexApiService.pageMetadata(libraryId, PlexApiService.TYPE_EPISODE, pageNumber, pageSize);
             plexIdList.addAll(pageResult.getRecords().stream().map(Metadata::getRatingKey).collect(Collectors.toList()));
