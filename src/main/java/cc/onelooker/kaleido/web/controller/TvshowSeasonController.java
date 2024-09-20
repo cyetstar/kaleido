@@ -5,6 +5,7 @@ import cc.onelooker.kaleido.dto.ActorDTO;
 import cc.onelooker.kaleido.dto.TvshowSeasonDTO;
 import cc.onelooker.kaleido.dto.TvshowShowDTO;
 import cc.onelooker.kaleido.dto.req.TvshowSeasonCreateReq;
+import cc.onelooker.kaleido.dto.req.TvshowSeasonDownloadPosterReq;
 import cc.onelooker.kaleido.dto.req.TvshowSeasonPageReq;
 import cc.onelooker.kaleido.dto.req.TvshowSeasonUpdateReq;
 import cc.onelooker.kaleido.dto.resp.TvshowSeasonCreateResp;
@@ -14,7 +15,9 @@ import cc.onelooker.kaleido.service.ActorService;
 import cc.onelooker.kaleido.service.TvshowManager;
 import cc.onelooker.kaleido.service.TvshowSeasonService;
 import cc.onelooker.kaleido.service.TvshowShowService;
+import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cn.hutool.http.HttpUtil;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
@@ -26,7 +29,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.stream.Collectors;
 
 /**
@@ -68,7 +74,9 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
     @ApiOperation(value = "查看单季详情")
     public CommonResult<TvshowSeasonViewResp> view(String id) {
         TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(id);
+        TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowSeasonDTO.getShowId());
         TvshowSeasonViewResp resp = TvshowSeasonConvert.INSTANCE.convertToViewResp(tvshowSeasonDTO);
+        resp.setShowTitle(tvshowShowDTO.getTitle());
         return CommonResult.success(resp);
     }
 
@@ -113,6 +121,19 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
         Path folderPath = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
         Path seasonPath = folderPath.resolve("Season " + StringUtils.leftPad(String.valueOf(tvshowSeasonDTO.getSeasonIndex()), 2, '0'));
         return CommonResult.success(seasonPath.toString());
+    }
+
+    @PostMapping("downloadPoster")
+    public CommonResult<Boolean> downloadPoster(@RequestBody TvshowSeasonDownloadPosterReq req) throws IOException {
+        TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(req.getId());
+        TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowSeasonDTO.getShowId());
+        Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
+        String fileName = StringUtils.joinWith("-", "season", tvshowSeasonDTO.getSeasonIndex(), KaleidoConstants.TVSHOW_POSTER);
+        HttpUtil.downloadFile(req.getUrl(), path.resolve(fileName).toFile());
+        if (tvshowSeasonDTO.getSeasonIndex() == 1) {
+            Files.copy(path.resolve(fileName), path.resolve(KaleidoConstants.TVSHOW_POSTER), StandardCopyOption.REPLACE_EXISTING);
+        }
+        return CommonResult.success(true);
     }
 
 }

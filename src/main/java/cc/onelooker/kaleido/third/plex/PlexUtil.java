@@ -4,6 +4,7 @@ import cc.onelooker.kaleido.dto.*;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.google.common.collect.Lists;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
 import java.util.stream.Collectors;
@@ -59,7 +60,8 @@ public class PlexUtil {
         tvshowShowDTO.setContentRating(metadata.getContentRating());
         tvshowShowDTO.setSummary(metadata.getSummary());
         tvshowShowDTO.setRating(metadata.getRating());
-        tvshowShowDTO.setYear(metadata.getYear());
+        //plex无法维护年份，即使后期nfo文件有年份，也无法覆盖
+        tvshowShowDTO.setYear(StringUtils.defaultIfEmpty(tvshowShowDTO.getYear(), metadata.getYear()));
         tvshowShowDTO.setThumb(metadata.getThumb());
         tvshowShowDTO.setArt(metadata.getArt());
         tvshowShowDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());

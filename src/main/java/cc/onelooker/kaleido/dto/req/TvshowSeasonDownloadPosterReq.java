@@ -8,7 +8,7 @@ import lombok.Data;
  * @Description TODO
  */
 @Data
-public class TvshowShowDownloadPosterReq {
+public class TvshowSeasonDownloadPosterReq {
 
     private String id;
 

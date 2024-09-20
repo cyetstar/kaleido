@@ -19,9 +19,6 @@ import java.nio.file.Paths;
  * @Date 2024-02-01 09:42:00
  * @Description TODO
  */
-@Slf4j
-@ActiveProfiles("dev")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class KaleidoUtilsTest {
 
     @Test
@@ -33,5 +30,13 @@ public class KaleidoUtilsTest {
 //        MovieNFO movieNFO = NFOUtil.read(Paths.get(decodePath), "movie.nfo");
 //        Assertions.assertNotNull(movieNFO);
     }
+
+    @Test
+    public void parseEpisodeIndex() {
+        String filename = "The Sound of Your Heart S01E04 1080p NF WEB-DL DDP2.0 x264-ARiN.mkv";
+        System.out.println(KaleidoUtils.parseSeasonIndex(filename,1));
+        System.out.println(KaleidoUtils.parseEpisodeIndex(filename));
+    }
+
 
 }

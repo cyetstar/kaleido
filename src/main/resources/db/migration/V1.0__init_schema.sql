@@ -315,7 +315,7 @@ create index netease_id on artist
 create table attribute
 (
     id    varchar(36) not null comment '主键',
-    value varchar(30) comment '属性值',
+    value varchar(100) comment '属性值',
     type  varchar(20) comment '类型',
     primary key (id)
 );
@@ -586,8 +586,8 @@ create table music_album
     title                   varchar(500) comment '标题',
     artists                 varchar(500) comment '艺术家',
     summary                 text comment '简介',
-    type                    varchar(50) comment '专辑类型',
-    genre                   varchar(50) comment '音乐流派',
+    type                    varchar(100) comment '专辑类型',
+    genre                   varchar(100) comment '音乐流派',
     release_country         varchar(100) comment '发行国家',
     label                   varchar(200) comment '唱片公司',
     year                    varchar(4) comment '首发年份',

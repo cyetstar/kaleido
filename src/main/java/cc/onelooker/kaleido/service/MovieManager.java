@@ -410,6 +410,8 @@ public class MovieManager {
             String doubanId = NFOUtil.getUniqueid(movieNFO.getUniqueids(), SourceType.douban);
             String imdb = NFOUtil.getUniqueid(movieNFO.getUniqueids(), SourceType.imdb);
             String tmdb = NFOUtil.getUniqueid(movieNFO.getUniqueids(), SourceType.tmdb);
+            //plex可能不会传递year，通过nfo文件补充该值
+            movieBasicDTO.setYear(StringUtils.defaultString(movieBasicDTO.getYear(), movieNFO.getYear()));
             movieBasicDTO.setDoubanId(StringUtils.defaultIfEmpty(doubanId, movieNFO.getDoubanId()));
             movieBasicDTO.setImdbId(StringUtils.defaultIfEmpty(imdb, movieNFO.getImdbId()));
             movieBasicDTO.setTmdbId(StringUtils.defaultIfEmpty(tmdb, movieNFO.getTmdbId()));

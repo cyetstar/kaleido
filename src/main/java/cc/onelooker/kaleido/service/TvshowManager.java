@@ -300,6 +300,8 @@ public class TvshowManager {
         String doubanId = NFOUtil.getUniqueid(tvshowNFO.getUniqueids(), SourceType.douban);
         String imdb = NFOUtil.getUniqueid(tvshowNFO.getUniqueids(), SourceType.imdb);
         String tmdb = NFOUtil.getUniqueid(tvshowNFO.getUniqueids(), SourceType.tmdb);
+        //plex可能不会传递year，通过nfo文件补充该值
+        tvshowShowDTO.setYear(StringUtils.defaultString(tvshowShowDTO.getYear(), tvshowNFO.getYear()));
         tvshowShowDTO.setDoubanId(StringUtils.defaultIfEmpty(doubanId, tvshowNFO.getDoubanId()));
         tvshowShowDTO.setImdbId(StringUtils.defaultIfEmpty(imdb, tvshowNFO.getImdbId()));
         tvshowShowDTO.setTmdbId(StringUtils.defaultIfEmpty(tmdb, tvshowNFO.getTmdbId()));
@@ -371,13 +373,14 @@ public class TvshowManager {
                     }
                     Integer seasonIndex = KaleidoUtils.parseSeasonIndex(fileName, 1);
                     Path seasonPath = createSeasonPath(showPath, seasonIndex);
-                    moveExistingFilesToRecycleBin(seasonPath, episodeIndex);
                     if (!KaleidoUtils.isVideoFile(fileName)) {
                         Files.move(s, seasonPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
                         log.info("== 移动其他文件: {}", fileName);
                         return;
+                    } else {
+                        //只有视频文件时才检查是否已经存在，防止多次检查
+                        moveExistingFilesToRecycleBin(seasonPath, episodeIndex);
                     }
-
                     Path episodePath = seasonPath.resolve(fileName);
                     TvshowSeasonDTO tvshowSeasonDTO = tvshowShowDTO.getSeason(seasonIndex);
                     if (tvshowSeasonDTO == null) {
@@ -444,7 +447,7 @@ public class TvshowManager {
         if (StringUtils.isEmpty(tvshowShowDTO.getThumb())) {
             return;
         }
-        HttpUtil.downloadFile(tvshowShowDTO.getThumb(), tvshowPath.resolve("poster.jpg").toFile());
+        HttpUtil.downloadFile(tvshowShowDTO.getThumb(), tvshowPath.resolve(KaleidoConstants.TVSHOW_POSTER).toFile());
         log.info("== 下载剧集海报: {}", tvshowShowDTO.getThumb());
     }
 
@@ -452,7 +455,7 @@ public class TvshowManager {
         if (StringUtils.isEmpty(tvshowSeasonDTO.getThumb())) {
             return;
         }
-        String fileName = StringUtils.joinWith("-", "season", tvshowSeasonDTO.getSeasonIndex(), "poster.jpg");
+        String fileName = StringUtils.joinWith("-", "season", tvshowSeasonDTO.getSeasonIndex(), KaleidoConstants.TVSHOW_POSTER);
         HttpUtil.downloadFile(tvshowSeasonDTO.getThumb(), seasonPath.resolveSibling(fileName).toFile());
         log.info("== 下载单季海报: {}", tvshowSeasonDTO.getThumb());
     }
@@ -499,8 +502,9 @@ public class TvshowManager {
     private Path createSeasonPath(Path showPath, Integer seasonIndex) throws IOException {
         String folderName = KaleidoUtils.genSeasonFolder(seasonIndex);
         Path folderPath = showPath.resolve(folderName);
-        KaleidoUtils.createFolderPath(folderPath);
-        log.info("== 创建季文件夹: {}", folderPath);
+        if (KaleidoUtils.createFolderPath(folderPath)) {
+            log.info("== 创建季文件夹: {}", folderPath);
+        }
         return folderPath;
     }
 

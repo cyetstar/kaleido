@@ -152,6 +152,7 @@ public class TmmUtil {
         tvshowSeasonDTO.setYear(season.getYear());
         tvshowSeasonDTO.setOriginallyAvailableAt(season.getPremiered());
         tvshowSeasonDTO.setRating(season.getAverage());
+        tvshowSeasonDTO.setThumb(season.getPoster());
         if (CollectionUtils.isNotEmpty(season.getCredits())) {
             tvshowSeasonDTO.setWriterList(season.getCredits().stream().map(TmmUtil::toActorDTO).collect(Collectors.toList()));
         }

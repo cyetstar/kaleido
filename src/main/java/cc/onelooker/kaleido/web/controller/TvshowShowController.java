@@ -12,7 +12,6 @@ import cc.onelooker.kaleido.dto.resp.TvshowShowViewResp;
 import cc.onelooker.kaleido.service.TvshowManager;
 import cc.onelooker.kaleido.service.TvshowSeasonService;
 import cc.onelooker.kaleido.service.TvshowShowService;
-import cc.onelooker.kaleido.third.tmm.Movie;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.third.tmm.Tvshow;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
@@ -27,12 +26,16 @@ import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -128,15 +131,6 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
         }
 
         return CommonResult.success(respList);
-    }
-
-    @PostMapping("downloadPoster")
-    public CommonResult<Boolean> downloadPoster(@RequestBody TvshowShowDownloadPosterReq req) {
-        TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(req.getId());
-        Path filePath = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
-        File file = filePath.resolve(KaleidoConstants.TVSHOW_POSTER).toFile();
-        HttpUtil.downloadFile(req.getUrl(), file);
-        return CommonResult.success(true);
     }
 
     @PostMapping("matchPath")

@@ -118,6 +118,12 @@ public class KaleidoUtils {
         return getTvshowLibraryPath().resolve(path);
     }
 
+    public static Path getSeasonPath(String path, Integer seasonIndex) {
+        Path showPath = getTvshowPath(path);
+        String folderName = genSeasonFolder(seasonIndex);
+        return showPath.resolve(folderName);
+    }
+
     public static Path getTvshowRecyclePath(String path) {
         path = StringUtils.removeStart(path, getTvshowLibraryPath().toString());
         if (StringUtils.startsWith(path, Constants.SLASH)) {

@@ -79,6 +79,9 @@ public class TvshowSeasonViewResp {
     @ApiModelProperty("主演")
     private List<ActorViewResp> actorList;
 
+    @ApiModelProperty("剧集名")
+    private String showTitle;
+
     @JsonProperty
     public List<String> summaryList() {
         return Arrays.asList(StringUtils.split(summary, "\n"));

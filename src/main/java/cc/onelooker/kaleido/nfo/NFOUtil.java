@@ -235,6 +235,7 @@ public class NFOUtil {
     private static ActorNFO toActorNFO(ActorDTO actorDTO) {
         ActorNFO actorNFO = new ActorNFO();
         actorNFO.setName(actorDTO.getName());
+        actorNFO.setOriginalName(actorDTO.getOriginalName());
         actorNFO.setRole(actorDTO.getPlayRole());
         actorNFO.setThumb(actorDTO.getThumb());
         actorNFO.setDoubanId(actorDTO.getDoubanId());
@@ -244,6 +245,7 @@ public class NFOUtil {
     public static ActorDTO toActorDTO(ActorNFO actorNFO) {
         ActorDTO actorDTO = new ActorDTO();
         actorDTO.setName(actorNFO.getName());
+        actorDTO.setOriginalName(actorNFO.getOriginalName());
         actorDTO.setPlayRole(actorNFO.getRole());
         actorDTO.setThumb(actorNFO.getThumb());
         actorDTO.setDoubanId(actorNFO.getDoubanId());

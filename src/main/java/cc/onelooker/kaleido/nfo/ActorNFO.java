@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlElement;
 public class ActorNFO {
 
     private String name;
+    @XmlElement(name = "originalname")
+    private String originalName;
     private String role;
     private String order;
     private String thumb;
