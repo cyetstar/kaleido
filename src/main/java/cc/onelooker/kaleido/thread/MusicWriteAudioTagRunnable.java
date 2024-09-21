@@ -9,24 +9,17 @@ import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.nfo.SeasonNFO;
 import cc.onelooker.kaleido.nfo.TvshowNFO;
 import cc.onelooker.kaleido.service.*;
-import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.zjjcnt.common.core.domain.PageResult;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Author xiadawei
@@ -82,10 +75,10 @@ public class MusicWriteAudioTagRunnable extends AbstractEntityActionRunnable<Tas
         String taskStatus = KaleidoConstants.TASK_STATUS_IGNORE;
         if (StringUtils.equals(SubjectType.TvshowShow.name(), taskDTO.getSubjectType())) {
             TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(tvshowShowDTO.getFirstSeason().getId());
-            TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, path, KaleidoConstants.TVSHOW_SHOW_NFO);
+            TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, path, KaleidoConstants.SHOW_NFO);
             TvshowNFO newTvshowNFO = NFOUtil.toTvshowNFO(tvshowShowDTO, tvshowSeasonDTO);
             if (tvshowNFO == null || !Objects.equals(tvshowNFO, newTvshowNFO)) {
-                NFOUtil.write(tvshowNFO, TvshowNFO.class, path, KaleidoConstants.TVSHOW_SHOW_NFO);
+                NFOUtil.write(tvshowNFO, TvshowNFO.class, path, KaleidoConstants.SHOW_NFO);
                 if (ConfigUtils.isEnabled(ConfigKey.refreshMetadata)) {
                     //如果大量刷新，否则可能会给Plex带来性能灾难
                     plexApiService.refreshMetadata(tvshowShowDTO.getId());
@@ -96,10 +89,10 @@ public class MusicWriteAudioTagRunnable extends AbstractEntityActionRunnable<Tas
             TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(taskDTO.getSubjectId());
             String seasonFolder = KaleidoUtils.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
             Path seasonPath = path.resolve(seasonFolder);
-            SeasonNFO seasonNFO = NFOUtil.read(SeasonNFO.class, seasonPath, KaleidoConstants.TVSHOW_SEASON_NFO);
+            SeasonNFO seasonNFO = NFOUtil.read(SeasonNFO.class, seasonPath, KaleidoConstants.SEASON_NFO);
             SeasonNFO newSeasonNFO = NFOUtil.toSeasonNFO(tvshowShowDTO, tvshowSeasonDTO);
             if (seasonNFO == null || !Objects.equals(seasonNFO, newSeasonNFO)) {
-                NFOUtil.write(newSeasonNFO, SeasonNFO.class, seasonPath, KaleidoConstants.TVSHOW_SEASON_NFO);
+                NFOUtil.write(newSeasonNFO, SeasonNFO.class, seasonPath, KaleidoConstants.SEASON_NFO);
                 if (ConfigUtils.isEnabled(ConfigKey.refreshMetadata)) {
                     //如果大量刷新，否则可能会给Plex带来性能灾难
                     plexApiService.refreshMetadata(tvshowSeasonDTO.getId());

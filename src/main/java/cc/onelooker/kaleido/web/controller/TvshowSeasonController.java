@@ -138,10 +138,10 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
         TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(req.getId());
         TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowSeasonDTO.getShowId());
         Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
-        String fileName = StringUtils.joinWith("-", "season", tvshowSeasonDTO.getSeasonIndex(), KaleidoConstants.TVSHOW_POSTER);
-        HttpUtil.downloadFile(req.getUrl(), path.resolve(fileName).toFile());
+        String filename = KaleidoUtils.genSeasonPosterFilename(tvshowSeasonDTO.getSeasonIndex());
+        HttpUtil.downloadFile(req.getUrl(), path.resolve(filename).toFile());
         if (tvshowSeasonDTO.getSeasonIndex() == 1) {
-            Files.copy(path.resolve(fileName), path.resolve(KaleidoConstants.TVSHOW_POSTER), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(path.resolve(filename), path.resolve(KaleidoConstants.POSTER), StandardCopyOption.REPLACE_EXISTING);
         }
         return CommonResult.success(true);
     }

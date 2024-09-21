@@ -51,6 +51,7 @@ public interface TvshowSeasonConvert {
     TvshowSeasonCreateResp convertToCreateResp(TvshowSeasonDTO dto);
 
     @Mappings({
+            @Mapping(target = "id", source = "seasonId"),
             @Mapping(target = "directorList", ignore = true),
             @Mapping(target = "writerList", ignore = true),
             @Mapping(target = "actorList", ignore = true),

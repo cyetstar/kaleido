@@ -170,7 +170,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("uploadPoster")
     @ApiOperation(value = "上传海报")
     public CommonResult<Boolean> uploadPoster(MovieBasicUploadPosterReq req) throws IOException {
-        Files.write(Paths.get(req.getPath(), KaleidoConstants.MOVIE_POSTER), req.getFile().getBytes());
+        Files.write(Paths.get(req.getPath(), KaleidoConstants.POSTER), req.getFile().getBytes());
         plexApiService.refreshMovieById(req.getId());
         return CommonResult.success(true);
     }
@@ -179,7 +179,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     public CommonResult<Boolean> downloadPoster(@RequestBody MovieBasicDownloadPosterReq req) {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(req.getId());
         Path filePath = KaleidoUtils.getMoviePath(movieBasicDTO.getPath());
-        File file = filePath.resolve(KaleidoConstants.MOVIE_POSTER).toFile();
+        File file = filePath.resolve(KaleidoConstants.POSTER).toFile();
         HttpUtil.downloadFile(req.getUrl(), file);
         return CommonResult.success(true);
     }

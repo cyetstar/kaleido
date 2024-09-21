@@ -486,7 +486,7 @@ public class MovieManager {
         if (StringUtils.isEmpty(movieBasicDTO.getThumb())) {
             return;
         }
-        HttpUtil.downloadFile(movieBasicDTO.getThumb(), folderPath.resolve(KaleidoConstants.MOVIE_POSTER).toFile());
+        HttpUtil.downloadFile(movieBasicDTO.getThumb(), folderPath.resolve(KaleidoConstants.POSTER).toFile());
         log.info("== 下载海报: {}", movieBasicDTO.getThumb());
     }
 

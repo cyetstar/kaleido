@@ -311,7 +311,7 @@ public class KaleidoUtils {
         return String.format("%s - %s.%s", index, title, extension);
     }
 
-    public static String genNfoFilename(String filename) {
+    public static String genEpisodeNfoFilename(String filename) {
         return FilenameUtils.getBaseName(filename) + ".nfo";
     }
 
@@ -320,10 +320,10 @@ public class KaleidoUtils {
     }
 
     public static String genSeasonPosterFilename(Integer seasonIndex) {
-        return "season-" + seasonIndex + KaleidoConstants.TVSHOW_POSTER;
+        return "season-" + StringUtils.leftPad(String.valueOf(seasonIndex), 2, "0") + '-' + KaleidoConstants.POSTER;
     }
 
-    public static String genThumbFilename(String filename) {
+    public static String genEpisodeThumbFilename(String filename) {
         return FilenameUtils.getBaseName(filename) + "-thumb.jpg";
     }
 
@@ -465,7 +465,5 @@ public class KaleidoUtils {
     public static void main(String[] args) {
         System.out.println(StringUtils.equals(null, null));
     }
-
-
 
 }

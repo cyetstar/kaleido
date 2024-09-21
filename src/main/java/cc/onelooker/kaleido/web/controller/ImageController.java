@@ -51,7 +51,7 @@ public class ImageController {
         } else {
             ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(id);
             Path path = KaleidoUtils.getComicPath(comicSeriesDTO.getPath());
-            coverPath = path.resolve(KaleidoConstants.COMIC_COVER);
+            coverPath = path.resolve(KaleidoConstants.COVER);
         }
         if (Files.exists(coverPath)) {
             content = Files.readAllBytes(coverPath);

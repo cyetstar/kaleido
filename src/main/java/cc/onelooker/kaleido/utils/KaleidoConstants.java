@@ -7,15 +7,12 @@ package cc.onelooker.kaleido.utils;
  */
 public class KaleidoConstants {
 
-    public static final String COMIC_INFO = "ComicInfo.xml";
-    public static final String COMIC_COVER = "cover.jpg";
-
     public static final String MOVIE_NFO = "movie.nfo";
-    public static final String MOVIE_POSTER = "poster.jpg";
-
-    public static final String TVSHOW_SHOW_NFO = "tvshow.nfo";
-    public static final String TVSHOW_SEASON_NFO = "season.nfo";
-    public static final String TVSHOW_POSTER = "poster.jpg";
+    public static final String SHOW_NFO = "tvshow.nfo";
+    public static final String SEASON_NFO = "season.nfo";
+    public static final String COMIC_INFO = "ComicInfo.xml";
+    public static final String POSTER = "poster.jpg";
+    public static final String COVER = "cover.jpg";
 
     public static final String SFJG_WIN = "1";
     public static final String SFJG_LOSS = "0";

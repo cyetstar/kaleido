@@ -168,13 +168,13 @@ public class TvshowManager {
                 if (!StringUtils.equals(newPath.toString(), path.toString())) {
                     NioFileUtils.renameDir(path, newPath, StandardCopyOption.REPLACE_EXISTING);
                 }
-                NFOUtil.write(tvshowNFO, TvshowNFO.class, newPath, KaleidoConstants.TVSHOW_SHOW_NFO);
+                NFOUtil.write(tvshowNFO, TvshowNFO.class, newPath, KaleidoConstants.SHOW_NFO);
             } else {
                 //新建文件夹，写入nfo再移入文件夹
                 if (Files.notExists(newPath)) {
                     Files.createDirectories(newPath);
                 }
-                NFOUtil.write(tvshowNFO, TvshowNFO.class, newPath, KaleidoConstants.TVSHOW_SHOW_NFO);
+                NFOUtil.write(tvshowNFO, TvshowNFO.class, newPath, KaleidoConstants.SHOW_NFO);
                 Files.move(path, newPath.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {
@@ -187,7 +187,7 @@ public class TvshowManager {
         if (!Files.isDirectory(path)) {
             return;
         }
-        if (Files.exists(path.resolve(KaleidoConstants.TVSHOW_SHOW_NFO))) {
+        if (Files.exists(path.resolve(KaleidoConstants.SHOW_NFO))) {
             try {
                 log.info("== 开始更新数据文件: {}", path);
                 Tvshow tvshow = findTmmTvshowByNFO(path);
@@ -296,7 +296,7 @@ public class TvshowManager {
 
     private void readNFO(TvshowShowDTO tvshowShowDTO) {
         Path filePath = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
-        TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, filePath, KaleidoConstants.TVSHOW_SHOW_NFO);
+        TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, filePath, KaleidoConstants.SHOW_NFO);
         if (tvshowNFO == null) {
             return;
         }
@@ -324,7 +324,7 @@ public class TvshowManager {
         TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowSeasonDTO.getShowId());
         Path folderPath = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
         Path seasonPath = folderPath.resolve(seasonFolder);
-        SeasonNFO seasonNFO = NFOUtil.read(SeasonNFO.class, seasonPath, KaleidoConstants.TVSHOW_SEASON_NFO);
+        SeasonNFO seasonNFO = NFOUtil.read(SeasonNFO.class, seasonPath, KaleidoConstants.SEASON_NFO);
         if (seasonNFO == null) {
             return;
         }
@@ -354,10 +354,10 @@ public class TvshowManager {
 
     private Tvshow findTmmTvshowByNFO(Path path) {
         try {
-            TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, path, KaleidoConstants.TVSHOW_SHOW_NFO);
+            TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, path, KaleidoConstants.SHOW_NFO);
             return tmmApiService.findShow(tvshowNFO.getDoubanId(), tvshowNFO.getImdbId(), tvshowNFO.getTmdbId());
         } catch (Exception e) {
-            log.info("== NFO文件无法读取: {}", path.resolve(KaleidoConstants.TVSHOW_SHOW_NFO).toString());
+            log.info("== NFO文件无法读取: {}", path.resolve(KaleidoConstants.SHOW_NFO).toString());
         }
         return null;
     }
@@ -450,7 +450,7 @@ public class TvshowManager {
         if (StringUtils.isEmpty(tvshowShowDTO.getThumb())) {
             return;
         }
-        HttpUtil.downloadFile(tvshowShowDTO.getThumb(), tvshowPath.resolve(KaleidoConstants.TVSHOW_POSTER).toFile());
+        HttpUtil.downloadFile(tvshowShowDTO.getThumb(), tvshowPath.resolve(KaleidoConstants.POSTER).toFile());
         log.info("== 下载剧集海报: {}", tvshowShowDTO.getThumb());
     }
 
@@ -467,30 +467,30 @@ public class TvshowManager {
         if (tvshowEpisodeDTO != null && StringUtils.isEmpty(tvshowEpisodeDTO.getThumb())) {
             return;
         }
-        String thumbFileName = KaleidoUtils.genThumbFilename(videoPath.getFileName().toString());
-        HttpUtil.downloadFile(tvshowEpisodeDTO.getThumb(), videoPath.resolveSibling(thumbFileName).toFile());
+        String filename = KaleidoUtils.genEpisodeThumbFilename(videoPath.getFileName().toString());
+        HttpUtil.downloadFile(tvshowEpisodeDTO.getThumb(), videoPath.resolveSibling(filename).toFile());
         log.info("== 下载单集图片: {}", tvshowEpisodeDTO.getThumb());
     }
 
     private void exportTvshowNFO(TvshowShowDTO tvshowShowDTO, Path tvshowPath) {
         TvshowSeasonDTO firstSeason = tvshowShowDTO.getFirstSeason();
         TvshowNFO tvshowNFO = NFOUtil.toTvshowNFO(tvshowShowDTO, firstSeason);
-        NFOUtil.write(tvshowNFO, TvshowNFO.class, tvshowPath, KaleidoConstants.TVSHOW_SHOW_NFO);
-        log.info("== 生成剧集NFO文件: {}", tvshowPath.resolve(KaleidoConstants.TVSHOW_SHOW_NFO));
+        NFOUtil.write(tvshowNFO, TvshowNFO.class, tvshowPath, KaleidoConstants.SHOW_NFO);
+        log.info("== 生成剧集NFO文件: {}", tvshowPath.resolve(KaleidoConstants.SHOW_NFO));
     }
 
     private void exportSeasonNFO(TvshowShowDTO tvshowShowDTO, TvshowSeasonDTO tvshowSeasonDTO, Path seasonPath) {
         SeasonNFO seasonNFO = NFOUtil.toSeasonNFO(tvshowShowDTO, tvshowSeasonDTO);
-        NFOUtil.write(seasonNFO, SeasonNFO.class, seasonPath, KaleidoConstants.TVSHOW_SEASON_NFO);
-        log.info("== 生成单季NFO文件: {}", seasonPath.resolve(KaleidoConstants.TVSHOW_SEASON_NFO));
+        NFOUtil.write(seasonNFO, SeasonNFO.class, seasonPath, KaleidoConstants.SEASON_NFO);
+        log.info("== 生成单季NFO文件: {}", seasonPath.resolve(KaleidoConstants.SEASON_NFO));
     }
 
     private void exportEpisodeNFO(TvshowShowDTO tvshowShowDTO, TvshowSeasonDTO tvshowSeasonDTO, TvshowEpisodeDTO tvshowEpisodeDTO, Path videoPath) {
-        String fileName = videoPath.getFileName().toString();
+        String filename = videoPath.getFileName().toString();
         EpisodeNFO episodeNFO = NFOUtil.toEpisodeNFO(tvshowShowDTO, tvshowSeasonDTO, tvshowEpisodeDTO);
-        String nfoFileName = FilenameUtils.getBaseName(fileName) + ".nfo";
-        NFOUtil.write(episodeNFO, EpisodeNFO.class, videoPath.getParent(), nfoFileName);
-        log.info("== 生成单集NFO文件: {}", videoPath.resolveSibling(nfoFileName));
+        filename = KaleidoUtils.genEpisodeNfoFilename(filename);
+        NFOUtil.write(episodeNFO, EpisodeNFO.class, videoPath.getParent(), filename);
+        log.info("== 生成单集NFO文件: {}", videoPath.resolveSibling(filename));
     }
 
     private Path createShowPath(TvshowShowDTO tvshowShowDTO) throws IOException {

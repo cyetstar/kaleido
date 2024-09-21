@@ -19,7 +19,6 @@ import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -81,10 +80,10 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
             TvshowShowDTO tvshowShowDTO = tvshowManager.findTvshowShow(taskDTO.getSubjectId());
             Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
             TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(tvshowShowDTO.getFirstSeason().getId());
-            TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, path, KaleidoConstants.TVSHOW_SHOW_NFO);
+            TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, path, KaleidoConstants.SHOW_NFO);
             TvshowNFO newTvshowNFO = NFOUtil.toTvshowNFO(tvshowShowDTO, tvshowSeasonDTO);
             if (tvshowNFO == null || !Objects.equals(tvshowNFO, newTvshowNFO)) {
-                NFOUtil.write(newTvshowNFO, TvshowNFO.class, path, KaleidoConstants.TVSHOW_SHOW_NFO);
+                NFOUtil.write(newTvshowNFO, TvshowNFO.class, path, KaleidoConstants.SHOW_NFO);
                 if (ConfigUtils.isEnabled(ConfigKey.refreshMetadata)) {
                     //如果大量刷新，否则可能会给Plex带来性能灾难
                     plexApiService.refreshMetadata(tvshowShowDTO.getId());
@@ -97,10 +96,10 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
             Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
             String seasonFolder = KaleidoUtils.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
             Path seasonPath = path.resolve(seasonFolder);
-            SeasonNFO seasonNFO = NFOUtil.read(SeasonNFO.class, seasonPath, KaleidoConstants.TVSHOW_SEASON_NFO);
+            SeasonNFO seasonNFO = NFOUtil.read(SeasonNFO.class, seasonPath, KaleidoConstants.SEASON_NFO);
             SeasonNFO newSeasonNFO = NFOUtil.toSeasonNFO(tvshowShowDTO, tvshowSeasonDTO);
             if (seasonNFO == null || !Objects.equals(seasonNFO, newSeasonNFO)) {
-                NFOUtil.write(newSeasonNFO, SeasonNFO.class, seasonPath, KaleidoConstants.TVSHOW_SEASON_NFO);
+                NFOUtil.write(newSeasonNFO, SeasonNFO.class, seasonPath, KaleidoConstants.SEASON_NFO);
                 if (ConfigUtils.isEnabled(ConfigKey.refreshMetadata)) {
                     //如果大量刷新，否则可能会给Plex带来性能灾难
                     plexApiService.refreshMetadata(tvshowSeasonDTO.getId());
@@ -114,7 +113,7 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
             Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
             String seasonFolder = KaleidoUtils.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
             Path seasonPath = path.resolve(seasonFolder);
-            String filename = KaleidoUtils.genNfoFilename(tvshowEpisodeDTO.getFilename());
+            String filename = KaleidoUtils.genEpisodeNfoFilename(tvshowEpisodeDTO.getFilename());
             EpisodeNFO episodeNFO = NFOUtil.read(EpisodeNFO.class, seasonPath, filename);
             EpisodeNFO newEpisodeNFO = NFOUtil.toEpisodeNFO(tvshowShowDTO, tvshowSeasonDTO, tvshowEpisodeDTO);
             if (episodeNFO == null || !Objects.equals(episodeNFO, newEpisodeNFO)) {
