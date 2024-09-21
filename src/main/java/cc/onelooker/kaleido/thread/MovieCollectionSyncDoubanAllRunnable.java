@@ -38,7 +38,7 @@ public class MovieCollectionSyncDoubanAllRunnable extends AbstractEntityActionRu
 
     @Override
     protected PageResult<MovieCollectionDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
-        return movieCollectionService.page(null, Page.of(pageNumber, pageSize, true));
+        return movieCollectionService.page(null, Page.of(pageNumber, pageSize));
     }
 
     @Override

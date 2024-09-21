@@ -32,7 +32,7 @@ public class MovieCheckThreadStatusRunnable extends AbstractEntityActionRunnable
 
     @Override
     protected PageResult<MovieThreadDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
-        return movieThreadService.page(null, Page.of(pageNumber, pageSize, true));
+        return movieThreadService.page(null, Page.of(pageNumber, pageSize));
     }
 
     @Override

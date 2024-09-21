@@ -31,9 +31,9 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/info.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!--日志文件保留天数-->
-            <MaxHistory>30</MaxHistory>
+            <MaxHistory>7</MaxHistory>
             <!--日志文件最大的大小-->
-            <MaxFileSize>5MB</MaxFileSize>
+            <MaxFileSize>20MB</MaxFileSize>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>${LOG_PATTERN}</pattern>
@@ -48,8 +48,8 @@
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <FileNamePattern>${LOG_PATH}/warn.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
-            <MaxHistory>30</MaxHistory>
-            <MaxFileSize>5MB</MaxFileSize>
+            <MaxHistory>7</MaxHistory>
+            <MaxFileSize>20MB</MaxFileSize>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>${LOG_PATTERN}</pattern>
@@ -66,9 +66,9 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!--日志文件保留天数-->
-            <MaxHistory>30</MaxHistory>
+            <MaxHistory>7</MaxHistory>
             <!--日志文件最大的大小-->
-            <MaxFileSize>5MB</MaxFileSize>
+            <MaxFileSize>20MB</MaxFileSize>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>${LOG_PATTERN}</pattern>
@@ -101,7 +101,6 @@
             <appender-ref ref="ERROR_FILE"/>
         </logger>
         <root>
-            <appender-ref ref="CONSOLE"/>
             <appender-ref ref="INFO_FILE"/>
             <appender-ref ref="WARN_FILE"/>
             <appender-ref ref="ERROR_FILE"/>

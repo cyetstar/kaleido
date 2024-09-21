@@ -68,6 +68,7 @@ public class TaskServiceImpl extends AbstractBaseServiceImpl<TaskMapper, TaskDO,
     }
 
     @Override
+    @Transactional
     public void updateTaskStatus(String id, String taskStatus) {
         TaskDO taskDO = new TaskDO();
         taskDO.setId(id);

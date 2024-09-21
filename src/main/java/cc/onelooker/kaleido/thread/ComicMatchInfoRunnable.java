@@ -71,7 +71,7 @@ public class ComicMatchInfoRunnable extends AbstractEntityActionRunnable<ComicSe
     @Override
     protected PageResult<ComicSeriesDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
         ComicSeriesDTO param = ComicSeriesConvert.INSTANCE.convertToDTO(params);
-        Page<ComicSeriesDTO> page = Page.of(pageNumber, pageSize, true);
+        Page<ComicSeriesDTO> page = Page.of(pageNumber, pageSize);
         page.addOrder(OrderItem.asc("updated_at"));
         return comicSeriesService.page(param, page);
     }

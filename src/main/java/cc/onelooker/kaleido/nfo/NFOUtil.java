@@ -280,7 +280,7 @@ public class NFOUtil {
 
     public static <T> T read(Class<T> clazz, Path filePath) {
         try {
-            if (Files.notExists(filePath)) {
+            if (Files.notExists(filePath) || filePath.toFile().length() == 0) {
                 return null;
             }
             JAXBContext context = JAXBContext.newInstance(clazz);

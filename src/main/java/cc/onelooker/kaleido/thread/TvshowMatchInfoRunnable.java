@@ -75,7 +75,7 @@ public class TvshowMatchInfoRunnable extends AbstractEntityActionRunnable<Tvshow
     @Override
     protected PageResult<TvshowSeasonDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
         TvshowSeasonDTO param = TvshowSeasonConvert.INSTANCE.convertToDTO(params);
-        Page<TvshowSeasonDTO> page = Page.of(pageNumber, pageSize, true);
+        Page<TvshowSeasonDTO> page = Page.of(pageNumber, pageSize);
         page.addOrder(OrderItem.asc("updated_at"));
         return tvshowSeasonService.page(param, page);
     }

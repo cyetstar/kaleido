@@ -35,7 +35,7 @@ public class MovieCollectionCheckMovieStatusRunnable extends AbstractEntityActio
     protected PageResult<MovieBasicCollectionDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
         MovieBasicCollectionDTO param = new MovieBasicCollectionDTO();
         param.setStatus(Constants.NO);
-        return movieBasicCollectionService.page(param, Page.of(pageNumber, pageNumber, true));
+        return movieBasicCollectionService.page(param, Page.of(pageNumber, pageNumber));
     }
 
     @Override

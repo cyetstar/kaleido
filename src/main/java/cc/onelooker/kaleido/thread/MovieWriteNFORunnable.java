@@ -54,7 +54,7 @@ public class MovieWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO>
         TaskDTO param = new TaskDTO();
         param.setTaskType(TaskType.writeMovieNFO.name());
         param.setTaskStatus(KaleidoConstants.TASK_STATUS_TODO);
-        return taskService.page(param, Page.of(pageNumber, pageSize));
+        return taskService.page(param, Page.of(1, pageSize));
     }
 
     @Override

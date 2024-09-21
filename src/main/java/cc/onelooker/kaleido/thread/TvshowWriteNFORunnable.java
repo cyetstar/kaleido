@@ -70,7 +70,7 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
         TaskDTO param = new TaskDTO();
         param.setTaskType(TaskType.writeTvshowNFO.name());
         param.setTaskStatus(KaleidoConstants.TASK_STATUS_TODO);
-        return taskService.page(param, Page.of(pageNumber, pageSize));
+        return taskService.page(param, Page.of(1, pageSize));
     }
 
     @Override
@@ -122,7 +122,7 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
                     //如果大量刷新，否则可能会给Plex带来性能灾难
                     plexApiService.refreshMetadata(tvshowEpisodeDTO.getId());
                 }
-                taskStatus = KaleidoConstants.TASK_STATUS_TODO;
+                taskStatus = KaleidoConstants.TASK_STATUS_DONE;
             }
         }
         taskService.updateTaskStatus(taskDTO.getId(), taskStatus);

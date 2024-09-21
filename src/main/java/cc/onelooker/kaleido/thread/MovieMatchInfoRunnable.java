@@ -75,7 +75,7 @@ public class MovieMatchInfoRunnable extends AbstractEntityActionRunnable<MovieBa
     @Override
     protected PageResult<MovieBasicDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
         MovieBasicDTO movieBasicDTO = MovieBasicConvert.INSTANCE.convertToDTO(params);
-        Page<MovieBasicDTO> page = Page.of(pageNumber, pageSize, true);
+        Page<MovieBasicDTO> page = Page.of(pageNumber, pageSize);
         page.addOrder(OrderItem.asc("updated_at"));
         return movieBasicService.page(movieBasicDTO, page);
     }
