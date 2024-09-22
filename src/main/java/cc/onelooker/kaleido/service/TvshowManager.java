@@ -161,8 +161,11 @@ public class TvshowManager {
             TvshowNFO tvshowNFO = new TvshowNFO();
             tvshowNFO.setDoubanId(tvshow.getDoubanId());
             Path importPath = KaleidoUtils.getTvshowImportPath();
-            String filename = tvshow.getTitle() + "(" + StringUtils.defaultIfEmpty(tvshow.getDoubanId(), tvshow.getTmdbId()) + ")";
-            Path newPath = importPath.resolve(StringUtils.defaultIfEmpty(filename, FilenameUtils.getBaseName(path.getFileName().toString())));
+            String filename = FilenameUtils.getBaseName(path.getFileName().toString());
+            if (StringUtils.isNotEmpty(tvshow.getTitle()) && (StringUtils.isNotEmpty(tvshow.getDoubanId()) || StringUtils.isNotEmpty(tvshow.getTmdbId()))) {
+                filename = tvshow.getTitle() + "(" + StringUtils.defaultIfEmpty(tvshow.getDoubanId(), tvshow.getTmdbId()) + ")";
+            }
+            Path newPath = importPath.resolve(filename);
             if (Files.isDirectory(path)) {
                 //如果是文件夹，则写入nfo再改名
                 if (!StringUtils.equals(newPath.toString(), path.toString())) {

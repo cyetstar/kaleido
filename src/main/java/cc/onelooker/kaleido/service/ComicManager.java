@@ -137,8 +137,11 @@ public class ComicManager {
             ComicInfoNFO comicInfoNFO = new ComicInfoNFO();
             comicInfoNFO.setSeriesBgmId(comic.getBgmId());
             Path importPath = KaleidoUtils.getComicImportPath();
-            String filename = StringUtils.defaultString(comic.getSeries(), StringUtils.EMPTY) + "(" + comic.getBgmId() + ")";
-            Path newPath = importPath.resolve(StringUtils.defaultIfEmpty(filename, FilenameUtils.getBaseName(path.getFileName().toString())));
+            String filename = FilenameUtils.getBaseName(path.getFileName().toString());
+            if (!StringUtils.isAllEmpty(comic.getSeries(), comic.getBgmId())) {
+                filename = StringUtils.defaultString(comic.getSeries(), StringUtils.EMPTY) + "(" + comic.getBgmId() + ")";
+            }
+            Path newPath = importPath.resolve(filename);
             if (Files.isDirectory(path)) {
                 if (!StringUtils.equals(newPath.toString(), path.toString())) {
                     NioFileUtils.renameDir(path, newPath, StandardCopyOption.REPLACE_EXISTING);

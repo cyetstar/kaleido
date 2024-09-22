@@ -12,5 +12,5 @@ public class MovieBasicSearchInfoReq {
 
     private String keyword;
 
-    private String type;
+    private String source;
 }

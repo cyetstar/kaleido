@@ -221,6 +221,31 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase> <!-- 在 generate-resources 阶段执行 -->
+                        <configuration>
+                            <target>
+                                <!-- 1. 清空 static 文件夹 -->
+                                <delete dir="${project.basedir}/src/main/resources/static"/>
+
+                                <!-- 2. 复制外部 dist 文件夹内容到 static 文件夹 -->
+                                <mkdir dir="${project.basedir}/src/main/resources/static"/>
+                                <copy todir="${project.basedir}/src/main/resources/static">
+                                    <fileset dir="/Users/cyetstar/workspace/webstorm/kaleido/dist"/>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <resources>
             <!-- 防止JKS被maven错误解析 -->

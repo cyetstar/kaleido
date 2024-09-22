@@ -42,8 +42,8 @@ public class ComicBookViewResp {
     @ApiModelProperty("页数")
     private Integer pageCount;
 
-    @ApiModelProperty("路径")
-    private String path;
+    @ApiModelProperty("文件名")
+    private String filename;
 
     @ApiModelProperty("文件大小")
     private Long fileSize;

@@ -12,9 +12,15 @@ public class MovieBasicMatchInfoReq {
 
     private String id;
 
+    private String path;
+
+    private String title;
+
     private String doubanId;
 
     private String tmdbId;
 
     private String imdbId;
+
+    private String matchType;
 }

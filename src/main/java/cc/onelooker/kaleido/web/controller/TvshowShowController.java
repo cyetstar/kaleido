@@ -133,16 +133,6 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
         return CommonResult.success(respList);
     }
 
-    @PostMapping("matchPath")
-    @ApiOperation(value = "匹配文件信息")
-    public CommonResult<Boolean> matchPath(@RequestBody TvshowShowMatchPathReq req) {
-        Tvshow tvshow = new Tvshow();
-        tvshow.setDoubanId(req.getDoubanId());
-        tvshow.setTitle(req.getTitle());
-        tvshowManager.matchPath(Paths.get(req.getPath()), tvshow);
-        return CommonResult.success(true);
-    }
-
     @GetMapping("viewPath")
     @ApiOperation(value = "获取目录")
     public CommonResult<String> viewPath(String id) {

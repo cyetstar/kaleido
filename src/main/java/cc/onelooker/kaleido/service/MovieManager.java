@@ -145,8 +145,11 @@ public class MovieManager {
             movieNFO.setDoubanId(movie.getDoubanId());
             movieNFO.setTmdbId(movie.getTmdbId());
             Path importPath = KaleidoUtils.getMovieImportPath();
-            String filename = movie.getTitle() + "(" + StringUtils.defaultIfEmpty(movie.getDoubanId(), movie.getTmdbId()) + ")";
-            Path newPath = importPath.resolve(StringUtils.defaultIfEmpty(filename, FilenameUtils.getBaseName(path.getFileName().toString())));
+            String filename = FilenameUtils.getBaseName(path.getFileName().toString());
+            if (StringUtils.isNotEmpty(movie.getTitle()) && (StringUtils.isNotEmpty(movie.getDoubanId()) || StringUtils.isNotEmpty(movie.getTmdbId()))) {
+                filename = movie.getTitle() + "(" + StringUtils.defaultIfEmpty(movie.getDoubanId(), movie.getTmdbId()) + ")";
+            }
+            Path newPath = importPath.resolve(filename);
             if (Files.isDirectory(path)) {
                 if (!StringUtils.equals(newPath.toString(), path.toString())) {
                     NioFileUtils.renameDir(path, newPath, StandardCopyOption.REPLACE_EXISTING);

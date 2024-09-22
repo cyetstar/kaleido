@@ -222,4 +222,17 @@ public class TempTest {
         System.out.println(passwordEncoder.encode("lenovot430"));
     }
 
+    @Test
+    public void renameFiles() throws IOException {
+        Files.list(Paths.get("/Volumes/tvshow/library/十一个女人 (1981)/Season 01")).forEach(s -> {
+            try {
+                String filename = s.getFileName().toString();
+                String newFilename = StringUtils.replace(filename, "EP", "S01E");
+                Files.move(s, s.resolveSibling(newFilename));
+            } catch (Exception e) {
+
+            }
+        });
+    }
+
 }

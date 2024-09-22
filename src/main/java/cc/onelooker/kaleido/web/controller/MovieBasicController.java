@@ -129,7 +129,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("searchInfo")
     @ApiOperation(value = "查询信息")
     public CommonResult<List<MovieBasicSearchInfoResp>> searchInfo(@RequestBody MovieBasicSearchInfoReq req) {
-        List<Movie> movieList = tmmApiService.searchMovie(req.getKeyword(), req.getType());
+        List<Movie> movieList = tmmApiService.searchMovie(req.getKeyword(), req.getSource());
         List<MovieBasicSearchInfoResp> respList = Lists.newArrayList();
         if (movieList != null) {
             respList = movieList.stream().map(s -> {
@@ -154,8 +154,16 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("matchInfo")
     @ApiOperation(value = "匹配信息")
     public CommonResult<Boolean> matchInfo(@RequestBody MovieBasicMatchInfoReq req) {
-        Movie movie = tmmApiService.findMovie(req.getDoubanId(), req.getImdbId(), req.getTmdbId());
-        movieManager.matchInfo(req.getId(), movie);
+        if (StringUtils.equals(req.getMatchType(), "path")) {
+            Movie movie = new Movie();
+            movie.setDoubanId(req.getDoubanId());
+            movie.setTmdbId(req.getTmdbId());
+            movie.setTitle(req.getTitle());
+            movieManager.matchPath(Paths.get(req.getPath()), movie);
+        } else {
+            Movie movie = tmmApiService.findMovie(req.getDoubanId(), req.getImdbId(), req.getTmdbId());
+            movieManager.matchInfo(req.getId(), movie);
+        }
         return CommonResult.success(true);
     }
 
@@ -200,17 +208,6 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
             respList.add(resp);
         }
         return CommonResult.success(respList);
-    }
-
-    @PostMapping("matchPath")
-    @ApiOperation(value = "匹配文件信息")
-    public CommonResult<Boolean> matchPath(@RequestBody MovieBasicMatchPathReq req) {
-        Movie movie = new Movie();
-        movie.setDoubanId(req.getDoubanId());
-        movie.setTmdbId(req.getTmdbId());
-        movie.setTitle(req.getTitle());
-        movieManager.matchPath(Paths.get(req.getPath()), movie);
-        return CommonResult.success(true);
     }
 
 }

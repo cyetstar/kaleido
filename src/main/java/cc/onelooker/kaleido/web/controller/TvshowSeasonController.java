@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Collectors;
 
@@ -128,8 +129,15 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
     @PostMapping("matchInfo")
     @ApiOperation(value = "匹配信息")
     public CommonResult<Boolean> matchInfo(@RequestBody TvshowSeasonMatchInfoReq req) {
-        Tvshow tvshow = tmmApiService.findShow(req.getDoubanId(), req.getImdbId(), req.getTmdbId());
-        tvshowManager.matchInfo(req.getId(), tvshow);
+        if (StringUtils.equals(req.getMatchType(), "path")) {
+            Tvshow tvshow = new Tvshow();
+            tvshow.setDoubanId(req.getDoubanId());
+            tvshow.setTitle(req.getTitle());
+            tvshowManager.matchPath(Paths.get(req.getPath()), tvshow);
+        } else {
+            Tvshow tvshow = tmmApiService.findShow(req.getDoubanId(), req.getImdbId(), req.getTmdbId());
+            tvshowManager.matchInfo(req.getId(), tvshow);
+        }
         return CommonResult.success(true);
     }
 
