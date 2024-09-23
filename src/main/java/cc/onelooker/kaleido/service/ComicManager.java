@@ -174,8 +174,9 @@ public class ComicManager {
                     operationPath(comicSeriesDTO, path);
                 } else {
                     log.info("== 未找到匹配信息，直接移动文件");
+                    Files.delete(path.resolve(KaleidoConstants.COMIC_INFO));
                     Path targetPath = KaleidoUtils.getComicPath(path.getFileName().toString());
-                    NioFileUtils.moveDir(path, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                    NioFileUtils.renameDir(path, targetPath, StandardCopyOption.REPLACE_EXISTING);
                 }
             } catch (Exception e) {
                 log.error("== 更新源发生错误: {}", path, e);
@@ -341,7 +342,7 @@ public class ComicManager {
             if (zipPath == null) {
                 return;
             }
-            Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), "kaleido");
+            Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), FilenameUtils.getBaseName(zipPath.getFileName().toString()));
             unzip(zipPath, tempPath);
             ComicInfoNFO comicInfoNFO = NFOUtil.read(ComicInfoNFO.class, tempPath, KaleidoConstants.COMIC_INFO);
             if (comicInfoNFO == null) {

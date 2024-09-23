@@ -8,9 +8,15 @@ import lombok.Data;
  * @Description TODO
  */
 @Data
-public class ComicSeriesMatchPathReq {
+public class ComicSeriesMatchInfoReq {
+
+    private String id;
 
     private String bgmId;
+
     private String series;
+
     private String path;
+
+    private String matchType;
 }

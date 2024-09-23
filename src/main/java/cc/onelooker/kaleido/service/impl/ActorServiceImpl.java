@@ -42,9 +42,6 @@ public class ActorServiceImpl extends AbstractBaseServiceImpl<ActorMapper, Actor
     @Autowired
     private TvshowSeasonActorService tvshowSeasonActorService;
 
-    @Autowired
-    private TvshowSeasonService tvshowSeasonService;
-
     @Override
     protected Wrapper<ActorDO> genQueryWrapper(ActorDTO dto) {
         LambdaQueryWrapper<ActorDO> query = new LambdaQueryWrapper<>();
@@ -65,6 +62,24 @@ public class ActorServiceImpl extends AbstractBaseServiceImpl<ActorMapper, Actor
     @Override
     public ActorDO convertToDO(ActorDTO actorDTO) {
         return convert.convertToDO(actorDTO);
+    }
+
+    @Override
+    @Transactional
+    public ActorDTO insert(ActorDTO dto) {
+        ActorDTO actorDTO = null;
+        if (StringUtils.isNotEmpty(dto.getDoubanId())) {
+            actorDTO = findByDoubanId(dto.getDoubanId());
+        } else {
+            actorDTO = findByName(dto.getName());
+            if (actorDTO != null && StringUtils.equals(dto.getDisambiguation(), actorDTO.getDisambiguation())) {
+                throw new RuntimeException("该演员已存在");
+            }
+        }
+        if (actorDTO != null) {
+            throw new RuntimeException("该演员已存在");
+        }
+        return super.insert(dto);
     }
 
     @Override

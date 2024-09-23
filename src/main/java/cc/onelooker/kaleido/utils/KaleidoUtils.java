@@ -301,6 +301,9 @@ public class KaleidoUtils {
         CollectionUtils.addIgnoreNull(authors, writerOptional.orElse(null));
         CollectionUtils.addIgnoreNull(authors, pencillerOptional.orElse(null));
         String authorName = StringUtils.join(authors, "×");
+        if (StringUtils.isEmpty(authorName)) {
+            return String.format("%s", sanitizeFileName(comicSeriesDTO.getTitle()));
+        }
         return String.format("%s [%s]", sanitizeFileName(comicSeriesDTO.getTitle()), sanitizeFileName(authorName));
     }
 

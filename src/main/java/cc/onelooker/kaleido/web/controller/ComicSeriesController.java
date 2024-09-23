@@ -20,6 +20,7 @@ import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -113,13 +114,18 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
         return CommonResult.success(respList);
     }
 
-    @PostMapping("matchPath")
-    @ApiOperation(value = "匹配文件信息")
-    public CommonResult<Boolean> matchPath(@RequestBody ComicSeriesMatchPathReq req) {
-        Comic comic = new Comic();
-        comic.setBgmId(req.getBgmId());
-        comic.setSeries(req.getSeries());
-        comicManager.matchPath(Paths.get(req.getPath()), comic);
+    @PostMapping("matchInfo")
+    @ApiOperation(value = "匹配信息")
+    public CommonResult<Boolean> matchInfo(@RequestBody ComicSeriesMatchInfoReq req) {
+        if (StringUtils.equals(req.getMatchType(), "path")) {
+            Comic comic = new Comic();
+            comic.setBgmId(req.getBgmId());
+            comic.setSeries(req.getSeries());
+            comicManager.matchPath(Paths.get(req.getPath()), comic);
+        } else {
+            Comic comic = tmmApiService.findComic(req.getBgmId());
+            comicManager.matchInfo(req.getId(), comic);
+        }
         return CommonResult.success(true);
     }
 

@@ -10,6 +10,7 @@ import cc.onelooker.kaleido.service.AuthorService;
 import cc.onelooker.kaleido.service.ComicSeriesAuthorService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.zjjcnt.common.core.exception.ServiceException;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,13 +56,22 @@ public class AuthorServiceImpl extends AbstractBaseServiceImpl<AuthorMapper, Aut
     }
 
     @Override
+    @Transactional
+    public AuthorDTO insert(AuthorDTO dto) {
+        AuthorDTO authorDTO = findByName(dto.getName());
+        if (authorDTO != null) {
+            throw new RuntimeException("该作者已存在");
+        }
+        return super.insert(dto);
+    }
+
+    @Override
     public AuthorDTO findByName(String name) {
         Validate.notEmpty(name);
         AuthorDTO param = new AuthorDTO();
         param.setName(name);
         return find(param);
     }
-
 
     @Override
     public List<AuthorDTO> listByKeyword(String keyword) {
