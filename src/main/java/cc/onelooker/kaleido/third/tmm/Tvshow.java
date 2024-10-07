@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.third.tmm;
 
+import cc.onelooker.kaleido.dto.IUnique;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ import java.util.Objects;
  * @Description TODO
  */
 @Data
-public class Tvshow {
+public class Tvshow implements IUnique {
     @JsonProperty("douban_id")
     private String doubanId;
     @JsonProperty("imdb_id")

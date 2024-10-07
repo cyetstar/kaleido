@@ -113,20 +113,15 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
 
     @PostMapping("uploadCover")
     @ApiOperation(value = "上传封面")
-    public CommonResult<Boolean> uploadCover(@RequestBody ComicBookUploadCoverReq req) throws IOException {
-        ComicBookDTO comicBookDTO = comicBookService.findById(req.getId());
-        comicBookDTO.setCoverPageNumber(req.getCoverPageNumber());
-        comicBookDTO.setCoverBoxData(req.getCoverBoxData());
-        comicBookService.update(comicBookDTO);
+    public CommonResult<Boolean> uploadCover(@RequestBody ComicBookUploadCoverReq req) {
+        comicManager.uploadCover(req.getId(), req.getCoverPageNumber(), req.getCoverBoxData(), req.getData());
+        return CommonResult.success(true);
+    }
 
-        ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(comicBookDTO.getSeriesId());
-        Path comicPath = KaleidoUtils.getComicPath(comicSeriesDTO.getPath());
-        Path bookCoverPath = comicPath.resolve(KaleidoUtils.genCoverFilename(comicBookDTO.getFilename()));
-        byte[] data = Base64.decode(RegExUtils.removeFirst(req.getData(), "data:image/.+;base64,"));
-        if (comicBookDTO.getBookNumber() == null || comicBookDTO.getBookNumber() <= 1) {
-            Files.write(bookCoverPath.resolveSibling(KaleidoConstants.COVER), data);
-        }
-        Files.write(bookCoverPath, data);
+    @PostMapping("clearCover")
+    @ApiOperation(value = "清除封面")
+    public CommonResult<Boolean> clearCover(@RequestBody ComicBookClearCoverReq req) {
+        comicManager.clearCover(req.getId());
         return CommonResult.success(true);
     }
 

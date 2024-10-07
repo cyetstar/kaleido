@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.nfo;
 
+import cc.onelooker.kaleido.dto.IUnique;
 import lombok.Data;
 
 import javax.xml.bind.annotation.*;
@@ -10,7 +11,7 @@ import java.util.Objects;
 @Data
 @XmlRootElement(name = "movie")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MovieNFO {
+public class MovieNFO implements IUnique {
 
     private String title;
     @XmlElement(name = "originaltitle")

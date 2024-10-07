@@ -1,10 +1,14 @@
 package cc.onelooker.kaleido.thread;
 
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.MovieManager;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,13 +24,23 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     private final MovieManager movieManager;
 
-    public MovieUpdateSourceRunnable(MovieManager movieManager) {
+    private final PlexApiService plexApiService;
+
+    public MovieUpdateSourceRunnable(MovieManager movieManager, PlexApiService plexApiService) {
         this.movieManager = movieManager;
+        this.plexApiService = plexApiService;
     }
 
     @Override
     public Action getAction() {
         return Action.movieUpdateSource;
+    }
+
+    @Override
+    protected void afterRun(@Nullable Map<String, String> params) {
+        super.afterRun(params);
+        String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
+        plexApiService.refreshLibrary(libraryId);
     }
 
     @Override

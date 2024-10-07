@@ -15,7 +15,7 @@ import java.util.List;
  * @see TvshowShowDO
  */
 @Data
-public class TvshowShowDTO implements BaseDTO<String> {
+public class TvshowShowDTO implements BaseDTO<String>, IUnique {
     private static final long serialVersionUID = 7717222741608978157L;
 
     /**

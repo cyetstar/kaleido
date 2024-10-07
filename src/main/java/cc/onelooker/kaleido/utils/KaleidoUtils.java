@@ -368,33 +368,17 @@ public class KaleidoUtils {
         return fileName;
     }
 
-    public static boolean isSameMovie(MovieBasicDTO movieBasicDTO, MovieNFO movieNFO) {
-        if (movieBasicDTO == null || movieNFO == null) {
+    public static boolean isSame(IUnique o1, IUnique o2) {
+        if (o1 == null || o2 == null) {
             return false;
         }
-        if (movieBasicDTO.getDoubanId() != null && movieNFO.getDoubanId() != null && StringUtils.equals(movieBasicDTO.getDoubanId(), movieNFO.getDoubanId())) {
+        if (o1.getDoubanId() != null && o2.getDoubanId() != null && StringUtils.equals(o1.getDoubanId(), o2.getDoubanId())) {
             return true;
         }
-        if (movieBasicDTO.getImdbId() != null && movieNFO.getImdbId() != null && StringUtils.equals(movieBasicDTO.getImdbId(), movieNFO.getImdbId())) {
+        if (o1.getImdbId() != null && o2.getImdbId() != null && StringUtils.equals(o1.getImdbId(), o2.getImdbId())) {
             return true;
         }
-        if (movieBasicDTO.getTmdbId() != null && movieNFO.getTmdbId() != null && StringUtils.equals(movieBasicDTO.getTmdbId(), movieNFO.getTmdbId())) {
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean isSameTvshow(TvshowShowDTO tvshowShowDTO1, Tvshow tvshow) {
-        if (tvshowShowDTO1 == null || tvshow == null) {
-            return false;
-        }
-        if (tvshowShowDTO1.getDoubanId() != null && tvshow.getDoubanId() != null && StringUtils.equals(tvshowShowDTO1.getDoubanId(), tvshow.getDoubanId())) {
-            return true;
-        }
-        if (tvshowShowDTO1.getImdbId() != null && tvshow.getImdbId() != null && StringUtils.equals(tvshowShowDTO1.getImdbId(), tvshow.getImdbId())) {
-            return true;
-        }
-        if (tvshowShowDTO1.getTmdbId() != null && tvshow.getTmdbId() != null && StringUtils.equals(tvshowShowDTO1.getTmdbId(), tvshow.getTmdbId())) {
+        if (o1.getTmdbId() != null && o2.getTmdbId() != null && StringUtils.equals(o1.getTmdbId(), o2.getTmdbId())) {
             return true;
         }
         return false;

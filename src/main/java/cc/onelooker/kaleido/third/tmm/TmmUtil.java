@@ -58,8 +58,12 @@ public class TmmUtil {
         if (comic == null) {
             return comicSeriesDTO;
         }
-        comicSeriesDTO.setTitle(StringUtils.defaultIfEmpty(comic.getSeries(), comic.getOriginalSeries()));
-        comicSeriesDTO.setOriginalTitle(comic.getOriginalSeries());
+        if (StringUtils.isEmpty(comicSeriesDTO.getTitle())) {
+            //防止被覆盖
+            comicSeriesDTO.setTitle(StringUtils.defaultIfEmpty(comic.getSeries(), comic.getOriginalSeries()));
+        }
+        //防止被覆盖
+        comicSeriesDTO.setOriginalTitle(StringUtils.defaultIfEmpty(comicSeriesDTO.getOriginalTitle(), comic.getOriginalSeries()));
         comicSeriesDTO.setBookCount(comic.getVolumeCount());
         comicSeriesDTO.setYear(comic.getYear());
         comicSeriesDTO.setSummary(comic.getSummary());

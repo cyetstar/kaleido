@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.mapper;
 import cc.onelooker.kaleido.entity.ComicBookDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 漫画书籍Mapper接口
@@ -13,4 +14,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ComicBookMapper extends BaseMapper<ComicBookDO> {
 
+    void clearCover(@Param("id") String id);
 }

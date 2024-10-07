@@ -66,8 +66,9 @@ public class PlexApiService {
     private final static String API_COLLECTION = "/library/collections/{collectionId}?X-Plex-Token={plexToken}";
     private final static String API_COLLECTION_CHILDREN = "/library/collections/{collectionId}/children?X-Plex-Token={plexToken}";
 
-    private final static String API_LIBRARY_LIST = "/library/sections/?X-Plex-Token={plexToken}";
-    private final static String API_METADATA_LIST = "/library/sections/{libraryId}/all?type={type}&X-Plex-Token={token}&X-Plex-Container-Start={start}&X-Plex-Container-Size={size}";
+    private final static String API_SECTIONS = "/library/sections/?X-Plex-Token={plexToken}";
+    private final static String API_SECTIONS_ALL = "/library/sections/{libraryId}/all?type={type}&X-Plex-Token={token}&X-Plex-Container-Start={start}&X-Plex-Container-Size={size}";
+    private final static String API_SECTIONS_REFRESH = "/library/sections/{libraryId}/refresh?force=0&X-Plex-Token={token}";
     private final static String API_METADATA = "/library/metadata/{metadataId}?X-Plex-Token={plexToken}";
     private final static String API_METADATA_CHILDREN = "/library/metadata/{metadataId}/children?X-Plex-Token={plexToken}";
     private final static String API_METADATA_REFRESH = "/library/metadata/{metadataId}/refresh?force=1&X-Plex-Token={plexToken}";
@@ -89,7 +90,7 @@ public class PlexApiService {
                 if (StringUtils.isEmpty(plexUrl) || StringUtils.isEmpty(plexToken)) {
                     return Lists.newArrayList();
                 }
-                PlexResult plexResult = restTemplate.getForObject(plexUrl + API_LIBRARY_LIST, PlexResult.class, plexToken);
+                PlexResult plexResult = restTemplate.getForObject(plexUrl + API_SECTIONS, PlexResult.class, plexToken);
                 Validate.notNull(plexResult);
                 MediaContainer mediaContainer = plexResult.getMediaContainer();
                 return mediaContainer.getDirectoryList();
@@ -108,7 +109,7 @@ public class PlexApiService {
             urlParams.put("token", plexToken);
             urlParams.put("start", (pageNumber - 1) * pageSize);
             urlParams.put("size", pageSize);
-            String uri = UriComponentsBuilder.fromUriString(plexUrl + API_METADATA_LIST).buildAndExpand(urlParams).toUriString();
+            String uri = UriComponentsBuilder.fromUriString(plexUrl + API_SECTIONS_ALL).buildAndExpand(urlParams).toUriString();
             PlexResult plexResult = restTemplate.getForObject(uri, PlexResult.class);
             Validate.notNull(plexResult);
             MediaContainer mediaContainer = plexResult.getMediaContainer();
@@ -122,66 +123,11 @@ public class PlexApiService {
         });
     }
 
-    public List<Metadata> listArtist(String libraryId) {
-        return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_ARTIST_LIST, PlexResult.class, libraryId, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getMetadataList();
-        });
-    }
-
-    public Metadata findArtistById(String artistId) {
-        return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_ARTIST_FIND, PlexResult.class, artistId, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getMetadata();
-        });
-    }
-
-    public List<Metadata> listAlbum(String libraryId) {
-        return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_ALBUM_LIST, PlexResult.class, libraryId, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getMetadataList();
-        });
-    }
-
-    public List<Metadata> listAlbumByUpdatedAt(String libraryId, Long updatedAt) {
-        return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_ALBUM_LIST_BY_UPDATED_AT, PlexResult.class, libraryId, updatedAt, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getMetadataList();
-        });
-    }
-
-    public Metadata findAlbumById(String albumId) {
-        return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_ALBUM_FIND, PlexResult.class, albumId, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getMetadata();
-        });
-    }
-
-    public List<Metadata> listAlbumByArtist(String libraryId, String artistId) {
-        return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_ALBUM_LIST_BY_ARTIST, PlexResult.class, libraryId, artistId, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getMetadataList();
-        });
-    }
-
     public List<Metadata> listTrackByAlbumId(String albumId) {
         return doRequest(() -> {
             PlexResult plexResult = restTemplate.getForObject(plexUrl + API_TRACK_LIST_BY_ALBUM, PlexResult.class, albumId, plexToken);
             MediaContainer mediaContainer = plexResult.getMediaContainer();
             return mediaContainer.getMetadataList();
-        });
-    }
-
-    public String getLibraryPath(String libraryId) {
-        return doRequest(() -> {
-            Directory directory = listLibrary().stream().filter(s -> StringUtils.equals(s.getKey(), libraryId)).findFirst().get();
-            return directory.getLocation().getPath();
         });
     }
 
@@ -204,76 +150,6 @@ public class PlexApiService {
             pageResult.setTotal(mediaContainer.getTotalSize().longValue());
             pageResult.setRecords(mediaContainer.getMetadataList() == null ? Lists.newArrayList() : mediaContainer.getMetadataList());
             return pageResult;
-        });
-    }
-
-    public List<Metadata> listMovieByUpdatedAt(String libraryId, Long updatedAt) {
-        return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_MOVIE_LIST_BY_UPDATED_AT, PlexResult.class, libraryId, updatedAt, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getMetadataList();
-        });
-    }
-
-    public List<Metadata> listTvshow(String libraryId) {
-        return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_TVSHOW_LIST, PlexResult.class, libraryId, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getMetadataList();
-        });
-    }
-
-    public List<Metadata> listTvshowByUpdatedAt(String libraryId, Long updatedAt) {
-        return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_TVSHOW_LIST_BY_UPDATED_AT, PlexResult.class, libraryId, updatedAt, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getMetadataList();
-        });
-    }
-
-    public PageResult<Metadata> pageEpsiode(String libraryId, Integer pageNumber, Integer pageSize) {
-        return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_EPISODE_LIST, PlexResult.class, libraryId, plexToken, (pageNumber - 1) * pageSize, pageSize);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            PageResult<Metadata> pageResult = new PageResult<>();
-            pageResult.setPageNumber(pageNumber.longValue());
-            pageResult.setPageSize(pageSize.longValue());
-            pageResult.setSearchCount(true);
-            pageResult.setTotal(mediaContainer.getTotalSize().longValue());
-            pageResult.setRecords(mediaContainer.getMetadataList() == null ? Lists.newArrayList() : mediaContainer.getMetadataList());
-            return pageResult;
-        });
-    }
-
-    public List<Metadata> listEpsiodeByUpdatedAt(String libraryId, Long updatedAt) {
-        return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_EPISODE_LIST_BY_UPDATED_AT, PlexResult.class, libraryId, updatedAt, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getMetadataList();
-        });
-    }
-
-    public Metadata findEpisodeById(String episodeId) {
-        return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_EPISODE_FIND, PlexResult.class, episodeId, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getMetadata();
-        });
-    }
-
-    public Metadata findSeasonById(String seasonId) {
-        return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_SEASON_FIND, PlexResult.class, seasonId, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getMetadata();
-        });
-    }
-
-    public Metadata findTvshowById(String tvshowId) {
-        return doRequest(() -> {
-            PlexResult plexResult = restTemplate.getForObject(plexUrl + API_TVSHOW_FIND, PlexResult.class, tvshowId, plexToken);
-            MediaContainer mediaContainer = plexResult.getMediaContainer();
-            return mediaContainer.getMetadata();
         });
     }
 
@@ -363,6 +239,13 @@ public class PlexApiService {
     public void refreshMetadata(String metadataId) {
         doRequest(() -> {
             restTemplate.put(plexUrl + API_METADATA_REFRESH, String.class, metadataId, plexToken);
+            return true;
+        });
+    }
+
+    public void refreshLibrary(String libraryId) {
+        doRequest(() -> {
+            restTemplate.getForObject(plexUrl + API_SECTIONS_REFRESH, String.class, libraryId, plexToken);
             return true;
         });
     }

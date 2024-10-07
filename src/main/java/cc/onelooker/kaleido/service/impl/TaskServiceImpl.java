@@ -76,4 +76,9 @@ public class TaskServiceImpl extends AbstractBaseServiceImpl<TaskMapper, TaskDO,
         updateById(taskDO);
     }
 
+    @Override
+    @Transactional
+    public void deleteNotExistRecords(String tableName, SubjectType subjectType) {
+        baseMapper.deleteNotExistRecords("comic_book", subjectType.name());
+    }
 }

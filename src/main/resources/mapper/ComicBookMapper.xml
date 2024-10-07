@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.onelooker.kaleido.mapper.ComicBookMapper">
+
+    <update id="clearCover">
+        update comic_book
+        set cover_page_number = null, cover_box_data = null
+        where id = #{id}
+    </update>
 </mapper>

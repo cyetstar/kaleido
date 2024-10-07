@@ -110,6 +110,10 @@ public class ComicInfoNFO {
     private String seriesBgmId;
     @XmlElement(name = "SeriesStatus")
     private String seriesStatus;
+    @XmlElement(name = "CoverPageNumber")
+    private Integer coverPageNumber;
+    @XmlElement(name = "CoverBoxData")
+    private String coverBoxData;
 
     @Override
     public boolean equals(Object o) {

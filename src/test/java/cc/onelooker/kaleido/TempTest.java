@@ -224,15 +224,52 @@ public class TempTest {
 
     @Test
     public void renameFiles() throws IOException {
-        Files.list(Paths.get("/Volumes/tvshow/library/十一个女人 (1981)/Season 01")).forEach(s -> {
+        Files.list(Paths.get("/Volumes/comic/import/[烈焰先鋒 救國的橘衣消防員][曽田正人×冨山玖呂][Vol.01-Vol.09][东立][电子版]")).forEach(s -> {
             try {
                 String filename = s.getFileName().toString();
-                String newFilename = StringUtils.replace(filename, "EP", "S01E");
-                Files.move(s, s.resolveSibling(newFilename));
+                filename = renameFile(filename);
+                Files.move(s, s.resolveSibling(filename));
             } catch (Exception e) {
 
             }
         });
+    }
+
+    private String renameFile(String fileName) {
+//        String nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
+//        String extension = fileName.substring(fileName.lastIndexOf("."));
+
+        Pattern pattern = Pattern.compile("(\\d+)");
+        Matcher matcher = pattern.matcher(fileName);
+        if (matcher.find()) {
+            Integer vol = Integer.parseInt(matcher.group(1));
+            String volStr = StringUtils.leftPad(vol.toString(), 2, '0');
+            String newName = "[曽田正人×冨山玖呂][烈焰先鋒 救國的橘衣消防員][東立電子版]Vol." + volStr + ".zip";
+            return newName;
+        }
+        // 3. 返回新的文件名
+        return fileName;
+    }
+
+    public static String renameFileWithAddition(String fileName, int addition) {
+        // 定义正则表达式来匹配 "Vol.数字"
+        Pattern pattern = Pattern.compile("Vol\\.(\\d+)");
+        Matcher matcher = pattern.matcher(fileName);
+
+        // 如果找到匹配的 "Vol.数字"
+        if (matcher.find()) {
+            // 获取当前的 Vol 后的数字
+            int currentVol = Integer.parseInt(matcher.group(1));
+            // 进行加法运算
+            int newVol = currentVol + addition;
+            // 格式化成三位数的Vol号
+            String newVolString = String.format("Vol.%03d", newVol);
+            // 返回替换后的新文件名
+            return matcher.replaceFirst(newVolString);
+        }
+
+        // 如果没有匹配到 "Vol." 的情况，返回原始文件名
+        return fileName;
     }
 
 }

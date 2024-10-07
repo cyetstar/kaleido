@@ -78,7 +78,7 @@ public class JobManager {
         comicSyncRunnable.run();
     }
 
-    @Scheduled(cron = "0 15 1 * * ?")
+   // @Scheduled(cron = "0 15 1 * * ?")
     public void checkThreadStatus() {
         movieCheckThreadStatusRunnable.run();
     }

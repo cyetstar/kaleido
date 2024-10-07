@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import cc.onelooker.kaleido.entity.TaskDO;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 任务Mapper接口
@@ -14,4 +15,5 @@ import cc.onelooker.kaleido.entity.TaskDO;
 @Mapper
 public interface TaskMapper extends BaseMapper<TaskDO> {
 
+    void deleteNotExistRecords(@Param("tableName") String tableName, @Param("subjectType") String subjectType);
 }

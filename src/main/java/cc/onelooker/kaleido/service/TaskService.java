@@ -16,4 +16,6 @@ public interface TaskService extends IBaseService<TaskDTO> {
     void newTask(String subjectId, SubjectType subjectType, TaskType taskType);
 
     void updateTaskStatus(String id, String taskStatus);
+
+    void deleteNotExistRecords(String tableName, SubjectType subjectType);
 }

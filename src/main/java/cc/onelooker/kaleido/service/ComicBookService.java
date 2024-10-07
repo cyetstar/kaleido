@@ -15,4 +15,5 @@ public interface ComicBookService extends IBaseService<ComicBookDTO> {
 
     List<ComicBookDTO> listBySeriesId(String seriesId);
 
+    void clearCover(String id);
 }

@@ -64,6 +64,8 @@ public class NFOUtil {
         comicInfoNFO.setAkas(comicSeriesDTO.getAlternateTitleList());
         comicInfoNFO.setSeriesBgmId(comicSeriesDTO.getBgmId());
         comicInfoNFO.setSeriesStatus(comicSeriesDTO.getStatus());
+        comicInfoNFO.setCoverPageNumber(comicBookDTO.getCoverPageNumber());
+        comicInfoNFO.setCoverBoxData(comicBookDTO.getCoverBoxData());
         return comicInfoNFO;
     }
 

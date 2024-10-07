@@ -225,8 +225,8 @@ public class TvshowManager {
             }
             TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(seasonId);
             TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowSeasonDTO.getShowId());
-            TmmUtil.toTvshowShow(tvshowShowDTO, tvshow);
-            if (KaleidoUtils.isSameTvshow(tvshowShowDTO, tvshow)) {
+            if (KaleidoUtils.isSame(tvshowShowDTO, tvshow)) {
+                TmmUtil.toTvshowShow(tvshowShowDTO, tvshow);
                 //如为相同的剧集，则直接更新
                 saveShow(tvshowShowDTO);
                 Season season = tvshow.getSeason(tvshowSeasonDTO.getSeasonIndex());
@@ -243,6 +243,7 @@ public class TvshowManager {
                     saveEpisode(tvshowEpisodeDTO);
                 }
             } else {
+                TmmUtil.toTvshowShow(tvshowShowDTO, tvshow);
                 //重新处理文件夹
                 Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
                 operationPath(tvshowShowDTO, path);

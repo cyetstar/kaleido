@@ -1,10 +1,14 @@
 package cc.onelooker.kaleido.thread;
 
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.TvshowManager;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,10 +24,11 @@ public class TvshowUpdateSourceRunnable extends AbstractEntityActionRunnable<Pat
 
     private final TvshowManager tvshowManager;
 
-    private Path importPath;
+    private final PlexApiService plexApiService;
 
-    public TvshowUpdateSourceRunnable(TvshowManager tvshowManager) {
+    public TvshowUpdateSourceRunnable(TvshowManager tvshowManager, PlexApiService plexApiService) {
         this.tvshowManager = tvshowManager;
+        this.plexApiService = plexApiService;
     }
 
     @Override
@@ -32,13 +37,16 @@ public class TvshowUpdateSourceRunnable extends AbstractEntityActionRunnable<Pat
     }
 
     @Override
-    protected void beforeRun(Map<String, String> params) {
-        importPath = KaleidoUtils.getTvshowImportPath();
+    protected void afterRun(@Nullable Map<String, String> params) {
+        super.afterRun(params);
+        String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryId);
+        plexApiService.refreshLibrary(libraryId);
     }
 
     @Override
     protected PageResult<Path> page(Map<String, String> params, int pageNumber, int pageSize) {
         try {
+            Path importPath = KaleidoUtils.getTvshowImportPath();
             PageResult<Path> pageResult = new PageResult<>();
             pageResult.setSearchCount(true);
             if (pageNumber == 1) {

@@ -127,8 +127,13 @@ public class MovieManager {
             return;
         }
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(movieId);
+        boolean isSameMovie = KaleidoUtils.isSame(movieBasicDTO, movie);
         TmmUtil.toMovieBasicDTO(movieBasicDTO, movie);
         saveMovie(movieBasicDTO);
+        if (!isSameMovie) {
+            Path moviePath = KaleidoUtils.getMoviePath(movieBasicDTO.getPath());
+            downloadPoster(movieBasicDTO, moviePath);
+        }
     }
 
     /**
@@ -140,7 +145,6 @@ public class MovieManager {
     @Transactional
     public void matchPath(Path path, Movie movie) {
         try {
-            NioFileUtils.deleteByFilter(path, "nfo");
             MovieNFO movieNFO = new MovieNFO();
             movieNFO.setDoubanId(movie.getDoubanId());
             movieNFO.setTmdbId(movie.getTmdbId());
@@ -151,6 +155,7 @@ public class MovieManager {
             }
             Path newPath = importPath.resolve(filename);
             if (Files.isDirectory(path)) {
+                NioFileUtils.deleteByFilter(path, "nfo");
                 if (!StringUtils.equals(newPath.toString(), path.toString())) {
                     NioFileUtils.renameDir(path, newPath, StandardCopyOption.REPLACE_EXISTING);
                 }
@@ -474,7 +479,7 @@ public class MovieManager {
                 break;
             } else {
                 MovieNFO movieNFO = NFOUtil.read(MovieNFO.class, folderPath, KaleidoConstants.MOVIE_NFO);
-                if (KaleidoUtils.isSameMovie(movieBasicDTO, movieNFO)) {
+                if (KaleidoUtils.isSame(movieBasicDTO, movieNFO)) {
                     break;
                 } else {
                     i++;

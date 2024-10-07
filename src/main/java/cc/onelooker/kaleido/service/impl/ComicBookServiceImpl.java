@@ -74,6 +74,12 @@ public class ComicBookServiceImpl extends AbstractBaseServiceImpl<ComicBookMappe
 
     @Override
     @Transactional
+    public void clearCover(String id) {
+        baseMapper.clearCover(id);
+    }
+
+    @Override
+    @Transactional
     public boolean deleteById(Serializable id) {
         ComicBookDTO comicBookDTO = findById(id);
         boolean result = super.deleteById(id);

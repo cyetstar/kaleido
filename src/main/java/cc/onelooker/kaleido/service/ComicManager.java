@@ -14,7 +14,9 @@ import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.exceptions.ExceptionUtil;
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ZipUtil;
@@ -25,6 +27,8 @@ import com.github.junrar.exception.RarException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -128,6 +132,8 @@ public class ComicManager {
             comicBookDTO = new ComicBookDTO();
         }
         KomgaUtil.toComicBookDTO(comicBookDTO, book);
+        //读取ComicInfo文件
+        readComicInfo(comicBookDTO);
         saveBook(comicBookDTO);
     }
 
@@ -224,6 +230,7 @@ public class ComicManager {
             Path zipPath = KaleidoUtils.getComicFilePath(comicSeriesDTO.getPath(), comicBookDTO.getFilename());
             Path folderPath = zipPath.resolveSibling(baseName);
             unzip(zipPath, folderPath);
+            moveBookImage(folderPath, folderPath);
             NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, folderPath, KaleidoConstants.COMIC_INFO);
             zip(folderPath, zipPath, true);
         } catch (Exception e) {
@@ -342,18 +349,37 @@ public class ComicManager {
             if (zipPath == null) {
                 return;
             }
-            Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), FilenameUtils.getBaseName(zipPath.getFileName().toString()));
+            Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString());
             unzip(zipPath, tempPath);
             ComicInfoNFO comicInfoNFO = NFOUtil.read(ComicInfoNFO.class, tempPath, KaleidoConstants.COMIC_INFO);
             if (comicInfoNFO == null) {
                 return;
             }
+            comicSeriesDTO.setOriginalTitle(comicInfoNFO.getOriginalSeries());
             comicSeriesDTO.setYear(comicInfoNFO.getYear());
             comicSeriesDTO.setBookCount(comicInfoNFO.getCount());
             comicSeriesDTO.setStatus(comicInfoNFO.getSeriesStatus());
             comicSeriesDTO.setBgmId(StringUtils.defaultIfEmpty(comicSeriesDTO.getBgmId(), comicInfoNFO.getSeriesBgmId()));
             comicSeriesDTO.setRating(NumberUtil.parseFloat(comicInfoNFO.getCommunityRating(), null));
             comicSeriesDTO.setAlternateTitleList(comicInfoNFO.getAkas());
+        } catch (Exception e) {
+            log.error("== 读取漫画信息异常: {}", ExceptionUtil.getMessage(e));
+            ExceptionUtil.wrapAndThrow(e);
+        }
+    }
+
+    private void readComicInfo(ComicBookDTO comicBookDTO) {
+        try {
+            ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(comicBookDTO.getSeriesId());
+            Path zipPath = KaleidoUtils.getComicFilePath(comicSeriesDTO.getPath(), comicBookDTO.getFilename());
+            Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString());
+            unzip(zipPath, tempPath);
+            ComicInfoNFO comicInfoNFO = NFOUtil.read(ComicInfoNFO.class, tempPath, KaleidoConstants.COMIC_INFO);
+            if (comicInfoNFO == null) {
+                return;
+            }
+            comicBookDTO.setCoverPageNumber(ObjectUtils.defaultIfNull(comicInfoNFO.getCoverPageNumber(), comicBookDTO.getCoverPageNumber()));
+            comicBookDTO.setCoverBoxData(StringUtils.defaultIfEmpty(comicInfoNFO.getCoverBoxData(), comicBookDTO.getCoverBoxData()));
         } catch (Exception e) {
             log.error("== 读取漫画信息异常: {}", ExceptionUtil.getMessage(e));
             ExceptionUtil.wrapAndThrow(e);
@@ -387,6 +413,16 @@ public class ComicManager {
     }
 
     private void moveBookImage(Path folderPath, Path tagetPath) throws IOException {
+        //删除系统文件夹
+        Files.list(folderPath).forEach(s -> {
+            if (Files.isDirectory(s) && StringUtils.equals(s.getFileName().toString(), "@eaDir")) {
+                try {
+                    NioFileUtils.deleteIfExists(s);
+                } catch (IOException e) {
+                    ExceptionUtil.wrapAndThrow(e);
+                }
+            }
+        });
         if (Files.list(folderPath).filter(Files::isDirectory).count() == 1) {
             Files.list(folderPath).forEach(s -> {
                 try {
@@ -417,4 +453,45 @@ public class ComicManager {
         log.info("== 移动图片文件: {}", folderPath);
     }
 
+    @Transactional
+    public void uploadCover(String id, Integer coverPageNumber, String coverBoxData, String base64) {
+        try {
+            ComicBookDTO comicBookDTO = comicBookService.findById(id);
+            comicBookDTO.setCoverPageNumber(coverPageNumber);
+            comicBookDTO.setCoverBoxData(coverBoxData);
+            saveBook(comicBookDTO);
+
+            ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(comicBookDTO.getSeriesId());
+            Path comicPath = KaleidoUtils.getComicPath(comicSeriesDTO.getPath());
+            Path bookCoverPath = comicPath.resolve(KaleidoUtils.genCoverFilename(comicBookDTO.getFilename()));
+            byte[] data = Base64.decode(RegExUtils.removeFirst(base64, "data:image/.+;base64,"));
+            if (comicBookDTO.getBookNumber() == null || comicBookDTO.getBookNumber() <= 1) {
+                Files.write(bookCoverPath.resolveSibling(KaleidoConstants.COVER), data);
+            }
+            Files.write(bookCoverPath, data);
+        } catch (Exception e) {
+            ExceptionUtil.wrapAndThrow(e);
+        }
+    }
+
+    @Transactional
+    public void clearCover(String id) {
+        try {
+            ComicBookDTO comicBookDTO = comicBookService.findById(id);
+            ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(comicBookDTO.getSeriesId());
+            String coverFilename = KaleidoUtils.genCoverFilename(comicBookDTO.getFilename());
+            Path comicFilePath = KaleidoUtils.getComicFilePath(comicSeriesDTO.getPath(), comicBookDTO.getFilename());
+            Files.delete(comicFilePath.resolveSibling(coverFilename));
+            if (comicBookDTO.getBookNumber() <= 1) {
+                Files.delete(comicFilePath.resolveSibling(KaleidoConstants.COVER));
+            }
+            comicBookService.clearCover(id);
+            if (ConfigUtils.isEnabled(ConfigKey.writeComicInfo)) {
+                taskService.newTask(id, SubjectType.ComicBook, TaskType.writeComicInfo);
+            }
+        } catch (IOException e) {
+            ExceptionUtil.wrapAndThrow(e);
+        }
+
+    }
 }

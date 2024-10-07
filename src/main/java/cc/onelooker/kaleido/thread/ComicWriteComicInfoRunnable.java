@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.thread;
 import cc.onelooker.kaleido.dto.ComicBookDTO;
 import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.dto.TaskDTO;
+import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.nfo.ComicInfoNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -57,6 +59,12 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
     public boolean isNeedRun() {
         PageResult<TaskDTO> pageResult = page(null, 1, 1);
         return !pageResult.isEmpty();
+    }
+
+    @Override
+    protected void beforeRun(@Nullable Map<String, String> params) {
+        super.beforeRun(params);
+        taskService.deleteNotExistRecords("comic_book", SubjectType.ComicBook);
     }
 
     @Override

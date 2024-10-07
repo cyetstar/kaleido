@@ -14,7 +14,7 @@ import java.util.List;
  * @see MovieBasicDO
  */
 @Data
-public class MovieBasicDTO implements BaseDTO<String> {
+public class MovieBasicDTO implements BaseDTO<String>, IUnique {
     private static final long serialVersionUID = -763658678910957490L;
 
     /**
