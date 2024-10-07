@@ -413,20 +413,16 @@ public class ComicManager {
     }
 
     private void moveBookImage(Path folderPath, Path tagetPath) throws IOException {
-        //删除系统文件夹
-        Files.list(folderPath).forEach(s -> {
-            if (Files.isDirectory(s) && StringUtils.equals(s.getFileName().toString(), "@eaDir")) {
-                try {
-                    NioFileUtils.deleteIfExists(s);
-                } catch (IOException e) {
-                    ExceptionUtil.wrapAndThrow(e);
-                }
-            }
-        });
-        if (Files.list(folderPath).filter(Files::isDirectory).count() == 1) {
+        NioFileUtils.deleteIfExists(folderPath.resolve("@eaDir"));
+        Files.deleteIfExists(folderPath.resolve(".DS_Store"));
+        long directoryCount = Files.list(folderPath).filter(Files::isDirectory).count();
+        long fileCount = Files.list(folderPath).filter(s -> !Files.isDirectory(s) && !StringUtils.equals(s.getFileName().toString(), KaleidoConstants.COMIC_INFO)).count();
+        if (directoryCount == 1 && fileCount == 0) {
             Files.list(folderPath).forEach(s -> {
                 try {
-                    moveBookImage(s, tagetPath);
+                    if (Files.isDirectory(s)) {
+                        moveBookImage(s, tagetPath);
+                    }
                 } catch (IOException e) {
                     ExceptionUtil.wrapAndThrow(e);
                 }

@@ -58,34 +58,46 @@ public class JobManager {
     @Autowired
     private ComicWriteComicInfoRunnable comicWriteComicInfoRunnable;
 
-    @Scheduled(cron = "0 0 2 * * ?")
-    public void syncPlexMovie() {
-        movieSyncPlexRunnable.run();
+    @Scheduled(cron = "0 30 2 * * ?")
+    public void syncMovie() {
+        if (ConfigUtils.isEnabled(ConfigKey.syncMovie)) {
+            movieSyncPlexRunnable.run();
+        }
+    }
+
+    @Scheduled(cron = "0 40 2 * * ?")
+    public void syncTvshow() {
+        if (ConfigUtils.isEnabled(ConfigKey.syncTvshow)) {
+            tvshowSyncPlexRunnable.run();
+        }
+    }
+
+    @Scheduled(cron = "0 50 2 * * ?")
+    public void syncMusic() {
+        if (ConfigUtils.isEnabled(ConfigKey.syncMusic)) {
+            musicSyncPlexRunnable.run();
+        }
     }
 
     @Scheduled(cron = "0 0 3 * * ?")
-    public void syncPlexTvshow() {
-        tvshowSyncPlexRunnable.run();
+    public void syncComic() {
+        if (ConfigUtils.isEnabled(ConfigKey.syncComic)) {
+            comicSyncRunnable.run();
+        }
+    }
+
+    @Scheduled(cron = "0 15 3 * * ?")
+    public void checkThreadStatus() {
+        if (ConfigUtils.isEnabled(ConfigKey.checkThreadStatus)) {
+            movieCheckThreadStatusRunnable.run();
+        }
     }
 
     @Scheduled(cron = "0 30 3 * * ?")
-    public void syncPlexMusic() {
-        musicSyncPlexRunnable.run();
-    }
-
-    @Scheduled(cron = "0 30 2 * * ?")
-    public void syncComic() {
-        comicSyncRunnable.run();
-    }
-
-   // @Scheduled(cron = "0 15 1 * * ?")
-    public void checkThreadStatus() {
-        movieCheckThreadStatusRunnable.run();
-    }
-
-    @Scheduled(cron = "0 30 1 * * ?")
     public void checkMovieStatus() {
-        movieCollectionCheckMovieStatusRunnable.run();
+        if (ConfigUtils.isEnabled(ConfigKey.checkMovieStatus)) {
+            movieCollectionCheckMovieStatusRunnable.run();
+        }
     }
 
     /**
@@ -93,7 +105,9 @@ public class JobManager {
      */
     @Scheduled(cron = "0 15 1 ? * TUE")
     public void analyzeMovie() {
-        movieAnalyzeRunnable.run();
+        if (ConfigUtils.isEnabled(ConfigKey.analyzeMovie)) {
+            movieAnalyzeRunnable.run();
+        }
     }
 
     @Scheduled(cron = "0 45 2 * * ?")

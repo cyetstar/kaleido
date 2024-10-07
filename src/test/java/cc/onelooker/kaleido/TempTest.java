@@ -2,12 +2,16 @@ package cc.onelooker.kaleido;
 
 import cc.onelooker.kaleido.nfo.ComicInfoNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
+import cc.onelooker.kaleido.utils.KaleidoConstants;
+import cc.onelooker.kaleido.utils.NioFileUtils;
+import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.ZipUtil;
 import cn.hutool.extra.compress.CompressUtil;
 import cn.hutool.extra.compress.archiver.Archiver;
 import cn.hutool.extra.compress.extractor.Extractor;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -270,6 +275,49 @@ public class TempTest {
 
         // 如果没有匹配到 "Vol." 的情况，返回原始文件名
         return fileName;
+    }
+
+    @Test
+    public void moveImage() throws IOException {
+        Path folderPath = Paths.get("/Volumes/comic/import/MIX Vol.01");
+        Path tagetPath = Paths.get("/Volumes/comic/import/MIX Vol.01");
+        moveBookImage(folderPath, tagetPath);
+    }
+
+    private void moveBookImage(Path folderPath, Path tagetPath) throws IOException {
+        NioFileUtils.deleteIfExists(folderPath.resolve("@eaDir"));
+        Files.deleteIfExists(folderPath.resolve(".DS_Store"));
+        long directoryCount = Files.list(folderPath).filter(Files::isDirectory).count();
+        long fileCount = Files.list(folderPath).filter(s -> !Files.isDirectory(s) && !StringUtils.equals(s.getFileName().toString(), KaleidoConstants.COMIC_INFO)).count();
+        if (directoryCount == 1 && fileCount == 0) {
+            Files.list(folderPath).forEach(s -> {
+                try {
+                    if (Files.isDirectory(s)) {
+                        moveBookImage(s, tagetPath);
+                    }
+                } catch (IOException e) {
+                    ExceptionUtil.wrapAndThrow(e);
+                }
+            });
+        } else {
+            Files.list(folderPath).forEach(s -> {
+                try {
+                    String fileName = s.getFileName().toString();
+                    if (Files.isDirectory(s)) {
+                        NioFileUtils.renameDir(s, tagetPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                    } else if (!StringUtils.equalsAnyIgnoreCase(FilenameUtils.getExtension(fileName), "jpg", "jpeg", "png", "xml")) {
+                        Files.delete(s);
+                    } else {
+                        Files.move(s, tagetPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                    }
+                } catch (IOException e) {
+                    ExceptionUtil.wrapAndThrow(e);
+                }
+            });
+        }
+        if (FileUtils.isEmptyDirectory(folderPath.toFile())) {
+            NioFileUtils.deleteIfExists(folderPath);
+        }
     }
 
 }

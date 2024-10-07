@@ -43,6 +43,13 @@ public enum ConfigKey {
     writeAudioTag,
     writeTvshowNFO,
     refreshMetadata,
+    syncMovie,
+    syncTvshow,
+    syncMusic,
+    syncComic,
+    checkThreadStatus,
+    checkMovieStatus,
+    analyzeMovie,
 
     videoExtension,
     comicZipExtension,
@@ -51,4 +58,5 @@ public enum ConfigKey {
     plexRetries,
     matchInfoSleepSecond,
     downloadLyricSleepSecond,
+
 }
