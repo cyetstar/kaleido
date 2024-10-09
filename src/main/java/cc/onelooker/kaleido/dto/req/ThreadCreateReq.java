@@ -14,10 +14,7 @@ import java.util.Date;
  */
 @Data
 @ApiModel("电影发布记录请求对象")
-public class MovieThreadUpdateReq {
-
-    @ApiModelProperty("")
-    private Long id;
+public class ThreadCreateReq {
 
     @ApiModelProperty("")
     private Date createdAt;

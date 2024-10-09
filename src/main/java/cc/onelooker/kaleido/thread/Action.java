@@ -29,7 +29,8 @@ public enum Action {
     comicSync("漫画同步"),
     comicUpdateSource("漫画更新源"),
     comicMatchInfo("匹配抓取"),
-    comicWriteComicInfo("写入ComicInfo");
+    comicWriteComicInfo("写入ComicInfo"),
+    tableOptimize("优化数据库");
 
     private String title;
 

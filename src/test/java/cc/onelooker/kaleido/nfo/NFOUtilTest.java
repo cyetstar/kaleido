@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.nfo;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
@@ -32,7 +33,8 @@ public class NFOUtilTest {
     public void writeComicInfo() throws Exception {
         ComicInfoNFO comicInfoNFO = new ComicInfoNFO();
         comicInfoNFO.setTitle("test");
-        NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, Paths.get("/Users/cyetstar/Downloads"), "ComicInfo2.xml");
+        comicInfoNFO.setAkas(Lists.newArrayList());
+        NFOUtil.write(comicInfoNFO, ComicInfoNFO.class, Paths.get("/Users/cyetstar/dev/kaleido"), "ComicInfo.xml");
     }
 
 }

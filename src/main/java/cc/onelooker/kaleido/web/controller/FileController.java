@@ -2,7 +2,6 @@ package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.dto.resp.FilePageResp;
-import cc.onelooker.kaleido.service.AsyncTaskManager;
 import cc.onelooker.kaleido.utils.NioFileUtils;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
@@ -36,9 +35,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/file")
 public class FileController {
-
-    @Autowired
-    private AsyncTaskManager asyncTaskManager;
 
     @GetMapping("page")
     public CommonResult<PageResult<FilePageResp>> page(FilePageReq req, PageParam pageParam) throws IOException {
@@ -133,12 +129,12 @@ public class FileController {
         }
         return CommonResult.success(true);
     }
-
-    @PostMapping("move")
-    public CommonResult<Boolean> move(@RequestBody FileMoveReq req) throws IOException {
-        asyncTaskManager.moveFile(req.getPathList(), req.getDestPath());
-        return CommonResult.success(true);
-    }
+//
+//    @PostMapping("move")
+//    public CommonResult<Boolean> move(@RequestBody FileMoveReq req) throws IOException {
+//        asyncTaskManager.moveFile(req.getPathList(), req.getDestPath());
+//        return CommonResult.success(true);
+//    }
 
     @GetMapping("open")
     @ApiOperation(value = "打开文件")

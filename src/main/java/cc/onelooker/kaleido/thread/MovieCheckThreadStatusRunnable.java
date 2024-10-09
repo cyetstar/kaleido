@@ -1,11 +1,12 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.dto.MovieThreadDTO;
+import cc.onelooker.kaleido.dto.ThreadDTO;
 import cc.onelooker.kaleido.enums.ThreadStatus;
 import cc.onelooker.kaleido.service.MovieManager;
-import cc.onelooker.kaleido.service.MovieThreadService;
+import cc.onelooker.kaleido.service.ThreadService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -14,13 +15,13 @@ import java.util.Map;
  * Created by cyetstar on 2021/1/7.
  */
 @Component
-public class MovieCheckThreadStatusRunnable extends AbstractEntityActionRunnable<MovieThreadDTO> {
+public class MovieCheckThreadStatusRunnable extends AbstractEntityActionRunnable<ThreadDTO> {
 
-    private final MovieThreadService movieThreadService;
+    private final ThreadService movieThreadService;
 
     private final MovieManager movieManager;
 
-    public MovieCheckThreadStatusRunnable(MovieThreadService movieThreadService, MovieManager movieManager) {
+    public MovieCheckThreadStatusRunnable(ThreadService movieThreadService, MovieManager movieManager) {
         this.movieThreadService = movieThreadService;
         this.movieManager = movieManager;
     }
@@ -31,13 +32,13 @@ public class MovieCheckThreadStatusRunnable extends AbstractEntityActionRunnable
     }
 
     @Override
-    protected PageResult<MovieThreadDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
+    protected PageResult<ThreadDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
         return movieThreadService.page(null, Page.of(pageNumber, pageSize));
     }
 
     @Override
-    protected int processEntity(Map<String, String> params, MovieThreadDTO dto) throws Exception {
-        if (dto.getStatus() == ThreadStatus.todo.ordinal()) {
+    protected int processEntity(Map<String, String> params, ThreadDTO dto) throws Exception {
+        if (StringUtils.equals(dto.getStatus(), ThreadStatus.todo.name())) {
             movieManager.checkThreadStatus(dto);
             return SUCCESS;
         }

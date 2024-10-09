@@ -14,7 +14,7 @@ import java.util.Date;
  */
 @Data
 @ApiModel("电影发布记录响应对象")
-public class MovieThreadViewResp {
+public class ThreadPageResp {
 
     @ApiModelProperty("")
     private Long id;

@@ -151,6 +151,8 @@ zjjcnt:
   file-transport:
     type: local
   security:
+    password-error-lock:
+      enabled: true
     url-filter:
       urls:
         - /ws/**

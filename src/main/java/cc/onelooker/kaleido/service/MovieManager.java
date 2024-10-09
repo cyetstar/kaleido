@@ -64,7 +64,7 @@ public class MovieManager {
     private MovieBasicCollectionService movieBasicCollectionService;
 
     @Autowired
-    private MovieThreadService movieThreadService;
+    private ThreadService movieThreadService;
 
     @Autowired
     private MovieThreadFilenameService movieThreadFilenameService;
@@ -201,27 +201,27 @@ public class MovieManager {
     }
 
     @DSTransactional
-    public void checkThreadStatus(MovieThreadDTO movieThreadDTO) {
-        List<MovieThreadFilenameDTO> movieThreadFilenameDTOList = movieThreadFilenameService.listByThreadId(movieThreadDTO.getId());
-        if (CollectionUtils.isEmpty(movieThreadFilenameDTOList)) {
-            return;
-        }
-        MovieBasicDTO movieBasicDTO = null;
-        if (StringUtils.isNotEmpty(movieThreadDTO.getDoubanId())) {
-            movieBasicDTO = movieBasicService.findByDoubanId(movieThreadDTO.getDoubanId());
-        } else if (StringUtils.isNotEmpty(movieThreadDTO.getImdb())) {
-            movieBasicDTO = movieBasicService.findByImdbId(movieThreadDTO.getImdb());
-        }
-        if (movieBasicDTO == null) {
-            return;
-        }
-        Metadata metadata = plexApiService.findMovieById(movieBasicDTO.getId());
-        String filename = StringUtils.lowerCase(StringUtils.substringAfterLast(metadata.getMedia().getPart().getFile(), Constants.SLASH));
-        List<String> filenameList = movieThreadFilenameDTOList.stream().map(s -> StringUtils.lowerCase(s.getValue())).collect(Collectors.toList());
-        if (filenameList.contains(filename)) {
-            movieThreadDTO.setStatus(ThreadStatus.done.ordinal());
-            movieThreadService.update(movieThreadDTO);
-        }
+    public void checkThreadStatus(ThreadDTO movieThreadDTO) {
+//        List<MovieThreadFilenameDTO> movieThreadFilenameDTOList = movieThreadFilenameService.listByThreadId(movieThreadDTO.getId());
+//        if (CollectionUtils.isEmpty(movieThreadFilenameDTOList)) {
+//            return;
+//        }
+//        MovieBasicDTO movieBasicDTO = null;
+//        if (StringUtils.isNotEmpty(movieThreadDTO.getDoubanId())) {
+//            movieBasicDTO = movieBasicService.findByDoubanId(movieThreadDTO.getDoubanId());
+//        } else if (StringUtils.isNotEmpty(movieThreadDTO.getImdb())) {
+//            movieBasicDTO = movieBasicService.findByImdbId(movieThreadDTO.getImdb());
+//        }
+//        if (movieBasicDTO == null) {
+//            return;
+//        }
+//        Metadata metadata = plexApiService.findMovieById(movieBasicDTO.getId());
+//        String filename = StringUtils.lowerCase(StringUtils.substringAfterLast(metadata.getMedia().getPart().getFile(), Constants.SLASH));
+//        List<String> filenameList = movieThreadFilenameDTOList.stream().map(s -> StringUtils.lowerCase(s.getValue())).collect(Collectors.toList());
+//        if (filenameList.contains(filename)) {
+//            movieThreadDTO.setStatus(ThreadStatus.done.ordinal());
+//            movieThreadService.update(movieThreadDTO);
+//        }
     }
 
     public void writeMovieNFO(MovieBasicDTO movieBasicDTO, MovieNFO movieNFO) {

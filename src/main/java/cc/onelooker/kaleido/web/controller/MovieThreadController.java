@@ -1,15 +1,14 @@
 package cc.onelooker.kaleido.web.controller;
 
-import cc.onelooker.kaleido.convert.MovieThreadConvert;
-import cc.onelooker.kaleido.dto.MovieThreadDTO;
-import cc.onelooker.kaleido.dto.req.MovieThreadCreateReq;
-import cc.onelooker.kaleido.dto.req.MovieThreadPageReq;
-import cc.onelooker.kaleido.dto.req.MovieThreadUpdateReq;
-import cc.onelooker.kaleido.dto.resp.MovieThreadCreateResp;
-import cc.onelooker.kaleido.dto.resp.MovieThreadPageResp;
-import cc.onelooker.kaleido.dto.resp.MovieThreadViewResp;
-import cc.onelooker.kaleido.service.AsyncTaskManager;
-import cc.onelooker.kaleido.service.MovieThreadService;
+import cc.onelooker.kaleido.convert.ThreadConvert;
+import cc.onelooker.kaleido.dto.ThreadDTO;
+import cc.onelooker.kaleido.dto.req.ThreadCreateReq;
+import cc.onelooker.kaleido.dto.req.ThreadPageReq;
+import cc.onelooker.kaleido.dto.req.ThreadUpdateReq;
+import cc.onelooker.kaleido.dto.resp.ThreadCreateResp;
+import cc.onelooker.kaleido.dto.resp.ThreadPageResp;
+import cc.onelooker.kaleido.dto.resp.ThreadViewResp;
+import cc.onelooker.kaleido.service.ThreadService;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
@@ -30,13 +29,10 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "电影发布记录")
 @RestController
 @RequestMapping("/movieThread")
-public class MovieThreadController extends AbstractCrudController<MovieThreadDTO> {
+public class MovieThreadController extends AbstractCrudController<ThreadDTO> {
 
     @Autowired
-    private MovieThreadService movieThreadService;
-
-    @Autowired
-    private AsyncTaskManager asyncTaskManager;
+    private ThreadService movieThreadService;
 
     @Override
     protected IBaseService getService() {
@@ -45,26 +41,26 @@ public class MovieThreadController extends AbstractCrudController<MovieThreadDTO
 
     @GetMapping("page")
     @ApiOperation(value = "查询电影发布记录")
-    public CommonResult<PageResult<MovieThreadPageResp>> page(MovieThreadPageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, MovieThreadConvert.INSTANCE::convertToDTO, MovieThreadConvert.INSTANCE::convertToPageResp);
+    public CommonResult<PageResult<ThreadPageResp>> page(ThreadPageReq req, PageParam pageParam) {
+        return super.page(req, pageParam, ThreadConvert.INSTANCE::convertToDTO, ThreadConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
     @ApiOperation(value = "查看电影发布记录详情")
-    public CommonResult<MovieThreadViewResp> view(String id) {
-        return super.view(id, MovieThreadConvert.INSTANCE::convertToViewResp);
+    public CommonResult<ThreadViewResp> view(String id) {
+        return super.view(id, ThreadConvert.INSTANCE::convertToViewResp);
     }
 
     @PostMapping("create")
     @ApiOperation(value = "新增电影发布记录")
-    public CommonResult<MovieThreadCreateResp> create(@RequestBody MovieThreadCreateReq req) {
-        return super.create(req, MovieThreadConvert.INSTANCE::convertToDTO, MovieThreadConvert.INSTANCE::convertToCreateResp);
+    public CommonResult<ThreadCreateResp> create(@RequestBody ThreadCreateReq req) {
+        return super.create(req, ThreadConvert.INSTANCE::convertToDTO, ThreadConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
     @ApiOperation(value = "编辑电影发布记录")
-    public CommonResult<Boolean> update(@RequestBody MovieThreadUpdateReq req) {
-        return super.update(req, MovieThreadConvert.INSTANCE::convertToDTO);
+    public CommonResult<Boolean> update(@RequestBody ThreadUpdateReq req) {
+        return super.update(req, ThreadConvert.INSTANCE::convertToDTO);
     }
 
     @DeleteMapping(value = "delete")

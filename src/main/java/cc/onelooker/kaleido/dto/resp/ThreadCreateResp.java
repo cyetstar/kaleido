@@ -1,4 +1,4 @@
-package cc.onelooker.kaleido.dto.req;
+package cc.onelooker.kaleido.dto.resp;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,14 +7,17 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 电影发布记录请求对象
+ * 电影发布记录响应对象
  *
  * @author cyetstar
  * @date 2023-12-18 14:53:14
  */
 @Data
-@ApiModel("电影发布记录请求对象")
-public class MovieThreadPageReq {
+@ApiModel("电影发布记录响应对象")
+public class ThreadCreateResp {
+
+    @ApiModelProperty("")
+    private Long id;
 
     @ApiModelProperty("")
     private Date createdAt;
@@ -51,5 +54,4 @@ public class MovieThreadPageReq {
 
     @ApiModelProperty("")
     private String url;
-
 }
