@@ -28,7 +28,7 @@ import java.util.Objects;
 public class TmmApiService {
 
     private final static String API_MOVIE_SEARCH = "/v1/movie/search?keyword={keyword}&source={source}";
-    private final static String API_MOVIE_VIEW = "/v1/movie/view?douban_id={doubanId}&imdb_id={imdbId}&tmdb_id={tmdbId}";
+    private final static String API_MOVIE_VIEW = "/v1/movie/view?douban_id={doubanId}&IMDb_id={imdbId}&tmdb_id={tmdbId}";
     private final static String API_MOVIE_WEEKLY = "/v1/movie/weekly";
     private final static String API_DOULIST_VIEW = "/v1/doulist/view?douban_id={doubanId}";
     private final static String API_DOULIST_MOVIES = "/v1/doulist/movies?douban_id={doubanId}&start={start}";
@@ -155,3 +155,4 @@ public class TmmApiService {
         restTemplate.postForEntity(url + API_DOUBAN_COOKIE, param, String.class);
     }
 }
+

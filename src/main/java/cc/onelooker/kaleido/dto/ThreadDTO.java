@@ -33,14 +33,24 @@ public class ThreadDTO implements BaseDTO<String> {
     private String url;
 
     /**
+     * 站点
+     */
+    private String website;
+
+    /**
      * 豆瓣编号
      */
     private String doubanId;
 
     /**
-     * iMDB编号
+     * IMDb编号
      */
     private String imdbId;
+
+    /**
+     * 番组计划编号
+     */
+    private String bgmId;
 
     /**
      * 状态

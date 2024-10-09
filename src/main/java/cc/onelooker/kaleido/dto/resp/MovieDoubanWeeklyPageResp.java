@@ -51,7 +51,7 @@ public class MovieDoubanWeeklyPageResp {
     @ApiModelProperty("电影id")
     private String movieId;
 
-    @ApiModelProperty("imdb编号")
+    @ApiModelProperty("IMDb编号")
     private String imdb;
 
     @JsonProperty

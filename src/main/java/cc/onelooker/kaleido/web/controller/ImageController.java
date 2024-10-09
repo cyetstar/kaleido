@@ -58,7 +58,7 @@ public class ImageController {
     private ComicBookService comicBookService;
 
     @GetMapping("/thumb")
-    public HttpEntity<byte[]> thumb(@RequestParam(required = false) String id, @RequestParam(required = false) String type, @RequestParam(required = false) String url) throws IOException {
+    public HttpEntity<byte[]> thumb(@RequestParam(required = false) String id, @RequestParam(required = false) SubjectType type, @RequestParam(required = false) String url) throws IOException {
         byte[] content = null;
         Path path = null;
         if (Objects.equals(type, SubjectType.MovieBasic)) {

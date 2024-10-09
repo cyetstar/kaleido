@@ -9,6 +9,8 @@ import cc.onelooker.kaleido.dto.resp.ApiThreadViewResp;
 import cc.onelooker.kaleido.service.ThreadService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.util.constant.Constants;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,13 +54,22 @@ public class ApiThreadController {
     @PostMapping("update")
     public ApiThreadUpdateResp update(@RequestBody ApiMovieThreadUpdateReq req) {
         ThreadDTO threadDTO = threadService.findById(req.getId());
+        boolean isNew = false;
         if (threadDTO == null) {
+            isNew = true;
             threadDTO = new ThreadDTO();
             threadDTO.setId(req.getId());
-            threadDTO.setStatus(req.getStatus());
+        }
+        threadDTO.setTitle(req.getTitle());
+        threadDTO.setUrl(req.getUrl());
+        threadDTO.setDoubanId(req.getDoubanId());
+        threadDTO.setImdbId(req.getImdbId());
+        threadDTO.setBgmId(req.getBgmId());
+        threadDTO.setWebsite(StringUtils.split(req.getId(), Constants.MINUS)[0]);
+        threadDTO.setStatus(req.getStatus());
+        if (isNew) {
             threadService.insert(threadDTO);
         } else {
-            threadDTO.setStatus(req.getStatus());
             threadService.update(threadDTO);
         }
         ApiThreadUpdateResp resp = new ApiThreadUpdateResp();

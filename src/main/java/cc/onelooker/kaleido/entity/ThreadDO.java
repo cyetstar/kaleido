@@ -39,16 +39,28 @@ public class ThreadDO implements IdEntity<String> {
     private String url;
 
     /**
+     * 站点
+     */
+    @TableField(value = "website")
+    private String website;
+
+    /**
      * 豆瓣编号
      */
     @TableField(value = "douban_id")
     private String doubanId;
 
     /**
-     * iMDB编号
+     * IMDb编号
      */
-    @TableField(value = "imdbId")
+    @TableField(value = "imdb_id")
     private String imdbId;
+
+    /**
+     * 番组计划编号
+     */
+    @TableField(value = "bgm_id")
+    private String bgmId;
 
     /**
      * 状态

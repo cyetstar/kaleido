@@ -7,51 +7,33 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 电影发布记录响应对象
+ * 发布记录响应对象
  *
  * @author cyetstar
  * @date 2023-12-18 14:53:14
  */
 @Data
-@ApiModel("电影发布记录响应对象")
+@ApiModel("发布记录响应对象")
 public class ThreadCreateResp {
 
-    @ApiModelProperty("")
-    private Long id;
+    @ApiModelProperty("主键")
+    private String id;
 
-    @ApiModelProperty("")
-    private Date createdAt;
-
-    @ApiModelProperty("")
-    private String doubanId;
-
-    @ApiModelProperty("")
-    private String imdb;
-
-    @ApiModelProperty("")
-    private String links;
-
-    @ApiModelProperty("")
-    private String publishDate;
-
-    @ApiModelProperty("")
-    private Double rating;
-
-    @ApiModelProperty("")
-    private Integer status;
-
-    @ApiModelProperty("")
-    private Boolean thanks;
-
-    @ApiModelProperty("")
+    @ApiModelProperty("标题")
     private String title;
 
-    @ApiModelProperty("")
-    private String type;
-
-    @ApiModelProperty("")
-    private Date updatedAt;
-
-    @ApiModelProperty("")
+    @ApiModelProperty("链接")
     private String url;
+
+    @ApiModelProperty("豆瓣编号")
+    private String doubanId;
+
+    @ApiModelProperty("IMDb编号")
+    private String imdbId;
+
+    @ApiModelProperty("番组计划编号")
+    private String bgmId;
+
+    @ApiModelProperty("状态")
+    private String status;
 }

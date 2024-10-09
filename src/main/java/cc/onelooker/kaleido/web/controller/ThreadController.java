@@ -20,51 +20,51 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 电影发布记录前端控制器
+ * 发布记录前端控制器
  *
  * @author cyetstar
  * @date 2023-12-18 14:53:14
  */
 
-@Api(tags = "电影发布记录")
+@Api(tags = "发布记录")
 @RestController
-@RequestMapping("/movieThread")
-public class MovieThreadController extends AbstractCrudController<ThreadDTO> {
+@RequestMapping("/thread")
+public class ThreadController extends AbstractCrudController<ThreadDTO> {
 
     @Autowired
-    private ThreadService movieThreadService;
+    private ThreadService threadService;
 
     @Override
     protected IBaseService getService() {
-        return movieThreadService;
+        return threadService;
     }
 
     @GetMapping("page")
-    @ApiOperation(value = "查询电影发布记录")
+    @ApiOperation(value = "查询发布记录")
     public CommonResult<PageResult<ThreadPageResp>> page(ThreadPageReq req, PageParam pageParam) {
         return super.page(req, pageParam, ThreadConvert.INSTANCE::convertToDTO, ThreadConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
-    @ApiOperation(value = "查看电影发布记录详情")
+    @ApiOperation(value = "查看发布记录详情")
     public CommonResult<ThreadViewResp> view(String id) {
         return super.view(id, ThreadConvert.INSTANCE::convertToViewResp);
     }
 
     @PostMapping("create")
-    @ApiOperation(value = "新增电影发布记录")
+    @ApiOperation(value = "新增发布记录")
     public CommonResult<ThreadCreateResp> create(@RequestBody ThreadCreateReq req) {
         return super.create(req, ThreadConvert.INSTANCE::convertToDTO, ThreadConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
-    @ApiOperation(value = "编辑电影发布记录")
+    @ApiOperation(value = "编辑发布记录")
     public CommonResult<Boolean> update(@RequestBody ThreadUpdateReq req) {
         return super.update(req, ThreadConvert.INSTANCE::convertToDTO);
     }
 
     @DeleteMapping(value = "delete")
-    @ApiOperation(value = "删除电影发布记录")
+    @ApiOperation(value = "删除发布记录")
     public CommonResult<Boolean> delete(@RequestBody String[] id) {
         return super.delete(id);
     }

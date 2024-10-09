@@ -28,9 +28,11 @@ public class ThreadServiceImpl extends AbstractBaseServiceImpl<ThreadMapper, Thr
         LambdaQueryWrapper<ThreadDO> query = new LambdaQueryWrapper<>();
         query.eq(StringUtils.isNotEmpty(dto.getDoubanId()), ThreadDO::getDoubanId, dto.getDoubanId());
         query.eq(StringUtils.isNotEmpty(dto.getImdbId()), ThreadDO::getImdbId, dto.getImdbId());
+        query.eq(StringUtils.isNotEmpty(dto.getBgmId()), ThreadDO::getBgmId, dto.getBgmId());
         query.eq(StringUtils.isNotEmpty(dto.getStatus()), ThreadDO::getStatus, dto.getStatus());
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), ThreadDO::getTitle, dto.getTitle());
         query.eq(StringUtils.isNotEmpty(dto.getUrl()), ThreadDO::getUrl, dto.getUrl());
+        query.eq(StringUtils.isNotEmpty(dto.getWebsite()), ThreadDO::getWebsite, dto.getWebsite());
         query.in(CollectionUtils.isNotEmpty(dto.getIdList()), ThreadDO::getId, dto.getIdList());
         return query;
     }

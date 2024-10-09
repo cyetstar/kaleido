@@ -12,5 +12,15 @@ public class ApiMovieThreadUpdateReq {
 
     private String id;
 
+    private String title;
+
+    private String url;
+
+    private String doubanId;
+
+    private String imdbId;
+
+    private String bgmId;
+
     private String status;
 }
