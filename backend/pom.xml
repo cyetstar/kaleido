@@ -9,9 +9,9 @@
         <relativePath/>
     </parent>
     <groupId>com.onelooker</groupId>
-    <artifactId>kaleido</artifactId>
+    <artifactId>kaleido-backend</artifactId>
     <version>1.0.0</version>
-    <name>kaleido</name>
+    <name>kaleido-backend</name>
 
     <properties>
         <java.version>1.8</java.version>
