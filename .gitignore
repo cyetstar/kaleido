@@ -3,3 +3,6 @@
 /kaleido.iml
 /logs/
 /src/main/resources/static/**
+/frontend/dist/
+/web-scraper/.venv/
+/frontend/node_modules/

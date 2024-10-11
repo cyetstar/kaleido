@@ -1,0 +1,1 @@
+import{J as o}from"./index-8V0LDlr9.js";const i=e=>o.get({url:"/movieCollection/page",params:e}),l=e=>o.get({url:"/movieCollection/view",params:e}),n=e=>o.post({url:"/movieCollection/create",data:e}),r=e=>o.delete({url:"/movieCollection/delete",data:e}),c=e=>o.get({url:"/movieCollection/listByMovieId",params:e});export{c as a,n as b,i as c,l as d,r as e};

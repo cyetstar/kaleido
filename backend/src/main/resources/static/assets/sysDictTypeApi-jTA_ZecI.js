@@ -1,0 +1,1 @@
+import{J as s}from"./index-8V0LDlr9.js";const p=e=>s.get({url:"/sysDictType/page",params:e}),r=e=>s.get({url:"/sysDictType/view",data:{id:e}}),y=e=>s.post({url:"/sysDictType/create",data:e}),c=e=>s.post({url:"/sysDictType/update",data:e}),i=e=>s.delete({url:"/sysDictType/delete",data:e}),a=()=>s.get({url:"/sysDictType/reload"});export{y as a,c as b,p as c,i as d,a as e,r as s};

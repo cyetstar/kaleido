@@ -1,0 +1,12 @@
+@font-dir: "@/assets/fonts/";
+
+//中文字体请自行裁剪后再添加至此
+@font-names: "D-DIN-Bold", "HelveticaNeue", "AliHYAiHei", "YouSheBiaoTiHei",
+  "DIN-Alternate-Bold";
+
+each(@font-names, {
+  @font-face {
+    font-family: @value;
+    src: url('@{font-dir}@{value}.ttf')
+  }
+});
