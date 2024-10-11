@@ -65,7 +65,7 @@ public class ApiThreadController {
             comicSeriesDTO = comicSeriesService.findByBgmId(req.getBgmId());
             threadDTOList.addAll(threadService.listByBgmId(req.getBgmId()));
         }
-        List<ApiThreadViewResp> threadList = threadDTOList.stream().map(s -> {
+        List<ApiThreadViewResp> threadList = threadDTOList.stream().filter(s -> !StringUtils.equals(s.getId(), req.getId())).map(s -> {
             ApiThreadViewResp resp = new ApiThreadViewResp();
             resp.setId(s.getId());
             resp.setTitle(s.getTitle());
@@ -75,15 +75,20 @@ public class ApiThreadController {
         }).collect(Collectors.toList());
 
         ApiThreadViewResp resp = new ApiThreadViewResp();
-        resp.setId(threadDTO.getId());
-        resp.setStatus(threadDTO.getStatus());
+        if (threadDTO != null) {
+            resp.setId(threadDTO.getId());
+            resp.setStatus(threadDTO.getStatus());
+        } else {
+            resp.setId(req.getId());
+            resp.setStatus("none");
+        }
         resp.setThreadList(threadList);
         if (movieBasicDTO != null) {
             resp.setMovieBasicId(movieBasicDTO.getId());
             resp.setFilenameList(Lists.newArrayList(movieBasicDTO.getFilename()));
         }
         if (comicSeriesDTO != null) {
-            resp.setId(comicSeriesDTO.getId());
+            resp.setComicSeriesId(comicSeriesDTO.getId());
             List<ComicBookDTO> comicBookDTOList = comicBookService.listBySeriesId(comicSeriesDTO.getId());
             resp.setFilenameList(comicBookDTOList.stream().map(ComicBookDTO::getFilename).collect(Collectors.toList()));
         }
