@@ -176,5 +176,6 @@ zjjcnt:
         - /webjars/**
         - /favicon.jpg
         - /favicon.ico
+        - /favicon.png
         - /swagger-resources
         - /v2/api-docs

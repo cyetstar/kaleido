@@ -84,6 +84,7 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
         query.eq(StringUtils.isNotEmpty(dto.getMandarin()), MovieBasicDO::getMandarin, dto.getMandarin());
         query.eq(StringUtils.isNotEmpty(dto.getNoSubtitle()), MovieBasicDO::getNoSubtitle, dto.getNoSubtitle());
         query.eq(StringUtils.isNotEmpty(dto.getPath()), MovieBasicDO::getPath, dto.getPath());
+        query.eq(StringUtils.isNotEmpty(dto.getFilename()), MovieBasicDO::getFilename, dto.getFilename());
         return query;
     }
 

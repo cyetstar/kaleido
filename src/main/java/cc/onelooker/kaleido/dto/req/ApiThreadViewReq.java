@@ -11,4 +11,10 @@ import lombok.Data;
 public class ApiThreadViewReq {
 
     private String id;
+
+    private String imdbId;
+
+    private String doubanId;
+
+    private String bgmId;
 }

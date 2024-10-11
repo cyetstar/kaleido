@@ -7,6 +7,8 @@ import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.nfo.UniqueidNFO;
 import cc.onelooker.kaleido.service.MovieBasicService;
 import cc.onelooker.kaleido.service.MovieDoubanWeeklyService;
+import cc.onelooker.kaleido.third.plex.Metadata;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.NioFileUtils;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
@@ -44,6 +46,9 @@ public class MovieManagerTest {
 
     @Autowired
     private MovieBasicService movieBasicService;
+
+    @Autowired
+    private PlexApiService plexApiService;
 
     @Test
     public void syncDoubanWeekly() {
@@ -160,6 +165,19 @@ public class MovieManagerTest {
 
             }
         });
+    }
+
+    @Test
+    public void fillFilename() {
+        MovieBasicDTO param = new MovieBasicDTO();
+        List<MovieBasicDTO> movieBasicDTOList = movieBasicService.list(param);
+        for (MovieBasicDTO movieBasicDTO : movieBasicDTOList) {
+            Metadata metadata = plexApiService.findMetadata(movieBasicDTO.getId());
+            if (metadata != null) {
+                movieBasicDTO.setFilename(FilenameUtils.getName(metadata.getMedia().getPart().getFile()));
+                movieBasicService.update(movieBasicDTO);
+            }
+        }
     }
 
 }

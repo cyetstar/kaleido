@@ -1,10 +1,13 @@
 package cc.onelooker.kaleido.dto.resp;
 
+import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 发布记录响应对象
@@ -39,4 +42,23 @@ public class ThreadViewResp {
 
     @ApiModelProperty("状态")
     private String status;
+
+    private String movieBasicId;
+
+    private String movieBasicTitle;
+
+    private String movieBasicOriginalTitle;
+
+    private String movieBasicPath;
+
+    private String comicSeriesId;
+
+    private String comicSeriesTitle;
+
+    private String comicSeriesOriginalTitle;
+
+    private String comicSeriesPath;
+
+    private List<ThreadViewResp> threadList;
+
 }

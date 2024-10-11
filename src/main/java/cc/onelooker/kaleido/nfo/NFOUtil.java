@@ -120,6 +120,7 @@ public class NFOUtil {
         if (CollectionUtils.isNotEmpty(movieBasicDTO.getTagList())) {
             movieNFO.setTags(movieBasicDTO.getTagList());
         }
+        movieNFO.setOriginalFilename(movieBasicDTO.getFilename());
         return movieNFO;
     }
 

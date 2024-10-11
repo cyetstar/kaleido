@@ -8,7 +8,7 @@ import lombok.Data;
  * @Description TODO
  */
 @Data
-public class ApiMovieThreadUpdateReq {
+public class ApiThreadUpdateReq {
 
     private String id;
 

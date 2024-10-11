@@ -171,6 +171,13 @@ public class MovieBasicDO implements IdEntity<String> {
     private String path;
 
     /**
+     * 文件名
+     */
+
+    @TableField(value = "filename")
+    private String filename;
+
+    /**
      * 加入时间
      */
     @TableField(value = "added_at")

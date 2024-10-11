@@ -4,6 +4,7 @@ import cc.onelooker.kaleido.entity.MovieBasicDO;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -143,6 +144,11 @@ public class MovieBasicDTO implements BaseDTO<String>, IUnique {
     private String path;
 
     /**
+     * 文件名
+     */
+    private String filename;
+
+    /**
      * 加入时间
      */
     private Long addedAt;
@@ -237,4 +243,5 @@ public class MovieBasicDTO implements BaseDTO<String>, IUnique {
     public String toString() {
         return title;
     }
+
 }

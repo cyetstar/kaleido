@@ -100,6 +100,9 @@
         <logger name="org.jaudiotagger" level="ERROR" additivity="false">
             <appender-ref ref="ERROR_FILE"/>
         </logger>
+        <logger name="org.apache.tomcat.util" level="ERROR" additivity="false">
+            <appender-ref ref="ERROR_FILE"/>
+        </logger>
         <root>
             <appender-ref ref="INFO_FILE"/>
             <appender-ref ref="WARN_FILE"/>

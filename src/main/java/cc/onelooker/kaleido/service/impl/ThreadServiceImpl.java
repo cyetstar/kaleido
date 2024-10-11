@@ -10,7 +10,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 发布记录ServiceImpl
@@ -30,7 +34,7 @@ public class ThreadServiceImpl extends AbstractBaseServiceImpl<ThreadMapper, Thr
         query.eq(StringUtils.isNotEmpty(dto.getImdbId()), ThreadDO::getImdbId, dto.getImdbId());
         query.eq(StringUtils.isNotEmpty(dto.getBgmId()), ThreadDO::getBgmId, dto.getBgmId());
         query.eq(StringUtils.isNotEmpty(dto.getStatus()), ThreadDO::getStatus, dto.getStatus());
-        query.eq(StringUtils.isNotEmpty(dto.getTitle()), ThreadDO::getTitle, dto.getTitle());
+        query.like(StringUtils.isNotEmpty(dto.getTitle()), ThreadDO::getTitle, dto.getTitle());
         query.eq(StringUtils.isNotEmpty(dto.getUrl()), ThreadDO::getUrl, dto.getUrl());
         query.eq(StringUtils.isNotEmpty(dto.getWebsite()), ThreadDO::getWebsite, dto.getWebsite());
         query.in(CollectionUtils.isNotEmpty(dto.getIdList()), ThreadDO::getId, dto.getIdList());
@@ -47,4 +51,36 @@ public class ThreadServiceImpl extends AbstractBaseServiceImpl<ThreadMapper, Thr
         return convert.convertToDO(threadDTO);
     }
 
+    @Override
+    public List<ThreadDTO> listByDoubanId(String doubanId) {
+        Validate.notEmpty(doubanId);
+        ThreadDTO param = new ThreadDTO();
+        param.setDoubanId(doubanId);
+        return list(param);
+    }
+
+    @Override
+    public List<ThreadDTO> listByImdbId(String imdbId) {
+        Validate.notEmpty(imdbId);
+        ThreadDTO param = new ThreadDTO();
+        param.setImdbId(imdbId);
+        return list(param);
+    }
+
+    @Override
+    public List<ThreadDTO> listByBgmId(String bgmId) {
+        Validate.notEmpty(bgmId);
+        ThreadDTO param = new ThreadDTO();
+        param.setBgmId(bgmId);
+        return list(param);
+    }
+
+    @Override
+    @Transactional
+    public void updateStatus(String id, String status) {
+        ThreadDO threadDO = new ThreadDO();
+        threadDO.setId(id);
+        threadDO.setStatus(status);
+        updateById(threadDO);
+    }
 }

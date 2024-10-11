@@ -96,6 +96,9 @@ public class MovieBasicViewResp {
     @ApiModelProperty("路径")
     private String path;
 
+    @ApiModelProperty("文件名")
+    private String filename;
+
     @ApiModelProperty("加入时间")
     private Long addedAt;
 
