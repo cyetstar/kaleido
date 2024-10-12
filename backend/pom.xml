@@ -240,7 +240,7 @@
                                 <!-- 2. 复制外部 dist 文件夹内容到 static 文件夹 -->
                                 <mkdir dir="${project.basedir}/src/main/resources/static"/>
                                 <copy todir="${project.basedir}/src/main/resources/static">
-                                    <fileset dir="/Users/cyetstar/workspace/webstorm/kaleido/dist"/>
+                                    <fileset dir="../frontend/dist"/>
                                 </copy>
                             </target>
                         </configuration>

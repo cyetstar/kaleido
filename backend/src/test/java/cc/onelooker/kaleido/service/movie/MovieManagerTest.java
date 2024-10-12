@@ -170,6 +170,7 @@ public class MovieManagerTest {
     @Test
     public void fillFilename() {
         MovieBasicDTO param = new MovieBasicDTO();
+        param.setIdList(Lists.newArrayList("348195", "348196"));
         List<MovieBasicDTO> movieBasicDTOList = movieBasicService.list(param);
         for (MovieBasicDTO movieBasicDTO : movieBasicDTOList) {
             Metadata metadata = plexApiService.findMetadata(movieBasicDTO.getId());

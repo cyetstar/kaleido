@@ -8,13 +8,15 @@
 import { defineStore } from "pinia";
 import { useUserStore } from "@/store/modules/user";
 
-const { VITE_BASE_WS } = import.meta.env;
-
 import { createPinia } from "pinia";
+
 const pinia = createPinia();
 export default pinia;
 
 const userStore = useUserStore(pinia);
+const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+const host = window.location.host;
+const wsUrl = protocol + host + "/websocket/";
 export const useWebSocketStore = defineStore("websocket", {
   state: (): any => ({
     websocket: null,
@@ -26,7 +28,7 @@ export const useWebSocketStore = defineStore("websocket", {
       if (this.connected) {
         return;
       }
-      this.websocket = new WebSocket(VITE_BASE_WS + userStore.userId);
+      this.websocket = new WebSocket(wsUrl + userStore.userId);
       this.websocket.onopen = () => {
         console.log("websocket opened");
         this.connected = true;

@@ -1,8 +1,10 @@
-/target/
 /.idea/
-/kaleido.iml
 /logs/
-/src/main/resources/static/**
-/frontend/dist/
+/kaleido.iml
 /web-scraper/.venv/
+/frontend/dist/
 /frontend/node_modules/
+/frontend/.idea/
+/backend/logs/
+/backend/src/main/resources/static/**
+

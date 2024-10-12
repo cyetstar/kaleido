@@ -143,17 +143,22 @@ function createDataTable(container, data) {
         const table = document.createElement('table');
         table.classList.add('kaleido-table');
         table.style.marginBottom = '20px';
-        data.filenameList.forEach(filename => {
-            table.innerHTML += `<tr><td>${filename}</td></tr>`;
-        });
-        data.threadList.forEach(thread => {
-            const threadRow = `
+        if (data.filenameList != null) {
+            data.filenameList.forEach(filename => {
+                const match = document.body.innerText.includes(filename);
+                table.innerHTML += `<tr><td><span class="${match ? 'matched' : ''}">${filename}</span></td></tr>`;
+            });
+        }
+        if (data.threadList != null) {
+            data.threadList.forEach(thread => {
+                const threadRow = `
       <tr>
         <td><span class="kaleido-tag kaleido-${thread.status}">${thread.status}</span> <a href="${thread.url}" target="_blank">${thread.title}</a></td>
       </tr>
     `;
-            table.innerHTML += threadRow;
-        });
+                table.innerHTML += threadRow;
+            });
+        }
         container.appendChild(table);
     }
 

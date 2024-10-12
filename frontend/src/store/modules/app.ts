@@ -21,10 +21,6 @@ export const useAppStore = defineStore("app", {
       return apiSysConfigFindByKeys([
         "komgaUrl",
         "plexUrl",
-        "plexToken",
-        "plexMovieLibraryId",
-        "plexTvshowLibraryId",
-        "plexMusicLibraryId",
         "movieLibraryPath",
         "tvshowLibraryPath",
         "musicLibraryPath",

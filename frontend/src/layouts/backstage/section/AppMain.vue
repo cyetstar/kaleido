@@ -9,6 +9,8 @@
   <section id="main-section">
     <k-global-config
       :image-url="VITE_IMAGE_PATH"
+      :plex-url="appStore.config['plexUrl']"
+      :komga-url="appStore.config['komgaUrl']"
       :list-dict-by-type="listDictByType"
     >
       <router-view v-slot="{ Component, route }">

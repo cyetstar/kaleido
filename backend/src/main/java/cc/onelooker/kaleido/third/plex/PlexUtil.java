@@ -34,6 +34,8 @@ public class PlexUtil {
         String fullPath = FilenameUtils.getFullPath(metadata.getMedia().getPart().getFile());
         Path path = KaleidoUtils.getMovieBasicPath(fullPath);
         movieBasicDTO.setPath(path.toString());
+        String filename = FilenameUtils.getName(metadata.getMedia().getPart().getFile());
+        movieBasicDTO.setFilename(filename);
         movieBasicDTO.setAddedAt(metadata.getAddedAt());
         movieBasicDTO.setUpdatedAt(metadata.getUpdatedAt());
         if (metadata.getCountryList() != null) {

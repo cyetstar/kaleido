@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 public class ComicUpdateSourceRunnable extends AbstractEntityActionRunnable<Path> {
 
     private final ComicManager comicManager;
-    private Path importPath;
 
     public ComicUpdateSourceRunnable(ComicManager comicManager) {
         this.comicManager = comicManager;
@@ -33,13 +32,9 @@ public class ComicUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
     }
 
     @Override
-    protected void beforeRun(Map<String, String> params) {
-        importPath = KaleidoUtils.getComicImportPath();
-    }
-
-    @Override
     protected PageResult<Path> page(Map<String, String> params, int pageNumber, int pageSize) {
         try {
+            Path importPath = KaleidoUtils.getComicImportPath();
             PageResult<Path> pageResult = new PageResult<>();
             pageResult.setSearchCount(true);
             if (pageNumber == 1) {

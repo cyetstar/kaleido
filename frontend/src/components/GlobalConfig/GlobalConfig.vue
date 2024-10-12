@@ -39,6 +39,8 @@ export default defineComponent({
       type: String,
       default: "/image/",
     },
+    plexUrl: String,
+    komgaUrl: String,
   },
   setup(props, context) {
     provide("listDictByType", props.listDictByType);
@@ -46,6 +48,8 @@ export default defineComponent({
     provide("fileUrl", props.fileUrl);
     provide("thumbSize", props.thumbSize);
     provide("imageUrl", props.imageUrl);
+    provide("plexUrl", props.plexUrl);
+    provide("komgaUrl", props.komgaUrl);
   },
 });
 </script>
