@@ -11,8 +11,11 @@ import cc.onelooker.kaleido.service.MusicManager;
 import cc.onelooker.kaleido.third.tmm.Album;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.third.tmm.Movie;
+import cc.onelooker.kaleido.third.tmm.Song;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.http.HttpUtil;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
@@ -24,6 +27,12 @@ import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +41,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 专辑前端控制器
@@ -107,16 +119,62 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
         List<MusicAlbumSearchInfoResp> respList = Lists.newArrayList();
         for (Album album : albumList) {
             MusicAlbumSearchInfoResp resp = MusicAlbumConvert.INSTANCE.convertToSearchNeteaseResp(album);
-            resp.setPublishTime(DateTimeUtils.parseTimestamp(album.getPublishTime()));
+            resp.setPublishTime(album.getPublishTime());
             respList.add(resp);
         }
         return CommonResult.success(respList);
     }
 
+    @PostMapping("viewMatchInfo")
+    public CommonResult<List<MusicAlbumViewMatchInfoResp>> viewMatchInfo(@RequestBody MusicAlbumViewMatchInfoReq req) {
+        Album album = tmmApiService.findAlbum(req.getNeteaseId(), req.getMusicbrainzId());
+        List<MusicAlbumViewMatchInfoResp> result = null;
+        try {
+            result = Files.list(Paths.get(req.getPath())).filter(path -> KaleidoUtils.isAudioFile(path.getFileName().toString())).map(path -> {
+                MusicAlbumViewMatchInfoResp resp = new MusicAlbumViewMatchInfoResp();
+                try {
+                    AudioFile audioFile = AudioFileIO.read(path.toFile());
+                    Tag tag = audioFile.getTag();
+                    String trackIndex = KaleidoUtils.getTagValue(tag, FieldKey.TRACK);
+                    resp.setTitle(KaleidoUtils.getTagValue(tag, FieldKey.TITLE));
+                    resp.setArtist(KaleidoUtils.getTagValue(tag, FieldKey.ARTIST));
+                    resp.setDuration(audioFile.getAudioHeader().getTrackLength());
+                    resp.setPublishTime(KaleidoUtils.getTagValue(tag, FieldKey.YEAR));
+                    if (StringUtils.isEmpty(trackIndex) || !StringUtils.isNumeric(trackIndex)) {
+
+                    }
+                    resp.setTrackIndex(Integer.parseInt(trackIndex));
+                    Song song = album.getSongs().stream().filter(s -> Objects.equals(s.getTrackIndex(), Integer.parseInt(trackIndex))).findFirst().orElse(null);
+                    if (song != null) {
+                        resp.setSongTitle(song.getTitle());
+                        resp.setSongArtist(song.getArtist());
+                        resp.setSongDuration(song.getDuration());
+                        resp.setSongTrackIndex(song.getTrackIndex());
+                        resp.setSongPublishTime(album.getPublishTime());
+                    }
+                } catch (Exception e) {
+                    ExceptionUtil.wrapAndThrow(e);
+                }
+                return resp;
+            }).sorted(Comparator.comparing(MusicAlbumViewMatchInfoResp::getTrackIndex)).collect(Collectors.toList());
+        } catch (IOException e) {
+            ExceptionUtil.wrapAndThrow(e);
+        }
+        return CommonResult.success(result);
+    }
+
     @PostMapping("matchInfo")
     public CommonResult<Boolean> matchInfo(@RequestBody MusicAlbumMatchInfoReq req) {
-        Album album = tmmApiService.findAlbum(req.getNeteaseId());
-        musicManager.matchInfo(req.getId(), album);
+        if (StringUtils.equals(req.getMatchType(), "path")) {
+            Album album = new Album();
+            album.setNeteaseId(req.getNeteaseId());
+            album.setMusicbrainzId(req.getMusicbrainzId());
+            album.setTitle(req.getTitle());
+            musicManager.matchPath(Paths.get(req.getPath()), album);
+        } else {
+            Album album = tmmApiService.findAlbum(req.getNeteaseId(), req.getMusicbrainzId());
+            musicManager.matchInfo(req.getId(), album);
+        }
         return CommonResult.success(true);
     }
 
@@ -143,7 +201,7 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @ApiOperation(value = "查询网易云专辑")
     public CommonResult<MusicAlbumViewNeteaseResp> viewNetease(String id) {
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(id);
-        Album album = tmmApiService.findAlbum(musicAlbumDTO.getNeteaseId());
+        Album album = tmmApiService.findAlbum(musicAlbumDTO.getNeteaseId(), null);
         MusicAlbumViewNeteaseResp resp = MusicAlbumConvert.INSTANCE.convertToViewNeteaseResp(album);
         return CommonResult.success(resp);
     }

@@ -8,6 +8,9 @@ import cc.onelooker.kaleido.enums.AttributeType;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.enums.TaskType;
+import cc.onelooker.kaleido.nfo.AlbumNFO;
+import cc.onelooker.kaleido.nfo.MovieNFO;
+import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.third.tmm.Album;
 import cc.onelooker.kaleido.third.tmm.Artist;
 import cc.onelooker.kaleido.third.tmm.Song;
@@ -15,6 +18,7 @@ import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexUtil;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtils;
 import cc.onelooker.kaleido.utils.NioFileUtils;
 import cn.hutool.core.exceptions.ExceptionUtil;
@@ -35,6 +39,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 /**
@@ -243,6 +248,36 @@ public class MusicManager {
     }
 
     @Transactional
+    public void matchPath(Path path, Album album) {
+        try {
+            AlbumNFO albumNFO = new AlbumNFO();
+            albumNFO.setNeteaseId(album.getNeteaseId());
+            albumNFO.setMusicbrainzId(album.getMusicbrainzId());
+            Path importPath = KaleidoUtils.getMusicImportPath();
+            String filename = FilenameUtils.getBaseName(path.getFileName().toString());
+            if (StringUtils.isNotEmpty(album.getTitle()) && !StringUtils.isAllEmpty(album.getNeteaseId(), album.getMusicbrainzId())) {
+                filename = album.getTitle() + "(" + StringUtils.defaultIfEmpty(album.getNeteaseId(), album.getMusicbrainzId()) + ")";
+            }
+            Path newPath = importPath.resolve(filename);
+            if (Files.isDirectory(path)) {
+                NioFileUtils.deleteByFilter(path, "nfo");
+                if (!StringUtils.equals(newPath.toString(), path.toString())) {
+                    NioFileUtils.renameDir(path, newPath, StandardCopyOption.REPLACE_EXISTING);
+                }
+                NFOUtil.write(albumNFO, AlbumNFO.class, newPath, KaleidoConstants.ALBUM_NFO);
+            } else {
+                if (Files.notExists(newPath)) {
+                    Files.createDirectories(newPath);
+                }
+                NFOUtil.write(albumNFO, AlbumNFO.class, newPath, KaleidoConstants.ALBUM_NFO);
+                Files.move(path, newPath.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (Exception e) {
+            ExceptionUtil.wrapAndThrow(e);
+        }
+    }
+
+    @Transactional
     public void matchInfo(String albumId, Album album) {
         if (album == null) {
             return;
@@ -259,7 +294,7 @@ public class MusicManager {
         for (MusicTrackDTO musicTrackDTO : musicTrackDTOList) {
             Song song = songs.stream().filter(s -> StringUtils.equalsAnyIgnoreCase(s.getSimpleName(), musicTrackDTO.getTitle(), musicTrackDTO.getSimpleTitle())).findFirst().orElse(null);
             if (song != null) {
-                musicTrackDTO.setNeteaseId(song.getId());
+                musicTrackDTO.setNeteaseId(song.getNeteaseId());
                 musicTrackService.update(musicTrackDTO);
             }
         }
@@ -268,7 +303,7 @@ public class MusicManager {
         for (MusicAlbumArtistDTO musicMusicAlbumArtistDTO : musicMusicAlbumArtistDTOList) {
             ArtistDTO artistDTO = artistService.findById(musicMusicAlbumArtistDTO.getArtistId());
             if (StringUtils.equals(artist.getName(), artistDTO.getTitle())) {
-                artistDTO.setNeteaseId(artist.getId());
+                artistDTO.setNeteaseId(artist.getNeteaseId());
                 artistService.update(artistDTO);
             }
         }

@@ -209,45 +209,6 @@ def doulist_movies():
         return __error(4, str(e))
 
 
-@app.route('/v1/thread/list')
-@cross_origin(supports_credentials=True)
-def thread_list():
-    try:
-        data = None
-        source = request.args.get('source', 'tlf')
-        page = request.args.get('page', '1')
-        if source == 'tlf':
-            catalog = request.args.get('catalog', '')
-            data = tlf.list_thread(page, catalog)
-        elif source == 'eastgame':
-            data = eastgame.list_thread(page)
-        return __success(data)
-    except Exception as e:
-        return __error(4, str(e))
-
-
-@app.route('/v1/thread/view')
-@cross_origin(supports_credentials=True)
-def thread_view():
-    try:
-        url = request.args.get('url')
-        data = tlf.get_thread(thread_id)
-        return __success(data)
-    except Exception as e:
-        return __error(4, str(e))
-
-
-@app.route('/v1/thread/thank')
-@cross_origin(supports_credentials=True)
-def thread_thank():
-    try:
-        thread_id = request.args.get('thread_id')
-        data = tlf.thank_thread(thread_id)
-        return __success(data)
-    except Exception as e:
-        return __error(4, str(e))
-
-
 def __success(data):
     return __result(data)
 

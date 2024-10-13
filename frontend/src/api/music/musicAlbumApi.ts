@@ -70,6 +70,7 @@ export const apiMusicAlbumSearchInfo = (params: any) => {
     params,
   });
 };
+
 export const apiMusicAlbumMatchInfo = (data: any) => {
   return useFetch.post<any>({
     url: "/musicAlbum/matchInfo",
@@ -77,9 +78,9 @@ export const apiMusicAlbumMatchInfo = (data: any) => {
   });
 };
 
-export const apiMusicAlbumMatchPath = (data: any) => {
+export const apiMusicAlbumViewMatchInfo = (data: any) => {
   return useFetch.post<any>({
-    url: "/musicAlbum/matchPath",
+    url: "/musicAlbum/viewMatchInfo",
     data,
   });
 };

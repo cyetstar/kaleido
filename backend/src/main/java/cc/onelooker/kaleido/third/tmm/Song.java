@@ -1,7 +1,11 @@
 package cc.onelooker.kaleido.third.tmm;
 
 import cc.onelooker.kaleido.utils.KaleidoUtils;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
+
+import java.util.List;
 
 /**
  * @Author cyetstar
@@ -11,11 +15,23 @@ import lombok.Data;
 @Data
 public class Song {
 
-    private String id;
-    private Integer no;
-    private String name;
+    @JsonProperty("netease_id")
+    private String neteaseId;
+    private String title;
+    @JsonProperty("track_index")
+    private Integer trackIndex;
+    private List<Artist> artists;
+    private Integer duration;
+
+    public String getArtist() {
+        if (CollectionUtils.isNotEmpty(artists)) {
+            return artists.get(0).getName();
+        }
+        return null;
+    }
 
     public String getSimpleName() {
-        return KaleidoUtils.genSongSimpleName(name);
+        return KaleidoUtils.genSongSimpleName(title);
     }
+
 }

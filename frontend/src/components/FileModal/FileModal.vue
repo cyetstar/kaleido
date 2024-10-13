@@ -210,6 +210,10 @@ export default defineComponent({
       load();
     };
 
+    const close = () => {
+      visible.value = false;
+    };
+
     const load = () => {
       refTableData.value.load(1);
     };
@@ -341,6 +345,7 @@ export default defineComponent({
       onDelete,
       onChange,
       show,
+      close,
       load,
     };
   },

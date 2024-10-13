@@ -8,17 +8,11 @@ import lombok.Data;
  * @Description TODO
  */
 @Data
-public class MusicAlbumMatchInfoReq {
-
-    private String id;
-
-    private String title;
+public class MusicAlbumViewMatchInfoReq {
 
     private String neteaseId;
 
     private String musicbrainzId;
-
-    private String matchType;
 
     private String path;
 }

@@ -1,5 +1,6 @@
 package cc.onelooker.kaleido.third.tmm;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -10,11 +11,13 @@ import lombok.Data;
 @Data
 public class Artist {
 
-    private String id;
+    @JsonProperty("netease_id")
+    private String neteaseId;
 
     private String name;
 
     private String trans;
 
+    @JsonProperty("pic_url")
     private String picUrl;
 }

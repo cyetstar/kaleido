@@ -6,13 +6,14 @@
 <template>
   <k-file-modal ref="refFileModal">
     <template #footer>
-      <h-button
-        plain
-        type="primary"
-        :disabled="refFileModal.selectedRows.length !== 1"
-        @click="onMatch"
-        >搜索匹配
-      </h-button>
+      <a-space>
+        <h-button @click="refFileModal.close()">关闭 </h-button>
+        <h-button
+          :disabled="refFileModal.selectedRows.length !== 1"
+          @click="onMatch"
+          >搜索匹配
+        </h-button>
+      </a-space>
     </template>
   </k-file-modal>
   <music-album-search-info

@@ -35,7 +35,7 @@ public class TmmApiService {
     private final static String API_SHOW_SEARCH = "/v1/show/search?keyword={keyword}&source={source}";
     private final static String API_SHOW_VIEW = "/v1/show/view?douban_id={doubanId}&imdb_id={imdbId}&tmdb_id={tmdbId}";
     private final static String API_ALBUM_SEARCH = "/v1/album/search?keyword={keyword}&source={source}";
-    private final static String API_ALBUM_VIEW = "/v1/album/view?netease_id={neteaseId}";
+    private final static String API_ALBUM_VIEW = "/v1/album/view?netease_id={neteaseId}&musicbrainz_id={musicbrainzId}";
     private final static String API_LYRIC_VIEW = "/v1/lyric/view?netease_id={neteaseId}";
     private final static String API_ARTIST_SEARCH = "/v1/artist/search?keyword={keyword}";
     private final static String API_COMIC_SERACH = "/v1/comic/search?keyword={keyword}&source={source}";
@@ -104,12 +104,12 @@ public class TmmApiService {
         return jsonArray != null ? jsonArray.toJavaList(Album.class) : Lists.newArrayList();
     }
 
-    public Album findAlbum(String neteaseId) {
-        if (StringUtils.isEmpty(neteaseId)) {
+    public Album findAlbum(String neteaseId, String musicbrainzId) {
+        if (StringUtils.isAllEmpty(neteaseId, musicbrainzId)) {
             return null;
         }
         String url = ConfigUtils.getSysConfig(ConfigKey.tmmUrl);
-        JSONObject jsonObject = restTemplate.getForObject(url + API_ALBUM_VIEW, JSONObject.class, neteaseId);
+        JSONObject jsonObject = restTemplate.getForObject(url + API_ALBUM_VIEW, JSONObject.class, neteaseId, musicbrainzId);
         return Objects.requireNonNull(jsonObject).getObject("data", Album.class);
     }
 

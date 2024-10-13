@@ -1,1 +1,0 @@
-import{J as s}from"./index-8V0LDlr9.js";const r=t=>s.get({url:"/musicArtist/page",params:t}),i=t=>s.get({url:"/musicArtist/view",params:t}),c=t=>s.get({url:"/musicArtist/syncPlexById",data:t}),a=t=>s.get({url:"/musicArtist/searchNetease",data:t}),u=t=>s.post({url:"/musicArtist/matchNetease",data:t});export{r as a,a as b,u as c,i as d,c as e};

@@ -16,7 +16,10 @@ public class Album {
     @JsonProperty("netease_id")
     private String neteaseId;
 
-    private String name;
+    @JsonProperty("musicbrainz_id")
+    private String musicbrainzId;
+
+    private String title;
 
     private String company;
 
@@ -26,7 +29,7 @@ public class Album {
     private String description;
 
     @JsonProperty("publish_time")
-    private Long publishTime;
+    private String publishTime;
 
     private Artist artist;
 

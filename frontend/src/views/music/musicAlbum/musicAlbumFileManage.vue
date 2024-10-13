@@ -6,14 +6,20 @@
 <template>
   <k-file-modal ref="refFileModal">
     <template #footer>
-      <a-upload
-        v-model:file-list="fileList"
-        name="file"
-        :showUploadList="false"
-        :custom-request="uploadFile"
-      >
-        <h-button plain type="primary">上传封面</h-button>
-      </a-upload>
+      <a-space>
+        <h-button
+            @click="refFileModal.close()"
+        >关闭
+        </h-button>
+        <a-upload
+            v-model:file-list="fileList"
+            name="file"
+            :showUploadList="false"
+            :custom-request="uploadFile"
+        >
+          <h-button>上传封面</h-button>
+        </a-upload>
+      </a-space>
     </template>
   </k-file-modal>
 </template>

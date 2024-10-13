@@ -15,11 +15,12 @@ public class MusicAlbumSearchInfoResp {
 
     private String neteaseId;
 
+    private String musicbrainzId;
+
     private String title;
 
     private String artist;
 
-    @StringDateFormat
     private String publishTime;
 
     private String picUrl;

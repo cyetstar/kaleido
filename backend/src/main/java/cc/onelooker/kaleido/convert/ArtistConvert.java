@@ -44,9 +44,5 @@ public interface ArtistConvert {
 
     ArtistCreateResp convertToCreateResp(ArtistDTO dto);
 
-    @Mappings({
-            @Mapping(source = "id", target = "neteaseId"),
-            @Mapping(source = "name", target = "title"),
-    })
     ArtistSearchNeteaseResp convertToSearchNeteaseResp(Artist artist);
 }
