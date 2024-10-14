@@ -4,5 +4,6 @@
 **/**.iml
 **/.venv/
 **/node_modules/
-/backend/src/main/resources/static/**
-
+/backend/src/main/resources/static/assets/**
+/backend/src/main/resources/static/favicon.png
+/backend/src/main/resources/static/index.html
