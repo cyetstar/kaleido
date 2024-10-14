@@ -43,10 +43,7 @@ public interface MusicAlbumConvert {
 
     MusicAlbumCreateResp convertToCreateResp(MusicAlbumDTO dto);
 
-    @Mappings({
-            @Mapping(source = "artist.name", target = "artist"),
-    })
-    MusicAlbumSearchInfoResp convertToSearchNeteaseResp(Album album);
+    MusicAlbumSearchInfoResp convertToSearchInfoResp(Album album);
 
     MusicAlbumListByArtistIdResp convertToListByArtistIdResp(MusicAlbumDTO musicAlbumDTO);
 
@@ -55,11 +52,8 @@ public interface MusicAlbumConvert {
             @Mapping(target = "genreList", ignore = true),
             @Mapping(target = "moodList", ignore = true),
             @Mapping(target = "artistList", ignore = true),
+            @Mapping(target = "trackList", ignore = true),
     })
     MusicAlbumDTO convertToDTO(Map<String, String> params);
 
-    @Mappings({
-            @Mapping(source = "artist.name", target = "artist"),
-    })
-    MusicAlbumViewNeteaseResp convertToViewNeteaseResp(Album album);
 }

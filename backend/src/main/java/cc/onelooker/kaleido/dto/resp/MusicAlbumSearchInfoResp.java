@@ -1,6 +1,5 @@
 package cc.onelooker.kaleido.dto.resp;
 
-import com.zjjcnt.common.core.annotation.StringDateFormat;
 import lombok.Data;
 
 /**
@@ -19,7 +18,7 @@ public class MusicAlbumSearchInfoResp {
 
     private String title;
 
-    private String artist;
+    private String artistName;
 
     private String publishTime;
 

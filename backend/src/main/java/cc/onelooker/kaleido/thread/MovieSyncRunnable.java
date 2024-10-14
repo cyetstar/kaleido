@@ -31,7 +31,7 @@ public class MovieSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
 
     private final MovieManager movieManager;
 
-    private List<String> plexIdList = Lists.newArrayList();
+    private final List<String> plexIdList = Lists.newArrayList();
 
     public MovieSyncRunnable(PlexApiService plexApiService, MovieManager movieManager, MovieBasicService movieBasicService) {
         this.plexApiService = plexApiService;
@@ -80,6 +80,7 @@ public class MovieSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
     @Override
     protected int processEntity(Map<String, String> params, Metadata metadata) throws Exception {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
+        //FIXME 已经存在，会存在部分无法及时更新的情况
         if (movieBasicDTO == null || MapUtils.getBooleanValue(params, "force")) {
             movieManager.syncMovie(plexApiService.findMetadata(metadata.getRatingKey()));
             return SUCCESS;

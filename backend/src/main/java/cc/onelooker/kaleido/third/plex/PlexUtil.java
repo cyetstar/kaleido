@@ -1,7 +1,7 @@
 package cc.onelooker.kaleido.third.plex;
 
 import cc.onelooker.kaleido.dto.*;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.google.common.collect.Lists;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +32,7 @@ public class PlexUtil {
         movieBasicDTO.setLastViewedAt(metadata.getLastViewedAt());
         movieBasicDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
         String fullPath = FilenameUtils.getFullPath(metadata.getMedia().getPart().getFile());
-        Path path = KaleidoUtils.getMovieBasicPath(fullPath);
+        Path path = KaleidoUtil.getMovieBasicPath(fullPath);
         movieBasicDTO.setPath(path.toString());
         String filename = FilenameUtils.getName(metadata.getMedia().getPart().getFile());
         movieBasicDTO.setFilename(filename);
@@ -68,7 +68,7 @@ public class PlexUtil {
         tvshowShowDTO.setArt(metadata.getArt());
         tvshowShowDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
         tvshowShowDTO.setTotalSeasons(metadata.getChildCount());
-        Path path = KaleidoUtils.getTvshowBasicPath(metadata.getLocation().getPath());
+        Path path = KaleidoUtil.getTvshowBasicPath(metadata.getLocation().getPath());
         tvshowShowDTO.setPath(path.toString());
         tvshowShowDTO.setAddedAt(metadata.getAddedAt());
         tvshowShowDTO.setUpdatedAt(metadata.getUpdatedAt());
@@ -136,7 +136,7 @@ public class PlexUtil {
         musicAlbumDTO.setAddedAt(metadata.getAddedAt());
         musicAlbumDTO.setUpdatedAt(metadata.getUpdatedAt());
         String fullPath = FilenameUtils.getFullPath(childMetadata.getMedia().getPart().getFile());
-        Path path = KaleidoUtils.getMusicBasicPath(fullPath);
+        Path path = KaleidoUtil.getMusicBasicPath(fullPath);
         musicAlbumDTO.setPath(path.toString());
         if (metadata.getStyleList() != null) {
             musicAlbumDTO.setStyleList(metadata.getStyleList().stream().map(Tag::getTag).collect(Collectors.toList()));

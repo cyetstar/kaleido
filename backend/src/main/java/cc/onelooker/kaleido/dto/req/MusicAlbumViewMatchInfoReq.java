@@ -10,6 +10,8 @@ import lombok.Data;
 @Data
 public class MusicAlbumViewMatchInfoReq {
 
+    private String id;
+
     private String neteaseId;
 
     private String musicbrainzId;

@@ -18,14 +18,14 @@ public class NioFileUtilsTest {
     public void moveDir() throws IOException {
         Path path1 = Paths.get("/Users/cyetstar/dev/kaleido/path1");
         Path path2 = Paths.get("/Users/cyetstar/dev/kaleido/path2");
-        NioFileUtils.moveDir(path1, path2);
+        NioFileUtil.moveDir(path1, path2);
     }
 
     @Test
     public void renameDir() throws IOException {
         Path path1 = Paths.get("/Users/cyetstar/dev/kaleido/path1");
         Path path2 = Paths.get("/Users/cyetstar/dev/kaleido/path3");
-        NioFileUtils.renameDir(path1, path2);
+        NioFileUtil.renameDir(path1, path2);
     }
 
     @Test

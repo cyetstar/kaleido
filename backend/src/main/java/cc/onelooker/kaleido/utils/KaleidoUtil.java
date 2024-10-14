@@ -4,23 +4,19 @@ import cc.onelooker.kaleido.dto.*;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.nfo.MovieNFO;
 import cc.onelooker.kaleido.third.plex.Media;
+import cc.onelooker.kaleido.third.tmm.Album;
+import cc.onelooker.kaleido.third.tmm.Comic;
+import cc.onelooker.kaleido.third.tmm.Movie;
 import cc.onelooker.kaleido.third.tmm.Tvshow;
 import cn.hutool.extra.pinyin.PinyinUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zjjcnt.common.util.constant.Constants;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jaudiotagger.tag.FieldKey;
-import org.jaudiotagger.tag.Tag;
-import org.jaudiotagger.tag.flac.FlacTag;
-import org.jaudiotagger.tag.id3.ID3v23FieldKey;
-import org.jaudiotagger.tag.id3.ID3v23Tag;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -29,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -40,9 +35,9 @@ import java.util.regex.Pattern;
  * @Date 2023-12-02 21:16:00
  * @Description TODO
  */
-public class KaleidoUtils {
+public class KaleidoUtil {
 
-    private static String[] noMainVideos = new String[]{"-other", "-CD2", "-CD3", "-CD4", "-CD5", "-CD6", "Part.2"};
+    private static final String[] noMainVideos = new String[]{"-other", "-CD2", "-CD3", "-CD4", "-CD5", "-CD6", "Part.2"};
     public static final String VIDEO_EXTENSION = "mkv,mp4,mpeg,mov,avi,wmv,rmvb,ts,m2ts";
     public static final String COMIC_ZIP_EXTENSION = "zip,rar,cbz";
     public static final String AUDIO_ZIP_EXTENSION = "mp3,wav,flac";
@@ -51,8 +46,11 @@ public class KaleidoUtils {
     private static final Pattern seasonIndexPattern = Pattern.compile("S_?(\\d+)E");
     private static final Pattern episodeIndexPattern = Pattern.compile("E[pP_]?(\\d+)");
     private static final Pattern volumeNumberPattern = Pattern.compile("[Vv]ol[._](\\d+)");
+    private static final Pattern trackIndexPattern = Pattern.compile("^(\\d{1,3})[\\s.-]*");
     private static final String IMPORT = "import";
     private static final String RECYCLE = "#recycle";
+
+
 
     //-----------movie--------------//
     public static Path getMovieBasicPath(String path) {
@@ -163,6 +161,14 @@ public class KaleidoUtils {
 
     public static Path getMusicImportPath() {
         return getMusicLibraryPath().resolveSibling(IMPORT);
+    }
+
+    public static Path getMusicRecyclePath(String path) {
+        path = StringUtils.removeStart(path, getMusicLibraryPath().toString());
+        if (StringUtils.startsWith(path, Constants.SLASH)) {
+            path = StringUtils.removeStart(path, Constants.SLASH);
+        }
+        return getMusicRecyclePath().resolve(path);
     }
 
     private static Path getMusicRecyclePath() {
@@ -291,7 +297,8 @@ public class KaleidoUtils {
         String year = StringUtils.defaultString(musicAlbumDTO.getYear(), "0000");
         String artist = sanitizeFileName(musicAlbumDTO.getArtists());
         String title = sanitizeFileName(musicAlbumDTO.getTitle());
-        return String.format("%s/%s - %s (%s)", artist, artist, title, year);
+        //如果最后一个字符是. 在群晖中会出现乱码
+        return String.format("%s/%s - %s (%s)", StringUtils.removeEnd(artist, Constants.DOT), artist, title, year);
     }
 
     public static String genComicFolder(ComicSeriesDTO comicSeriesDTO) {
@@ -307,7 +314,7 @@ public class KaleidoUtils {
         return String.format("%s [%s]", sanitizeFileName(comicSeriesDTO.getTitle()), sanitizeFileName(authorName));
     }
 
-    public static String genMusicFilename(MusicTrackDTO musicTrackDTO) {
+    public static String genMusicTrackFilename(MusicTrackDTO musicTrackDTO) {
         String index = StringUtils.leftPad(String.valueOf(musicTrackDTO.getTrackIndex()), 2, "0");
         String title = sanitizeFileName(musicTrackDTO.getTitle());
         String extension = FilenameUtils.getExtension(musicTrackDTO.getFilename());
@@ -368,20 +375,61 @@ public class KaleidoUtils {
         return fileName;
     }
 
-    public static boolean isSame(IUnique o1, IUnique o2) {
-        if (o1 == null || o2 == null) {
+    public static boolean isSame(MovieBasicDTO movieBasicDTO, MovieNFO movieNFO) {
+        if (movieBasicDTO == null || movieNFO == null) {
             return false;
         }
-        if (o1.getDoubanId() != null && o2.getDoubanId() != null && StringUtils.equals(o1.getDoubanId(), o2.getDoubanId())) {
+        if (movieBasicDTO.getDoubanId() != null && movieNFO.getDoubanId() != null && StringUtils.equals(movieBasicDTO.getDoubanId(), movieNFO.getDoubanId())) {
             return true;
         }
-        if (o1.getImdbId() != null && o2.getImdbId() != null && StringUtils.equals(o1.getImdbId(), o2.getImdbId())) {
+        if (movieBasicDTO.getImdbId() != null && movieNFO.getImdbId() != null && StringUtils.equals(movieBasicDTO.getImdbId(), movieNFO.getImdbId())) {
             return true;
         }
-        if (o1.getTmdbId() != null && o2.getTmdbId() != null && StringUtils.equals(o1.getTmdbId(), o2.getTmdbId())) {
+        return movieBasicDTO.getTmdbId() != null && movieNFO.getTmdbId() != null && StringUtils.equals(movieBasicDTO.getTmdbId(), movieNFO.getTmdbId());
+    }
+
+
+    public static boolean isSame(MovieBasicDTO movieBasicDTO, Movie movie) {
+        if (movieBasicDTO == null || movie == null) {
+            return false;
+        }
+        if (movieBasicDTO.getDoubanId() != null && movie.getDoubanId() != null && StringUtils.equals(movieBasicDTO.getDoubanId(), movie.getDoubanId())) {
             return true;
         }
-        return false;
+        if (movieBasicDTO.getImdbId() != null && movie.getImdbId() != null && StringUtils.equals(movieBasicDTO.getImdbId(), movie.getImdbId())) {
+            return true;
+        }
+        return movieBasicDTO.getTmdbId() != null && movie.getTmdbId() != null && StringUtils.equals(movieBasicDTO.getTmdbId(), movie.getTmdbId());
+    }
+
+    public static boolean isSame(TvshowShowDTO tvshowShowDTO, Tvshow tvshow) {
+        if (tvshowShowDTO == null || tvshow == null) {
+            return false;
+        }
+        if (tvshowShowDTO.getDoubanId() != null && tvshow.getDoubanId() != null && StringUtils.equals(tvshowShowDTO.getDoubanId(), tvshow.getDoubanId())) {
+            return true;
+        }
+        if (tvshowShowDTO.getImdbId() != null && tvshow.getImdbId() != null && StringUtils.equals(tvshowShowDTO.getImdbId(), tvshow.getImdbId())) {
+            return true;
+        }
+        return tvshowShowDTO.getTmdbId() != null && tvshow.getTmdbId() != null && StringUtils.equals(tvshowShowDTO.getTmdbId(), tvshow.getTmdbId());
+    }
+
+    public static boolean isSame(MusicAlbumDTO musicAlbumDTO, Album album) {
+        if (musicAlbumDTO == null || album == null) {
+            return false;
+        }
+        if (musicAlbumDTO.getNeteaseId() != null && album.getNeteaseId() != null && StringUtils.equals(musicAlbumDTO.getNeteaseId(), album.getNeteaseId())) {
+            return true;
+        }
+        return musicAlbumDTO.getMusicbrainzId() != null && album.getMusicbrainzId() != null && StringUtils.equals(musicAlbumDTO.getMusicbrainzId(), album.getMusicbrainzId());
+    }
+
+    public static boolean isSame(ComicSeriesDTO comicSeriesDTO, Comic comic) {
+        if (comicSeriesDTO == null || comic == null) {
+            return false;
+        }
+        return comicSeriesDTO.getBgmId() != null && comic.getBgmId() != null && StringUtils.equals(comicSeriesDTO.getBgmId(), comic.getBgmId());
     }
 
     public static Integer parseSeasonIndex(String text, Integer defaultValue) {
@@ -408,6 +456,14 @@ public class KaleidoUtils {
         return defaultValue;
     }
 
+    public static Integer parseTrackIndex(String text) {
+        Matcher matcher = trackIndexPattern.matcher(text);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        }
+        return null;
+    }
+
     public static boolean createFolderPath(Path folderPath) throws IOException {
         if (Files.notExists(folderPath)) {
             Files.createDirectories(folderPath);
@@ -417,37 +473,6 @@ public class KaleidoUtils {
         }
     }
 
-    public static Map<FieldKey, ID3v23FieldKey> fieldKeyMap = Maps.newHashMap();
-
-    static {
-        fieldKeyMap.put(FieldKey.MUSICBRAINZ_TRACK_ID, ID3v23FieldKey.MUSICBRAINZ_TRACK_ID);
-        fieldKeyMap.put(FieldKey.MUSICBRAINZ_RELEASEID, ID3v23FieldKey.MUSICBRAINZ_RELEASEID);
-        fieldKeyMap.put(FieldKey.ALBUM_ARTIST, ID3v23FieldKey.ALBUM_ARTIST);
-        fieldKeyMap.put(FieldKey.MUSICBRAINZ_RELEASE_TYPE, ID3v23FieldKey.MUSICBRAINZ_RELEASE_TYPE);
-        fieldKeyMap.put(FieldKey.GENRE, ID3v23FieldKey.GENRE);
-        fieldKeyMap.put(FieldKey.MUSICBRAINZ_RELEASE_COUNTRY, ID3v23FieldKey.MUSICBRAINZ_RELEASE_COUNTRY);
-        fieldKeyMap.put(FieldKey.YEAR, ID3v23FieldKey.YEAR);
-        fieldKeyMap.put(FieldKey.RECORD_LABEL, ID3v23FieldKey.RECORD_LABEL);
-        fieldKeyMap.put(FieldKey.ORIGINALRELEASEDATE, ID3v23FieldKey.ORIGINALRELEASEDATE);
-        fieldKeyMap.put(FieldKey.MEDIA, ID3v23FieldKey.MEDIA);
-    }
-
-    public static String getTagValue(Tag tag, FieldKey fieldKey) {
-        if (tag instanceof FlacTag) {
-            FlacTag flacTag = (FlacTag) tag;
-            return flacTag.getFirst(fieldKey);
-        } else if (tag instanceof ID3v23Tag) {
-            ID3v23Tag id3v2Tag = (ID3v23Tag) tag;
-            ID3v23FieldKey id3v23FieldKey = MapUtils.getObject(fieldKeyMap, fieldKey);
-            if (id3v23FieldKey != null) {
-                return id3v2Tag.getFirst(id3v23FieldKey);
-            } else {
-                return id3v2Tag.getFirst(fieldKey);
-            }
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }
 
     public static void main(String[] args) {
         System.out.println(StringUtils.equals(null, null));

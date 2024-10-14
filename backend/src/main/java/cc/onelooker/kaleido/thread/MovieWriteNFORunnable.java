@@ -9,13 +9,12 @@ import cc.onelooker.kaleido.service.MovieBasicService;
 import cc.onelooker.kaleido.service.MovieManager;
 import cc.onelooker.kaleido.service.TaskService;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -87,7 +86,7 @@ public class MovieWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO>
     }
 
     private MovieNFO readMovieNFO(MovieBasicDTO movieBasicDTO) {
-        Path path = KaleidoUtils.getMoviePath(movieBasicDTO.getPath());
+        Path path = KaleidoUtil.getMoviePath(movieBasicDTO.getPath());
         return NFOUtil.read(MovieNFO.class, path, KaleidoConstants.MOVIE_NFO);
     }
 

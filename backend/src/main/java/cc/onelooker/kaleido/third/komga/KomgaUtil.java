@@ -4,7 +4,7 @@ import cc.onelooker.kaleido.dto.AuthorDTO;
 import cc.onelooker.kaleido.dto.ComicBookDTO;
 import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.enums.AuthorRole;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,7 +26,7 @@ public class KomgaUtil {
         comicSeriesDTO.setSummary(booksMetadata.getSummary());
         comicSeriesDTO.setBgmId(getBgmId(metadata.getLinks()));
         comicSeriesDTO.setPublisher(metadata.getPublisher());
-        Path path = KaleidoUtils.getComicBasicPath(series.getUrl());
+        Path path = KaleidoUtil.getComicBasicPath(series.getUrl());
         comicSeriesDTO.setPath(path.toString());
         comicSeriesDTO.setAddedAt(series.getAddedAt());
         comicSeriesDTO.setUpdatedAt(series.getUpdatedAt());

@@ -31,8 +31,8 @@
             <div class="flex">
               <a-popover placement="top">
                 <template #content>
-                  <div>{{ record.title }}</div>
-                  <div>{{ record.songTitle }}</div>
+                  <div>A:{{ record.title }}</div>
+                  <div>B:{{ record.songTitle }}</div>
                 </template>
                 <div
                   :class="[
@@ -43,8 +43,8 @@
               </a-popover>
               <a-popover placement="top">
                 <template #content>
-                  <div>{{ record.artist }}</div>
-                  <div>{{ record.songArtist }}</div>
+                  <div>A:{{ record.artistName }}</div>
+                  <div>B:{{ record.songArtistName }}</div>
                 </template>
                 <div
                   :class="[
@@ -55,8 +55,8 @@
               </a-popover>
               <a-popover placement="top">
                 <template #content>
-                  <div>{{ record.durationLabel }}</div>
-                  <div>{{ record.songDurationLabel }}</div>
+                  <div>A:{{ record.durationLabel }}</div>
+                  <div>B:{{ record.songDurationLabel }}</div>
                 </template>
                 <div
                   :class="[
@@ -67,8 +67,8 @@
               </a-popover>
               <a-popover placement="top">
                 <template #content>
-                  <div>{{ record.publishTime }}</div>
-                  <div>{{ record.songPublishTime }}</div>
+                  <div>A:{{ record.publishTime }}</div>
+                  <div>B:{{ record.songPublishTime }}</div>
                 </template>
                 <div
                   :class="[
@@ -129,7 +129,7 @@
               {{ record.title }}
             </p>
             <p class="text-muted">
-              {{ record.artist }}
+              {{ record.artistName }}
             </p>
             <div class="text-muted">{{ record.publishTime }}</div>
           </template>

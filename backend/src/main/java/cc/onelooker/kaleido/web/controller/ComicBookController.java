@@ -14,8 +14,7 @@ import cc.onelooker.kaleido.service.ComicSeriesService;
 import cc.onelooker.kaleido.third.komga.KomgaApiService;
 import cc.onelooker.kaleido.third.komga.Page;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
-import cn.hutool.core.codec.Base64;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.extra.compress.CompressUtil;
 import cn.hutool.extra.compress.extractor.Extractor;
@@ -26,7 +25,6 @@ import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -130,7 +128,7 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
     public HttpEntity<byte[]> openComicInfo(ComicBookOpenComicInfoReq req) throws IOException {
         ComicBookDTO comicBookDTO = comicBookService.findById(req.getId());
         ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(comicBookDTO.getSeriesId());
-        Path zipPath = KaleidoUtils.getComicFilePath(comicSeriesDTO.getPath(), comicBookDTO.getFilename());
+        Path zipPath = KaleidoUtil.getComicFilePath(comicSeriesDTO.getPath(), comicBookDTO.getFilename());
         Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), zipPath.toFile());
         Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), "kaleido");
         extractor.extract(tempPath.toFile(), f -> StringUtils.equals(f.getName(), KaleidoConstants.COMIC_INFO));

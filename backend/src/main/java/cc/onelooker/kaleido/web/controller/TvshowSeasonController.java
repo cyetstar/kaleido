@@ -15,7 +15,7 @@ import cc.onelooker.kaleido.service.TvshowShowService;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.third.tmm.Tvshow;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import cn.hutool.http.HttpUtil;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
@@ -121,7 +121,7 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
     public CommonResult<String> viewPath(String id) {
         TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(id);
         TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowSeasonDTO.getShowId());
-        Path folderPath = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
+        Path folderPath = KaleidoUtil.getTvshowPath(tvshowShowDTO.getPath());
         Path seasonPath = folderPath.resolve("Season " + StringUtils.leftPad(String.valueOf(tvshowSeasonDTO.getSeasonIndex()), 2, '0'));
         return CommonResult.success(seasonPath.toString());
     }
@@ -145,8 +145,8 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
     public CommonResult<Boolean> downloadPoster(@RequestBody TvshowSeasonDownloadPosterReq req) throws IOException {
         TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(req.getId());
         TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowSeasonDTO.getShowId());
-        Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
-        String filename = KaleidoUtils.genSeasonPosterFilename(tvshowSeasonDTO.getSeasonIndex());
+        Path path = KaleidoUtil.getTvshowPath(tvshowShowDTO.getPath());
+        String filename = KaleidoUtil.genSeasonPosterFilename(tvshowSeasonDTO.getSeasonIndex());
         HttpUtil.downloadFile(req.getUrl(), path.resolve(filename).toFile());
         if (tvshowSeasonDTO.getSeasonIndex() == 1) {
             Files.copy(path.resolve(filename), path.resolve(KaleidoConstants.POSTER), StandardCopyOption.REPLACE_EXISTING);

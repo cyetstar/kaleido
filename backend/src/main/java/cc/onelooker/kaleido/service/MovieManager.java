@@ -92,7 +92,7 @@ public class MovieManager {
             actorService.updateMovieActors(movieBasicDTO.getDirectorList(), movieBasicDTO.getId(), ActorRole.Director);
             actorService.updateMovieActors(movieBasicDTO.getWriterList(), movieBasicDTO.getId(), ActorRole.Writer);
             actorService.updateMovieActors(movieBasicDTO.getActorList(), movieBasicDTO.getId(), ActorRole.Actor);
-            movieBasicDTO.setSortTitle(KaleidoUtils.genSortTitle(movieBasicDTO.getTitle()));
+            movieBasicDTO.setSortTitle(KaleidoUtil.genSortTitle(movieBasicDTO.getTitle()));
             renameDirIfChanged(movieBasicDTO);
             MovieBasicDTO existMovieBasicDTO = movieBasicService.findById(movieBasicDTO.getId());
             if (existMovieBasicDTO == null) {
@@ -127,11 +127,11 @@ public class MovieManager {
             return;
         }
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(movieId);
-        boolean isSameMovie = KaleidoUtils.isSame(movieBasicDTO, movie);
+        boolean isSameMovie = KaleidoUtil.isSame(movieBasicDTO, movie);
         TmmUtil.toMovieBasicDTO(movieBasicDTO, movie);
         saveMovie(movieBasicDTO);
         if (!isSameMovie) {
-            Path moviePath = KaleidoUtils.getMoviePath(movieBasicDTO.getPath());
+            Path moviePath = KaleidoUtil.getMoviePath(movieBasicDTO.getPath());
             downloadPoster(movieBasicDTO, moviePath);
         }
     }
@@ -148,16 +148,16 @@ public class MovieManager {
             MovieNFO movieNFO = new MovieNFO();
             movieNFO.setDoubanId(movie.getDoubanId());
             movieNFO.setTmdbId(movie.getTmdbId());
-            Path importPath = KaleidoUtils.getMovieImportPath();
+            Path importPath = KaleidoUtil.getMovieImportPath();
             String filename = FilenameUtils.getBaseName(path.getFileName().toString());
             if (StringUtils.isNotEmpty(movie.getTitle()) && (StringUtils.isNotEmpty(movie.getDoubanId()) || StringUtils.isNotEmpty(movie.getTmdbId()))) {
                 filename = movie.getTitle() + "(" + StringUtils.defaultIfEmpty(movie.getDoubanId(), movie.getTmdbId()) + ")";
             }
             Path newPath = importPath.resolve(filename);
             if (Files.isDirectory(path)) {
-                NioFileUtils.deleteByFilter(path, "nfo");
+                NioFileUtil.deleteByFilter(path, "nfo");
                 if (!StringUtils.equals(newPath.toString(), path.toString())) {
-                    NioFileUtils.renameDir(path, newPath, StandardCopyOption.REPLACE_EXISTING);
+                    NioFileUtil.renameDir(path, newPath, StandardCopyOption.REPLACE_EXISTING);
                 }
                 NFOUtil.write(movieNFO, MovieNFO.class, newPath, KaleidoConstants.MOVIE_NFO);
             } else {
@@ -188,8 +188,8 @@ public class MovieManager {
                     operationPath(movieBasicDTO, path);
                 } else {
                     log.info("== 未找到匹配信息，直接移动文件");
-                    Path movieLibraryPath = KaleidoUtils.getMovieLibraryPath();
-                    NioFileUtils.moveDir(path, movieLibraryPath, StandardCopyOption.REPLACE_EXISTING);
+                    Path movieLibraryPath = KaleidoUtil.getMovieLibraryPath();
+                    NioFileUtil.moveDir(path, movieLibraryPath, StandardCopyOption.REPLACE_EXISTING);
                 }
             } catch (Exception e) {
                 log.error("== 更新电影源发生错误: {}", path, e);
@@ -225,7 +225,7 @@ public class MovieManager {
     }
 
     public void writeMovieNFO(MovieBasicDTO movieBasicDTO, MovieNFO movieNFO) {
-        Path path = KaleidoUtils.getMoviePath(movieBasicDTO.getPath());
+        Path path = KaleidoUtil.getMoviePath(movieBasicDTO.getPath());
         NFOUtil.write(movieNFO, MovieNFO.class, path, KaleidoConstants.MOVIE_NFO);
         if (ConfigUtils.isEnabled(ConfigKey.refreshMetadata)) {
             //如果大量刷新，否则可能会给Plex带来性能灾难
@@ -324,27 +324,27 @@ public class MovieManager {
     public void analyze(Metadata metadata) {
         try {
             MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
-            Path filePath = KaleidoUtils.getMoviePath(movieBasicDTO.getPath());
+            Path filePath = KaleidoUtil.getMoviePath(movieBasicDTO.getPath());
             try (Stream<Path> stream = Files.list(filePath)) {
-                List<Path> videoPathList = stream.filter(s -> KaleidoUtils.isVideoFile(s.getFileName().toString())).collect(Collectors.toList());
+                List<Path> videoPathList = stream.filter(s -> KaleidoUtil.isVideoFile(s.getFileName().toString())).collect(Collectors.toList());
                 if (CollectionUtils.size(videoPathList) > 1) {
                     movieBasicDTO.setMultipleFiles(Constants.YES);
                 } else {
                     movieBasicDTO.setMultipleFiles(Constants.NO);
                 }
-                if (videoPathList.stream().anyMatch(s -> FilenameUtils.isExtension(s.getFileName().toString(), KaleidoUtils.lowQualityExtensions))) {
+                if (videoPathList.stream().anyMatch(s -> FilenameUtils.isExtension(s.getFileName().toString(), KaleidoUtil.lowQualityExtensions))) {
                     movieBasicDTO.setLowQuality(Constants.YES);
                 } else {
                     movieBasicDTO.setLowQuality(Constants.NO);
                 }
                 Media media = metadata.getMedia();
                 List<Media.Stream> streamList = media.getPart().getStreamList();
-                if (streamList != null && streamList.stream().anyMatch(s -> s.getStreamType() == 2 && KaleidoUtils.isChineseStream(s))) {
+                if (streamList != null && streamList.stream().anyMatch(s -> s.getStreamType() == 2 && KaleidoUtil.isChineseStream(s))) {
                     movieBasicDTO.setMandarin(Constants.YES);
                 } else {
                     movieBasicDTO.setMandarin(Constants.NO);
                 }
-                if (streamList != null && streamList.stream().anyMatch(s -> s.getStreamType() == 3 && KaleidoUtils.isChineseStream(s))) {
+                if (streamList != null && streamList.stream().anyMatch(s -> s.getStreamType() == 3 && KaleidoUtil.isChineseStream(s))) {
                     movieBasicDTO.setNoSubtitle(Constants.NO);
                 } else {
                     movieBasicDTO.setNoSubtitle(Constants.YES);
@@ -392,25 +392,25 @@ public class MovieManager {
     }
 
     private void renameDirIfChanged(MovieBasicDTO movieBasicDTO) throws IOException {
-        String newPath = KaleidoUtils.genMovieFolder(movieBasicDTO);
+        String newPath = KaleidoUtil.genMovieFolder(movieBasicDTO);
         if (StringUtils.isEmpty(movieBasicDTO.getPath())) {
             //如果path不存在，则重新从数据库中取出来
             MovieBasicDTO pathDTO = movieBasicService.findById(movieBasicDTO.getId());
             movieBasicDTO.setPath(pathDTO.getPath());
         }
         if (!StringUtils.equals(newPath, movieBasicDTO.getPath())) {
-            Path moviePath = KaleidoUtils.getMoviePath(newPath);
+            Path moviePath = KaleidoUtil.getMoviePath(newPath);
             if (Files.notExists(moviePath)) {
                 Files.createDirectories(moviePath);
             }
-            NioFileUtils.renameDir(KaleidoUtils.getMoviePath(movieBasicDTO.getPath()), moviePath);
+            NioFileUtil.renameDir(KaleidoUtil.getMoviePath(movieBasicDTO.getPath()), moviePath);
             movieBasicDTO.setPath(newPath);
         }
     }
 
     private void readNFO(MovieBasicDTO movieBasicDTO) {
         try {
-            Path filePath = KaleidoUtils.getMoviePath(movieBasicDTO.getPath());
+            Path filePath = KaleidoUtil.getMoviePath(movieBasicDTO.getPath());
             MovieNFO movieNFO = NFOUtil.read(MovieNFO.class, filePath, KaleidoConstants.MOVIE_NFO);
             if (movieNFO == null) {
                 return;
@@ -446,7 +446,7 @@ public class MovieManager {
             //创建规范文件夹
             Path moviePath = createMoviePath(movieBasicDTO);
             moveExistingFilesToRecycleBin(moviePath);
-            NioFileUtils.renameDir(path, moviePath, StandardCopyOption.REPLACE_EXISTING);
+            NioFileUtil.renameDir(path, moviePath, StandardCopyOption.REPLACE_EXISTING);
             log.info("== 移动文件夹至: {}", moviePath);
             //下载海报
             downloadPoster(movieBasicDTO, moviePath);
@@ -461,25 +461,25 @@ public class MovieManager {
 
     private void moveExistingFilesToRecycleBin(Path moviePath) throws IOException {
         if (Files.exists(moviePath)) {
-            Path movieRecyclePath = KaleidoUtils.getMovieRecyclePath(moviePath.toString());
-            KaleidoUtils.createFolderPath(movieRecyclePath);
+            Path movieRecyclePath = KaleidoUtil.getMovieRecyclePath(moviePath.toString());
+            KaleidoUtil.createFolderPath(movieRecyclePath);
             //直接将整个文件夹移到回收站
-            NioFileUtils.renameDir(moviePath, movieRecyclePath, StandardCopyOption.REPLACE_EXISTING);
+            NioFileUtil.renameDir(moviePath, movieRecyclePath, StandardCopyOption.REPLACE_EXISTING);
             log.info("== 原文件夹移至回收站: {}", movieRecyclePath);
         }
     }
 
     private Path createMoviePath(MovieBasicDTO movieBasicDTO) throws IOException {
-        String folderName = KaleidoUtils.genMovieFolder(movieBasicDTO);
+        String folderName = KaleidoUtil.genMovieFolder(movieBasicDTO);
         Path folderPath = null;
         int i = 0;
         while (true) {
-            folderPath = KaleidoUtils.getMoviePath(i == 0 ? folderName : folderName + StringUtils.SPACE + i);
-            if (KaleidoUtils.createFolderPath(folderPath)) {
+            folderPath = KaleidoUtil.getMoviePath(i == 0 ? folderName : folderName + StringUtils.SPACE + i);
+            if (KaleidoUtil.createFolderPath(folderPath)) {
                 break;
             } else {
                 MovieNFO movieNFO = NFOUtil.read(MovieNFO.class, folderPath, KaleidoConstants.MOVIE_NFO);
-                if (KaleidoUtils.isSame(movieBasicDTO, movieNFO)) {
+                if (KaleidoUtil.isSame(movieBasicDTO, movieNFO)) {
                     break;
                 } else {
                     i++;

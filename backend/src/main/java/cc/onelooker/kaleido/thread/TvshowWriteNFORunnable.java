@@ -15,7 +15,7 @@ import cc.onelooker.kaleido.service.*;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +78,7 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
         String taskStatus = KaleidoConstants.TASK_STATUS_IGNORE;
         if (StringUtils.equals(SubjectType.TvshowShow.name(), taskDTO.getSubjectType())) {
             TvshowShowDTO tvshowShowDTO = tvshowManager.findTvshowShow(taskDTO.getSubjectId());
-            Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
+            Path path = KaleidoUtil.getTvshowPath(tvshowShowDTO.getPath());
             TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(tvshowShowDTO.getFirstSeason().getId());
             TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, path, KaleidoConstants.SHOW_NFO);
             TvshowNFO newTvshowNFO = NFOUtil.toTvshowNFO(tvshowShowDTO, tvshowSeasonDTO);
@@ -93,8 +93,8 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
         } else if (StringUtils.equals(SubjectType.TvshowSeason.name(), taskDTO.getSubjectType())) {
             TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(taskDTO.getSubjectId());
             TvshowShowDTO tvshowShowDTO = tvshowManager.findTvshowShow(tvshowSeasonDTO.getShowId());
-            Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
-            String seasonFolder = KaleidoUtils.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
+            Path path = KaleidoUtil.getTvshowPath(tvshowShowDTO.getPath());
+            String seasonFolder = KaleidoUtil.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
             Path seasonPath = path.resolve(seasonFolder);
             SeasonNFO seasonNFO = NFOUtil.read(SeasonNFO.class, seasonPath, KaleidoConstants.SEASON_NFO);
             SeasonNFO newSeasonNFO = NFOUtil.toSeasonNFO(tvshowShowDTO, tvshowSeasonDTO);
@@ -110,10 +110,10 @@ public class TvshowWriteNFORunnable extends AbstractEntityActionRunnable<TaskDTO
             TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(taskDTO.getSubjectId());
             TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(tvshowEpisodeDTO.getSeasonId());
             TvshowShowDTO tvshowShowDTO = tvshowManager.findTvshowShow(tvshowSeasonDTO.getShowId());
-            Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
-            String seasonFolder = KaleidoUtils.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
+            Path path = KaleidoUtil.getTvshowPath(tvshowShowDTO.getPath());
+            String seasonFolder = KaleidoUtil.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
             Path seasonPath = path.resolve(seasonFolder);
-            String filename = KaleidoUtils.genEpisodeNfoFilename(tvshowEpisodeDTO.getFilename());
+            String filename = KaleidoUtil.genEpisodeNfoFilename(tvshowEpisodeDTO.getFilename());
             EpisodeNFO episodeNFO = NFOUtil.read(EpisodeNFO.class, seasonPath, filename);
             EpisodeNFO newEpisodeNFO = NFOUtil.toEpisodeNFO(tvshowShowDTO, tvshowSeasonDTO, tvshowEpisodeDTO);
             if (episodeNFO == null || !Objects.equals(episodeNFO, newEpisodeNFO)) {

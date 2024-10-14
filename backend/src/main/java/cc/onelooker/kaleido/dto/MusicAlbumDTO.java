@@ -3,6 +3,7 @@ package cc.onelooker.kaleido.dto;
 import cc.onelooker.kaleido.entity.MusicAlbumDO;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
@@ -124,6 +125,8 @@ public class MusicAlbumDTO implements BaseDTO<String> {
      */
     private String decade;
 
+    private List<MusicTrackDTO> trackList;
+
     private List<String> styleList;
 
     private List<String> genreList;
@@ -145,5 +148,12 @@ public class MusicAlbumDTO implements BaseDTO<String> {
     @Override
     public String toString() {
         return title;
+    }
+
+    public MusicTrackDTO getTrack(Integer trackIndex) {
+        if (CollectionUtils.isEmpty(trackList) || trackIndex == null) {
+            return null;
+        }
+        return trackList.stream().filter(s -> trackIndex.equals(s.getTrackIndex())).findFirst().orElse(null);
     }
 }

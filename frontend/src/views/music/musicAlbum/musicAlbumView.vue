@@ -21,7 +21,7 @@
               :form="searchForm"
           />
           <k-action-button
-              action="movieMatchInfo"
+              action="musicMatchInfo"
               ok-text="自动抓取"
               cancel-text="取消抓取"
               :form="searchForm"

@@ -57,10 +57,16 @@ public class ArtistDO implements IdEntity<String> {
     private String title;
 
     /**
-     * 排序名称
+     * 原名称
      */
-    @TableField(value = "title_sort")
-    private String titleSort;
+    @TableField(value = "original_title")
+    private String originalTitle;
+
+    /**
+     * 排序名
+     */
+    @TableField(value = "sort_title")
+    private String sortTitle;
 
     /**
      * 封面图

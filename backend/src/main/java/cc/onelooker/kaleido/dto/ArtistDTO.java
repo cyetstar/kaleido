@@ -48,9 +48,14 @@ public class ArtistDTO implements BaseDTO<String> {
     private String title;
 
     /**
+     * 原名
+     */
+    private String originalTitle;
+
+    /**
      * 排序名称
      */
-    private String titleSort;
+    private String sortTitle;
 
     /**
      * 封面图

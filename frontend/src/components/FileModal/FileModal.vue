@@ -13,40 +13,47 @@
     :width="width"
   >
     <div class="flex">
-      <h-button small @click="onBack" :disabled="history.length === 0">
-        <left-outlined />
-      </h-button>
-      <h-button class="mx-2" small @click="onRefresh">
-        <reload-outlined />
-      </h-button>
+      <a-space class="mr-2">
+        <h-button small @click="onBack" :disabled="history.length === 0">
+          <left-outlined />
+        </h-button>
+        <h-button small @click="onRefresh">
+          <reload-outlined />
+        </h-button>
+      </a-space>
       <a-input v-model:value="searchForm.path" readonly />
-      <div class="ml-2 flex">
-        <h-button @click="onNewDirectory" class="mr-2">新建文件夹</h-button>
-        <h-button
-          @click="onCopy"
-          class="mr-2"
-          :disabled="selectedRows.length === 0"
-          >复制
+      <a-space class="ml-2">
+        <h-button small @click="onNewDirectory">
+          <folder-add-outlined />
+        </h-button>
+        <a-upload
+          name="file"
+          :showUploadList="false"
+          :custom-request="onUpload"
+        >
+          <h-button small>
+            <upload-outlined />
+          </h-button>
+        </a-upload>
+        <h-button @click="onCopy" :disabled="selectedRows.length === 0">
+          <copy-outlined />
           <span v-if="copyOrCutPaths.copy === true"
             >({{ copyOrCutPaths.pathList.length }})</span
           >
         </h-button>
-        <h-button
-          @click="onCut"
-          class="mr-2"
-          :disabled="selectedRows.length === 0"
-          >移动
+        <h-button @click="onCut" :disabled="selectedRows.length === 0">
+          <scissor-outlined />
           <span v-if="copyOrCutPaths.copy === false"
             >({{ copyOrCutPaths.pathList.length }})</span
           >
         </h-button>
-        <h-button v-if="canPaste" @click="onPaste" class="mr-2">粘贴</h-button>
-        <h-button-delete
-          :disabled="selectedRows.length === 0"
-          @delete="onDelete"
-          >删除
-        </h-button-delete>
-      </div>
+        <h-button v-if="canPaste" @click="onPaste">
+          <snippets-outlined />
+        </h-button>
+        <h-button @click="onDelete" :disabled="selectedRows.length === 0">
+          <delete-outlined />
+        </h-button>
+      </a-space>
     </div>
     <h-table-data
       ref="refTableData"
@@ -115,6 +122,7 @@
       </a-table-column>
     </h-table-data>
     <template #footer>
+      <h-button @click="visible = false" class="mr-2">关闭</h-button>
       <slot name="footer"></slot>
     </template>
   </a-modal>
@@ -124,6 +132,12 @@
 import { computed, defineComponent, ref } from "vue";
 import { message, Modal, Input, Table } from "ant-design-vue";
 import {
+  SnippetsOutlined,
+  ScissorOutlined,
+  DeleteOutlined,
+  CopyOutlined,
+  UploadOutlined,
+  FolderAddOutlined,
   CheckOutlined,
   EditOutlined,
   FolderFilled,
@@ -138,9 +152,9 @@ import {
   apiFileOpen,
   apiFilePage,
   apiFileRename,
+  apiFileUpload,
 } from "@/api/sysadmin/fileApi";
 import { isNotEmpty } from "@ht/util";
-import { apiTvshowEpisodePage } from "@/api/tvshow/tvshowEpisodeApi";
 
 export default defineComponent({
   name: "KFileModal",
@@ -149,11 +163,17 @@ export default defineComponent({
     AModal: Modal,
     AInput: Input,
     ATableColumn: Table.Column,
-    CheckOutlined: CheckOutlined,
-    EditOutlined: EditOutlined,
-    FolderFilled: FolderFilled,
-    LeftOutlined: LeftOutlined,
-    ReloadOutlined: ReloadOutlined,
+    CheckOutlined,
+    EditOutlined,
+    FolderFilled,
+    LeftOutlined,
+    ReloadOutlined,
+    UploadOutlined,
+    FolderAddOutlined,
+    CopyOutlined,
+    SnippetsOutlined,
+    ScissorOutlined,
+    DeleteOutlined,
     HButton,
     HButtonDelete,
     HTableData,
@@ -179,15 +199,7 @@ export default defineComponent({
 
     const canPaste = computed(() => {
       const pathList = copyOrCutPaths.value.pathList;
-      if (isNotEmpty(pathList)) {
-        let pathStrArr = pathList[0].split("/");
-        pathStrArr.pop();
-        if (pathStrArr.join("/") !== searchForm.value.path) {
-          return true;
-        }
-        return false;
-      }
-      return false;
+      return isNotEmpty(pathList);
     });
 
     const canOpen = (record) => {
@@ -318,8 +330,18 @@ export default defineComponent({
       });
     };
 
-    const onChange = (page, filters, sorter) => {
-      console.log(page, filters, sorter);
+    const onUpload = (options) => {
+      let path = searchForm.value.path;
+      apiFileUpload({
+        path,
+        file: options.file,
+      }).then((res) => {
+        if (res) {
+          refTableData.value.load(1);
+        } else {
+          message.error("上传失败");
+        }
+      });
     };
 
     return {
@@ -343,7 +365,7 @@ export default defineComponent({
       onCut,
       onPaste,
       onDelete,
-      onChange,
+      onUpload,
       show,
       close,
       load,

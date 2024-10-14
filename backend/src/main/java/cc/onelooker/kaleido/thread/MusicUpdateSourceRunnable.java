@@ -1,14 +1,10 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.enums.ConfigKey;
-import cc.onelooker.kaleido.service.TvshowManager;
-import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.service.MusicManager;
 import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,36 +13,28 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Created by cyetstar on 2021/1/7.
+ * @Author xiadawei
+ * @Date 2024-02-01 14:06:00
+ * @Description TODO
  */
 @Component
-public class TvshowUpdateSourceRunnable extends AbstractEntityActionRunnable<Path> {
+public class MusicUpdateSourceRunnable extends AbstractEntityActionRunnable<Path> {
 
-    private final TvshowManager tvshowManager;
+    private final MusicManager musicManager;
 
-    private final PlexApiService plexApiService;
-
-    public TvshowUpdateSourceRunnable(TvshowManager tvshowManager, PlexApiService plexApiService) {
-        this.tvshowManager = tvshowManager;
-        this.plexApiService = plexApiService;
+    public MusicUpdateSourceRunnable(MusicManager musicManager) {
+        this.musicManager = musicManager;
     }
 
     @Override
     public Action getAction() {
-        return Action.tvshowUpdateSource;
-    }
-
-    @Override
-    protected void afterRun(@Nullable Map<String, String> params) {
-        super.afterRun(params);
-        String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryId);
-        plexApiService.refreshLibrary(libraryId);
+        return Action.musicUpdateSource;
     }
 
     @Override
     protected PageResult<Path> page(Map<String, String> params, int pageNumber, int pageSize) {
         try {
-            Path importPath = KaleidoUtil.getTvshowImportPath();
+            Path importPath = KaleidoUtil.getMusicImportPath();
             PageResult<Path> pageResult = new PageResult<>();
             pageResult.setSearchCount(true);
             if (pageNumber == 1) {
@@ -62,7 +50,7 @@ public class TvshowUpdateSourceRunnable extends AbstractEntityActionRunnable<Pat
 
     @Override
     protected int processEntity(Map<String, String> params, Path path) throws Exception {
-        tvshowManager.updateSource(path);
+        musicManager.updateSource(path);
         return SUCCESS;
     }
 
@@ -70,4 +58,5 @@ public class TvshowUpdateSourceRunnable extends AbstractEntityActionRunnable<Pat
     protected String getMessage(Path path, Integer state) {
         return formatMessage(path.getFileName().toString(), state);
     }
+
 }

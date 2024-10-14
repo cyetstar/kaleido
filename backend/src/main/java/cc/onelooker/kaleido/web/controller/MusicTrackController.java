@@ -4,7 +4,6 @@ import cc.onelooker.kaleido.convert.MusicTrackConvert;
 import cc.onelooker.kaleido.dto.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.MusicTrackDTO;
 import cc.onelooker.kaleido.dto.req.MusicTrackCreateReq;
-import cc.onelooker.kaleido.dto.req.MusicTrackDownloadLyricReq;
 import cc.onelooker.kaleido.dto.req.MusicTrackPageReq;
 import cc.onelooker.kaleido.dto.req.MusicTrackUpdateReq;
 import cc.onelooker.kaleido.dto.resp.MusicTrackCreateResp;
@@ -14,7 +13,7 @@ import cc.onelooker.kaleido.dto.resp.MusicTrackViewResp;
 import cc.onelooker.kaleido.service.MusicAlbumService;
 import cc.onelooker.kaleido.service.MusicManager;
 import cc.onelooker.kaleido.service.MusicTrackService;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
@@ -97,7 +96,7 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
         List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(albumId);
         List<MusicTrackListByAlbumIdResp> respList = Lists.newArrayList();
         for (MusicTrackDTO musicTrackDTO : musicTrackDTOList) {
-            File file = KaleidoUtils.getMusicFilePath(musicAlbumDTO.getPath(), FilenameUtils.getBaseName(musicTrackDTO.getFilename()) + ".lrc").toFile();
+            File file = KaleidoUtil.getMusicFilePath(musicAlbumDTO.getPath(), FilenameUtils.getBaseName(musicTrackDTO.getFilename()) + ".lrc").toFile();
             MusicTrackListByAlbumIdResp resp = MusicTrackConvert.INSTANCE.convertToListByAlbumIdResp(musicTrackDTO);
             resp.setHasLyric(file.exists() && file.length() > 0 ? Constants.YES : Constants.NO);
             respList.add(resp);
@@ -110,7 +109,7 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
     public CommonResult<List<String>> viewLyric(String id) throws IOException {
         MusicTrackDTO musicTrackDTO = musicTrackService.findById(id);
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(musicTrackDTO.getAlbumId());
-        File file = KaleidoUtils.getMusicFilePath(musicAlbumDTO.getPath(), FilenameUtils.getBaseName(musicTrackDTO.getFilename()) + ".lrc").toFile();
+        File file = KaleidoUtil.getMusicFilePath(musicAlbumDTO.getPath(), FilenameUtils.getBaseName(musicTrackDTO.getFilename()) + ".lrc").toFile();
         String content = FileUtils.readFileToString(file);
         List<String> result = Arrays.asList(StringUtils.split(content, "\n"));
         return CommonResult.success(result);

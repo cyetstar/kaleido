@@ -10,9 +10,7 @@ import cc.onelooker.kaleido.service.TaskService;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
-import com.zjjcnt.common.core.utils.ApplicationContextHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,6 +77,6 @@ public class TaskServiceImpl extends AbstractBaseServiceImpl<TaskMapper, TaskDO,
     @Override
     @Transactional
     public void deleteNotExistRecords(String tableName, SubjectType subjectType) {
-        baseMapper.deleteNotExistRecords("comic_book", subjectType.name());
+        baseMapper.deleteNotExistRecords(tableName, subjectType.name());
     }
 }

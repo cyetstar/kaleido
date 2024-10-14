@@ -1,123 +1,87 @@
 package cc.onelooker.kaleido.thread;
 
-import cc.onelooker.kaleido.dto.*;
-import cc.onelooker.kaleido.enums.ConfigKey;
+import cc.onelooker.kaleido.dto.MusicAlbumDTO;
+import cc.onelooker.kaleido.dto.MusicTrackDTO;
+import cc.onelooker.kaleido.dto.TaskDTO;
 import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.enums.TaskType;
-import cc.onelooker.kaleido.nfo.EpisodeNFO;
-import cc.onelooker.kaleido.nfo.NFOUtil;
-import cc.onelooker.kaleido.nfo.SeasonNFO;
-import cc.onelooker.kaleido.nfo.TvshowNFO;
-import cc.onelooker.kaleido.service.*;
-import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.service.MusicAlbumService;
+import cc.onelooker.kaleido.service.MusicTrackService;
+import cc.onelooker.kaleido.service.TaskService;
+import cc.onelooker.kaleido.utils.AudioTagUtil;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjjcnt.common.core.domain.PageResult;
-import org.apache.commons.lang3.StringUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.tag.Tag;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Map;
 
 /**
- * @Author xiadawei
- * @Date 2024-02-01 14:06:00
- * @Description TODO
+ * Created by cyetstar on 2021/1/7.
  */
+@Slf4j
 @Component
 public class MusicWriteAudioTagRunnable extends AbstractEntityActionRunnable<TaskDTO> {
 
-    private final TvshowManager tvshowManager;
-
-    private final TvshowShowService tvshowShowService;
-
-    private final TvshowSeasonService tvshowSeasonService;
-
-    private final TvshowEpisodeService tvshowEpisodeService;
-
     private final TaskService taskService;
 
-    private final PlexApiService plexApiService;
+    private final MusicTrackService musicTrackService;
 
-    public MusicWriteAudioTagRunnable(TvshowManager tvshowManager, TvshowShowService tvshowShowService, TvshowSeasonService tvshowSeasonService, TvshowEpisodeService tvshowEpisodeService, TaskService taskService, PlexApiService plexApiService) {
-        this.tvshowManager = tvshowManager;
-        this.tvshowShowService = tvshowShowService;
-        this.tvshowSeasonService = tvshowSeasonService;
-        this.tvshowEpisodeService = tvshowEpisodeService;
+    private final MusicAlbumService musicAlbumService;
+
+    public MusicWriteAudioTagRunnable(TaskService taskService, MusicTrackService musicTrackService, MusicAlbumService musicAlbumService) {
         this.taskService = taskService;
-        this.plexApiService = plexApiService;
+        this.musicTrackService = musicTrackService;
+        this.musicAlbumService = musicAlbumService;
     }
 
     @Override
     public Action getAction() {
-        return Action.tvshowWriteNFO;
+        return Action.musicReadAudioTag;
     }
 
     @Override
     public boolean isNeedRun() {
-        return false;
+        PageResult<TaskDTO> pageResult = page(null, 1, 1);
+        return !pageResult.isEmpty();
+    }
+
+    @Override
+    protected void beforeRun(@Nullable Map<String, String> params) {
+        super.beforeRun(params);
+        taskService.deleteNotExistRecords("music_track", SubjectType.MusicTrack);
     }
 
     @Override
     protected PageResult<TaskDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
         TaskDTO param = new TaskDTO();
-        param.setTaskType(TaskType.writeTvshowNFO.name());
+        param.setTaskType(TaskType.writeAudioTag.name());
         param.setTaskStatus(KaleidoConstants.TASK_STATUS_TODO);
-        return taskService.page(param, Page.of(pageNumber, pageSize));
+        return taskService.page(param, Page.of(1, pageSize));
     }
 
     @Override
     protected int processEntity(Map<String, String> params, TaskDTO taskDTO) throws Exception {
-        TvshowShowDTO tvshowShowDTO = tvshowManager.findTvshowShow(taskDTO.getSubjectId());
-        Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
-        String taskStatus = KaleidoConstants.TASK_STATUS_IGNORE;
-        if (StringUtils.equals(SubjectType.TvshowShow.name(), taskDTO.getSubjectType())) {
-            TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(tvshowShowDTO.getFirstSeason().getId());
-            TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, path, KaleidoConstants.SHOW_NFO);
-            TvshowNFO newTvshowNFO = NFOUtil.toTvshowNFO(tvshowShowDTO, tvshowSeasonDTO);
-            if (tvshowNFO == null || !Objects.equals(tvshowNFO, newTvshowNFO)) {
-                NFOUtil.write(tvshowNFO, TvshowNFO.class, path, KaleidoConstants.SHOW_NFO);
-                if (ConfigUtils.isEnabled(ConfigKey.refreshMetadata)) {
-                    //如果大量刷新，否则可能会给Plex带来性能灾难
-                    plexApiService.refreshMetadata(tvshowShowDTO.getId());
-                }
-                taskStatus = KaleidoConstants.TASK_STATUS_DONE;
-            }
-        } else if (StringUtils.equals(SubjectType.TvshowSeason.name(), taskDTO.getSubjectType())) {
-            TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(taskDTO.getSubjectId());
-            String seasonFolder = KaleidoUtils.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
-            Path seasonPath = path.resolve(seasonFolder);
-            SeasonNFO seasonNFO = NFOUtil.read(SeasonNFO.class, seasonPath, KaleidoConstants.SEASON_NFO);
-            SeasonNFO newSeasonNFO = NFOUtil.toSeasonNFO(tvshowShowDTO, tvshowSeasonDTO);
-            if (seasonNFO == null || !Objects.equals(seasonNFO, newSeasonNFO)) {
-                NFOUtil.write(newSeasonNFO, SeasonNFO.class, seasonPath, KaleidoConstants.SEASON_NFO);
-                if (ConfigUtils.isEnabled(ConfigKey.refreshMetadata)) {
-                    //如果大量刷新，否则可能会给Plex带来性能灾难
-                    plexApiService.refreshMetadata(tvshowSeasonDTO.getId());
-                }
-                taskStatus = KaleidoConstants.TASK_STATUS_DONE;
-            }
-        } else if (StringUtils.equals(SubjectType.TvshowEpisode.name(), taskDTO.getSubjectType())) {
-            TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(taskDTO.getSubjectId());
-            TvshowSeasonDTO tvshowSeasonDTO = tvshowManager.findTvshowSeason(tvshowEpisodeDTO.getSeasonId());
-            String seasonFolder = KaleidoUtils.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
-            Path seasonPath = path.resolve(seasonFolder);
-            Path nfoPath = null;
-            EpisodeNFO episodeNFO = NFOUtil.read(EpisodeNFO.class, nfoPath);
-            EpisodeNFO newEpisodeNFO = NFOUtil.toEpisodeNFO(tvshowShowDTO, tvshowSeasonDTO, tvshowEpisodeDTO);
-            if (episodeNFO == null || !Objects.equals(episodeNFO, newEpisodeNFO)) {
-                NFOUtil.write(episodeNFO, EpisodeNFO.class, path);
-                if (ConfigUtils.isEnabled(ConfigKey.refreshMetadata)) {
-                    //如果大量刷新，否则可能会给Plex带来性能灾难
-                    plexApiService.refreshMetadata(tvshowEpisodeDTO.getId());
-                }
-                taskStatus = KaleidoConstants.TASK_STATUS_TODO;
-            }
+        MusicTrackDTO musicTrackDTO = musicTrackService.findById(taskDTO.getSubjectId());
+        MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(musicTrackDTO.getAlbumId());
+        Path audioPath = KaleidoUtil.getMusicFilePath(musicAlbumDTO.getPath(), musicTrackDTO.getFilename());
+        AudioFile audioFile = AudioFileIO.read(audioPath.toFile());
+        Tag tag = audioFile.getTag();
+        if (AudioTagUtil.isChanged(tag, musicAlbumDTO, musicTrackDTO)) {
+            AudioTagUtil.toTag(musicAlbumDTO, musicTrackDTO, tag);
+            audioFile.commit();
+            taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
+            return SUCCESS;
         }
-        taskService.updateTaskStatus(taskDTO.getId(), taskStatus);
-        return StringUtils.equals(taskStatus, KaleidoConstants.TASK_STATUS_DONE) ? SUCCESS : IGNORE;
+        taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_IGNORE);
+        return IGNORE;
     }
 
     @Override
@@ -128,17 +92,9 @@ public class MusicWriteAudioTagRunnable extends AbstractEntityActionRunnable<Tas
 
     @Override
     protected String getMessage(TaskDTO taskDTO, Integer state) {
-        String title = null;
-        if (StringUtils.equals(SubjectType.TvshowShow.name(), taskDTO.getSubjectType())) {
-            title = tvshowShowService.findById(taskDTO.getSubjectId()).getTitle();
-        } else if (StringUtils.equals(SubjectType.TvshowSeason.name(), taskDTO.getSubjectType())) {
-            title = tvshowSeasonService.findById(taskDTO.getSubjectId()).getTitle();
-        } else if (StringUtils.equals(SubjectType.TvshowEpisode.name(), taskDTO.getSubjectType())) {
-            TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(taskDTO.getSubjectId());
-            TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(tvshowEpisodeDTO.getSeasonId());
-            title = String.format("第%s集【%s】", tvshowEpisodeDTO.getEpisodeIndex(), tvshowSeasonDTO.getTitle());
-        }
+        MusicTrackDTO musicTrackDTO = musicTrackService.findById(taskDTO.getSubjectId());
+        MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(musicTrackDTO.getAlbumId());
+        String title = String.format("%s【%s】", musicTrackDTO.getTitle(), musicAlbumDTO.getTitle());
         return formatMessage(title, state);
     }
-
 }

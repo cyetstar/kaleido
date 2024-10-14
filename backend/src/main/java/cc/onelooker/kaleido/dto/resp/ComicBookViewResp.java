@@ -1,6 +1,6 @@
 package cc.onelooker.kaleido.dto.resp;
 
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -68,7 +68,7 @@ public class ComicBookViewResp {
 
     @JsonProperty
     public String fileSizeLabel() {
-        return KaleidoUtils.getFormatSize(fileSize);
+        return KaleidoUtil.getFormatSize(fileSize);
     }
 
     @Data

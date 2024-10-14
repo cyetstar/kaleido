@@ -1,7 +1,5 @@
 package cc.onelooker.kaleido.dto.resp;
 
-import cc.onelooker.kaleido.third.tmm.Song;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -18,7 +16,7 @@ public class MusicAlbumViewMatchInfoResp {
 
     private Integer trackIndex;
 
-    private String artist;
+    private String artistName;
 
     private String publishTime;
 
@@ -28,7 +26,7 @@ public class MusicAlbumViewMatchInfoResp {
 
     private Integer songTrackIndex;
 
-    private String songArtist;
+    private String songArtistName;
 
     private String songPublishTime;
 
@@ -42,7 +40,7 @@ public class MusicAlbumViewMatchInfoResp {
 
     private String formatDuration(Integer duration) {
         if (duration != null) {
-            return String.format("%d:%02d", duration / 1000 / 60, duration % 60);
+            return String.format("%d:%02d", duration / 60, duration % 60);
         }
         return null;
     }

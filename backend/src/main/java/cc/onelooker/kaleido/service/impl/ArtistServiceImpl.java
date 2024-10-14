@@ -40,7 +40,7 @@ public class ArtistServiceImpl extends AbstractBaseServiceImpl<ArtistMapper, Art
         query.eq(StringUtils.isNotEmpty(dto.getMusicbrainzId()), ArtistDO::getMusicbrainzId, dto.getMusicbrainzId());
         query.eq(StringUtils.isNotEmpty(dto.getNeteaseId()), ArtistDO::getNeteaseId, dto.getNeteaseId());
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), ArtistDO::getTitle, dto.getTitle());
-        query.eq(StringUtils.isNotEmpty(dto.getTitleSort()), ArtistDO::getTitleSort, dto.getTitleSort());
+        query.eq(StringUtils.isNotEmpty(dto.getSortTitle()), ArtistDO::getSortTitle, dto.getSortTitle());
         query.eq(StringUtils.isNotEmpty(dto.getArea()), ArtistDO::getArea, dto.getArea());
         query.like(StringUtils.isNotEmpty(dto.getKeyword()), ArtistDO::getTitle, dto.getKeyword());
         return query;

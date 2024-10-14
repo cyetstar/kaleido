@@ -14,7 +14,7 @@ import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.third.tmm.Movie;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import cn.hutool.http.HttpUtil;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
@@ -31,8 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -171,22 +169,14 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @ApiOperation(value = "获取目录")
     public CommonResult<String> viewPath(String id) {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(id);
-        Path filePath = KaleidoUtils.getMoviePath(movieBasicDTO.getPath());
+        Path filePath = KaleidoUtil.getMoviePath(movieBasicDTO.getPath());
         return CommonResult.success(filePath.toString());
-    }
-
-    @PostMapping("uploadPoster")
-    @ApiOperation(value = "上传海报")
-    public CommonResult<Boolean> uploadPoster(MovieBasicUploadPosterReq req) throws IOException {
-        Files.write(Paths.get(req.getPath(), KaleidoConstants.POSTER), req.getFile().getBytes());
-        plexApiService.refreshMovieById(req.getId());
-        return CommonResult.success(true);
     }
 
     @PostMapping("downloadPoster")
     public CommonResult<Boolean> downloadPoster(@RequestBody MovieBasicDownloadPosterReq req) {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(req.getId());
-        Path filePath = KaleidoUtils.getMoviePath(movieBasicDTO.getPath());
+        Path filePath = KaleidoUtil.getMoviePath(movieBasicDTO.getPath());
         File file = filePath.resolve(KaleidoConstants.POSTER).toFile();
         HttpUtil.downloadFile(req.getUrl(), file);
         return CommonResult.success(true);

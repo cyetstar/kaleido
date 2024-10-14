@@ -1,7 +1,7 @@
 package cc.onelooker.kaleido.dto;
 
 import cc.onelooker.kaleido.entity.MusicTrackDO;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
@@ -94,6 +94,6 @@ public class MusicTrackDTO implements BaseDTO<String> {
     }
 
     public String getSimpleTitle() {
-        return KaleidoUtils.genSongSimpleName(title);
+        return KaleidoUtil.genSongSimpleName(title);
     }
 }

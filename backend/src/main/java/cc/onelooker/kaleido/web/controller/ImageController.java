@@ -5,7 +5,7 @@ import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.service.*;
 import cc.onelooker.kaleido.third.komga.KomgaApiService;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import cn.hutool.http.HttpUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,30 +63,30 @@ public class ImageController {
         Path path = null;
         if (Objects.equals(type, SubjectType.MovieBasic)) {
             MovieBasicDTO movieBasicDTO = movieBasicService.findById(id);
-            path = KaleidoUtils.getMoviePath(movieBasicDTO.getPath()).resolve(KaleidoConstants.POSTER);
+            path = KaleidoUtil.getMoviePath(movieBasicDTO.getPath()).resolve(KaleidoConstants.POSTER);
         } else if (Objects.equals(type, SubjectType.TvshowShow)) {
             TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(id);
-            path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath()).resolve(KaleidoConstants.POSTER);
+            path = KaleidoUtil.getTvshowPath(tvshowShowDTO.getPath()).resolve(KaleidoConstants.POSTER);
         } else if (Objects.equals(type, SubjectType.TvshowSeason)) {
             TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(id);
             TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowSeasonDTO.getShowId());
-            path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath()).resolve(KaleidoUtils.genSeasonPosterFilename(tvshowSeasonDTO.getSeasonIndex()));
+            path = KaleidoUtil.getTvshowPath(tvshowShowDTO.getPath()).resolve(KaleidoUtil.genSeasonPosterFilename(tvshowSeasonDTO.getSeasonIndex()));
         } else if (Objects.equals(type, SubjectType.TvshowEpisode)) {
             TvshowEpisodeDTO tvshowEpisodeDTO = tvshowEpisodeService.findById(id);
             TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(tvshowEpisodeDTO.getSeasonId());
             TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowSeasonDTO.getShowId());
-            String seasonFolder = KaleidoUtils.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
-            path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath()).resolve(seasonFolder).resolve(KaleidoUtils.genEpisodeThumbFilename(tvshowEpisodeDTO.getFilename()));
+            String seasonFolder = KaleidoUtil.genSeasonFolder(tvshowSeasonDTO.getSeasonIndex());
+            path = KaleidoUtil.getTvshowPath(tvshowShowDTO.getPath()).resolve(seasonFolder).resolve(KaleidoUtil.genEpisodeThumbFilename(tvshowEpisodeDTO.getFilename()));
         } else if (Objects.equals(type, SubjectType.MusicAlbum)) {
             MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(id);
-            path = KaleidoUtils.getMusicPath(musicAlbumDTO.getPath()).resolve(KaleidoConstants.COVER);
+            path = KaleidoUtil.getMusicPath(musicAlbumDTO.getPath()).resolve(KaleidoConstants.COVER);
         } else if (Objects.equals(type, SubjectType.ComicBook)) {
             ComicBookDTO comicBookDTO = comicBookService.findById(id);
             ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(comicBookDTO.getSeriesId());
-            path = KaleidoUtils.getComicPath(comicSeriesDTO.getPath()).resolve(KaleidoUtils.genCoverFilename(comicBookDTO.getFilename()));
+            path = KaleidoUtil.getComicPath(comicSeriesDTO.getPath()).resolve(KaleidoUtil.genCoverFilename(comicBookDTO.getFilename()));
         } else if (Objects.equals(type, SubjectType.ComicSeries)) {
             ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(id);
-            path = KaleidoUtils.getComicPath(comicSeriesDTO.getPath()).resolve(KaleidoConstants.COVER);
+            path = KaleidoUtil.getComicPath(comicSeriesDTO.getPath()).resolve(KaleidoConstants.COVER);
         }
         if (path != null && Files.exists(path)) {
             content = Files.readAllBytes(path);

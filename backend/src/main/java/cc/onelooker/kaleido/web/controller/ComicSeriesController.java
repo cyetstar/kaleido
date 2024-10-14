@@ -12,7 +12,7 @@ import cc.onelooker.kaleido.service.ComicManager;
 import cc.onelooker.kaleido.service.ComicSeriesService;
 import cc.onelooker.kaleido.third.tmm.Comic;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
@@ -133,7 +133,7 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     @ApiOperation(value = "获取目录")
     public CommonResult<String> viewPath(String id) {
         ComicSeriesDTO comicSeriesDTO = comicSeriesService.findById(id);
-        Path path = KaleidoUtils.getComicPath(comicSeriesDTO.getPath());
+        Path path = KaleidoUtil.getComicPath(comicSeriesDTO.getPath());
         return CommonResult.success(path.toString());
     }
 

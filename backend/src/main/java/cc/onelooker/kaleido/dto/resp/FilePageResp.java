@@ -1,13 +1,9 @@
 package cc.onelooker.kaleido.dto.resp;
 
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zjjcnt.common.core.annotation.StringDateTimeFormat;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 /**
  * @Author cyetstar
@@ -32,7 +28,7 @@ public class FilePageResp {
 
     @JsonProperty
     public String lengthLabel() {
-        return KaleidoUtils.getFormatSize(length);
+        return KaleidoUtil.getFormatSize(length);
     }
 
 

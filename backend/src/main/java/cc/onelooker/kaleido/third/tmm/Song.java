@@ -1,6 +1,6 @@
 package cc.onelooker.kaleido.third.tmm;
 
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,13 +17,15 @@ public class Song {
 
     @JsonProperty("netease_id")
     private String neteaseId;
+    @JsonProperty("musicbrainz_id")
+    private String musicbrainzId;
     private String title;
     @JsonProperty("track_index")
     private Integer trackIndex;
     private List<Artist> artists;
     private Integer duration;
 
-    public String getArtist() {
+    public String getArtistName() {
         if (CollectionUtils.isNotEmpty(artists)) {
             return artists.get(0).getName();
         }
@@ -31,7 +33,7 @@ public class Song {
     }
 
     public String getSimpleName() {
-        return KaleidoUtils.genSongSimpleName(title);
+        return KaleidoUtil.genSongSimpleName(title);
     }
 
 }

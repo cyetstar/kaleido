@@ -7,7 +7,6 @@
   <k-file-modal ref="refFileModal">
     <template #footer>
       <a-space>
-        <h-button @click="refFileModal.close()">关闭 </h-button>
         <h-button
           :disabled="refFileModal.selectedRows.length !== 1"
           @click="onMatch"

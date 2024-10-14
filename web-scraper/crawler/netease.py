@@ -61,7 +61,7 @@ def __deal_album(album):
         'pic_url': album.get('picUrl'),
         'description': album.get('description'),
         'publish_time': __timestamp_to_date(album.get('publishTime')),
-        'artist': __deal_artist(album.get('artist')),
+        'artists': [__deal_artist(artist) for artist in album.get('artists')],
         'songs': [__deal_song(song) for song in album.get('songs')],
     }
 

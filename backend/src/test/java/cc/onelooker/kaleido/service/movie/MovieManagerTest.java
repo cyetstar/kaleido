@@ -9,7 +9,7 @@ import cc.onelooker.kaleido.service.MovieBasicService;
 import cc.onelooker.kaleido.service.MovieDoubanWeeklyService;
 import cc.onelooker.kaleido.third.plex.Metadata;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
-import cc.onelooker.kaleido.utils.NioFileUtils;
+import cc.onelooker.kaleido.utils.NioFileUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Lists;
@@ -134,7 +134,7 @@ public class MovieManagerTest {
                 if (uniqueidNFO != null) {
                     MovieBasicDTO movieBasicDTO = movieBasicService.findByImdbId(uniqueidNFO.getValue());
                     if (movieBasicDTO != null) {
-                        NioFileUtils.moveDir(s, Paths.get("/Volumes/tmp/big/已存在"));
+                        NioFileUtil.moveDir(s, Paths.get("/Volumes/tmp/big/已存在"));
                         System.out.println(s.toString() + "===> 已存在");
                     }
                 }

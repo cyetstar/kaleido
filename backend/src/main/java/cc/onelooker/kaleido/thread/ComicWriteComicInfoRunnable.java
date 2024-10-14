@@ -12,7 +12,7 @@ import cc.onelooker.kaleido.service.ComicManager;
 import cc.onelooker.kaleido.service.ComicSeriesService;
 import cc.onelooker.kaleido.service.TaskService;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.extra.compress.CompressUtil;
 import cn.hutool.extra.compress.extractor.Extractor;
@@ -97,7 +97,7 @@ public class ComicWriteComicInfoRunnable extends AbstractEntityActionRunnable<Ta
     }
 
     private ComicInfoNFO readComicInfoNFO(ComicSeriesDTO comicSeriesDTO, ComicBookDTO comicBookDTO) {
-        Path comicFilePath = KaleidoUtils.getComicFilePath(comicSeriesDTO.getPath(), comicBookDTO.getFilename());
+        Path comicFilePath = KaleidoUtil.getComicFilePath(comicSeriesDTO.getPath(), comicBookDTO.getFilename());
         Extractor extractor = CompressUtil.createExtractor(CharsetUtil.defaultCharset(), comicFilePath.toFile());
         Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), "kaleido");
         extractor.extract(tempPath.toFile(), f -> StringUtils.equals(f.getName(), KaleidoConstants.COMIC_INFO));

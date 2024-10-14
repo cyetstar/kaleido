@@ -2,15 +2,15 @@ package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.dto.resp.FilePageResp;
-import cc.onelooker.kaleido.utils.NioFileUtils;
+import cc.onelooker.kaleido.utils.NioFileUtil;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.util.DateTimeUtils;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -77,7 +78,7 @@ public class FileController {
     @DeleteMapping("delete")
     public CommonResult<Boolean> delete(@RequestBody String[] path) throws IOException {
         for (String s : path) {
-            NioFileUtils.deleteIfExists(Paths.get(s));
+            NioFileUtil.deleteIfExists(Paths.get(s));
         }
         return CommonResult.success(true);
     }
@@ -88,7 +89,7 @@ public class FileController {
             return CommonResult.success(true);
         }
         if (Files.isDirectory(Paths.get(req.getPath()))) {
-            NioFileUtils.renameDir(Paths.get(req.getPath()), Paths.get(req.getNewPath()));
+            NioFileUtil.renameDir(Paths.get(req.getPath()), Paths.get(req.getNewPath()));
         } else {
             Files.move(Paths.get(req.getPath()), Paths.get(req.getNewPath()));
         }
@@ -118,23 +119,20 @@ public class FileController {
         for (String pathStr : req.getPathList()) {
             Path path = Paths.get(pathStr);
             if (Files.isDirectory(path) && req.getCopy()) {
-                NioFileUtils.copyDir(path, Paths.get(req.getDestPath()));
+                NioFileUtil.copyDir(path, Paths.get(req.getDestPath()));
             } else if (Files.isDirectory(path) && !req.getCopy()) {
-                NioFileUtils.moveDir(path, Paths.get(req.getDestPath()));
+                NioFileUtil.moveDir(path, Paths.get(req.getDestPath()));
             } else if (!Files.isDirectory(path) && req.getCopy()) {
-                Files.copy(path, Paths.get(req.getDestPath()).resolve(path.getFileName()));
+                copy(path, Paths.get(req.getDestPath()).resolve(path.getFileName()));
             } else if (!Files.isDirectory(path) && !req.getCopy()) {
-                Files.move(path, Paths.get(req.getDestPath()).resolve(path.getFileName()));
+                Path destPath = Paths.get(req.getDestPath()).resolve(path.getFileName());
+                if (!Objects.equals(path, destPath)) {
+                    Files.move(path, destPath);
+                }
             }
         }
         return CommonResult.success(true);
     }
-//
-//    @PostMapping("move")
-//    public CommonResult<Boolean> move(@RequestBody FileMoveReq req) throws IOException {
-//        asyncTaskManager.moveFile(req.getPathList(), req.getDestPath());
-//        return CommonResult.success(true);
-//    }
 
     @GetMapping("open")
     @ApiOperation(value = "打开文件")
@@ -146,5 +144,23 @@ public class FileController {
             mediaType = new MediaType(mediaType, StandardCharsets.UTF_8);
         }
         return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + filename).contentType(mediaType).body(FileUtils.readFileToByteArray(file));
+    }
+
+    @PostMapping("upload")
+    @ApiOperation(value = "上传")
+    public CommonResult<Boolean> upload(FileUploadReq req) throws IOException {
+        Files.write(Paths.get(req.getPath(), req.getFile().getOriginalFilename()), req.getFile().getBytes());
+        return CommonResult.success(true);
+    }
+
+    private void copy(Path src, Path dest) throws IOException {
+        if (Files.exists(dest)) {
+            String basename = FilenameUtils.getBaseName(src.getFileName().toString());
+            String extension = FilenameUtils.getExtension(src.getFileName().toString());
+            basename += "副本";
+            copy(src, dest.resolveSibling(basename + "." + extension));
+        } else {
+            Files.copy(src, dest);
+        }
     }
 }

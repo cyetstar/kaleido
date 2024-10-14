@@ -4,7 +4,10 @@ import cc.onelooker.kaleido.convert.ActorConvert;
 import cc.onelooker.kaleido.convert.TvshowShowConvert;
 import cc.onelooker.kaleido.dto.TvshowSeasonDTO;
 import cc.onelooker.kaleido.dto.TvshowShowDTO;
-import cc.onelooker.kaleido.dto.req.*;
+import cc.onelooker.kaleido.dto.req.TvshowShowCreateReq;
+import cc.onelooker.kaleido.dto.req.TvshowShowPageReq;
+import cc.onelooker.kaleido.dto.req.TvshowShowSearchInfoReq;
+import cc.onelooker.kaleido.dto.req.TvshowShowUpdateReq;
 import cc.onelooker.kaleido.dto.resp.TvshowShowCreateResp;
 import cc.onelooker.kaleido.dto.resp.TvshowShowPageResp;
 import cc.onelooker.kaleido.dto.resp.TvshowShowSearchInfoResp;
@@ -14,9 +17,7 @@ import cc.onelooker.kaleido.service.TvshowSeasonService;
 import cc.onelooker.kaleido.service.TvshowShowService;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.third.tmm.Tvshow;
-import cc.onelooker.kaleido.utils.KaleidoConstants;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
-import cn.hutool.http.HttpUtil;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.google.common.collect.Lists;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;
@@ -26,16 +27,10 @@ import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -137,7 +132,7 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @ApiOperation(value = "获取目录")
     public CommonResult<String> viewPath(String id) {
         TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(id);
-        Path path = KaleidoUtils.getTvshowPath(tvshowShowDTO.getPath());
+        Path path = KaleidoUtil.getTvshowPath(tvshowShowDTO.getPath());
         return CommonResult.success(path.toString());
     }
 

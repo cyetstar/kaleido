@@ -2,7 +2,6 @@ package cc.onelooker.kaleido.third.tmm;
 
 import cc.onelooker.kaleido.dto.*;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -194,6 +193,47 @@ public class TmmUtil {
         return tvshowEpisodeDTO;
     }
 
+    public static MusicAlbumDTO toMusicAlbumDTO(Album album) {
+        MusicAlbumDTO musicAlbumDTO = new MusicAlbumDTO();
+        return toMusicAlbumDTO(musicAlbumDTO, album);
+    }
+
+    public static MusicAlbumDTO toMusicAlbumDTO(MusicAlbumDTO musicAlbumDTO, Album album) {
+        musicAlbumDTO.setNeteaseId(album.getNeteaseId());
+        musicAlbumDTO.setMusicbrainzId(album.getMusicbrainzId());
+        musicAlbumDTO.setTitle(album.getTitle());
+        musicAlbumDTO.setOriginallyAvailableAt(album.getPublishTime());
+        musicAlbumDTO.setSummary(album.getDescription());
+        musicAlbumDTO.setYear(StringUtils.substring(album.getPublishTime(), 0, 4));
+        musicAlbumDTO.setThumb(album.getPicUrl());
+        if (CollectionUtils.isNotEmpty(album.getArtists())) {
+            musicAlbumDTO.setArtistList(album.getArtists().stream().map(TmmUtil::toArtistDTO).collect(Collectors.toList()));
+            musicAlbumDTO.setArtists(album.getArtists().stream().map(Artist::getName).collect(Collectors.joining("; ")));
+        }
+        if (CollectionUtils.isNotEmpty(album.getSongs())) {
+            musicAlbumDTO.setTrackList(album.getSongs().stream().map(TmmUtil::toMusicTrackDTO).collect(Collectors.toList()));
+        }
+        return musicAlbumDTO;
+    }
+
+    public static MusicTrackDTO toMusicTrackDTO(Song song) {
+        MusicTrackDTO musicTrackDTO = new MusicTrackDTO();
+        return toMusicTrackDTO(musicTrackDTO, song);
+    }
+
+    public static MusicTrackDTO toMusicTrackDTO(MusicTrackDTO musicTrackDTO, Song song) {
+        musicTrackDTO.setTitle(song.getTitle());
+        musicTrackDTO.setDiscIndex(1);
+        musicTrackDTO.setTrackIndex(song.getTrackIndex());
+        musicTrackDTO.setDuration(song.getDuration());
+        if (CollectionUtils.isNotEmpty(song.getArtists())) {
+            musicTrackDTO.setArtists(song.getArtists().stream().map(Artist::getName).collect(Collectors.joining("; ")));
+        }
+        musicTrackDTO.setNeteaseId(song.getNeteaseId());
+        musicTrackDTO.setMusicbrainzId(song.getMusicbrainzId());
+        return musicTrackDTO;
+    }
+
     private static ActorDTO toActorDTO(Actor actor) {
         ActorDTO actorDTO = new ActorDTO();
         actorDTO.setName(actor.getCnName());
@@ -209,4 +249,14 @@ public class TmmUtil {
         authorDTO.setName(author.getName());
         return authorDTO;
     }
+
+    private static ArtistDTO toArtistDTO(Artist artist) {
+        ArtistDTO artistDTO = new ArtistDTO();
+        artistDTO.setTitle(StringUtils.defaultIfEmpty(artist.getTrans(), artist.getName()));
+        artistDTO.setOriginalTitle(artist.getName());
+        artistDTO.setThumb(artist.getPicUrl());
+        artistDTO.setNeteaseId(artist.getNeteaseId());
+        return artistDTO;
+    }
+
 }

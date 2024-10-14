@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author xiadawei
@@ -32,6 +33,13 @@ public class Comic {
     private String average;
     private String cover;
     private List<Volume> volumes;
+
+    public Volume getVolume(Integer volumeNumber) {
+        if (volumes == null) {
+            return null;
+        }
+        return volumes.stream().filter(s -> Objects.equals(s.getVolumeNumber(), volumeNumber)).findFirst().orElse(null);
+    }
 
     @Data
     public static class Volume {

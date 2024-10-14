@@ -1,11 +1,9 @@
 package cc.onelooker.kaleido.utils;
 
-import lombok.extern.slf4j.Slf4j;
+import cc.onelooker.kaleido.dto.MusicAlbumDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import javax.xml.bind.JAXBException;
 import java.net.URI;
@@ -23,7 +21,7 @@ public class KaleidoUtilsTest {
 
     @Test
     public void getMovieFolder() throws JAXBException, URISyntaxException {
-        Path filePath = KaleidoUtils.getMoviePath("/Volumes/movie/1970s/你还好吗? (1976)/俾鬼抓.Ghost.Snatchers.1986.DVD5.x264.2AAC.HALFCD-TLF.mkv");
+        Path filePath = KaleidoUtil.getMoviePath("/Volumes/movie/1970s/你还好吗? (1976)/俾鬼抓.Ghost.Snatchers.1986.DVD5.x264.2AAC.HALFCD-TLF.mkv");
         URI uri = new URI(StringUtils.replace(filePath.getParent().toString(), "?", "%3F"));
 
         Assertions.assertTrue(Files.exists(Paths.get(uri).resolve("movie.nfo")));
@@ -34,9 +32,14 @@ public class KaleidoUtilsTest {
     @Test
     public void parseEpisodeIndex() {
         String filename = "The Sound of Your Heart S01E04 1080p NF WEB-DL DDP2.0 x264-ARiN.mkv";
-        System.out.println(KaleidoUtils.parseSeasonIndex(filename,1));
-        System.out.println(KaleidoUtils.parseEpisodeIndex(filename));
+        System.out.println(KaleidoUtil.parseSeasonIndex(filename, 1));
+        System.out.println(KaleidoUtil.parseEpisodeIndex(filename));
     }
 
+    @Test
+    public void genMusicFolder() {
+        MusicAlbumDTO musicAlbumDTO = new MusicAlbumDTO();
+
+    }
 
 }

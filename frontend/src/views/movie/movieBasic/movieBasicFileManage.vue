@@ -4,55 +4,20 @@
  * @Description: 发行品表单页面
 -->
 <template>
-  <k-file-modal ref="refFileModal">
-    <template #footer>
-      <a-upload
-        v-model:file-list="fileList"
-        name="file"
-        :showUploadList="false"
-        :custom-request="uploadFile"
-      >
-        <h-button plain type="primary">上传海报</h-button>
-      </a-upload>
-    </template>
-  </k-file-modal>
+  <k-file-modal ref="refFileModal" />
 </template>
 
 <script setup>
 import { ref } from "vue";
 
-import { message } from "ant-design-vue";
-import {
-  apiMovieBasicUploadPoster,
-  apiMovieBasicViewPath,
-} from "@/api/movie/movieBasicApi";
+import { apiMovieBasicViewPath } from "@/api/movie/movieBasicApi";
 
 const emits = defineEmits(["match-success"]);
-
-const fileList = ref([]);
 const refFileModal = ref();
-let id = null;
-let path = null;
 
 const show = (recordId) => {
-  id = recordId;
-  apiMovieBasicViewPath({ id }).then((res) => {
-    path = res;
-    refFileModal.value.show(path);
-  });
-};
-
-const uploadFile = (options) => {
-  apiMovieBasicUploadPoster({
-    id,
-    path,
-    file: options.file,
-  }).then((res) => {
-    if (res) {
-      refFileModal.value.load();
-    } else {
-      message.error("上传失败");
-    }
+  apiMovieBasicViewPath({ id: recordId }).then((res) => {
+    refFileModal.value.show(res);
   });
 };
 

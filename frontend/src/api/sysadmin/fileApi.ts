@@ -1,4 +1,5 @@
 import { useFetch } from "@/utils/http";
+import { RequestMethod } from "@ht/http";
 
 export const apiFilePage = (params: any) => {
   return useFetch.get<any>({
@@ -39,5 +40,13 @@ export const apiFileOpen = (params: any) => {
   return useFetch.open<any>({
     url: "/file/open",
     params,
+  });
+};
+
+export const apiFileUpload = (data: any) => {
+  return useFetch.upload<any>({
+    url: "/file/upload",
+    method: RequestMethod.POST,
+    data,
   });
 };

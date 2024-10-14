@@ -3,7 +3,7 @@ package cc.onelooker.kaleido;
 import cc.onelooker.kaleido.nfo.ComicInfoNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
-import cc.onelooker.kaleido.utils.NioFileUtils;
+import cc.onelooker.kaleido.utils.NioFileUtil;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.ZipUtil;
@@ -240,6 +240,13 @@ public class TempTest {
         });
     }
 
+    @Test
+    public void createDir() throws IOException {
+        Path path1 = Paths.get("/Volumes/music/import/The fin./");
+        Files.createDirectory(path1);
+//        NioFileUtils.renameDir(path1, Paths.get("/Volumes/music/import/The fin"));
+    }
+
     private String renameFile(String fileName) {
 //        String nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
 //        String extension = fileName.substring(fileName.lastIndexOf("."));
@@ -285,7 +292,7 @@ public class TempTest {
     }
 
     private void moveBookImage(Path folderPath, Path tagetPath) throws IOException {
-        NioFileUtils.deleteIfExists(folderPath.resolve("@eaDir"));
+        NioFileUtil.deleteIfExists(folderPath.resolve("@eaDir"));
         Files.deleteIfExists(folderPath.resolve(".DS_Store"));
         long directoryCount = Files.list(folderPath).filter(Files::isDirectory).count();
         long fileCount = Files.list(folderPath).filter(s -> !Files.isDirectory(s) && !StringUtils.equals(s.getFileName().toString(), KaleidoConstants.COMIC_INFO)).count();
@@ -304,7 +311,7 @@ public class TempTest {
                 try {
                     String fileName = s.getFileName().toString();
                     if (Files.isDirectory(s)) {
-                        NioFileUtils.renameDir(s, tagetPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                        NioFileUtil.renameDir(s, tagetPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
                     } else if (!StringUtils.equalsAnyIgnoreCase(FilenameUtils.getExtension(fileName), "jpg", "jpeg", "png", "xml")) {
                         Files.delete(s);
                     } else {
@@ -316,7 +323,7 @@ public class TempTest {
             });
         }
         if (FileUtils.isEmptyDirectory(folderPath.toFile())) {
-            NioFileUtils.deleteIfExists(folderPath);
+            NioFileUtil.deleteIfExists(folderPath);
         }
     }
 

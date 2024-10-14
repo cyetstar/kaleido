@@ -12,7 +12,7 @@ import java.nio.file.attribute.BasicFileAttributes;
  * @Date 2023-12-06 11:17:00
  * @Description TODO
  */
-public class NioFileUtils {
+public class NioFileUtil {
 
     /**
      * 复制文件夹
@@ -185,7 +185,7 @@ public class NioFileUtils {
      * @see {@link #sameOrSub(Path, Path)}
      */
     public static boolean isSub(Path parent, Path sub) throws IOException {
-        return (null == sub) ? false : sameOrSub(parent, sub.getParent());
+        return null != sub && sameOrSub(parent, sub.getParent());
     }
 
     public static void deleteByFilter(Path dir, String extension) throws IOException {

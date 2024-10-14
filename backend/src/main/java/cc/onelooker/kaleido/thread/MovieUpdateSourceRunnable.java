@@ -4,7 +4,7 @@ import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.MovieManager;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
 
@@ -46,7 +46,7 @@ public class MovieUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
     @Override
     protected PageResult<Path> page(Map<String, String> params, int pageNumber, int pageSize) {
         try {
-            Path importPath = KaleidoUtils.getMovieImportPath();
+            Path importPath = KaleidoUtil.getMovieImportPath();
             PageResult<Path> pageResult = new PageResult<>();
             pageResult.setSearchCount(true);
             if (pageNumber == 1) {

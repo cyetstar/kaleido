@@ -1,7 +1,7 @@
 package cc.onelooker.kaleido.thread;
 
 import cc.onelooker.kaleido.service.ComicManager;
-import cc.onelooker.kaleido.utils.KaleidoUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +34,7 @@ public class ComicUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
     @Override
     protected PageResult<Path> page(Map<String, String> params, int pageNumber, int pageSize) {
         try {
-            Path importPath = KaleidoUtils.getComicImportPath();
+            Path importPath = KaleidoUtil.getComicImportPath();
             PageResult<Path> pageResult = new PageResult<>();
             pageResult.setSearchCount(true);
             if (pageNumber == 1) {
