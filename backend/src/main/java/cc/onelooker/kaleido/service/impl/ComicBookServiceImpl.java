@@ -2,10 +2,7 @@ package cc.onelooker.kaleido.service.impl;
 
 import cc.onelooker.kaleido.convert.ComicBookConvert;
 import cc.onelooker.kaleido.dto.ComicBookDTO;
-import cc.onelooker.kaleido.dto.ComicSeriesDTO;
 import cc.onelooker.kaleido.entity.ComicBookDO;
-import cc.onelooker.kaleido.enums.SubjectType;
-import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.mapper.ComicBookMapper;
 import cc.onelooker.kaleido.service.ComicBookService;
 import cc.onelooker.kaleido.service.ComicSeriesService;

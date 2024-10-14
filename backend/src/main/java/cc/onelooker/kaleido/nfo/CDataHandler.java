@@ -15,7 +15,7 @@ public class CDataHandler implements InvocationHandler {
 
     private static Method writeCharactersMethod = null;
 
-    private XMLStreamWriter writer;
+    private final XMLStreamWriter writer;
 
     public CDataHandler(XMLStreamWriter writer) {
         this.writer = writer;

@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.utils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * @Author cyetstar
@@ -12,7 +13,7 @@ public class BigDecimalUtils {
     public static String divide(String a, String b, int scale) {
         BigDecimal abd = new BigDecimal(a);
         BigDecimal bbd = new BigDecimal(b);
-        BigDecimal result = abd.divide(bbd, scale, BigDecimal.ROUND_DOWN);
+        BigDecimal result = abd.divide(bbd, scale, RoundingMode.DOWN);
         return result.toPlainString();
     }
 }

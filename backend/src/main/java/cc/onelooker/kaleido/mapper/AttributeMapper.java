@@ -1,6 +1,5 @@
 package cc.onelooker.kaleido.mapper;
 
-import cc.onelooker.kaleido.dto.AttributeDTO;
 import cc.onelooker.kaleido.entity.AttributeDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;

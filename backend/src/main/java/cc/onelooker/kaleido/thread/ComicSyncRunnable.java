@@ -35,7 +35,7 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
 
     private final List<String> bookIdList = Lists.newArrayList();
 
-    private Set<String> seriesIdCache = Sets.newHashSet();
+    private final Set<String> seriesIdCache = Sets.newHashSet();
 
     public ComicSyncRunnable(KomgaApiService komgaApiService, ComicManager comicManager, ComicBookService comicBookService) {
         this.komgaApiService = komgaApiService;

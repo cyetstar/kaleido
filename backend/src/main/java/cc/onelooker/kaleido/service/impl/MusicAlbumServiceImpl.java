@@ -1,12 +1,12 @@
 package cc.onelooker.kaleido.service.impl;
 
 import cc.onelooker.kaleido.convert.MusicAlbumConvert;
-import cc.onelooker.kaleido.dto.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.MusicAlbumArtistDTO;
+import cc.onelooker.kaleido.dto.MusicAlbumDTO;
 import cc.onelooker.kaleido.entity.MusicAlbumDO;
 import cc.onelooker.kaleido.mapper.MusicAlbumMapper;
-import cc.onelooker.kaleido.service.MusicAlbumService;
 import cc.onelooker.kaleido.service.MusicAlbumArtistService;
+import cc.onelooker.kaleido.service.MusicAlbumService;
 import cc.onelooker.kaleido.service.MusicTrackService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

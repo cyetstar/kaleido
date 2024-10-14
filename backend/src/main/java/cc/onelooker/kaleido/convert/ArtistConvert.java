@@ -12,8 +12,6 @@ import cc.onelooker.kaleido.entity.ArtistDO;
 import cc.onelooker.kaleido.third.tmm.Artist;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 /**

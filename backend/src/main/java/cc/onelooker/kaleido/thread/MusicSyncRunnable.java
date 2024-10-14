@@ -36,7 +36,7 @@ public class MusicSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
 
     private final PlexApiService plexApiService;
 
-    private List<String> plexIdList = Lists.newArrayList();
+    private final List<String> plexIdList = Lists.newArrayList();
 
     private final Set<String> artistIdCache = Sets.newHashSet();
 

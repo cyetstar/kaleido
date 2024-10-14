@@ -1,17 +1,16 @@
 package cc.onelooker.kaleido.convert;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.InheritInverseConfiguration;
-
 import cc.onelooker.kaleido.dto.TaskDTO;
-import cc.onelooker.kaleido.entity.TaskDO;
-import cc.onelooker.kaleido.dto.req.TaskPageReq;
 import cc.onelooker.kaleido.dto.req.TaskCreateReq;
+import cc.onelooker.kaleido.dto.req.TaskPageReq;
 import cc.onelooker.kaleido.dto.req.TaskUpdateReq;
+import cc.onelooker.kaleido.dto.resp.TaskCreateResp;
 import cc.onelooker.kaleido.dto.resp.TaskPageResp;
 import cc.onelooker.kaleido.dto.resp.TaskViewResp;
-import cc.onelooker.kaleido.dto.resp.TaskCreateResp;
+import cc.onelooker.kaleido.entity.TaskDO;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
 /**
 * 任务Convert

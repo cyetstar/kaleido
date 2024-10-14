@@ -1,12 +1,9 @@
 package cc.onelooker.kaleido.dto.resp;
 
-import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.Date;
 import java.util.List;
 
 /**

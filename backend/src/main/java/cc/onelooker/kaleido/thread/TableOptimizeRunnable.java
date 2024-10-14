@@ -13,7 +13,7 @@ import java.util.Map;
 @Component
 public class TableOptimizeRunnable extends AbstractEntityActionRunnable<String> {
 
-    private TableOptimizeService tableOptimizeService;
+    private final TableOptimizeService tableOptimizeService;
 
     public TableOptimizeRunnable(TableOptimizeService tableOptimizeService) {
         this.tableOptimizeService = tableOptimizeService;

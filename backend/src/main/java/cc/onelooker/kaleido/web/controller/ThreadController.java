@@ -14,7 +14,6 @@ import cc.onelooker.kaleido.dto.resp.ThreadViewResp;
 import cc.onelooker.kaleido.service.ComicSeriesService;
 import cc.onelooker.kaleido.service.MovieBasicService;
 import cc.onelooker.kaleido.service.ThreadService;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zjjcnt.common.core.domain.CommonResult;
 import com.zjjcnt.common.core.domain.PageParam;

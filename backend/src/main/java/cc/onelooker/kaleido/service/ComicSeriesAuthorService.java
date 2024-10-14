@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.service;
 
 import cc.onelooker.kaleido.dto.ComicSeriesAuthorDTO;
-import cc.onelooker.kaleido.enums.AuthorRole;
 import com.zjjcnt.common.core.service.IBaseService;
 
 import java.util.List;

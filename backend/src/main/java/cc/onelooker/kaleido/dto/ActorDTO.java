@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.dto;
 
 import cc.onelooker.kaleido.entity.ActorDO;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 

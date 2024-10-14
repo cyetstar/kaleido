@@ -1,12 +1,9 @@
 package cc.onelooker.kaleido.dto.resp;
 
-import lombok.Data;
+import com.zjjcnt.common.core.annotation.Dict;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.lang.Long;
-import com.zjjcnt.common.core.annotation.Dict;
-import java.lang.String;
+import lombok.Data;
 
 /**
  * 任务响应对象

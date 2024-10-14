@@ -25,9 +25,9 @@ public class WebSocket {
     //concurrent包的线程安全Set，用来存放每个客户端对应的MyWebSocket对象。
     //虽然@Component默认是单例模式的，但springboot还是会为每个websocket连接初始化一个bean，所以可以用一个静态set保存起来。
     //  注：底下WebSocket是当前类名
-    private static CopyOnWriteArraySet<WebSocket> webSockets = new CopyOnWriteArraySet<>();
+    private static final CopyOnWriteArraySet<WebSocket> webSockets = new CopyOnWriteArraySet<>();
     // 用来存在线连接数
-    private static Map<String, Session> sessionPool = Maps.newHashMap();
+    private static final Map<String, Session> sessionPool = Maps.newHashMap();
 
     /**
      * 链接成功调用的方法

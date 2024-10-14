@@ -10,7 +10,6 @@ import cc.onelooker.kaleido.mapper.ActorMapper;
 import cc.onelooker.kaleido.service.ActorService;
 import cc.onelooker.kaleido.service.MovieBasicActorService;
 import cc.onelooker.kaleido.service.TvshowSeasonActorService;
-import cc.onelooker.kaleido.service.TvshowSeasonService;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

@@ -4,7 +4,6 @@ import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * 属性DTO

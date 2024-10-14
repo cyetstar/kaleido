@@ -9,5 +9,5 @@ public enum AttributeType {
 
     Genre, Language, Country, Tag,
     Style,
-    Mood;
+    Mood
 }

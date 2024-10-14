@@ -2,11 +2,11 @@ package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.convert.ArtistConvert;
 import cc.onelooker.kaleido.dto.ArtistDTO;
+import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.dto.resp.ArtistCreateResp;
 import cc.onelooker.kaleido.dto.resp.ArtistPageResp;
 import cc.onelooker.kaleido.dto.resp.ArtistSearchNeteaseResp;
 import cc.onelooker.kaleido.dto.resp.ArtistViewResp;
-import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.service.ArtistService;
 import cc.onelooker.kaleido.service.MusicManager;
 import cc.onelooker.kaleido.third.tmm.Artist;

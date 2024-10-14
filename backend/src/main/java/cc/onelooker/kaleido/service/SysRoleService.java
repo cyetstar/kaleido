@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.service;
 
 import cc.onelooker.kaleido.dto.SysRoleDTO;
-import cc.onelooker.kaleido.service.IDictionaryService;
 import com.zjjcnt.common.core.service.IBaseService;
 
 import java.util.List;

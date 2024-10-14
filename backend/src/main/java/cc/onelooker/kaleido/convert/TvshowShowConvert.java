@@ -9,7 +9,6 @@ import cc.onelooker.kaleido.dto.resp.TvshowShowPageResp;
 import cc.onelooker.kaleido.dto.resp.TvshowShowSearchInfoResp;
 import cc.onelooker.kaleido.dto.resp.TvshowShowViewResp;
 import cc.onelooker.kaleido.entity.TvshowShowDO;
-import cc.onelooker.kaleido.third.tmm.Movie;
 import cc.onelooker.kaleido.third.tmm.Tvshow;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
