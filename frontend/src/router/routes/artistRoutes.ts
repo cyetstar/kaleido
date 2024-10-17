@@ -2,8 +2,8 @@ import type { AppRouteConfig } from "@/router/types";
 
 const artistRoutes: AppRouteConfig[] = [
   {
-    path: "/music/artist/page",
-    name: "musicArtistPage",
+    path: "/artist/page",
+    name: "artistPage",
     component: () => import("@/views/artist/artistPage.vue"),
     meta: {
       title: "艺术家",
@@ -12,8 +12,8 @@ const artistRoutes: AppRouteConfig[] = [
     },
   },
   {
-    path: "/music/artist/view",
-    name: "musicArtistView",
+    path: "/artist/view",
+    name: "artistView",
     component: () => import("@/views/artist/artistView.vue"),
     meta: {
       title: "艺术家详情",

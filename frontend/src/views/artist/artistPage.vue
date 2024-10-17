@@ -47,11 +47,10 @@
 
 <script setup>
 import { ref, onMounted, onActivated } from "vue";
-import { apiMusicArtistPage } from "@/api/music/musicArtistApi.ts";
+import { apiArtistPage } from "@/api/artistApi.ts";
 
 import { Empty, message } from "ant-design-vue";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
-import { isEmpty, isNotEmpty } from "@ht/util";
 import { useAppStore } from "@/store/modules/app";
 
 const router = useRouter();
@@ -85,7 +84,7 @@ const loadData = () => {
     searchCount: true,
     ...searchForm.value,
   };
-  apiMusicArtistPage(data).then((res) => {
+  apiArtistPage(data).then((res) => {
     loading.value = false;
     pageResult.value.records.push(...res.records);
     pageResult.value.pageNumber = res.pageNumber;
@@ -101,7 +100,7 @@ const onSearch = () => {
 };
 
 const onViewRecord = (id) => {
-  router.push({ path: "/music/musicArtist/view", query: { id } });
+  router.push({ path: "/artist/view", query: { id } });
 };
 
 const onScrollGrid = () => {

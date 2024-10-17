@@ -90,7 +90,7 @@ public class ImageController {
         }
         if (path != null && Files.exists(path)) {
             content = Files.readAllBytes(path);
-        } else if (StringUtils.isNotEmpty(url)) {
+        } else if (StringUtils.startsWithAny(url, "http://", "https://")) {
             content = HttpUtil.downloadBytes(url);
         }
         if (content == null) {

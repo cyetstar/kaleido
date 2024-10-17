@@ -19,11 +19,10 @@
     <section>
       <a-row>
         <h-col :span="6">
-          <k-plex-image
-            style="width: 280px"
-            :plex-thumb="record.thumb"
-            type="music"
-          />
+          <k-thumb-image
+              :preview="false"
+              style="width: 280px"
+              :url="record.thumb"/>
         </h-col>
         <h-col :span="18">
           <p>{{ record.area }}</p>
@@ -47,11 +46,11 @@
         <template :key="albumRecord.id" v-for="albumRecord in albumRecords">
           <a-card class="col-span-3 k-card" :bordered="false">
             <template #cover>
-              <k-plex-image
+              <k-thumb-image
                 class="h-cover cursor-pointer"
-                type="music"
+                type="MusicAlbum"
                 :preview="false"
-                :plex-thumb="albumRecord.thumb"
+                :id="albumRecord.id"
                 @click="onViewAlbumRecord(albumRecord.id)"
               />
               <div class="absolute top-0 left-0 m-2px">
@@ -79,10 +78,10 @@
     </section>
   </section>
 
-  <artist-search-netease
-    ref="refArtistSearchNetease"
-    @match-success="onMatchSuccess"
-  />
+<!--  <artist-search-netease-->
+<!--    ref="refArtistSearchNetease"-->
+<!--    @match-success="onMatchSuccess"-->
+<!--  />-->
 </template>
 
 <script setup>
@@ -90,11 +89,10 @@ import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { message } from "ant-design-vue";
 import { LeftOutlined } from "@ant-design/icons-vue";
-import ArtistSearchNetease from "@/views/artist/artistSearchNetease.vue";
 import {
-  apiMusicArtistSyncPlexById,
-  apiMusicArtistView,
-} from "@/api/music/musicArtistApi.ts";
+  apiArtistSyncPlexById,
+  apiArtistView,
+} from "@/api/artistApi.ts";
 import { apiMusicAlbumListByArtistId } from "@/api/music/musicAlbumApi";
 
 const route = useRoute();
@@ -105,7 +103,7 @@ const record = ref({});
 const albumRecords = ref([]);
 const refArtistSearchNetease = ref();
 const initData = () => {
-  apiMusicArtistView({ id }).then((res) => (record.value = res));
+  apiArtistView({ id }).then((res) => (record.value = res));
   apiMusicAlbumListByArtistId({ artistId: id }).then(
     (res) => (albumRecords.value = res)
   );
@@ -116,7 +114,7 @@ const onViewAlbumRecord = (id) => {
 };
 
 const onSyncPlexById = () => {
-  apiMusicArtistSyncPlexById({ id }).then(() => {
+  apiArtistSyncPlexById({ id }).then(() => {
     message.success("同步成功");
   });
 };

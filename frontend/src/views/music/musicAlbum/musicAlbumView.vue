@@ -116,10 +116,9 @@
       <p>{{ lyrics }}</p>
     </template>
   </a-modal>
-  <music-album-form ref="refMusicAlbumForm"/>
-  <music-album-search-info ref="refMusicAlbumSearchInfo" @match-success="initAlbumData"/>
+  <music-album-form ref="refMusicAlbumForm" @match-success="initData"/>
+  <music-album-search-info ref="refMusicAlbumSearchInfo" @match-success="initData"/>
   <music-album-file-manage ref="refMusicAlbumFileManage"/>
-  <music-album-search-lyric ref="refMusicAlbumSearchLyric" @match-success="initTrackData"/>
 </template>
 
 <script setup>
@@ -140,7 +139,6 @@ import {FileTextOutlined, LeftOutlined, FileSearchOutlined} from "@ant-design/ic
 import MusicAlbumSearchInfo from "@/views/music/musicAlbum/musicAlbumSearchInfo.vue";
 import MusicAlbumFileManage from "@/views/music/musicAlbum/musicAlbumFileManage.vue";
 import MusicAlbumSearchLyric from "@/views/music/musicAlbum/musicAlbumSearchLyric.vue";
-import {isNotEmpty} from "@ht/util";
 import MusicAlbumForm from "@/views/music/musicAlbum/musicAlbumForm.vue";
 
 const route = useRoute();
@@ -161,7 +159,6 @@ const searchForm = ref({
 const refMusicAlbumForm = ref();
 const refMusicAlbumSearchInfo = ref();
 const refMusicAlbumFileManage = ref();
-const refMusicAlbumSearchLyric = ref();
 
 const initData = () => {
   Promise.all([
@@ -182,7 +179,7 @@ const onFileManage = () => {
 };
 
 const onViewArtist = (id) => {
-  router.push({path: "/music/musicArtist/view", query: {id}});
+  router.push({path: "/artist/view", query: {id}});
 };
 
 const onUpdateAudioTag = () => {
@@ -225,10 +222,6 @@ const onViewLyric = (record) => {
     modalLyricsVisible.value = true;
   });
 };
-
-const onSearchLyric = (record) => {
-  refMusicAlbumSearchLyric.value.show(record)
-}
 
 onMounted(() => {
   initData();
