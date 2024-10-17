@@ -26,9 +26,6 @@ public class MovieBasicUpdateReq {
     @ApiModelProperty("原片名")
     private String originalTitle;
 
-    @ApiModelProperty("排序名")
-    private String titleSort;
-
     @ApiModelProperty("首映年份")
     private String year;
 
@@ -63,6 +60,9 @@ public class MovieBasicUpdateReq {
     @ApiModelProperty("TMDB编号")
     private String tmdbId;
 
+    @ApiModelProperty("路径")
+    private String path;
+
     @ApiModelProperty("别名列表")
     private List<String> akaList;
 
@@ -86,7 +86,6 @@ public class MovieBasicUpdateReq {
 
     @ApiModelProperty("演员主键列表")
     private List<Actor> actorList;
-
 
     @Data
     public static class Actor {

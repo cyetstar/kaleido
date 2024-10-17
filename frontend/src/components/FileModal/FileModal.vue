@@ -11,6 +11,7 @@
     v-model:visible="visible"
     :title="title"
     :width="width"
+    zIndex="100"
   >
     <div class="flex">
       <a-space class="mr-2">
@@ -144,7 +145,7 @@ import {
   LeftOutlined,
   ReloadOutlined,
 } from "@ant-design/icons-vue";
-import { HButton, HButtonDelete, HTableData } from "hta-ui";
+import { HButton, HTableData } from "hta-ui";
 import {
   apiFileCopyOrCut,
   apiFileDelete,
@@ -175,7 +176,6 @@ export default defineComponent({
     ScissorOutlined,
     DeleteOutlined,
     HButton,
-    HButtonDelete,
     HTableData,
   },
   props: {
@@ -320,14 +320,23 @@ export default defineComponent({
       });
     };
     const onDelete = () => {
-      let path = selectedRows.value.map((s) => s.path);
-      apiFileDelete(path).then((res) => {
-        if (res) {
-          refTableData.value.load(1);
-        } else {
-          message.error("删除失败");
-        }
+      Modal.confirm({
+        title: '确认删除所选文件吗?',
+        onOk() {
+          let path = selectedRows.value.map((s) => s.path);
+          apiFileDelete(path).then((res) => {
+            if (res) {
+              refTableData.value.load(1);
+            } else {
+              message.error("删除失败");
+            }
+          });
+        },
+        onCancel() {
+        },
+        class: 'test',
       });
+
     };
 
     const onUpload = (options) => {

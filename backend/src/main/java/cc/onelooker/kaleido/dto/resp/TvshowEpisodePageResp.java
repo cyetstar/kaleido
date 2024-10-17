@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 public class TvshowEpisodePageResp {
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("剧集id")
     private Long showId;

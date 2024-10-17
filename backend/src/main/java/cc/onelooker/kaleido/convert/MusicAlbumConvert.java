@@ -35,6 +35,10 @@ public interface MusicAlbumConvert {
 
     MusicAlbumDTO convertToDTO(MusicAlbumCreateReq req);
 
+    @Mappings({
+            @Mapping(target = "artistList", ignore = true),
+            @Mapping(target = "trackList", ignore = true),
+    })
     MusicAlbumDTO convertToDTO(MusicAlbumUpdateReq req);
 
     MusicAlbumPageResp convertToPageResp(MusicAlbumDTO dto);

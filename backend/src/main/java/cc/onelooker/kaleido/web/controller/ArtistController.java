@@ -1,12 +1,11 @@
 package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.convert.ArtistConvert;
+import cc.onelooker.kaleido.convert.AuthorConvert;
 import cc.onelooker.kaleido.dto.ArtistDTO;
+import cc.onelooker.kaleido.dto.AuthorDTO;
 import cc.onelooker.kaleido.dto.req.*;
-import cc.onelooker.kaleido.dto.resp.ArtistCreateResp;
-import cc.onelooker.kaleido.dto.resp.ArtistPageResp;
-import cc.onelooker.kaleido.dto.resp.ArtistSearchNeteaseResp;
-import cc.onelooker.kaleido.dto.resp.ArtistViewResp;
+import cc.onelooker.kaleido.dto.resp.*;
 import cc.onelooker.kaleido.service.ArtistService;
 import cc.onelooker.kaleido.service.MusicManager;
 import cc.onelooker.kaleido.third.tmm.Artist;
@@ -17,11 +16,14 @@ import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
+import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -53,7 +55,13 @@ public class ArtistController extends AbstractCrudController<ArtistDTO> {
     @GetMapping("page")
     @ApiOperation(value = "查询艺术家")
     public CommonResult<PageResult<ArtistPageResp>> page(ArtistPageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, ArtistConvert.INSTANCE::convertToDTO, ArtistConvert.INSTANCE::convertToPageResp);
+        ArtistDTO dto =ArtistConvert.INSTANCE.convertToDTO(req);
+        if (StringUtils.isNotEmpty(req.getIds())) {
+            dto.setIdList(Arrays.asList(StringUtils.split(req.getIds(), Constants.COMMA)));
+        }
+        PageResult<ArtistDTO> dtoPageResult = artistService.page(dto, pageParam.toPage());
+        PageResult<ArtistPageResp> pageResult = PageResult.convert(dtoPageResult, ArtistConvert.INSTANCE::convertToPageResp);
+        return CommonResult.success(pageResult);
     }
 
     @GetMapping("view")

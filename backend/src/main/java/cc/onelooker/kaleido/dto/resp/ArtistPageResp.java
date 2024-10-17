@@ -15,7 +15,7 @@ import lombok.Data;
 public class ArtistPageResp {
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("MusicBrainz编号")
     private String musicbrainzId;
@@ -23,24 +23,10 @@ public class ArtistPageResp {
     @ApiModelProperty("网易云音乐编号")
     private String neteaseId;
 
-    @ApiModelProperty("国家地区")
-    private String area;
-
-    @ApiModelProperty("简介")
-    private String summary;
-
     @ApiModelProperty("名称")
     private String title;
 
     @ApiModelProperty("排序名称")
     private String titleSort;
 
-    @ApiModelProperty("封面图")
-    private String thumb;
-
-    @ApiModelProperty("加入时间")
-    private Long addedAt;
-
-    @ApiModelProperty("更新时间")
-    private Long updatedAt;
 }

@@ -42,6 +42,7 @@ public class MusicAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAlbumMap
     @Override
     protected Wrapper<MusicAlbumDO> genQueryWrapper(MusicAlbumDTO dto) {
         LambdaQueryWrapper<MusicAlbumDO> query = new LambdaQueryWrapper<>();
+        query.eq(StringUtils.isNotEmpty(dto.getId()), MusicAlbumDO::getId, dto.getId());
         query.eq(StringUtils.isNotEmpty(dto.getMusicbrainzId()), MusicAlbumDO::getMusicbrainzId, dto.getMusicbrainzId());
         query.eq(StringUtils.isNotEmpty(dto.getNeteaseId()), MusicAlbumDO::getNeteaseId, dto.getNeteaseId());
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), MusicAlbumDO::getTitle, dto.getTitle());

@@ -46,11 +46,9 @@ public class KaleidoUtil {
     private static final Pattern seasonIndexPattern = Pattern.compile("S_?(\\d+)E");
     private static final Pattern episodeIndexPattern = Pattern.compile("E[pP_]?(\\d+)");
     private static final Pattern volumeNumberPattern = Pattern.compile("[Vv]ol[._](\\d+)");
-    private static final Pattern trackIndexPattern = Pattern.compile("^(\\d{1,3})[\\s.-]*");
+    private static final Pattern trackIndexPattern = Pattern.compile("^(\\d{1,3})[\\s.-]*(.*)$");
     private static final String IMPORT = "import";
     private static final String RECYCLE = "#recycle";
-
-
 
     //-----------movie--------------//
     public static Path getMovieBasicPath(String path) {
@@ -318,6 +316,7 @@ public class KaleidoUtil {
         String index = StringUtils.leftPad(String.valueOf(musicTrackDTO.getTrackIndex()), 2, "0");
         String title = sanitizeFileName(musicTrackDTO.getTitle());
         String extension = FilenameUtils.getExtension(musicTrackDTO.getFilename());
+        extension = StringUtils.defaultIfEmpty(extension, musicTrackDTO.getFormat());
         return String.format("%s - %s.%s", index, title, extension);
     }
 
@@ -387,7 +386,6 @@ public class KaleidoUtil {
         }
         return movieBasicDTO.getTmdbId() != null && movieNFO.getTmdbId() != null && StringUtils.equals(movieBasicDTO.getTmdbId(), movieNFO.getTmdbId());
     }
-
 
     public static boolean isSame(MovieBasicDTO movieBasicDTO, Movie movie) {
         if (movieBasicDTO == null || movie == null) {
@@ -464,6 +462,15 @@ public class KaleidoUtil {
         return null;
     }
 
+    public static String parseTrackTitle(String text) {
+        text = FilenameUtils.removeExtension(text);
+        Matcher matcher = trackIndexPattern.matcher(text);
+        if (matcher.find()) {
+            return matcher.group(2);
+        }
+        return null;
+    }
+
     public static boolean createFolderPath(Path folderPath) throws IOException {
         if (Files.notExists(folderPath)) {
             Files.createDirectories(folderPath);
@@ -473,6 +480,20 @@ public class KaleidoUtil {
         }
     }
 
+    public static boolean isOverride(String param1, String param2) {
+        // 如果 param1 为 null 且 param2 非 null，则返回 true
+        if (param1 == null && param2 != null) {
+            return true;
+        }
+
+        // 如果 param1 非 null 且 param2 非 null，且两者不相等，则返回 true
+        if (param1 != null && param2 != null && !param1.equals(param2)) {
+            return true;
+        }
+
+        // 其他情况返回 false
+        return false;
+    }
 
     public static void main(String[] args) {
         System.out.println(StringUtils.equals(null, null));

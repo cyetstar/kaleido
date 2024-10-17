@@ -83,7 +83,7 @@ public class MovieAnalyzeRunnable extends AbstractEntityActionRunnable<Metadata>
         pageResult.setSearchCount(true);
         if (StringUtils.isEmpty(id)) {
             String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
-            pageResult = plexApiService.pageMovie(libraryId, pageNumber, pageSize);
+            pageResult = plexApiService.pageMetadata(libraryId, PlexApiService.TYPE_MOVIE, pageNumber, pageSize);
         } else if (pageNumber == 1) {
             Metadata metadata = plexApiService.findMetadata(id);
             pageResult.setTotal(1L);

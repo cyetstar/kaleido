@@ -16,7 +16,7 @@ import lombok.Data;
 public class AlternateTitlePageResp{
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("标题")
     private String title;

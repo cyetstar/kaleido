@@ -61,24 +61,6 @@ public class MusicAlbumArtistServiceImpl extends AbstractBaseServiceImpl<MusicAl
     }
 
     @Override
-    public MusicAlbumArtistDTO findByArtistIdAndAlbumId(String artistId, String albumId) {
-        Validate.notEmpty(artistId);
-        Validate.notEmpty(albumId);
-        MusicAlbumArtistDTO param = new MusicAlbumArtistDTO();
-        param.setArtistId(artistId);
-        param.setAlbumId(albumId);
-        return find(param);
-    }
-
-    @Override
-    public MusicAlbumArtistDTO insertByArtistIdAndAlbumId(String artistId, String albumId) {
-        MusicAlbumArtistDTO musicMusicAlbumArtistDTO = new MusicAlbumArtistDTO();
-        musicMusicAlbumArtistDTO.setArtistId(artistId);
-        musicMusicAlbumArtistDTO.setAlbumId(albumId);
-        return insert(musicMusicAlbumArtistDTO);
-    }
-
-    @Override
     @Transactional
     public boolean deleteByAlbumId(String albumId) {
         Validate.notEmpty(albumId);

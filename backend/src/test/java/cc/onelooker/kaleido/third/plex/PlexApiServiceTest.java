@@ -1,9 +1,12 @@
 package cc.onelooker.kaleido.third.plex;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
 
 /**
  * @Author xiadawei
@@ -17,5 +20,11 @@ public class PlexApiServiceTest {
 
     @Autowired
     private PlexApiService plexApiService;
+
+    @Test
+    public void listMetadataChildren() {
+        plexApiService.listMetadataChildren("348451");
+
+    }
 
 }

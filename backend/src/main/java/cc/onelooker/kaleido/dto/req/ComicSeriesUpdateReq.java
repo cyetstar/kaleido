@@ -40,9 +40,6 @@ public class ComicSeriesUpdateReq {
     @ApiModelProperty("状态")
     private String status;
 
-    @ApiModelProperty("路径")
-    private String path;
-
     @ApiModelProperty("番组计划编号")
     private String bgmId;
 

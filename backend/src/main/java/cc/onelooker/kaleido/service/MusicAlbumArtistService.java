@@ -17,9 +17,5 @@ public interface MusicAlbumArtistService extends IBaseService<MusicAlbumArtistDT
 
     List<MusicAlbumArtistDTO> listByAlbumId(String albumId);
 
-    MusicAlbumArtistDTO findByArtistIdAndAlbumId(String artistId, String albumId);
-
-    MusicAlbumArtistDTO insertByArtistIdAndAlbumId(String artistId, String albumId);
-
     boolean deleteByAlbumId(String albumId);
 }

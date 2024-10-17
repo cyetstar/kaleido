@@ -283,6 +283,10 @@ public class TvshowManager {
 
     private void renameDirIfChanged(TvshowShowDTO tvshowShowDTO) throws IOException {
         String newPath = KaleidoUtil.genTvshowFolder(tvshowShowDTO);
+        if (StringUtils.isEmpty(tvshowShowDTO.getPath())) {
+            TvshowShowDTO existTvshowShowDTO = tvshowShowService.findById(tvshowShowDTO.getId());
+            tvshowShowDTO.setPath(existTvshowShowDTO.getPath());
+        }
         if (!StringUtils.equals(newPath, tvshowShowDTO.getPath())) {
             Path tvshowPath = KaleidoUtil.getTvshowPath(newPath);
             if (Files.notExists(tvshowPath)) {

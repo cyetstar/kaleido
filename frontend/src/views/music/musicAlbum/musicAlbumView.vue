@@ -38,13 +38,13 @@
             class="h-cover"
             type="MusicAlbum"
             style="width: 250px"
-            :id="record.id"
+            :id="id"
         />
       </div>
       <div class="flex-1 ml-8">
         <h1>
           <a
-              v-for="artist in record.musicArtistDTOList"
+              v-for="artist in record.artistList"
               @click="onViewArtist(artist.id)"
           >{{ artist.title }}</a
           >
@@ -52,8 +52,11 @@
         <p>{{ record.originallyAvailableAt }}</p>
         <p>{{ record.label }}</p>
         <p>
-          <a-tag v-if="record.type">{{ record.type }}</a-tag>
+          <!--          <a-tag v-for="genre in record.genreList">{{ genre }}</a-tag>-->
+          <!--          <a-tag v-for="style in record.styleList">{{ style }}</a-tag>-->
+          <!--          <a-tag v-for="mood in record.moodList">{{ mood }}</a-tag>-->
           <a-tag v-if="record.genre">{{ record.genre }}</a-tag>
+          <a-tag v-if="record.type">{{ record.type }}</a-tag>
           <a-tag v-if="record.media">{{ record.media }}</a-tag>
         </p>
         <p>
@@ -92,11 +95,8 @@
           <a-table-column title="歌词" width="5%" align="center">
             <template #="{ record: trackRecord }">
               <file-text-outlined
-                  v-if="trackRecord.hasLyric === '1'"
                   @click="onViewLyric(trackRecord)"
               />
-              <file-search-outlined v-if="isNotEmpty(record.neteaseId) && trackRecord.hasLyric !== '1'"
-                                    @click="onSearchLyric(trackRecord)"/>
             </template>
           </a-table-column>
           <a-table-column
@@ -153,6 +153,7 @@ const modalLyricsVisible = ref(false);
 const modalLyricsTitle = ref();
 const lyrics = ref();
 const searchForm = ref({
+  id: id,
   albumId: id,
   force: true
 })
@@ -163,18 +164,13 @@ const refMusicAlbumFileManage = ref();
 const refMusicAlbumSearchLyric = ref();
 
 const initData = () => {
-  initAlbumData();
-  initTrackData();
-};
-
-const initAlbumData = () => {
-  apiMusicAlbumView({id}).then((res) => (record.value = res));
-};
-
-const initTrackData = () => {
-  apiMusicTrackListByAlbumId({albumId: id}).then(
-      (res) => discRecords.value = res
-  );
+  Promise.all([
+    apiMusicAlbumView({id}),
+    apiMusicTrackListByAlbumId({albumId: id})
+  ]).then(([res1, res2]) => {
+    record.value = res1;
+    discRecords.value = res2;
+  })
 };
 
 const onUpdate = () => {

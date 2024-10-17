@@ -5,13 +5,17 @@ package cc.onelooker.kaleido.thread;
  */
 public enum Action {
 
-    movieUpdateSource("更新电影源"), movieSync("同步Plex电影库"), movieMatchInfo("匹配信息"), movieReadNFO("读取NFO"), movieExportNFO("导出NFO"), movieCheckThreadStatus("检测发布"), movieCollectionSyncDouban("同步豆列"), movieCollectionSyncDoubanAll("同步全部豆列"), movieCollectionCheckMovieStatus("检测豆列收藏情况"), movieAnalyze("分析电影信息"), movieWriteNFO("写入NFO"),
+    movieUpdateSource("更新电影源"), movieSync("同步Plex电影库"), movieMatchInfo("自动匹配电影信息"), movieWriteNFO("导出电影NFO"),
 
-    musicUpdateSource("更新音乐源"), musicSync("同步Plex音乐库"), musicReadAudioTag("读取音乐标签"), musicDownloadLyric("下载歌词"),
+    movieCollectionSyncDouban("同步豆列"), movieCollectionSyncDoubanAll("同步全部豆列"), movieCollectionCheckMovieStatus("检测豆列收藏情况"), movieAnalyze("分析电影信息"),
 
-    tvshowUpdateSource("更新剧集源"), tvshowSync("同步Plex剧集库"), tvshowMatchInfo("匹配信息"), tvshowWriteNFO("写入NFO"),
+    musicUpdateSource("更新音乐源"), musicSync("同步Plex音乐库"), musicMatchInfo("自动匹配音乐信息"), musicWriteAudioTag("覆写音乐标签"), musicDownloadLyric("下载歌词"),
 
-    comicUpdateSource("漫画更新源"), comicSync("漫画Komga同步"), comicMatchInfo("匹配抓取"), comicWriteComicInfo("写入ComicInfo"), tableOptimize("优化数据库"),
+    tvshowUpdateSource("更新剧集源"), tvshowSync("同步Plex剧集库"), tvshowMatchInfo("自动匹配剧集信息"), tvshowWriteNFO("导出剧集NFO"),
+
+    comicUpdateSource("更新漫画源"), comicSync("同步Komga漫画库"), comicMatchInfo("自动匹配漫画信息"), comicWriteComicInfo("导出ComicInfo"),
+
+    tableOptimize("优化数据库"),
     ;
 
     private final String title;

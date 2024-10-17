@@ -74,11 +74,15 @@ public class ArtistDTO implements BaseDTO<String> {
 
     // ------ 非数据库表字段 -------
 
+    private List<String> idList;
+
     private String keyword;
 
     private List<String> styleList;
 
     private List<String> genreList;
+
+    private String trackId;
 
     @Override
     public String getId() {
@@ -89,4 +93,5 @@ public class ArtistDTO implements BaseDTO<String> {
     public void setId(String id) {
         this.id = id;
     }
+
 }

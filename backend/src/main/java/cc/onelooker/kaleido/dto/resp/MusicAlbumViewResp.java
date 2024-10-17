@@ -21,7 +21,7 @@ import java.util.List;
 public class MusicAlbumViewResp {
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("MusicBrainz编号")
     private String musicbrainzId;
@@ -65,8 +65,8 @@ public class MusicAlbumViewResp {
     @ApiModelProperty("首发日期")
     private String originallyAvailableAt;
 
-    @ApiModelProperty("封面图")
-    private String thumb;
+    @ApiModelProperty("路径")
+    private String path;
 
     @ApiModelProperty("加入时间")
     private Long addedAt;
@@ -74,10 +74,25 @@ public class MusicAlbumViewResp {
     @ApiModelProperty("更新时间")
     private Long updatedAt;
 
-    private List<ArtistDTO> artistDTOList;
+    private List<String> styleList;
+
+    private List<String> genreList;
+
+    private List<String> moodList;
+
+    private List<Artist> artistList;
 
     @JsonProperty
     public List<String> summaryList() {
         return Arrays.asList(StringUtils.split(summary, "\n"));
+    }
+
+    @Data
+    public static class Artist {
+
+        private String id;
+
+        private String title;
+
     }
 }

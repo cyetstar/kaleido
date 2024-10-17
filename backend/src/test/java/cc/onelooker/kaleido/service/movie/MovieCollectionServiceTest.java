@@ -30,20 +30,4 @@ public class MovieCollectionServiceTest {
     @Autowired
     private PlexApiService plexApiService;
 
-    @Test
-    void deleteAll() {
-        String plexMovieLibraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
-        List<Metadata> metadataList = plexApiService.listCollection(plexMovieLibraryId);
-        int size = metadataList.size();
-        log.info("总共【{}】条记录待删除", size);
-        for (Metadata metadata : metadataList) {
-            try {
-                plexApiService.deleteCollection(metadata.getRatingKey());
-                log.info("{}.【{}】含{}部，删除成功", size--, metadata.getTitle(), metadata.getChildCount());
-            } catch (Exception e) {
-                log.error("{}.【{}】含{}部，删除发生错误:{}", size--, metadata.getTitle(), metadata.getChildCount(), ExceptionUtil.getMessage(e));
-            }
-        }
-    }
-
 }

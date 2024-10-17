@@ -82,6 +82,7 @@ import FileModal from "@/components/FileModal";
 import ActionButton from "@/components/ActionButton";
 import SelectActor from "@/components/SelectActor";
 import SelectAuthor from "@/components/SelectAuthor";
+import SelectArtist from "@/components/SelectArtist";
 
 export const registerGlobComp = (app: App) => {
   app
@@ -111,6 +112,7 @@ export const registerGlobComp = (app: App) => {
     .component("k-logo-link", LogoLink)
     .component("k-select-actor", SelectActor)
     .component("k-select-author", SelectAuthor)
+    .component("k-select-artist", SelectArtist)
     .use(Layout)
     .use(Button)
     .use(Input)

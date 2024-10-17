@@ -15,7 +15,7 @@ import lombok.Data;
 public class ActorViewResp {
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("豆瓣编号")
     private String doubanId;

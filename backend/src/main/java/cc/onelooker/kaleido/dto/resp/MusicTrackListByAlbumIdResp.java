@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 曲目响应对象
  *
@@ -16,7 +18,7 @@ import lombok.Data;
 public class MusicTrackListByAlbumIdResp {
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("MusicBrainz编号")
     private String musicbrainzId;
@@ -48,21 +50,26 @@ public class MusicTrackListByAlbumIdResp {
     @ApiModelProperty("碟号")
     private Integer discIndex;
 
-    @ApiModelProperty("加入时间")
-    private Long addedAt;
-
-    @ApiModelProperty("更新时间")
-    private Long updatedAt;
-
     @ApiModelProperty("是否有歌词")
     private String hasLyric;
 
+    private List<Artist> artistList;
+
     @JsonProperty
-    public String durationLabel() {
+    public String getDurationLabel() {
         //将秒转分秒格式
         if (duration != null) {
             return String.format("%d:%02d", duration / 1000 / 60, duration % 60);
         }
         return null;
+    }
+
+    @Data
+    public static class Artist {
+
+        private String id;
+
+        private String title;
+
     }
 }

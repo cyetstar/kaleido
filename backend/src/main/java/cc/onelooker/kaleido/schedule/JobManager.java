@@ -19,8 +19,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class JobManager {
 
-    @Autowired
-    private MovieCheckThreadStatusRunnable movieCheckThreadStatusRunnable;
 
     @Autowired
     private MovieCollectionCheckMovieStatusRunnable movieCollectionCheckMovieStatusRunnable;
@@ -83,13 +81,6 @@ public class JobManager {
     public void syncComic() {
         if (ConfigUtils.isEnabled(ConfigKey.syncComic)) {
             comicSyncRunnable.run();
-        }
-    }
-
-    @Scheduled(cron = "0 15 3 * * ?")
-    public void checkThreadStatus() {
-        if (ConfigUtils.isEnabled(ConfigKey.checkThreadStatus)) {
-            movieCheckThreadStatusRunnable.run();
         }
     }
 

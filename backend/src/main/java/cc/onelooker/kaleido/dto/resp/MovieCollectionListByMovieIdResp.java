@@ -15,7 +15,7 @@ import lombok.Data;
 public class MovieCollectionListByMovieIdResp {
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("标题")
     private String title;

@@ -16,13 +16,13 @@ import lombok.Data;
 public class MovieBasicCollectionViewResp{
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("电影id")
-    private Long movieId;
+    private String movieId;
 
     @ApiModelProperty("集合id")
-    private Long collectionId;
+    private String collectionId;
 
     @ApiModelProperty("电影名")
     private String title;

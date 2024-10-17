@@ -64,12 +64,6 @@ public class MovieManager {
     private MovieBasicCollectionService movieBasicCollectionService;
 
     @Autowired
-    private ThreadService movieThreadService;
-
-    @Autowired
-    private MovieThreadFilenameService movieThreadFilenameService;
-
-    @Autowired
     private MovieDoubanWeeklyService movieDoubanWeeklyService;
 
     @Autowired
@@ -198,30 +192,6 @@ public class MovieManager {
             }
         }
 
-    }
-
-    @DSTransactional
-    public void checkThreadStatus(ThreadDTO movieThreadDTO) {
-//        List<MovieThreadFilenameDTO> movieThreadFilenameDTOList = movieThreadFilenameService.listByThreadId(movieThreadDTO.getId());
-//        if (CollectionUtils.isEmpty(movieThreadFilenameDTOList)) {
-//            return;
-//        }
-//        MovieBasicDTO movieBasicDTO = null;
-//        if (StringUtils.isNotEmpty(movieThreadDTO.getDoubanId())) {
-//            movieBasicDTO = movieBasicService.findByDoubanId(movieThreadDTO.getDoubanId());
-//        } else if (StringUtils.isNotEmpty(movieThreadDTO.getImdb())) {
-//            movieBasicDTO = movieBasicService.findByImdbId(movieThreadDTO.getImdb());
-//        }
-//        if (movieBasicDTO == null) {
-//            return;
-//        }
-//        Metadata metadata = plexApiService.findMovieById(movieBasicDTO.getId());
-//        String filename = StringUtils.lowerCase(StringUtils.substringAfterLast(metadata.getMedia().getPart().getFile(), Constants.SLASH));
-//        List<String> filenameList = movieThreadFilenameDTOList.stream().map(s -> StringUtils.lowerCase(s.getValue())).collect(Collectors.toList());
-//        if (filenameList.contains(filename)) {
-//            movieThreadDTO.setStatus(ThreadStatus.done.ordinal());
-//            movieThreadService.update(movieThreadDTO);
-//        }
     }
 
     public void writeMovieNFO(MovieBasicDTO movieBasicDTO, MovieNFO movieNFO) {
@@ -395,8 +365,8 @@ public class MovieManager {
         String newPath = KaleidoUtil.genMovieFolder(movieBasicDTO);
         if (StringUtils.isEmpty(movieBasicDTO.getPath())) {
             //如果path不存在，则重新从数据库中取出来
-            MovieBasicDTO pathDTO = movieBasicService.findById(movieBasicDTO.getId());
-            movieBasicDTO.setPath(pathDTO.getPath());
+            MovieBasicDTO existMovieBasicDTO = movieBasicService.findById(movieBasicDTO.getId());
+            movieBasicDTO.setPath(existMovieBasicDTO.getPath());
         }
         if (!StringUtils.equals(newPath, movieBasicDTO.getPath())) {
             Path moviePath = KaleidoUtil.getMoviePath(newPath);

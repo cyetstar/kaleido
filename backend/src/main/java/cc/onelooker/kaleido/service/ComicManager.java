@@ -330,6 +330,10 @@ public class ComicManager {
 
     private void renameDirIfChanged(ComicSeriesDTO comicSeriesDTO) throws IOException {
         String comicFolder = KaleidoUtil.genComicFolder(comicSeriesDTO);
+        if (StringUtils.isEmpty(comicSeriesDTO.getPath())) {
+            ComicSeriesDTO existComicSeriesDTO = comicSeriesService.findById(comicSeriesDTO.getId());
+            comicSeriesDTO.setPath(existComicSeriesDTO.getPath());
+        }
         if (!StringUtils.equals(comicFolder, comicSeriesDTO.getPath())) {
             Path newPath = KaleidoUtil.getComicPath(comicFolder);
             Path oldPath = KaleidoUtil.getComicPath(comicSeriesDTO.getPath());

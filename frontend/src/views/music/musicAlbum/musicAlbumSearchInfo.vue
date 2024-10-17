@@ -49,7 +49,7 @@
                 <div
                   :class="[
                     'k-block',
-                    compareTitles(record.artist, record.songArtist),
+                    compareTitles(record.artistName, record.songArtistName),
                   ]"
                 ></div>
               </a-popover>
@@ -263,13 +263,16 @@ const addRowColor = (source) => {
 };
 
 const compareNumbers = (num1, num2) => {
+  if (num1 === null || num2 === null) {
+    return "low";
+  }
   if (num1 === num2) {
     return "high";
   }
   // 计算两个数字的差异百分比
   const difference = Math.abs(num1 - num2) / Math.max(num1, num2);
-  // 如果差异小于等于 1%，返回相似，否则返回不同
-  if (difference <= 0.01) {
+  // 如果差异小于等于 2%，返回相似，否则返回不同
+  if (difference <= 0.02) {
     return "medium";
   } else {
     return "low";
@@ -286,18 +289,17 @@ const compareTitles = (title1, title2) => {
       .trim(); // 去除首尾空格
   }
 
-  // 如果两个字符串完全一致
+  if (title1 === null || title2 === null) {
+    return "low";
+  }
   if (title1 === title2) {
     return "high";
   }
-  // 标准化标题
   const normalizedTitle1 = normalizeTitle(title1);
   const normalizedTitle2 = normalizeTitle(title2);
-  // 如果标准化后的标题一致
   if (normalizedTitle1 === normalizedTitle2) {
     return "medium";
   }
-  // 如果不一致
   return "low";
 };
 

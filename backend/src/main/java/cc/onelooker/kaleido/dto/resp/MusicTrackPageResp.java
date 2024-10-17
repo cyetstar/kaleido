@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 曲目响应对象
  *
@@ -15,7 +17,7 @@ import lombok.Data;
 public class MusicTrackPageResp {
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("MusicBrainz编号")
     private String musicbrainzId;
@@ -32,8 +34,8 @@ public class MusicTrackPageResp {
     @ApiModelProperty("文件格式")
     private String format;
 
-    @ApiModelProperty("文件路径")
-    private String path;
+    @ApiModelProperty("文件名")
+    private String filename;
 
     @ApiModelProperty("专辑id")
     private Long albumId;
@@ -47,9 +49,4 @@ public class MusicTrackPageResp {
     @ApiModelProperty("碟号")
     private Integer discIndex;
 
-    @ApiModelProperty("加入时间")
-    private Long addedAt;
-
-    @ApiModelProperty("更新时间")
-    private Long updatedAt;
 }

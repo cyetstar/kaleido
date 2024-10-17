@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 专辑请求对象
  *
@@ -15,7 +17,7 @@ import lombok.Data;
 public class MusicAlbumUpdateReq {
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("MusicBrainz编号")
     private String musicbrainzId;
@@ -53,19 +55,30 @@ public class MusicAlbumUpdateReq {
     @ApiModelProperty("媒体")
     private String media;
 
-    @ApiModelProperty("首发年份")
-    private String year;
-
     @ApiModelProperty("首发日期")
     private String originallyAvailableAt;
 
-    @ApiModelProperty("封面图")
-    private String thumb;
+    @ApiModelProperty("艺术家主键列表")
+    private List<String> artistList;
 
-    @ApiModelProperty("加入时间")
-    private Long addedAt;
+    @ApiModelProperty("曲目列表")
+    private List<Track> trackList;
 
-    @ApiModelProperty("更新时间")
-    private Long updatedAt;
+    @Data
+    public static class Track {
+        @ApiModelProperty("主键")
+        private String id;
 
+        @ApiModelProperty("标题")
+        private String title;
+
+        @ApiModelProperty("曲号")
+        private Integer trackIndex;
+
+        @ApiModelProperty("碟号")
+        private Integer discIndex;
+
+        @ApiModelProperty("艺术家主键列表")
+        private List<String> artistList;
+    }
 }

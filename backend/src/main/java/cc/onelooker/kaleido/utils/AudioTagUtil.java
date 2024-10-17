@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.tag.FieldDataInvalidException;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
-import org.jaudiotagger.tag.flac.FlacTag;
 import org.jaudiotagger.tag.id3.ID3v23FieldKey;
 import org.jaudiotagger.tag.id3.ID3v23Tag;
 
@@ -47,9 +46,20 @@ public class AudioTagUtil {
         musicAlbumDTO.setType(audioTag.getReleaseType());
         musicAlbumDTO.setGenre(audioTag.getGenre());
         musicAlbumDTO.setReleaseCountry(audioTag.getReleaseCountry());
-        musicAlbumDTO.setOriginallyAvailableAt(audioTag.getReleaseYear());
+        musicAlbumDTO.setOriginallyAvailableAt(audioTag.getReleaseDate());
+        if (StringUtils.isNotEmpty(audioTag.getYear())) {
+            musicAlbumDTO.setYear(StringUtils.substring(audioTag.getYear(), 0, 4));
+        } else {
+            musicAlbumDTO.setYear(StringUtils.substring(audioTag.getReleaseDate(), 0, 4));
+        }
         musicAlbumDTO.setLabel(audioTag.getRecordLabel());
         musicAlbumDTO.setMedia(audioTag.getMedia());
+        if (StringUtils.isNumeric(audioTag.getTotalDiscs())) {
+            musicAlbumDTO.setTotalDiscs(Integer.parseInt(audioTag.getTotalDiscs()));
+        }
+        if (StringUtils.isNumeric(audioTag.getTotalTracks())) {
+            musicAlbumDTO.setTotalTracks(Integer.parseInt(audioTag.getTotalTracks()));
+        }
     }
 
     public static void toMusicTrackDTO(Tag tag, MusicTrackDTO musicTrackDTO) {
@@ -57,10 +67,10 @@ public class AudioTagUtil {
         musicTrackDTO.setNeteaseId(audioTag.getNeteaseId());
         musicTrackDTO.setMusicbrainzId(audioTag.getMusicbrainzId());
         musicTrackDTO.setArtists(audioTag.getArtist());
-        if (audioTag.getDiscIndex() != null) {
+        if (StringUtils.isNumeric(audioTag.getDiscIndex())) {
             musicTrackDTO.setDiscIndex(Integer.parseInt(audioTag.getDiscIndex()));
         }
-        if (audioTag.getTrackIndex() != null) {
+        if (StringUtils.isNumeric(audioTag.getTrackIndex())) {
             musicTrackDTO.setTrackIndex(Integer.parseInt(audioTag.getTrackIndex()));
         }
     }
@@ -76,7 +86,9 @@ public class AudioTagUtil {
         setTagValue(tag, FieldKey.MUSICBRAINZ_RELEASE_COUNTRY, audioTag.getReleaseCountry());
         setTagValue(tag, FieldKey.RECORD_LABEL, audioTag.getRecordLabel());
         setTagValue(tag, FieldKey.MEDIA, audioTag.getMedia());
-        setTagValue(tag, FieldKey.YEAR, audioTag.getReleaseYear());
+        setTagValue(tag, FieldKey.ORIGINALRELEASEDATE, audioTag.getReleaseDate());
+        setTagValue(tag, FieldKey.YEAR, audioTag.getYear());
+        setTagValue(tag, FieldKey.DISC_TOTAL, audioTag.releaseCountry);
 
         setTagValue(tag, FieldKey.CUSTOM2, audioTag.getNeteaseId());
         setTagValue(tag, FieldKey.MUSICBRAINZ_TRACK_ID, audioTag.getMusicbrainzId());
@@ -103,7 +115,10 @@ public class AudioTagUtil {
         audioTag.setReleaseCountry(getTagValue(tag, FieldKey.MUSICBRAINZ_RELEASE_COUNTRY));
         audioTag.setRecordLabel(getTagValue(tag, FieldKey.RECORD_LABEL));
         audioTag.setMedia(getTagValue(tag, FieldKey.MEDIA));
-        audioTag.setReleaseYear(getTagValue(tag, FieldKey.YEAR));
+        audioTag.setReleaseDate(getTagValue(tag, FieldKey.ORIGINALRELEASEDATE));
+        audioTag.setYear(getTagValue(tag, FieldKey.YEAR));
+        audioTag.setTotalDiscs(getTagValue(tag, FieldKey.DISC_TOTAL));
+        audioTag.setTotalTracks(getTagValue(tag, FieldKey.TRACK_TOTAL));
         audioTag.setNeteaseId(getTagValue(tag, FieldKey.CUSTOM2));
         audioTag.setMusicbrainzId(getTagValue(tag, FieldKey.MUSICBRAINZ_TRACK_ID));
         audioTag.setTitle(getTagValue(tag, FieldKey.TITLE));
@@ -120,11 +135,18 @@ public class AudioTagUtil {
         audioTag.setAlbumTitle(musicAlbumDTO.getTitle());
         audioTag.setAlbumArtist(musicAlbumDTO.getArtists());
         audioTag.setReleaseType(musicAlbumDTO.getType());
-        audioTag.setGenre(musicAlbumDTO.getGenre());
         audioTag.setReleaseCountry(musicAlbumDTO.getReleaseCountry());
+        audioTag.setReleaseDate(StringUtils.defaultIfEmpty(musicAlbumDTO.getOriginallyAvailableAt(), musicAlbumDTO.getYear()));
         audioTag.setRecordLabel(musicAlbumDTO.getLabel());
+        audioTag.setGenre(musicAlbumDTO.getGenre());
         audioTag.setMedia(musicAlbumDTO.getMedia());
-        audioTag.setReleaseYear(StringUtils.substring(musicAlbumDTO.getOriginallyAvailableAt(), 0, 4));
+        audioTag.setYear(musicAlbumDTO.getYear());
+        if (musicAlbumDTO.getTotalDiscs() != null) {
+            audioTag.setTotalDiscs(String.valueOf(musicAlbumDTO.getTotalDiscs()));
+        }
+        if (musicAlbumDTO.getTotalTracks() != null) {
+            audioTag.setTotalTracks(String.valueOf(musicAlbumDTO.getTotalTracks()));
+        }
         audioTag.setNeteaseId(musicTrackDTO.getNeteaseId());
         audioTag.setMusicbrainzId(musicTrackDTO.getMusicbrainzId());
         audioTag.setTitle(musicTrackDTO.getTitle());
@@ -139,10 +161,7 @@ public class AudioTagUtil {
     }
 
     private static String getTagValue(Tag tag, FieldKey fieldKey) {
-        if (tag instanceof FlacTag) {
-            FlacTag flacTag = (FlacTag) tag;
-            return flacTag.getFirst(fieldKey);
-        } else if (tag instanceof ID3v23Tag) {
+        if (tag instanceof ID3v23Tag) {
             ID3v23Tag id3v2Tag = (ID3v23Tag) tag;
             ID3v23FieldKey id3v23FieldKey = MapUtils.getObject(fieldKeyMap, fieldKey);
             if (id3v23FieldKey != null) {
@@ -151,7 +170,7 @@ public class AudioTagUtil {
                 return id3v2Tag.getFirst(fieldKey);
             }
         } else {
-            throw new IllegalArgumentException();
+            return tag.getFirst(fieldKey);
         }
     }
 
@@ -173,7 +192,8 @@ public class AudioTagUtil {
         private String albumArtist;
         private String releaseType;
         private String releaseCountry;
-        private String releaseYear;
+        private String releaseDate;
+        private String year;
         private String genre;
         private String recordLabel;
         private String media;
@@ -183,18 +203,20 @@ public class AudioTagUtil {
         private String artist;
         private String discIndex;
         private String trackIndex;
+        private String totalDiscs;
+        private String totalTracks;
 
         @Override
         public boolean equals(Object object) {
             if (this == object) return true;
             if (object == null || getClass() != object.getClass()) return false;
             AudioTag audioTag = (AudioTag) object;
-            return Objects.equals(neteaseReleaseId, audioTag.neteaseReleaseId) && Objects.equals(musicbrainzReleaseId, audioTag.musicbrainzReleaseId) && Objects.equals(albumTitle, audioTag.albumTitle) && Objects.equals(albumArtist, audioTag.albumArtist) && Objects.equals(releaseType, audioTag.releaseType) && Objects.equals(releaseCountry, audioTag.releaseCountry) && Objects.equals(genre, audioTag.genre) && Objects.equals(recordLabel, audioTag.recordLabel) && Objects.equals(media, audioTag.media) && Objects.equals(neteaseId, audioTag.neteaseId) && Objects.equals(musicbrainzId, audioTag.musicbrainzId) && Objects.equals(title, audioTag.title) && Objects.equals(artist, audioTag.artist) && Objects.equals(discIndex, audioTag.discIndex) && Objects.equals(trackIndex, audioTag.trackIndex);
+            return Objects.equals(neteaseReleaseId, audioTag.neteaseReleaseId) && Objects.equals(musicbrainzReleaseId, audioTag.musicbrainzReleaseId) && Objects.equals(albumTitle, audioTag.albumTitle) && Objects.equals(albumArtist, audioTag.albumArtist) && Objects.equals(releaseType, audioTag.releaseType) && Objects.equals(releaseCountry, audioTag.releaseCountry) && Objects.equals(releaseDate, audioTag.releaseDate) && Objects.equals(year, audioTag.year) && Objects.equals(genre, audioTag.genre) && Objects.equals(recordLabel, audioTag.recordLabel) && Objects.equals(media, audioTag.media) && Objects.equals(neteaseId, audioTag.neteaseId) && Objects.equals(musicbrainzId, audioTag.musicbrainzId) && Objects.equals(title, audioTag.title) && Objects.equals(artist, audioTag.artist) && Objects.equals(discIndex, audioTag.discIndex) && Objects.equals(trackIndex, audioTag.trackIndex) && Objects.equals(totalDiscs, audioTag.totalDiscs) && Objects.equals(totalTracks, audioTag.totalTracks);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(neteaseReleaseId, musicbrainzReleaseId, albumTitle, albumArtist, releaseType, releaseCountry, genre, recordLabel, media, neteaseId, musicbrainzId, title, artist, discIndex, trackIndex);
+            return Objects.hash(neteaseReleaseId, musicbrainzReleaseId, albumTitle, albumArtist, releaseType, releaseCountry, releaseDate, year, genre, recordLabel, media, neteaseId, musicbrainzId, title, artist, discIndex, trackIndex, totalDiscs, totalTracks);
         }
     }
 }

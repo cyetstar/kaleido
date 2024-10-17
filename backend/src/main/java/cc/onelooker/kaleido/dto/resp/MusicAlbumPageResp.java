@@ -15,7 +15,7 @@ import lombok.Data;
 public class MusicAlbumPageResp {
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("MusicBrainz编号")
     private String musicbrainzId;

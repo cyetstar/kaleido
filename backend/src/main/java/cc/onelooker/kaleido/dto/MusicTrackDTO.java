@@ -5,6 +5,8 @@ import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 曲目DTO
  *
@@ -82,6 +84,8 @@ public class MusicTrackDTO implements BaseDTO<String> {
     private Long updatedAt;
 
     // ------ 非数据库表字段 -------
+
+    private List<ArtistDTO> artistList;
 
     @Override
     public String getId() {

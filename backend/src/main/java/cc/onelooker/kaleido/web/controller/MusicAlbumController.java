@@ -1,8 +1,8 @@
 package cc.onelooker.kaleido.web.controller;
 
+import cc.onelooker.kaleido.convert.MovieBasicConvert;
 import cc.onelooker.kaleido.convert.MusicAlbumConvert;
-import cc.onelooker.kaleido.dto.ArtistDTO;
-import cc.onelooker.kaleido.dto.MusicAlbumDTO;
+import cc.onelooker.kaleido.dto.*;
 import cc.onelooker.kaleido.dto.req.*;
 import cc.onelooker.kaleido.dto.resp.*;
 import cc.onelooker.kaleido.service.ArtistService;
@@ -14,6 +14,7 @@ import cc.onelooker.kaleido.third.tmm.Album;
 import cc.onelooker.kaleido.third.tmm.Song;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.AudioTagUtil;
+import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtil;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.http.HttpUtil;
@@ -23,6 +24,7 @@ import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
+import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -67,9 +69,6 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @Autowired
     private TmmApiService tmmApiService;
 
-    @Autowired
-    private PlexApiService plexApiService;
-
     @Override
     protected IBaseService getService() {
         return musicAlbumService;
@@ -85,10 +84,9 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @GetMapping("view")
     @ApiOperation(value = "查看专辑详情")
     public CommonResult<MusicAlbumViewResp> view(String id) {
-        List<ArtistDTO> artistDTOList = artistService.listByAlbumId(id);
-        MusicAlbumViewResp musicAlbumViewResp = doView(id, MusicAlbumConvert.INSTANCE::convertToViewResp);
-        musicAlbumViewResp.setArtistDTOList(artistDTOList);
-        return CommonResult.success(musicAlbumViewResp);
+        MusicAlbumDTO musicAlbumDTO = musicManager.findMusicAlbum(id);
+        MusicAlbumViewResp resp = MusicAlbumConvert.INSTANCE.convertToViewResp(musicAlbumDTO);
+        return CommonResult.success(resp);
     }
 
     @PostMapping("create")
@@ -100,7 +98,27 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
     @PostMapping("update")
     @ApiOperation(value = "编辑专辑")
     public CommonResult<Boolean> update(@RequestBody MusicAlbumUpdateReq req) {
-        return super.update(req, MusicAlbumConvert.INSTANCE::convertToDTO);
+        MusicAlbumDTO dto = MusicAlbumConvert.INSTANCE.convertToDTO(req);
+        dto.setYear(StringUtils.defaultIfEmpty(dto.getYear(), StringUtils.substring(dto.getOriginallyAvailableAt(), 0, 4)));
+        if (req.getArtistList() != null) {
+            dto.setArtistList(req.getArtistList().stream().map(s -> artistService.findById(s)).collect(Collectors.toList()));
+            dto.setArtists(dto.getArtistList().stream().map(ArtistDTO::getTitle).collect(Collectors.joining(Constants.SEMICOLON)));
+        }
+        if (req.getTrackList() != null) {
+            List<MusicTrackDTO> musicTrackDTOList = req.getTrackList().stream().map(s -> {
+                MusicTrackDTO musicTrackDTO = new MusicTrackDTO();
+                musicTrackDTO.setId(s.getId());
+                musicTrackDTO.setAlbumId(req.getId());
+                musicTrackDTO.setTitle(s.getTitle());
+                musicTrackDTO.setTrackIndex(s.getTrackIndex());
+                musicTrackDTO.setDiscIndex(s.getDiscIndex());
+                musicTrackDTO.setArtistList(s.getArtistList().stream().map(a -> artistService.findById(a)).collect(Collectors.toList()));
+                return musicTrackDTO;
+            }).collect(Collectors.toList());
+            dto.setTrackList(musicTrackDTOList);
+        }
+        musicManager.saveAlbum(dto);
+        return CommonResult.success(true);
     }
 
     @DeleteMapping(value = "delete")
@@ -140,10 +158,10 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
                     Tag tag = audioFile.getTag();
                     AudioTagUtil.AudioTag audioTag = AudioTagUtil.toAudioTag(tag);
                     Integer trackIndex = null;
-                    resp.setTitle(audioTag.getTitle());
+                    resp.setTitle(StringUtils.defaultIfEmpty(audioTag.getTitle(), KaleidoUtil.parseTrackTitle(s.getFileName().toString())));
                     resp.setArtistName(audioTag.getArtist());
                     resp.setDuration(audioFile.getAudioHeader().getTrackLength());
-                    resp.setPublishTime(audioTag.getReleaseYear());
+                    resp.setPublishTime(StringUtils.defaultIfEmpty(audioTag.getReleaseDate(), audioTag.getYear()));
                     if (StringUtils.isNumeric(audioTag.getTrackIndex())) {
                         trackIndex = Integer.parseInt(audioTag.getTrackIndex());
                     } else {
@@ -205,10 +223,9 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
 
     @PostMapping("downloadCover")
     public CommonResult<Boolean> downloadCover(@RequestBody MusicAlbumDownloadCoverReq req) {
-        List<Metadata> metadataList = plexApiService.listTrackByAlbumId(req.getId());
-        Metadata metadata = metadataList.get(0);
-        Path filePath = KaleidoUtil.getMusicPath(metadata.getMedia().getPart().getFile());
-        File file = filePath.resolveSibling("cover.jpg").toFile();
+        MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(req.getId());
+        Path filePath = KaleidoUtil.getMusicPath(musicAlbumDTO.getPath());
+        File file = filePath.resolve(KaleidoConstants.COVER).toFile();
         HttpUtil.downloadFile(req.getUrl(), file);
         return CommonResult.success(true);
     }

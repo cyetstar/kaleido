@@ -41,7 +41,7 @@
             class="h-poster"
             style="width: 250px"
             type="ComicSeries"
-            :id="record.id"
+            :id="id"
         />
       </div>
       <div class="flex-1 ml-8">

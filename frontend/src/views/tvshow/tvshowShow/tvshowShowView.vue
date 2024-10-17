@@ -35,7 +35,7 @@
             class="h-poster"
             type="TvshowShow"
             style="width: 250px"
-            :id="record.id"
+            :id="id"
         />
       </div>
       <div class="flex-1 ml-8">

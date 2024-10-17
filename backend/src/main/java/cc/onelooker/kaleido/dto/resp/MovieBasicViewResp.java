@@ -21,7 +21,7 @@ import java.util.List;
 public class MovieBasicViewResp {
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("电影名")
     private String title;

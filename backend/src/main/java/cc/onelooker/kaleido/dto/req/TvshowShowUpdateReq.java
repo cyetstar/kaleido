@@ -52,9 +52,6 @@ public class TvshowShowUpdateReq {
     @ApiModelProperty("TMDB编号")
     private String tmdbId;
 
-    @ApiModelProperty("路径")
-    private String path;
-
     @ApiModelProperty("别名列表")
     private List<String> akaList;
 

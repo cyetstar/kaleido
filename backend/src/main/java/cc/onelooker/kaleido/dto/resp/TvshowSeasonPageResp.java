@@ -15,10 +15,10 @@ import lombok.Data;
 public class TvshowSeasonPageResp {
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("剧集id")
-    private Long showId;
+    private String showId;
 
     @ApiModelProperty("标题")
     private String title;

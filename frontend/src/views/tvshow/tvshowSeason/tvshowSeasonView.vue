@@ -36,7 +36,7 @@
             class="h-poster"
             type="TvshowSeason"
             style="width: 250px"
-            :id="record.id"
+            :id="id"
         />
       </div>
       <div class="flex-1 ml-8">

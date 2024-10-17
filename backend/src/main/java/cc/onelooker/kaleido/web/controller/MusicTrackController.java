@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.convert.MusicTrackConvert;
+import cc.onelooker.kaleido.dto.ArtistDTO;
 import cc.onelooker.kaleido.dto.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.MusicTrackDTO;
 import cc.onelooker.kaleido.dto.req.MusicTrackCreateReq;
@@ -10,6 +11,7 @@ import cc.onelooker.kaleido.dto.resp.MusicTrackCreateResp;
 import cc.onelooker.kaleido.dto.resp.MusicTrackListByAlbumIdResp;
 import cc.onelooker.kaleido.dto.resp.MusicTrackPageResp;
 import cc.onelooker.kaleido.dto.resp.MusicTrackViewResp;
+import cc.onelooker.kaleido.service.ArtistService;
 import cc.onelooker.kaleido.service.MusicAlbumService;
 import cc.onelooker.kaleido.service.MusicManager;
 import cc.onelooker.kaleido.service.MusicTrackService;
@@ -53,7 +55,7 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
     private MusicAlbumService musicAlbumService;
 
     @Autowired
-    private MusicManager musicManager;
+    private ArtistService artistService;
 
     @Override
     protected IBaseService getService() {
@@ -92,13 +94,13 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
 
     @GetMapping("listByAlbumId")
     public CommonResult<Collection<List<MusicTrackListByAlbumIdResp>>> listByAlbumId(String albumId) {
-        MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(albumId);
         List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(albumId);
+        List<String> trackIdList = musicTrackDTOList.stream().map(MusicTrackDTO::getId).collect(Collectors.toList());
+        Map<String, List<ArtistDTO>> mapResult = artistService.mapByTrackIdList(trackIdList);
         List<MusicTrackListByAlbumIdResp> respList = Lists.newArrayList();
         for (MusicTrackDTO musicTrackDTO : musicTrackDTOList) {
-            File file = KaleidoUtil.getMusicFilePath(musicAlbumDTO.getPath(), FilenameUtils.getBaseName(musicTrackDTO.getFilename()) + ".lrc").toFile();
+            musicTrackDTO.setArtistList(mapResult.getOrDefault(musicTrackDTO.getId(), Lists.newArrayList()));
             MusicTrackListByAlbumIdResp resp = MusicTrackConvert.INSTANCE.convertToListByAlbumIdResp(musicTrackDTO);
-            resp.setHasLyric(file.exists() && file.length() > 0 ? Constants.YES : Constants.NO);
             respList.add(resp);
         }
         Map<Optional<Integer>, List<MusicTrackListByAlbumIdResp>> result = respList.stream().collect(Collectors.groupingBy(s -> Optional.ofNullable(s.getDiscIndex())));
@@ -110,15 +112,12 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
         MusicTrackDTO musicTrackDTO = musicTrackService.findById(id);
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(musicTrackDTO.getAlbumId());
         File file = KaleidoUtil.getMusicFilePath(musicAlbumDTO.getPath(), FilenameUtils.getBaseName(musicTrackDTO.getFilename()) + ".lrc").toFile();
-        String content = FileUtils.readFileToString(file);
-        List<String> result = Arrays.asList(StringUtils.split(content, "\n"));
+        List<String> result = Lists.newArrayList();
+        if (file.exists() && file.length() > 0) {
+            String content = FileUtils.readFileToString(file);
+            result = Arrays.asList(StringUtils.split(content, "\n"));
+        }
         return CommonResult.success(result);
     }
-
-//    @PostMapping("downloadLyric")
-//    public CommonResult<Boolean> downloadLyric(@RequestBody MusicTrackDownloadLyricReq req) {
-//        musicManager.downloadTrackLyric(req.getId(), req.getNeteaseId());
-//        return CommonResult.success(true);
-//    }
 
 }

@@ -7,8 +7,9 @@
  */
 import { defineStore } from "pinia";
 import { useUserStore } from "@/store/modules/user";
-
 import { createPinia } from "pinia";
+
+const { VITE_WS_PATH, MODE } = import.meta.env;
 
 const pinia = createPinia();
 export default pinia;
@@ -16,7 +17,9 @@ export default pinia;
 const userStore = useUserStore(pinia);
 const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
 const host = window.location.host;
-const wsUrl = protocol + host + "/websocket/";
+const wsUrl =
+  MODE === "development" ? VITE_WS_PATH || "" : protocol + host + "/websocket/";
+
 export const useWebSocketStore = defineStore("websocket", {
   state: (): any => ({
     websocket: null,

@@ -6,6 +6,7 @@
 <template>
   <h-form-modal
     ref="refForm"
+    mask
     :label-col="{ span: 4 }"
     width="1000px"
     v-model:form="form"

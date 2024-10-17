@@ -3,15 +3,20 @@ package cc.onelooker.kaleido.service.impl;
 import cc.onelooker.kaleido.convert.ArtistConvert;
 import cc.onelooker.kaleido.dto.ArtistDTO;
 import cc.onelooker.kaleido.dto.MusicAlbumArtistDTO;
+import cc.onelooker.kaleido.dto.MusicTrackArtistDTO;
 import cc.onelooker.kaleido.entity.ArtistDO;
 import cc.onelooker.kaleido.mapper.ArtistMapper;
 import cc.onelooker.kaleido.service.ArtistService;
 import cc.onelooker.kaleido.service.MusicAlbumArtistService;
+import cc.onelooker.kaleido.service.MusicTrackArtistService;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 艺术家ServiceImpl
@@ -32,7 +40,10 @@ public class ArtistServiceImpl extends AbstractBaseServiceImpl<ArtistMapper, Art
     ArtistConvert convert = ArtistConvert.INSTANCE;
 
     @Autowired
-    private MusicAlbumArtistService musicMusicAlbumArtistService;
+    private MusicAlbumArtistService musicAlbumArtistService;
+
+    @Autowired
+    private MusicTrackArtistService musicTrackArtistService;
 
     @Override
     protected Wrapper<ArtistDO> genQueryWrapper(ArtistDTO dto) {
@@ -43,6 +54,7 @@ public class ArtistServiceImpl extends AbstractBaseServiceImpl<ArtistMapper, Art
         query.eq(StringUtils.isNotEmpty(dto.getSortTitle()), ArtistDO::getSortTitle, dto.getSortTitle());
         query.eq(StringUtils.isNotEmpty(dto.getArea()), ArtistDO::getArea, dto.getArea());
         query.like(StringUtils.isNotEmpty(dto.getKeyword()), ArtistDO::getTitle, dto.getKeyword());
+        query.in(CollectionUtils.isNotEmpty(dto.getIdList()), ArtistDO::getId, dto.getIdList());
         return query;
     }
 
@@ -58,15 +70,42 @@ public class ArtistServiceImpl extends AbstractBaseServiceImpl<ArtistMapper, Art
 
     @Override
     public List<ArtistDTO> listByAlbumId(String albumId) {
-        List<MusicAlbumArtistDTO> musicMusicAlbumArtistDTOList = musicMusicAlbumArtistService.listByAlbumId(albumId);
+        List<MusicAlbumArtistDTO> musicAlbumArtistDTOList = musicAlbumArtistService.listByAlbumId(albumId);
         List<ArtistDTO> artistDTOList = Lists.newArrayList();
-        for (MusicAlbumArtistDTO musicMusicAlbumArtistDTO : musicMusicAlbumArtistDTOList) {
-            ArtistDTO artistDTO = findById(musicMusicAlbumArtistDTO.getArtistId());
+        for (MusicAlbumArtistDTO musicAlbumArtistDTO : musicAlbumArtistDTOList) {
+            ArtistDTO artistDTO = findById(musicAlbumArtistDTO.getArtistId());
             if (artistDTO != null) {
                 artistDTOList.add(artistDTO);
             }
         }
         return artistDTOList;
+    }
+
+    @Override
+    public List<ArtistDTO> listByTrackId(String trackId) {
+        List<MusicTrackArtistDTO> musicTrackArtistDTOList = musicTrackArtistService.listByTrackId(trackId);
+        List<ArtistDTO> artistDTOList = Lists.newArrayList();
+        for (MusicTrackArtistDTO musicTrackArtistDTO : musicTrackArtistDTOList) {
+            ArtistDTO artistDTO = findById(musicTrackArtistDTO.getArtistId());
+            if (artistDTO != null) {
+                artistDTOList.add(artistDTO);
+            }
+        }
+        return artistDTOList;
+    }
+
+    public Map<String, List<ArtistDTO>> mapByTrackIdList(List<String> trackIdList) {
+        Map<String, ArtistDTO> cacheContext = Maps.newHashMap();
+        List<MusicTrackArtistDTO> musicTrackArtistDTOList = musicTrackArtistService.listByTrackIdList(trackIdList);
+        return musicTrackArtistDTOList.stream().map(s -> {
+            ArtistDTO artistDTO = cacheContext.get(s.getArtistId());
+            if (artistDTO == null) {
+                artistDTO = findById(s.getArtistId());
+                cacheContext.put(s.getArtistId(), artistDTO);
+            }
+            artistDTO.setTrackId(s.getTrackId());
+            return artistDTO;
+        }).collect(Collectors.groupingBy(ArtistDTO::getTrackId));
     }
 
     @Override
@@ -104,11 +143,11 @@ public class ArtistServiceImpl extends AbstractBaseServiceImpl<ArtistMapper, Art
 
     @Override
     @Transactional
-    public void updateArtists(List<ArtistDTO> artistDTOList, String albumId) {
+    public void updateAlbumArtists(List<ArtistDTO> artistDTOList, String albumId) {
         if (artistDTOList == null) {
             return;
         }
-        musicMusicAlbumArtistService.deleteByAlbumId(albumId);
+        musicAlbumArtistService.deleteByAlbumId(albumId);
         artistDTOList.forEach(s -> {
             MusicAlbumArtistDTO musicAlbumArtistDTO = new MusicAlbumArtistDTO();
             musicAlbumArtistDTO.setAlbumId(albumId);
@@ -118,9 +157,29 @@ public class ArtistServiceImpl extends AbstractBaseServiceImpl<ArtistMapper, Art
             } else {
                 musicAlbumArtistDTO.setArtistId(s.getId());
             }
-            musicMusicAlbumArtistService.insert(musicAlbumArtistDTO);
+            musicAlbumArtistService.insert(musicAlbumArtistDTO);
         });
 
+    }
+
+    @Override
+    @Transactional
+    public void updateTrackArtists(List<ArtistDTO> artistDTOList, String trackId) {
+        if (artistDTOList == null) {
+            return;
+        }
+        musicTrackArtistService.deleteByTrackId(trackId);
+        artistDTOList.forEach(s -> {
+            MusicTrackArtistDTO musicTrackArtistDTO = new MusicTrackArtistDTO();
+            musicTrackArtistDTO.setTrackId(trackId);
+            if (StringUtils.isEmpty(s.getId())) {
+                ArtistDTO artistDTO = findOrSave(s);
+                musicTrackArtistDTO.setArtistId(artistDTO.getId());
+            } else {
+                musicTrackArtistDTO.setArtistId(s.getId());
+            }
+            musicTrackArtistService.insert(musicTrackArtistDTO);
+        });
     }
 
     private ArtistDTO findOrSave(ArtistDTO dto) {
@@ -142,7 +201,7 @@ public class ArtistServiceImpl extends AbstractBaseServiceImpl<ArtistMapper, Art
             artistDTO.setNeteaseId(dto.getNeteaseId());
             artistDTO.setMusicbrainzId(dto.getMusicbrainzId());
             artistDTO = insert(artistDTO);
-        } else {
+        } else if (isNeedUpdate(artistDTO, dto)) {
             artistDTO.setTitle(dto.getTitle());
             artistDTO.setThumb(StringUtils.defaultString(dto.getThumb(), artistDTO.getThumb()));
             artistDTO.setNeteaseId(StringUtils.defaultString(dto.getNeteaseId(), artistDTO.getNeteaseId()));
@@ -150,5 +209,12 @@ public class ArtistServiceImpl extends AbstractBaseServiceImpl<ArtistMapper, Art
             update(artistDTO);
         }
         return artistDTO;
+    }
+
+    private boolean isNeedUpdate(ArtistDTO dto1, ArtistDTO dto2) {
+        if (KaleidoUtil.isOverride(dto1.getTitle(), dto2.getTitle()) || KaleidoUtil.isOverride(dto1.getNeteaseId(), dto2.getNeteaseId()) || KaleidoUtil.isOverride(dto1.getMusicbrainzId(), dto2.getMusicbrainzId()) || KaleidoUtil.isOverride(dto1.getThumb(), dto2.getThumb())) {
+            return true;
+        }
+        return false;
     }
 }

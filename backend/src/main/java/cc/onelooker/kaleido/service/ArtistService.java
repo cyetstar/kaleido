@@ -4,6 +4,7 @@ import cc.onelooker.kaleido.dto.ArtistDTO;
 import com.zjjcnt.common.core.service.IBaseService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 艺术家Service
@@ -15,6 +16,10 @@ public interface ArtistService extends IBaseService<ArtistDTO> {
 
     List<ArtistDTO> listByAlbumId(String albumId);
 
+    List<ArtistDTO> listByTrackId(String trackId);
+
+    Map<String, List<ArtistDTO>> mapByTrackIdList(List<String> trackIdList);
+
     Boolean updateNeteaseId(String id, String neteaseId);
 
     ArtistDTO findByNeteaseId(String neteaseId);
@@ -23,5 +28,7 @@ public interface ArtistService extends IBaseService<ArtistDTO> {
 
     ArtistDTO findByTitle(String title);
 
-    void updateArtists(List<ArtistDTO> artistList, String albumId);
+    void updateAlbumArtists(List<ArtistDTO> artistList, String albumId);
+
+    void updateTrackArtists(List<ArtistDTO> artistList, String trackId);
 }

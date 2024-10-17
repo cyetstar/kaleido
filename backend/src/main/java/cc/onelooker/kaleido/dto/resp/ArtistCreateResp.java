@@ -15,7 +15,7 @@ import lombok.Data;
 public class ArtistCreateResp {
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("MusicBrainz编号")
     private String musicbrainzId;
@@ -33,7 +33,7 @@ public class ArtistCreateResp {
     private String title;
 
     @ApiModelProperty("排序名称")
-    private String titleSort;
+    private String sortTitle;
 
     @ApiModelProperty("封面图")
     private String thumb;

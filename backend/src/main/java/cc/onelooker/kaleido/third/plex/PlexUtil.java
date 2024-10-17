@@ -131,22 +131,13 @@ public class PlexUtil {
         musicAlbumDTO.setArtists(metadata.getParentTitle());
         musicAlbumDTO.setSummary(metadata.getSummary());
         musicAlbumDTO.setThumb(metadata.getThumb());
-        musicAlbumDTO.setYear(metadata.getYear());
         musicAlbumDTO.setOriginallyAvailableAt(metadata.getOriginallyAvailableAt());
+        musicAlbumDTO.setYear(StringUtils.defaultIfEmpty(metadata.getYear(), StringUtils.substring(metadata.getOriginallyAvailableAt(), 0, 4)));
         musicAlbumDTO.setAddedAt(metadata.getAddedAt());
         musicAlbumDTO.setUpdatedAt(metadata.getUpdatedAt());
         String fullPath = FilenameUtils.getFullPath(childMetadata.getMedia().getPart().getFile());
         Path path = KaleidoUtil.getMusicBasicPath(fullPath);
         musicAlbumDTO.setPath(path.toString());
-        if (metadata.getStyleList() != null) {
-            musicAlbumDTO.setStyleList(metadata.getStyleList().stream().map(Tag::getTag).collect(Collectors.toList()));
-        }
-        if (metadata.getGenreList() != null) {
-            musicAlbumDTO.setGenreList(metadata.getGenreList().stream().map(Tag::getTag).collect(Collectors.toList()));
-        }
-        if (metadata.getMoodList() != null) {
-            musicAlbumDTO.setMoodList(metadata.getMoodList().stream().map(Tag::getTag).collect(Collectors.toList()));
-        }
         ArtistDTO artistDTO = new ArtistDTO();
         artistDTO.setId(metadata.getParentRatingKey());
         artistDTO.setTitle(metadata.getParentTitle());
@@ -164,6 +155,10 @@ public class PlexUtil {
         musicTrackDTO.setFilename(filename);
         musicTrackDTO.setAddedAt(metadata.getAddedAt());
         musicTrackDTO.setUpdatedAt(metadata.getUpdatedAt());
+        ArtistDTO artistDTO = new ArtistDTO();
+        artistDTO.setId(metadata.getGrandparentRatingKey());
+        artistDTO.setTitle(metadata.getGrandparentTitle());
+        musicTrackDTO.setArtistList(Lists.newArrayList(artistDTO));
     }
 
     private static ActorDTO toActorDTO(Tag tag) {

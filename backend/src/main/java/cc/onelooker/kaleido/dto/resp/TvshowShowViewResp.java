@@ -20,7 +20,7 @@ import java.util.List;
 public class TvshowShowViewResp {
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("剧集名")
     private String title;

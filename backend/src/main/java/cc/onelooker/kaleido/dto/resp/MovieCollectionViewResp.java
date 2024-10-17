@@ -22,7 +22,7 @@ import java.util.List;
 public class MovieCollectionViewResp{
 
     @ApiModelProperty("主键")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("标题")
     private String title;

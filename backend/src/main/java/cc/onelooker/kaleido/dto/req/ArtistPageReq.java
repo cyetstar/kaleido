@@ -14,25 +14,13 @@ import lombok.Data;
 @ApiModel("艺术家请求对象")
 public class ArtistPageReq {
 
-    @ApiModelProperty("MusicBrainz编号")
-    private String musicbrainzId;
-
-    @ApiModelProperty("网易云音乐编号")
-    private String neteaseId;
-
-    @ApiModelProperty("国家地区")
-    private String area;
-
-    @ApiModelProperty("简介")
-    private String summary;
-
     @ApiModelProperty("名称")
     private String title;
 
-    @ApiModelProperty("排序名称")
-    private String titleSort;
-
-    @ApiModelProperty("关键词")
+    @ApiModelProperty("关键字")
     private String keyword;
+
+    @ApiModelProperty("主键列表，逗号间隔")
+    private String ids;
 
 }

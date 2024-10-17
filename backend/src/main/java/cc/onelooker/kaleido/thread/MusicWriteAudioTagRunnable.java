@@ -44,7 +44,7 @@ public class MusicWriteAudioTagRunnable extends AbstractEntityActionRunnable<Tas
 
     @Override
     public Action getAction() {
-        return Action.musicReadAudioTag;
+        return Action.musicWriteAudioTag;
     }
 
     @Override

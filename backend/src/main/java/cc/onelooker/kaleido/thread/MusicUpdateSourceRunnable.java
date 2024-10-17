@@ -1,10 +1,14 @@
 package cc.onelooker.kaleido.thread;
 
+import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.MusicManager;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
+import cc.onelooker.kaleido.utils.ConfigUtils;
 import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,13 +26,23 @@ public class MusicUpdateSourceRunnable extends AbstractEntityActionRunnable<Path
 
     private final MusicManager musicManager;
 
-    public MusicUpdateSourceRunnable(MusicManager musicManager) {
+    private final PlexApiService plexApiService;
+
+    public MusicUpdateSourceRunnable(MusicManager musicManager, PlexApiService plexApiService) {
         this.musicManager = musicManager;
+        this.plexApiService = plexApiService;
     }
 
     @Override
     public Action getAction() {
         return Action.musicUpdateSource;
+    }
+
+    @Override
+    protected void afterRun(@Nullable Map<String, String> params) {
+        super.afterRun(params);
+        String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMusicLibraryId);
+        plexApiService.refreshLibrary(libraryId);
     }
 
     @Override

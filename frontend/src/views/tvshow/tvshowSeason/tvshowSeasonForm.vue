@@ -82,7 +82,7 @@
             <k-select-actor
               v-model:value="form.directorList"
               mode="multiple"
-              name="directorIdList"
+              name="directorList"
               label="导演"
             />
           </h-col>
