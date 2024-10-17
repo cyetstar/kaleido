@@ -8,10 +8,12 @@ import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.service.MusicAlbumService;
 import cc.onelooker.kaleido.service.MusicTrackService;
 import cc.onelooker.kaleido.service.TaskService;
+import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.AudioTagUtil;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.Sets;
 import com.zjjcnt.common.core.domain.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.jaudiotagger.audio.AudioFile;
@@ -20,8 +22,10 @@ import org.jaudiotagger.tag.Tag;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by cyetstar on 2021/1/7.
@@ -36,10 +40,15 @@ public class MusicWriteAudioTagRunnable extends AbstractEntityActionRunnable<Tas
 
     private final MusicAlbumService musicAlbumService;
 
-    public MusicWriteAudioTagRunnable(TaskService taskService, MusicTrackService musicTrackService, MusicAlbumService musicAlbumService) {
+    private final PlexApiService plexApiService;
+
+    private final Set<String> albumIdCache = Sets.newHashSet();
+
+    public MusicWriteAudioTagRunnable(TaskService taskService, MusicTrackService musicTrackService, MusicAlbumService musicAlbumService, PlexApiService plexApiService) {
         this.taskService = taskService;
         this.musicTrackService = musicTrackService;
         this.musicAlbumService = musicAlbumService;
+        this.plexApiService = plexApiService;
     }
 
     @Override
@@ -60,6 +69,12 @@ public class MusicWriteAudioTagRunnable extends AbstractEntityActionRunnable<Tas
     }
 
     @Override
+    protected void afterRun(@Nullable Map<String, String> params) {
+        super.afterRun(params);
+        albumIdCache.forEach(plexApiService::refreshMetadata);
+    }
+
+    @Override
     protected PageResult<TaskDTO> page(Map<String, String> params, int pageNumber, int pageSize) {
         TaskDTO param = new TaskDTO();
         param.setTaskType(TaskType.writeAudioTag.name());
@@ -72,13 +87,16 @@ public class MusicWriteAudioTagRunnable extends AbstractEntityActionRunnable<Tas
         MusicTrackDTO musicTrackDTO = musicTrackService.findById(taskDTO.getSubjectId());
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(musicTrackDTO.getAlbumId());
         Path audioPath = KaleidoUtil.getMusicFilePath(musicAlbumDTO.getPath(), musicTrackDTO.getFilename());
-        AudioFile audioFile = AudioFileIO.read(audioPath.toFile());
-        Tag tag = audioFile.getTag();
-        if (AudioTagUtil.isChanged(tag, musicAlbumDTO, musicTrackDTO)) {
-            AudioTagUtil.toTag(musicAlbumDTO, musicTrackDTO, tag);
-            audioFile.commit();
-            taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
-            return SUCCESS;
+        if (Files.exists(audioPath)) {
+            AudioFile audioFile = AudioFileIO.read(audioPath.toFile());
+            Tag tag = audioFile.getTag();
+            if (AudioTagUtil.isChanged(tag, musicAlbumDTO, musicTrackDTO)) {
+                AudioTagUtil.toTag(musicAlbumDTO, musicTrackDTO, tag);
+                audioFile.commit();
+                albumIdCache.add(musicAlbumDTO.getId());
+                taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_DONE);
+                return SUCCESS;
+            }
         }
         taskService.updateTaskStatus(taskDTO.getId(), KaleidoConstants.TASK_STATUS_IGNORE);
         return IGNORE;
