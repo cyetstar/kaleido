@@ -1,6 +1,7 @@
 package cc.onelooker.kaleido.third.tmm;
 
 import cc.onelooker.kaleido.dto.*;
+import com.zjjcnt.common.util.constant.Constants;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -208,7 +209,7 @@ public class TmmUtil {
         musicAlbumDTO.setThumb(album.getPicUrl());
         if (CollectionUtils.isNotEmpty(album.getArtists())) {
             musicAlbumDTO.setArtistList(album.getArtists().stream().map(TmmUtil::toArtistDTO).collect(Collectors.toList()));
-            musicAlbumDTO.setArtists(album.getArtists().stream().map(Artist::getName).collect(Collectors.joining("; ")));
+            musicAlbumDTO.setArtists(album.getArtists().stream().map(Artist::getName).collect(Collectors.joining(Constants.SEMICOLON)));
         }
         if (CollectionUtils.isNotEmpty(album.getSongs())) {
             musicAlbumDTO.setTrackList(album.getSongs().stream().map(TmmUtil::toMusicTrackDTO).collect(Collectors.toList()));
@@ -222,6 +223,9 @@ public class TmmUtil {
     }
 
     public static MusicTrackDTO toMusicTrackDTO(MusicTrackDTO musicTrackDTO, Song song) {
+        if (song == null) {
+            return musicTrackDTO;
+        }
         musicTrackDTO.setTitle(song.getTitle());
         musicTrackDTO.setDiscIndex(1);
         musicTrackDTO.setTrackIndex(song.getTrackIndex());

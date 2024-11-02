@@ -140,9 +140,9 @@
       </div>
     </section>
   </section>
-  <tvshow-show-search-info ref="refTvshowShowSearchInfo"/>
+  <tvshow-season-form ref="refTvshowSeasonForm" @save-complete="initData"/>
+  <tvshow-show-search-info ref="refTvshowShowSearchInfo" @match-success="initData"/>
   <tvshow-season-file-manage ref="refTvshowSeasonFileManage"/>
-  <tvshow-season-form ref="refTvshowSeasonForm"/>
 </template>
 
 <script setup>

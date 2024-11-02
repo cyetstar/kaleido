@@ -157,10 +157,9 @@
       </div>
     </section>
   </section>
-
+  <movie-basic-form ref="refMovieBasicForm" @save-complete="initData"/>
   <movie-basic-search-info ref="refMovieBasicSearchInfo" @match-success="initData"/>
   <movie-basic-file-manage ref="refMovieBasicFileManage"/>
-  <movie-basic-form ref="refMovieBasicForm"/>
 </template>
 
 <script setup>

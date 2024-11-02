@@ -66,6 +66,14 @@ public class MusicManager {
     private TmmApiService tmmApiService;
 
     @Transactional
+    public void saveAlbumTrack(MusicAlbumDTO musicAlbumDTO, List<MusicTrackDTO> musicTrackDTOList) {
+        saveAlbum(musicAlbumDTO);
+        if (musicTrackDTOList != null) {
+            musicTrackDTOList.forEach(this::saveTrack);
+        }
+    }
+
+    @Transactional
     public void saveArtist(ArtistDTO artistDTO) {
         attributeService.updateAttributes(artistDTO.getStyleList(), artistDTO.getId(), AttributeType.Style);
         attributeService.updateAttributes(artistDTO.getGenreList(), artistDTO.getId(), AttributeType.Genre);
@@ -103,12 +111,8 @@ public class MusicManager {
             } else {
                 musicAlbumService.update(musicAlbumDTO);
             }
-            List<MusicTrackDTO> musicTrackDTOList = musicAlbumDTO.getTrackList();
-            if (musicTrackDTOList != null) {
-                musicTrackDTOList.forEach(this::saveTrack);
-            }
             if (ConfigUtils.isEnabled(ConfigKey.writeAudioTag)) {
-                musicTrackDTOList = musicTrackService.listByAlbumId(musicAlbumDTO.getId());
+                List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(musicAlbumDTO.getId());
                 musicTrackDTOList.forEach(musicTrackDTO -> taskService.newTask(musicTrackDTO.getId(), SubjectType.MusicTrack, TaskType.writeAudioTag));
             }
         } catch (IOException e) {

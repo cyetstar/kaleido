@@ -116,7 +116,7 @@
       <p>{{ lyrics }}</p>
     </template>
   </a-modal>
-  <music-album-form ref="refMusicAlbumForm" @match-success="initData"/>
+  <music-album-form ref="refMusicAlbumForm" @save-complete="initData"/>
   <music-album-search-info ref="refMusicAlbumSearchInfo" @match-success="initData"/>
   <music-album-file-manage ref="refMusicAlbumFileManage"/>
 </template>

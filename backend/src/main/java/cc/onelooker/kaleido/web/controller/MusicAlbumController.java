@@ -42,6 +42,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -104,8 +106,9 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
             dto.setArtistList(req.getArtistList().stream().map(s -> artistService.findById(s)).collect(Collectors.toList()));
             dto.setArtists(dto.getArtistList().stream().map(ArtistDTO::getTitle).collect(Collectors.joining(Constants.SEMICOLON)));
         }
+        List<MusicTrackDTO> musicTrackDTOList = null;
         if (req.getTrackList() != null) {
-            List<MusicTrackDTO> musicTrackDTOList = req.getTrackList().stream().map(s -> {
+            musicTrackDTOList = req.getTrackList().stream().map(s -> {
                 MusicTrackDTO musicTrackDTO = new MusicTrackDTO();
                 musicTrackDTO.setId(s.getId());
                 musicTrackDTO.setAlbumId(req.getId());
@@ -115,9 +118,8 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
                 musicTrackDTO.setArtistList(s.getArtistList().stream().map(a -> artistService.findById(a)).collect(Collectors.toList()));
                 return musicTrackDTO;
             }).collect(Collectors.toList());
-            dto.setTrackList(musicTrackDTOList);
         }
-        musicManager.saveAlbum(dto);
+        musicManager.saveAlbumTrack(dto, musicTrackDTOList);
         return CommonResult.success(true);
     }
 
@@ -149,9 +151,9 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
                 MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(req.getId());
                 path = KaleidoUtil.getMusicPath(musicAlbumDTO.getPath());
             } else {
-                path = Paths.get(req.getPath());
+                path = KaleidoUtil.getMusicPath(req.getPath());
             }
-            result = Files.list(path).filter(s -> KaleidoUtil.isAudioFile(s.getFileName().toString())).map(s -> {
+            Map<Integer, MusicAlbumViewMatchInfoResp> map = Files.list(path).filter(s -> KaleidoUtil.isAudioFile(s.getFileName().toString())).map(s -> {
                 MusicAlbumViewMatchInfoResp resp = new MusicAlbumViewMatchInfoResp();
                 try {
                     AudioFile audioFile = AudioFileIO.read(s.toFile());
@@ -180,7 +182,20 @@ public class MusicAlbumController extends AbstractCrudController<MusicAlbumDTO> 
                     ExceptionUtil.wrapAndThrow(e);
                 }
                 return resp;
-            }).sorted(Comparator.comparing(MusicAlbumViewMatchInfoResp::getTrackIndex)).collect(Collectors.toList());
+            }).collect(Collectors.toMap(MusicAlbumViewMatchInfoResp::getTrackIndex, Function.identity()));
+            album.getSongs().stream().forEach(s -> {
+                MusicAlbumViewMatchInfoResp resp = map.get(s.getTrackIndex());
+                if (resp == null) {
+                    resp = new MusicAlbumViewMatchInfoResp();
+                    resp.setSongTitle(s.getTitle());
+                    resp.setSongArtistName(s.getArtistName());
+                    resp.setSongDuration(s.getDuration());
+                    resp.setSongTrackIndex(s.getTrackIndex());
+                    resp.setSongPublishTime(album.getPublishTime());
+                    map.put(s.getTrackIndex(), resp);
+                }
+            });
+            result = map.values().stream().sorted(Comparator.comparing(MusicAlbumViewMatchInfoResp::getTrackIndex)).collect(Collectors.toList());
         } catch (IOException e) {
             ExceptionUtil.wrapAndThrow(e);
         }

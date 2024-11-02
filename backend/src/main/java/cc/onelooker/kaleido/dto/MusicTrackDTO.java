@@ -85,6 +85,8 @@ public class MusicTrackDTO implements BaseDTO<String> {
 
     // ------ 非数据库表字段 -------
 
+    private String keyword;
+
     private List<ArtistDTO> artistList;
 
     @Override

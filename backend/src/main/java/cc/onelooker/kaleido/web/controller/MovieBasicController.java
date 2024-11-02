@@ -63,9 +63,6 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     private MovieManager movieManager;
 
     @Autowired
-    private PlexApiService plexApiService;
-
-    @Autowired
     private TmmApiService tmmApiService;
 
     @Override

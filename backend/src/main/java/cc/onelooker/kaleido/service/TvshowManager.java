@@ -390,7 +390,7 @@ public class TvshowManager {
                     Path episodePath = seasonPath.resolve(fileName);
                     TvshowSeasonDTO tvshowSeasonDTO = tvshowShowDTO.getSeason(seasonIndex);
                     if (tvshowSeasonDTO == null) {
-                        log.info("== 无法找到季号信息，不再处理: {}", fileName);
+                        log.info("== 无法找到季信息，不再处理: {}", fileName);
                     }
                     TvshowEpisodeDTO tvshowEpisodeDTO = tvshowSeasonDTO.getEpisode(episodeIndex);
                     if (tvshowEpisodeDTO == null) {

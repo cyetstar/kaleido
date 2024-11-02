@@ -143,8 +143,8 @@
       </div>
     </section>
   </section>
+  <tvshow-show-form ref="refTvshowShowForm" @save-complete="initData"/>
   <tvshow-show-file-manage ref="refTvshowShowFileManage"/>
-  <tvshow-show-form ref="refTvshowShowForm"/>
 </template>
 
 <script setup>

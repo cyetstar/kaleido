@@ -2,8 +2,10 @@ package cc.onelooker.kaleido.service.impl;
 
 import cc.onelooker.kaleido.convert.MusicTrackConvert;
 import cc.onelooker.kaleido.dto.MusicTrackDTO;
+import cc.onelooker.kaleido.dto.TvshowEpisodeDTO;
 import cc.onelooker.kaleido.entity.MusicTrackDO;
 import cc.onelooker.kaleido.mapper.MusicTrackMapper;
+import cc.onelooker.kaleido.service.MusicAlbumService;
 import cc.onelooker.kaleido.service.MusicTrackService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -11,7 +13,10 @@ import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,6 +31,8 @@ public class MusicTrackServiceImpl extends AbstractBaseServiceImpl<MusicTrackMap
 
     MusicTrackConvert convert = MusicTrackConvert.INSTANCE;
 
+    private MusicAlbumService musicAlbumService;
+
     @Override
     protected Wrapper<MusicTrackDO> genQueryWrapper(MusicTrackDTO dto) {
         LambdaQueryWrapper<MusicTrackDO> query = new LambdaQueryWrapper<>();
@@ -39,8 +46,7 @@ public class MusicTrackServiceImpl extends AbstractBaseServiceImpl<MusicTrackMap
         query.eq(Objects.nonNull(dto.getDuration()), MusicTrackDO::getDuration, dto.getDuration());
         query.eq(Objects.nonNull(dto.getTrackIndex()), MusicTrackDO::getTrackIndex, dto.getTrackIndex());
         query.eq(Objects.nonNull(dto.getDiscIndex()), MusicTrackDO::getDiscIndex, dto.getDiscIndex());
-        query.eq(Objects.nonNull(dto.getAddedAt()), MusicTrackDO::getAddedAt, dto.getAddedAt());
-        query.eq(Objects.nonNull(dto.getUpdatedAt()), MusicTrackDO::getUpdatedAt, dto.getUpdatedAt());
+        query.like(StringUtils.isNotEmpty(dto.getKeyword()), MusicTrackDO::getTitle, dto.getKeyword());
         return query;
     }
 
@@ -65,6 +71,14 @@ public class MusicTrackServiceImpl extends AbstractBaseServiceImpl<MusicTrackMap
     }
 
     @Override
+    public List<MusicTrackDTO> listByKeyword(String keyword) {
+        Validate.notEmpty(keyword);
+        MusicTrackDTO param = new MusicTrackDTO();
+        param.setKeyword(keyword);
+        return list(param);
+    }
+
+    @Override
     public boolean deleteByAlbumId(String albumId) {
         Validate.notNull(albumId);
         MusicTrackDTO param = new MusicTrackDTO();
@@ -72,4 +86,17 @@ public class MusicTrackServiceImpl extends AbstractBaseServiceImpl<MusicTrackMap
         return delete(param);
     }
 
+    @Override
+    @Transactional
+    public boolean deleteById(Serializable id) {
+        MusicTrackDTO musicTrackDTO = findById(id);
+        boolean result = super.deleteById(id);
+        MusicTrackDTO param = new MusicTrackDTO();
+        param.setAlbumId(musicTrackDTO.getAlbumId());
+        long count = count(param);
+        if (count == 0) {
+            musicAlbumService.deleteById(musicTrackDTO.getAlbumId());
+        }
+        return result;
+    }
 }

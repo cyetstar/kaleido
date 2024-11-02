@@ -7,3 +7,5 @@
 /backend/src/main/resources/static/assets/**
 /backend/src/main/resources/static/favicon.png
 /backend/src/main/resources/static/index.html
+.DS_Store
+**/__pycache__/**

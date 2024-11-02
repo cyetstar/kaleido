@@ -133,10 +133,10 @@
       </div>
     </section>
   </section>
+  <comic-series-form ref="refComicSeriesForm" @save-complete="initData"/>
+  <comic-series-search-info ref="refComicSeriesSearchInfo" @match-success="initData"/>
   <comic-series-file-manage ref="refComicSeriesFileManage"/>
   <comic-series-set-cover ref="refComicSeriesSetCover"/>
-  <comic-series-form ref="refComicSeriesForm" @save-complete="initData"/>
-  <comic-series-search-info ref="refComicSeriesSearchInfo"/>
 </template>
 
 <script setup>

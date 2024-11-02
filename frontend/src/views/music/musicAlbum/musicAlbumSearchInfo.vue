@@ -213,7 +213,7 @@ const show = (data, dataType) => {
     title.value = record.name;
     searchForm.value.keyword = record.name.replaceAll("\.", " ");
   } else {
-    title.value = record.title + " " + record.artists;
+    title.value = (record.title + " " + record.artists).trim();
     searchForm.value.keyword = record.title;
   }
   visible.value = true;

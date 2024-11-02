@@ -47,6 +47,9 @@ export const useWebSocketStore = defineStore("websocket", {
       };
       this.websocket.onclose = () => {
         console.log("websocket closed");
+        setTimeout(() => {
+          connect(callback);
+        }, 1000);
         this.connected = false;
       };
     },

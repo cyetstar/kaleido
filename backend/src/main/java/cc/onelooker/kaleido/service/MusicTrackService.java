@@ -16,4 +16,6 @@ public interface MusicTrackService extends IBaseService<MusicTrackDTO> {
     List<MusicTrackDTO> listByAlbumId(String albumId);
 
     boolean deleteByAlbumId(String albumId);
+
+    List<MusicTrackDTO> listByKeyword(String keyword);
 }
