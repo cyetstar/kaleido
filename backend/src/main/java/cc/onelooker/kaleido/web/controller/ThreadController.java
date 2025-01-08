@@ -52,14 +52,15 @@ public class ThreadController extends AbstractCrudController<ThreadDTO> {
     private ComicSeriesService comicSeriesService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<ThreadDTO> getService() {
         return threadService;
     }
 
     @GetMapping("page")
     @ApiOperation(value = "查询发布记录")
     public CommonResult<PageResult<ThreadPageResp>> page(ThreadPageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, ThreadConvert.INSTANCE::convertToDTO, ThreadConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, ThreadConvert.INSTANCE::convertToDTO,
+                ThreadConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -97,7 +98,8 @@ public class ThreadController extends AbstractCrudController<ThreadDTO> {
             resp.setComicSeriesOriginalTitle(comicSeriesDTO.getOriginalTitle());
             resp.setComicSeriesPath(comicSeriesDTO.getPath());
         }
-        List<ThreadViewResp> threadList = threadViewRespSet.stream().filter(s -> !StringUtils.equals(s.getId(), resp.getId())).collect(Collectors.toList());
+        List<ThreadViewResp> threadList = threadViewRespSet.stream()
+                .filter(s -> !StringUtils.equals(s.getId(), resp.getId())).collect(Collectors.toList());
         resp.setThreadList(threadList);
         return CommonResult.success(resp);
     }

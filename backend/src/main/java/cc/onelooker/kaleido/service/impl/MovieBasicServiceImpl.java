@@ -33,7 +33,8 @@ import java.util.stream.Collectors;
  * @date 2023-11-26 01:19:02
  */
 @Service
-public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMapper, MovieBasicDO, MovieBasicDTO> implements MovieBasicService {
+public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMapper, MovieBasicDO, MovieBasicDTO>
+        implements MovieBasicService {
 
     MovieBasicConvert convert = MovieBasicConvert.INSTANCE;
 
@@ -53,11 +54,15 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
     protected Wrapper<MovieBasicDO> genQueryWrapper(MovieBasicDTO dto) {
         LambdaQueryWrapper<MovieBasicDO> query = new LambdaQueryWrapper<>();
         if (StringUtils.isNotEmpty(dto.getKeyword())) {
-            query.and(q -> q.like(MovieBasicDO::getTitle, dto.getKeyword()).or().like(MovieBasicDO::getOriginalTitle, dto.getKeyword()).or().eq(MovieBasicDO::getDoubanId, dto.getKeyword()).or().eq(MovieBasicDO::getImdbId, dto.getKeyword()));
+            query.and(q -> q.like(MovieBasicDO::getTitle, dto.getKeyword()).or()
+                    .like(MovieBasicDO::getOriginalTitle, dto.getKeyword()).or()
+                    .eq(MovieBasicDO::getDoubanId, dto.getKeyword()).or()
+                    .eq(MovieBasicDO::getImdbId, dto.getKeyword()));
         }
         query.eq(StringUtils.isNotEmpty(dto.getId()), MovieBasicDO::getId, dto.getId());
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), MovieBasicDO::getTitle, dto.getTitle());
-        query.eq(StringUtils.isNotEmpty(dto.getOriginalTitle()), MovieBasicDO::getOriginalTitle, dto.getOriginalTitle());
+        query.eq(StringUtils.isNotEmpty(dto.getOriginalTitle()), MovieBasicDO::getOriginalTitle,
+                dto.getOriginalTitle());
         query.eq(StringUtils.isNotEmpty(dto.getSortTitle()), MovieBasicDO::getSortTitle, dto.getSortTitle());
         query.eq(StringUtils.isNotEmpty(dto.getYear()), MovieBasicDO::getYear, dto.getYear());
         query.eq(StringUtils.isNotEmpty(dto.getThumb()), MovieBasicDO::getThumb, dto.getThumb());
@@ -65,9 +70,12 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
         query.eq(Objects.nonNull(dto.getUserRating()), MovieBasicDO::getUserRating, dto.getUserRating());
         query.eq(Objects.nonNull(dto.getSummary()), MovieBasicDO::getSummary, dto.getSummary());
         query.eq(Objects.nonNull(dto.getDuration()), MovieBasicDO::getDuration, dto.getDuration());
-        query.eq(StringUtils.isNotEmpty(dto.getContentRating()), MovieBasicDO::getContentRating, dto.getContentRating());
-        query.ge(StringUtils.isNotEmpty(dto.getOriginallyAvailableAtStart()), MovieBasicDO::getOriginallyAvailableAt, dto.getOriginallyAvailableAtStart());
-        query.le(StringUtils.isNotEmpty(dto.getOriginallyAvailableAtEnd()), MovieBasicDO::getOriginallyAvailableAt, dto.getOriginallyAvailableAtEnd());
+        query.eq(StringUtils.isNotEmpty(dto.getContentRating()), MovieBasicDO::getContentRating,
+                dto.getContentRating());
+        query.ge(StringUtils.isNotEmpty(dto.getOriginallyAvailableAtStart()), MovieBasicDO::getOriginallyAvailableAt,
+                dto.getOriginallyAvailableAtStart());
+        query.le(StringUtils.isNotEmpty(dto.getOriginallyAvailableAtEnd()), MovieBasicDO::getOriginallyAvailableAt,
+                dto.getOriginallyAvailableAtEnd());
         query.eq(StringUtils.isNotEmpty(dto.getStudio()), MovieBasicDO::getStudio, dto.getStudio());
         query.eq(Objects.nonNull(dto.getRating()), MovieBasicDO::getRating, dto.getRating());
         query.eq(Objects.nonNull(dto.getLastViewedAt()), MovieBasicDO::getLastViewedAt, dto.getLastViewedAt());
@@ -77,9 +85,11 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
         query.eq(StringUtils.isNotEmpty(dto.getTmdbId()), MovieBasicDO::getTmdbId, dto.getTmdbId());
         query.eq(Objects.nonNull(dto.getAddedAt()), MovieBasicDO::getAddedAt, dto.getAddedAt());
         query.eq(Objects.nonNull(dto.getUpdatedAt()), MovieBasicDO::getUpdatedAt, dto.getUpdatedAt());
-        query.likeRight(StringUtils.length(dto.getDecade()) > 3, MovieBasicDO::getYear, StringUtils.substring(dto.getDecade(), 0, 3));
+        query.likeRight(StringUtils.length(dto.getDecade()) > 3, MovieBasicDO::getYear,
+                StringUtils.substring(dto.getDecade(), 0, 3));
         query.in(CollectionUtils.isNotEmpty(dto.getIdList()), MovieBasicDO::getId, dto.getIdList());
-        query.eq(StringUtils.isNotEmpty(dto.getMultipleFiles()), MovieBasicDO::getMultipleFiles, dto.getMultipleFiles());
+        query.eq(StringUtils.isNotEmpty(dto.getMultipleFiles()), MovieBasicDO::getMultipleFiles,
+                dto.getMultipleFiles());
         query.eq(StringUtils.isNotEmpty(dto.getLowQuality()), MovieBasicDO::getLowQuality, dto.getLowQuality());
         query.eq(StringUtils.isNotEmpty(dto.getMandarin()), MovieBasicDO::getMandarin, dto.getMandarin());
         query.eq(StringUtils.isNotEmpty(dto.getNoSubtitle()), MovieBasicDO::getNoSubtitle, dto.getNoSubtitle());
@@ -91,8 +101,11 @@ public class MovieBasicServiceImpl extends AbstractBaseServiceImpl<MovieBasicMap
     @Override
     public PageResult<MovieBasicDTO> page(@Nullable MovieBasicDTO dto, Page page) {
         if (dto != null && StringUtils.isNotEmpty(dto.getKeyword()) && StringUtils.isNotEmpty(dto.getKeywordType())) {
-            List<SubjectAttributeDTO> subjectAttributeDTOList = subjectAttributeService.listByAttributeValueAndAttributeType(dto.getKeyword(), AttributeType.valueOf(dto.getKeywordType()));
-            dto.setIdList(subjectAttributeDTOList.stream().map(SubjectAttributeDTO::getSubjectId).collect(Collectors.toList()));
+            List<SubjectAttributeDTO> subjectAttributeDTOList = subjectAttributeService
+                    .listByAttributeValueAndAttributeType(dto.getKeyword(),
+                            AttributeType.valueOf(dto.getKeywordType()));
+            dto.setIdList(subjectAttributeDTOList.stream().map(SubjectAttributeDTO::getSubjectId)
+                    .collect(Collectors.toList()));
         }
         return super.page(dto, page);
     }

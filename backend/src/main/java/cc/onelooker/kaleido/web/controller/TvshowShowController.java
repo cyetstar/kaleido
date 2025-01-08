@@ -27,6 +27,7 @@ import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,7 +61,7 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     private TmmApiService tmmApiService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<TvshowShowDTO> getService() {
         return tvshowShowService;
     }
 
@@ -68,7 +69,8 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @ApiOperation(value = "查询剧集")
     public CommonResult<PageResult<TvshowShowPageResp>> page(TvshowShowPageReq req, PageParam pageParam) {
         pageParam.setOrderBy("DESC:added_at");
-        return super.page(req, pageParam, TvshowShowConvert.INSTANCE::convertToDTO, TvshowShowConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, TvshowShowConvert.INSTANCE::convertToDTO,
+                TvshowShowConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -78,13 +80,16 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
         TvshowSeasonDTO tvshowSeason = tvshowManager.findTvshowSeason(tvshowShowDTO.getFirstSeason().getId());
         TvshowShowViewResp resp = TvshowShowConvert.INSTANCE.convertToViewResp(tvshowShowDTO);
         if (tvshowSeason.getDirectorList() != null) {
-            resp.setDirectorList(tvshowSeason.getDirectorList().stream().map(ActorConvert.INSTANCE::convertToViewResp).collect(Collectors.toList()));
+            resp.setDirectorList(tvshowSeason.getDirectorList().stream().map(ActorConvert.INSTANCE::convertToViewResp)
+                    .collect(Collectors.toList()));
         }
         if (tvshowSeason.getWriterList() != null) {
-            resp.setWriterList(tvshowSeason.getWriterList().stream().map(ActorConvert.INSTANCE::convertToViewResp).collect(Collectors.toList()));
+            resp.setWriterList(tvshowSeason.getWriterList().stream().map(ActorConvert.INSTANCE::convertToViewResp)
+                    .collect(Collectors.toList()));
         }
         if (tvshowSeason.getActorList() != null) {
-            resp.setActorList(tvshowSeason.getActorList().stream().map(ActorConvert.INSTANCE::convertToViewResp).collect(Collectors.toList()));
+            resp.setActorList(tvshowSeason.getActorList().stream().map(ActorConvert.INSTANCE::convertToViewResp)
+                    .collect(Collectors.toList()));
         }
         return CommonResult.success(resp);
     }
@@ -92,7 +97,8 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
     @PostMapping("create")
     @ApiOperation(value = "新增剧集")
     public CommonResult<TvshowShowCreateResp> create(@RequestBody TvshowShowCreateReq req) {
-        return super.create(req, TvshowShowConvert.INSTANCE::convertToDTO, TvshowShowConvert.INSTANCE::convertToCreateResp);
+        return super.create(req, TvshowShowConvert.INSTANCE::convertToDTO,
+                TvshowShowConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
@@ -117,7 +123,12 @@ public class TvshowShowController extends AbstractCrudController<TvshowShowDTO> 
         if (tvshowList != null) {
             respList = tvshowList.stream().map(s -> {
                 TvshowShowSearchInfoResp resp = TvshowShowConvert.INSTANCE.convertToSearchInfoResp(s);
-                TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findByDoubanId(s.getDoubanId());
+                TvshowSeasonDTO tvshowSeasonDTO = null;
+                if (StringUtils.isNoneEmpty(s.getDoubanId())) {
+                    tvshowSeasonDTO = tvshowSeasonService.findByDoubanId(s.getDoubanId());
+                } else if (StringUtils.isNoneEmpty(s.getTmdbId())) {
+                    tvshowSeasonDTO = tvshowSeasonService.findByTmdbId(s.getTmdbId());
+                }
                 if (tvshowSeasonDTO != null) {
                     resp.setExistId(tvshowSeasonDTO.getId());
                 }

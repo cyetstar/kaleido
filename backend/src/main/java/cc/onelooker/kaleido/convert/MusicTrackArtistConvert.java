@@ -4,6 +4,7 @@ import cc.onelooker.kaleido.dto.MusicTrackArtistDTO;
 import cc.onelooker.kaleido.entity.MusicTrackArtistDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -12,7 +13,7 @@ import org.mapstruct.factory.Mappers;
  * @author cyetstar
  * @date 2023-11-25 22:16:58
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MusicTrackArtistConvert {
 
     MusicTrackArtistConvert INSTANCE = Mappers.getMapper(MusicTrackArtistConvert.class);

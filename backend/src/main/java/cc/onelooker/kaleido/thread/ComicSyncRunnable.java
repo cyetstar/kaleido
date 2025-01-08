@@ -15,6 +15,7 @@ import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,8 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
 
     private final Set<String> seriesIdCache = Sets.newHashSet();
 
-    public ComicSyncRunnable(KomgaApiService komgaApiService, ComicManager comicManager, ComicBookService comicBookService) {
+    public ComicSyncRunnable(KomgaApiService komgaApiService, ComicManager comicManager,
+                             ComicBookService comicBookService) {
         this.komgaApiService = komgaApiService;
         this.comicManager = comicManager;
         this.comicBookService = comicBookService;
@@ -79,7 +81,7 @@ public class ComicSyncRunnable extends AbstractEntityActionRunnable<Book> {
     }
 
     @Override
-    protected void afterRun(Map<String, String> params) {
+    protected void afterRun(@Nullable Map<String, String> params) {
         String seriesId = MapUtils.getString(params, "seriesId");
         if (StringUtils.isEmpty(seriesId)) {
             ComicBookDTO param = ComicBookConvert.INSTANCE.convertToDTO(params);

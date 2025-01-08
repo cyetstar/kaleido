@@ -20,29 +20,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
-* 别名前端控制器
-*
-* @author cyetstar
-* @date 2024-03-12 17:48:21
-*/
+ * 别名前端控制器
+ *
+ * @author cyetstar
+ * @date 2024-03-12 17:48:21
+ */
 
 @Api(tags = "别名")
 @RestController
 @RequestMapping("/alternateTitle")
-public class AlternateTitleController extends AbstractCrudController<AlternateTitleDTO>{
+public class AlternateTitleController extends AbstractCrudController<AlternateTitleDTO> {
 
     @Autowired
     private AlternateTitleService alternateTitleService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<AlternateTitleDTO> getService() {
         return alternateTitleService;
     }
 
     @GetMapping("page")
     @ApiOperation(value = "查询别名")
     public CommonResult<PageResult<AlternateTitlePageResp>> page(AlternateTitlePageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, AlternateTitleConvert.INSTANCE::convertToDTO, AlternateTitleConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, AlternateTitleConvert.INSTANCE::convertToDTO,
+                AlternateTitleConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -54,7 +55,8 @@ public class AlternateTitleController extends AbstractCrudController<AlternateTi
     @PostMapping("create")
     @ApiOperation(value = "新增别名")
     public CommonResult<AlternateTitleCreateResp> create(@RequestBody AlternateTitleCreateReq req) {
-        return super.create(req, AlternateTitleConvert.INSTANCE::convertToDTO, AlternateTitleConvert.INSTANCE::convertToCreateResp);
+        return super.create(req, AlternateTitleConvert.INSTANCE::convertToDTO,
+                AlternateTitleConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
@@ -68,6 +70,5 @@ public class AlternateTitleController extends AbstractCrudController<AlternateTi
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return super.delete(id);
     }
-
 
 }

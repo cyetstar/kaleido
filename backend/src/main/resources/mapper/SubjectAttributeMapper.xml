@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.onelooker.kaleido.mapper.SubjectAttributeMapper">
-
     <delete id="deleteBySubjectIdAndAttributeType">
         delete t1
-          from subject_attribute t1
-    inner join attribute t2 on t1.attribute_id = t2.id
-         where t1.subject_id = #{subjectId}
-           and t2.type = #{attributeType}
+        from subject_attribute t1
+        inner join attribute t2 on t1.attribute_id = t2.id
+        where t1.subject_id = #{subjectId}
+        and t2.type = #{attributeType}
     </delete>
 
     <select id="listBySubjectIdAndAttributeType" resultType="cc.onelooker.kaleido.entity.SubjectAttributeDO">
         select t1.*
-          from subject_attribute t1
-    inner join attribute t2 on t1.attribute_id = t2.id
-         where t1.subject_id = #{subjectId}
-           and t2.type = #{attributeType}
+        from subject_attribute t1
+        inner join attribute t2 on t1.attribute_id = t2.id
+        where t1.subject_id = #{subjectId}
+        and t2.type = #{attributeType}
     </select>
 
     <select id="listByAttributeValueAndAttributeType" resultType="cc.onelooker.kaleido.entity.SubjectAttributeDO">
         select t1.*
-          from subject_attribute t1
-    inner join attribute t2 on t1.attribute_id = t2.id
-         where t2.value = #{attributeValue}
-           and t2.type = #{attributeType}
+        from subject_attribute t1
+        inner join attribute t2 on t1.attribute_id = t2.id
+        where t2.value = #{attributeValue}
+        and t2.type = #{attributeType}
     </select>
 </mapper>

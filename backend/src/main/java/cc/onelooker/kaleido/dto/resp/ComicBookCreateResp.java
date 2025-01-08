@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2024-03-12 17:47:50
- *
  */
 @Data
 @ApiModel("漫画书籍响应对象")
-public class ComicBookCreateResp{
+public class ComicBookCreateResp {
 
     @ApiModelProperty("主键")
     private String id;

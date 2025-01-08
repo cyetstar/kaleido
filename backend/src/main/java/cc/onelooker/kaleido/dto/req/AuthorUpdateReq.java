@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2024-03-12 17:47:50
- *
  */
 @Data
 @ApiModel("作者请求对象")
-public class AuthorUpdateReq{
+public class AuthorUpdateReq {
 
     @ApiModelProperty("主键")
     private String id;

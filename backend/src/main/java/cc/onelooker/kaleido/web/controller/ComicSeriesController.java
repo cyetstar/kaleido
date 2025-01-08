@@ -54,7 +54,7 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     private ComicManager comicManager;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<ComicSeriesDTO> getService() {
         return comicSeriesService;
     }
 
@@ -62,7 +62,8 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     @ApiOperation(value = "查询漫画系列")
     public CommonResult<PageResult<ComicSeriesPageResp>> page(ComicSeriesPageReq req, PageParam pageParam) {
         pageParam.setOrderBy("DESC:added_at");
-        return super.page(req, pageParam, ComicSeriesConvert.INSTANCE::convertToDTO, ComicSeriesConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, ComicSeriesConvert.INSTANCE::convertToDTO,
+                ComicSeriesConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -76,7 +77,8 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     @PostMapping("create")
     @ApiOperation(value = "新增漫画系列")
     public CommonResult<ComicSeriesCreateResp> create(@RequestBody ComicSeriesCreateReq req) {
-        return super.create(req, ComicSeriesConvert.INSTANCE::convertToDTO, ComicSeriesConvert.INSTANCE::convertToCreateResp);
+        return super.create(req, ComicSeriesConvert.INSTANCE::convertToDTO,
+                ComicSeriesConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
@@ -84,10 +86,12 @@ public class ComicSeriesController extends AbstractCrudController<ComicSeriesDTO
     public CommonResult<Boolean> update(@RequestBody ComicSeriesUpdateReq req) {
         ComicSeriesDTO comicSeriesDTO = ComicSeriesConvert.INSTANCE.convertToDTO(req);
         if (req.getWriterList() != null) {
-            comicSeriesDTO.setWriterList(req.getWriterList().stream().map(s -> authorService.findById(s)).collect(Collectors.toList()));
+            comicSeriesDTO.setWriterList(
+                    req.getWriterList().stream().map(s -> authorService.findById(s)).collect(Collectors.toList()));
         }
         if (req.getPencillerList() != null) {
-            comicSeriesDTO.setPencillerList(req.getPencillerList().stream().map(s -> authorService.findById(s)).collect(Collectors.toList()));
+            comicSeriesDTO.setPencillerList(
+                    req.getPencillerList().stream().map(s -> authorService.findById(s)).collect(Collectors.toList()));
         }
         comicManager.saveSeries(comicSeriesDTO);
         return CommonResult.success(true);

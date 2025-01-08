@@ -57,7 +57,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         CorsFilter corsFilter = new CorsFilter(source);
-        FilterRegistrationBean bean = new FilterRegistrationBean(corsFilter);
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(corsFilter);
         bean.setOrder(0);
         return corsFilter;
     }
@@ -89,7 +89,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(@Autowired JacksonProperties jacksonProperties) {
+    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(
+            @Autowired JacksonProperties jacksonProperties) {
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().createXmlMapper(false).build();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(jacksonProperties.getDateFormat());
         // 全局配置序列化返回 JSON 处理

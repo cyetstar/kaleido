@@ -7,10 +7,7 @@ import cc.onelooker.kaleido.dto.req.MovieBasicUpdateReq;
 import cc.onelooker.kaleido.dto.resp.*;
 import cc.onelooker.kaleido.entity.MovieBasicDO;
 import cc.onelooker.kaleido.third.tmm.Movie;
-import org.mapstruct.InheritInverseConfiguration;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Map;
@@ -21,7 +18,7 @@ import java.util.Map;
  * @author cyetstar
  * @date 2023-11-26 01:19:02
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MovieBasicConvert {
 
     MovieBasicConvert INSTANCE = Mappers.getMapper(MovieBasicConvert.class);

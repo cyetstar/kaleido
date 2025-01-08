@@ -2,7 +2,6 @@ package cc.onelooker.kaleido.service.impl;
 
 import cc.onelooker.kaleido.convert.MusicTrackConvert;
 import cc.onelooker.kaleido.dto.MusicTrackDTO;
-import cc.onelooker.kaleido.dto.TvshowEpisodeDTO;
 import cc.onelooker.kaleido.entity.MusicTrackDO;
 import cc.onelooker.kaleido.mapper.MusicTrackMapper;
 import cc.onelooker.kaleido.service.MusicAlbumService;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,7 +26,8 @@ import java.util.Objects;
  * @date 2023-11-20 22:35:26
  */
 @Service
-public class MusicTrackServiceImpl extends AbstractBaseServiceImpl<MusicTrackMapper, MusicTrackDO, MusicTrackDTO> implements MusicTrackService {
+public class MusicTrackServiceImpl extends AbstractBaseServiceImpl<MusicTrackMapper, MusicTrackDO, MusicTrackDTO>
+        implements MusicTrackService {
 
     MusicTrackConvert convert = MusicTrackConvert.INSTANCE;
 
@@ -36,7 +36,8 @@ public class MusicTrackServiceImpl extends AbstractBaseServiceImpl<MusicTrackMap
     @Override
     protected Wrapper<MusicTrackDO> genQueryWrapper(MusicTrackDTO dto) {
         LambdaQueryWrapper<MusicTrackDO> query = new LambdaQueryWrapper<>();
-        query.eq(StringUtils.isNotEmpty(dto.getMusicbrainzId()), MusicTrackDO::getMusicbrainzId, dto.getMusicbrainzId());
+        query.eq(StringUtils.isNotEmpty(dto.getMusicbrainzId()), MusicTrackDO::getMusicbrainzId,
+                dto.getMusicbrainzId());
         query.eq(StringUtils.isNotEmpty(dto.getNeteaseId()), MusicTrackDO::getNeteaseId, dto.getNeteaseId());
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), MusicTrackDO::getTitle, dto.getTitle());
         query.eq(StringUtils.isNotEmpty(dto.getArtists()), MusicTrackDO::getArtists, dto.getArtists());
@@ -66,7 +67,7 @@ public class MusicTrackServiceImpl extends AbstractBaseServiceImpl<MusicTrackMap
         MusicTrackDTO param = new MusicTrackDTO();
         param.setAlbumId(albumId);
         LambdaQueryWrapper<MusicTrackDO> wrapper = (LambdaQueryWrapper<MusicTrackDO>) genQueryWrapper(param);
-        wrapper.orderByAsc(MusicTrackDO::getDiscIndex, MusicTrackDO::getTrackIndex);
+        wrapper.orderByAsc(Arrays.asList(MusicTrackDO::getDiscIndex, MusicTrackDO::getTrackIndex));
         return convertToDTO(list(wrapper));
     }
 

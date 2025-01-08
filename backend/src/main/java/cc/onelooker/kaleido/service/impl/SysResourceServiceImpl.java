@@ -27,7 +27,8 @@ import java.util.Objects;
  * @date 2022-08-15 17:38:57
  */
 @Service
-public class SysResourceServiceImpl extends KaleidoBaseServiceImpl<SysResourceMapper, SysResourceDO, SysResourceDTO> implements SysResourceService {
+public class SysResourceServiceImpl extends
+        KaleidoBaseServiceImpl<Long, SysResourceMapper, SysResourceDO, SysResourceDTO> implements SysResourceService {
 
     SysResourceConvert convert = SysResourceConvert.INSTANCE;
 
@@ -42,8 +43,10 @@ public class SysResourceServiceImpl extends KaleidoBaseServiceImpl<SysResourceMa
         query.eq(StringUtils.isNotEmpty(sysResourceDTO.getType()), SysResourceDO::getType, sysResourceDTO.getType());
         query.like(StringUtils.isNotEmpty(sysResourceDTO.getName()), SysResourceDO::getName, sysResourceDTO.getName());
         query.eq(StringUtils.isNotEmpty(sysResourceDTO.getUrl()), SysResourceDO::getUrl, sysResourceDTO.getUrl());
-        query.eq(StringUtils.isNotEmpty(sysResourceDTO.getMethod()), SysResourceDO::getMethod, sysResourceDTO.getMethod());
-        query.in(CollectionUtils.isNotEmpty(sysResourceDTO.getIdArr()), SysResourceDO::getId, sysResourceDTO.getIdArr());
+        query.eq(StringUtils.isNotEmpty(sysResourceDTO.getMethod()), SysResourceDO::getMethod,
+                sysResourceDTO.getMethod());
+        query.in(CollectionUtils.isNotEmpty(sysResourceDTO.getIdArr()), SysResourceDO::getId,
+                sysResourceDTO.getIdArr());
         return query;
     }
 

@@ -41,7 +41,8 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class SysDictTypeServiceImpl extends KaleidoBaseServiceImpl<SysDictTypeMapper, SysDictTypeDO, SysDictTypeDTO> implements SysDictTypeService {
+public class SysDictTypeServiceImpl extends
+        KaleidoBaseServiceImpl<Long, SysDictTypeMapper, SysDictTypeDO, SysDictTypeDTO> implements SysDictTypeService {
 
     SysDictTypeConvert convert = SysDictTypeConvert.INSTANCE;
 
@@ -61,7 +62,8 @@ public class SysDictTypeServiceImpl extends KaleidoBaseServiceImpl<SysDictTypeMa
         LambdaQueryWrapper<SysDictTypeDO> query = new LambdaQueryWrapper<>();
         query.eq(StringUtils.isNotEmpty(sysDictTypeDTO.getType()), SysDictTypeDO::getType, sysDictTypeDTO.getType());
         query.eq(StringUtils.isNotEmpty(sysDictTypeDTO.getName()), SysDictTypeDO::getName, sysDictTypeDTO.getName());
-        query.eq(Objects.nonNull(sysDictTypeDTO.getIsDeleted()), SysDictTypeDO::getIsDeleted, sysDictTypeDTO.getIsDeleted());
+        query.eq(Objects.nonNull(sysDictTypeDTO.getIsDeleted()), SysDictTypeDO::getIsDeleted,
+                sysDictTypeDTO.getIsDeleted());
         return query;
     }
 
@@ -115,7 +117,8 @@ public class SysDictTypeServiceImpl extends KaleidoBaseServiceImpl<SysDictTypeMa
             baseMapper.deleteBatchIds(idList);
 
             if (!CollectionUtils.isEmpty(dictTypeList)) {
-                sysDictService.deleteByDictType(dictTypeList.stream().map(SysDictTypeDO::getType).collect(Collectors.toList()));
+                sysDictService.deleteByDictType(
+                        dictTypeList.stream().map(SysDictTypeDO::getType).collect(Collectors.toList()));
             }
         }
 
@@ -157,7 +160,8 @@ public class SysDictTypeServiceImpl extends KaleidoBaseServiceImpl<SysDictTypeMa
         String type = null;
         for (Directory secondary : secondaryList) {
             try {
-                if (BooleanUtils.isNotTrue(secondary.getSecondary()) || ArrayUtils.contains(IGNORE_SECONDARY, secondary.getKey())) {
+                if (BooleanUtils.isNotTrue(secondary.getSecondary())
+                        || ArrayUtils.contains(IGNORE_SECONDARY, secondary.getKey())) {
                     continue;
                 }
                 type = prefix + StringUtils.capitalize(secondary.getKey());

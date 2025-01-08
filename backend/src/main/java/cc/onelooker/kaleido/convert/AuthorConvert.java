@@ -10,22 +10,23 @@ import cc.onelooker.kaleido.dto.resp.AuthorViewResp;
 import cc.onelooker.kaleido.entity.AuthorDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 作者Convert
-*
-* @author cyetstar
-* @date 2024-03-12 17:47:50
-*/
-@Mapper
+ * 作者Convert
+ *
+ * @author cyetstar
+ * @date 2024-03-12 17:47:50
+ */
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AuthorConvert {
 
     AuthorConvert INSTANCE = Mappers.getMapper(AuthorConvert.class);
 
     AuthorDTO convert(AuthorDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     AuthorDO convertToDO(AuthorDTO dto);
 
     AuthorDTO convertToDTO(AuthorPageReq req);

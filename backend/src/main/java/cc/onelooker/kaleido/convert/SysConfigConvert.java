@@ -10,6 +10,7 @@ import cc.onelooker.kaleido.dto.resp.SysConfigViewResp;
 import cc.onelooker.kaleido.entity.SysConfigDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -18,7 +19,7 @@ import org.mapstruct.factory.Mappers;
  * @author cyetstar
  * @date 2022-11-13 00:43:42
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SysConfigConvert {
     SysConfigConvert INSTANCE = Mappers.getMapper(SysConfigConvert.class);
 

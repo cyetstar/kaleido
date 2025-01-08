@@ -27,7 +27,8 @@ import java.util.stream.Collectors;
  * @date 2022-04-26 00:41:00
  */
 @Service
-public class SysRoleServiceImpl extends DictionaryBaseServiceImpl<SysRoleMapper, SysRoleDO, SysRoleDTO> implements SysRoleService {
+public class SysRoleServiceImpl extends DictionaryBaseServiceImpl<Long, SysRoleMapper, SysRoleDO, SysRoleDTO>
+        implements SysRoleService {
 
     SysRoleConvert convert = SysRoleConvert.INSTANCE;
 
@@ -40,7 +41,8 @@ public class SysRoleServiceImpl extends DictionaryBaseServiceImpl<SysRoleMapper,
         query.eq(Objects.nonNull(sysRoleDTO.getParentId()), SysRoleDO::getParentId, sysRoleDTO.getParentId());
         query.like(StringUtils.isNotEmpty(sysRoleDTO.getCode()), SysRoleDO::getCode, sysRoleDTO.getCode());
         query.like(StringUtils.isNotEmpty(sysRoleDTO.getName()), SysRoleDO::getName, sysRoleDTO.getName());
-        query.eq(StringUtils.isNotEmpty(sysRoleDTO.getDescription()), SysRoleDO::getDescription, sysRoleDTO.getDescription());
+        query.eq(StringUtils.isNotEmpty(sysRoleDTO.getDescription()), SysRoleDO::getDescription,
+                sysRoleDTO.getDescription());
         query.eq(Objects.nonNull(sysRoleDTO.getSubCount()), SysRoleDO::getSubCount, sysRoleDTO.getSubCount());
         query.eq(Objects.nonNull(sysRoleDTO.getIsDeleted()), SysRoleDO::getIsDeleted, sysRoleDTO.getIsDeleted());
         return query;
@@ -71,7 +73,8 @@ public class SysRoleServiceImpl extends DictionaryBaseServiceImpl<SysRoleMapper,
                 sysRoleResourceService.deleteById(sysRoleResourceDTO.getId());
             }
         }
-        List<Long> existResourceIds = sysRoleResourceDTOList.stream().map(SysRoleResourceDTO::getResourceId).collect(Collectors.toList());
+        List<Long> existResourceIds = sysRoleResourceDTOList.stream().map(SysRoleResourceDTO::getResourceId)
+                .collect(Collectors.toList());
         for (Long resourceId : resourceIds) {
             if (!existResourceIds.contains(resourceId)) {
                 sysRoleResourceService.insertBy(id, resourceId);

@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2024-03-12 17:48:21
- *
  */
 @Data
 @ApiModel("属性请求对象")
-public class AttributeCreateReq{
+public class AttributeCreateReq {
 
     @ApiModelProperty("属性值")
     private String value;

@@ -10,11 +10,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-12-29 16:15:43
- *
  */
 @Data
 @ApiModel("豆瓣电影口碑榜请求对象")
-public class MovieDoubanWeeklyPageReq{
+public class MovieDoubanWeeklyPageReq {
 
     @ApiModelProperty("电影名")
     private String title;

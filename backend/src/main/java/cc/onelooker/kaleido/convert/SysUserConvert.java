@@ -11,6 +11,7 @@ import cc.onelooker.kaleido.dto.resp.SysUserViewResp;
 import cc.onelooker.kaleido.entity.SysUserDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -19,7 +20,7 @@ import org.mapstruct.factory.Mappers;
  * @author cyetstar
  * @date 2022-11-10 16:46:50
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SysUserConvert {
     SysUserConvert INSTANCE = Mappers.getMapper(SysUserConvert.class);
 

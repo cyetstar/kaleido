@@ -10,22 +10,23 @@ import cc.onelooker.kaleido.dto.resp.TaskViewResp;
 import cc.onelooker.kaleido.entity.TaskDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 任务Convert
-*
-* @author cyetstar
-* @date 2024-06-27 17:18:04
-*/
-@Mapper
+ * 任务Convert
+ *
+ * @author cyetstar
+ * @date 2024-06-27 17:18:04
+ */
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TaskConvert {
 
     TaskConvert INSTANCE = Mappers.getMapper(TaskConvert.class);
 
     TaskDTO convert(TaskDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     TaskDO convertToDO(TaskDTO dto);
 
     TaskDTO convertToDTO(TaskPageReq req);

@@ -14,6 +14,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,8 @@ public class MovieSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
 
     private final List<String> plexIdList = Lists.newArrayList();
 
-    public MovieSyncRunnable(PlexApiService plexApiService, MovieManager movieManager, MovieBasicService movieBasicService) {
+    public MovieSyncRunnable(PlexApiService plexApiService, MovieManager movieManager,
+                             MovieBasicService movieBasicService) {
         this.plexApiService = plexApiService;
         this.movieManager = movieManager;
         this.movieBasicService = movieBasicService;
@@ -45,10 +47,10 @@ public class MovieSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
     }
 
     @Override
-    protected void afterRun(Map<String, String> params) {
+    protected void afterRun(@Nullable Map<String, String> params) {
         String id = MapUtils.getString(params, "id");
         if (StringUtils.isNotEmpty(id)) {
-            //单条记录同步，不做后续处理
+            // 单条记录同步，不做后续处理
             return;
         }
         List<MovieBasicDTO> movieBasicDTOList = movieBasicService.list(null);
@@ -67,7 +69,8 @@ public class MovieSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
         if (StringUtils.isEmpty(id)) {
             String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexMovieLibraryId);
             pageResult = plexApiService.pageMetadata(libraryId, PlexApiService.TYPE_MOVIE, pageNumber, pageSize);
-            plexIdList.addAll(pageResult.getRecords().stream().map(Metadata::getRatingKey).collect(Collectors.toList()));
+            plexIdList
+                    .addAll(pageResult.getRecords().stream().map(Metadata::getRatingKey).collect(Collectors.toList()));
         } else if (pageNumber == 1) {
             Metadata metadata = plexApiService.findMetadata(id);
             pageResult.setTotal(1L);
@@ -80,7 +83,7 @@ public class MovieSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
     @Override
     protected int processEntity(Map<String, String> params, Metadata metadata) throws Exception {
         MovieBasicDTO movieBasicDTO = movieBasicService.findById(metadata.getRatingKey());
-        //FIXME 已经存在，会存在部分无法及时更新的情况
+        // FIXME 已经存在，会存在部分无法及时更新的情况
         if (movieBasicDTO == null || MapUtils.getBooleanValue(params, "force")) {
             movieManager.syncMovie(plexApiService.findMetadata(metadata.getRatingKey()));
             return SUCCESS;

@@ -1,6 +1,6 @@
 package cc.onelooker.kaleido.dto;
 
-import cc.onelooker.kaleido.entity.MusicAlbumArtistDO;
+import cc.onelooker.kaleido.entity.MusicTrackArtistDO;
 import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 

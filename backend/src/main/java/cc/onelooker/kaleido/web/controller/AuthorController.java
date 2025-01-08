@@ -39,7 +39,7 @@ public class AuthorController extends AbstractCrudController<AuthorDTO> {
     private AuthorService authorService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<AuthorDTO> getService() {
         return authorService;
     }
 
@@ -51,7 +51,8 @@ public class AuthorController extends AbstractCrudController<AuthorDTO> {
             dto.setIdList(Arrays.asList(StringUtils.split(req.getIds(), Constants.COMMA)));
         }
         PageResult<AuthorDTO> dtoPageResult = authorService.page(dto, pageParam.toPage());
-        PageResult<AuthorPageResp> pageResult = PageResult.convert(dtoPageResult, AuthorConvert.INSTANCE::convertToPageResp);
+        PageResult<AuthorPageResp> pageResult = PageResult.convert(dtoPageResult,
+                AuthorConvert.INSTANCE::convertToPageResp);
         return CommonResult.success(pageResult);
     }
 

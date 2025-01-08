@@ -1,13 +1,13 @@
 package cc.onelooker.kaleido.web.controller;
 
 import cc.onelooker.kaleido.convert.ArtistConvert;
-import cc.onelooker.kaleido.convert.AuthorConvert;
 import cc.onelooker.kaleido.dto.ArtistDTO;
-import cc.onelooker.kaleido.dto.AuthorDTO;
 import cc.onelooker.kaleido.dto.req.*;
-import cc.onelooker.kaleido.dto.resp.*;
+import cc.onelooker.kaleido.dto.resp.ArtistCreateResp;
+import cc.onelooker.kaleido.dto.resp.ArtistPageResp;
+import cc.onelooker.kaleido.dto.resp.ArtistSearchNeteaseResp;
+import cc.onelooker.kaleido.dto.resp.ArtistViewResp;
 import cc.onelooker.kaleido.service.ArtistService;
-import cc.onelooker.kaleido.service.MusicManager;
 import cc.onelooker.kaleido.third.tmm.Artist;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import com.google.common.collect.Lists;
@@ -42,25 +42,23 @@ public class ArtistController extends AbstractCrudController<ArtistDTO> {
     private ArtistService artistService;
 
     @Autowired
-    private MusicManager musicManager;
-
-    @Autowired
     private TmmApiService tmmApiService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<ArtistDTO> getService() {
         return artistService;
     }
 
     @GetMapping("page")
     @ApiOperation(value = "查询艺术家")
     public CommonResult<PageResult<ArtistPageResp>> page(ArtistPageReq req, PageParam pageParam) {
-        ArtistDTO dto =ArtistConvert.INSTANCE.convertToDTO(req);
+        ArtistDTO dto = ArtistConvert.INSTANCE.convertToDTO(req);
         if (StringUtils.isNotEmpty(req.getIds())) {
             dto.setIdList(Arrays.asList(StringUtils.split(req.getIds(), Constants.COMMA)));
         }
         PageResult<ArtistDTO> dtoPageResult = artistService.page(dto, pageParam.toPage());
-        PageResult<ArtistPageResp> pageResult = PageResult.convert(dtoPageResult, ArtistConvert.INSTANCE::convertToPageResp);
+        PageResult<ArtistPageResp> pageResult = PageResult.convert(dtoPageResult,
+                ArtistConvert.INSTANCE::convertToPageResp);
         return CommonResult.success(pageResult);
     }
 

@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.5.3</version>
-        <relativePath/>
+        <relativePath />
     </parent>
     <groupId>com.onelooker</groupId>
     <artifactId>kaleido-backend</artifactId>
     <version>1.0.0</version>
     <name>kaleido-backend</name>
+    <profiles>
+        <profile>
+            <id>dev</id>
+        </profile>
+    </profiles>
 
     <properties>
         <java.version>1.8</java.version>
@@ -19,11 +25,11 @@
         <common-security.version>1.1.0-SNAPSHOT</common-security.version>
         <common-util.version>1.0.3-SNAPSHOT</common-util.version>
         <common-file.version>1.1.0</common-file.version>
-        <lombok.version>1.18.20</lombok.version>
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <lombok.version>1.18.34</lombok.version>
+        <mapstruct.version>1.6.2</mapstruct.version>
         <mybatis-plus.version>3.5.1</mybatis-plus.version>
         <hutool-all.version>5.8.27</hutool-all.version>
-        <commons-io.version>2.4</commons-io.version>
+        <commons-io.version>2.15.1</commons-io.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <fastjson2.version>2.0.43</fastjson2.version>
         <jaudiotagger.version>3.0.1</jaudiotagger.version>
@@ -90,6 +96,12 @@
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>${mapstruct.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
@@ -176,11 +188,6 @@
             <version>1.26.1</version>
         </dependency>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.15.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -190,6 +197,12 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     <build>
         <finalName>app</finalName>
@@ -198,6 +211,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.5.3</version>
+                <configuration>
+                    <profiles>
+                        <profile>dev</profile>
+                    </profiles>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -208,21 +226,23 @@
                     <target>${java.version}</target> <!-- or higher, depending on your project -->
                     <annotationProcessorPaths>
                         <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${mapstruct.version}</version>
-                        </path>
-                        <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
                         </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok-mapstruct-binding</artifactId>
                             <version>0.2.0</version>
                         </path>
                     </annotationProcessorPaths>
+                    <compilerArgs>-Amapstruct.defaultComponentModel=spring -Amapstruct.verbose=true</compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -235,12 +255,12 @@
                         <configuration>
                             <target>
                                 <!-- 1. 清空 static 文件夹 -->
-                                <delete dir="${project.basedir}/src/main/resources/static"/>
+                                <delete dir="${project.basedir}/src/main/resources/static" />
 
                                 <!-- 2. 复制外部 dist 文件夹内容到 static 文件夹 -->
-                                <mkdir dir="${project.basedir}/src/main/resources/static"/>
+                                <mkdir dir="${project.basedir}/src/main/resources/static" />
                                 <copy todir="${project.basedir}/src/main/resources/static">
-                                    <fileset dir="../frontend/dist"/>
+                                    <fileset dir="../frontend/dist" />
                                 </copy>
                             </target>
                         </configuration>

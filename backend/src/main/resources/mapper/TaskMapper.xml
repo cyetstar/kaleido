@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.onelooker.kaleido.mapper.TaskMapper">
-
     <delete id="deleteNotExistRecords">
         delete from task
         where not exists (select 1 from ${tableName} t where t.id = task.subject_id)
-          and task.subject_type = #{subjectType};
+        and task.subject_type = #{subjectType};
     </delete>
 </mapper>

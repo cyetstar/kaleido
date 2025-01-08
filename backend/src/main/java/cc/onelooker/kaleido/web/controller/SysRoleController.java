@@ -36,14 +36,15 @@ public class SysRoleController extends AbstractCrudController<SysRoleDTO> {
     private SysRoleService sysRoleService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<SysRoleDTO> getService() {
         return sysRoleService;
     }
 
     @GetMapping("page")
     @ApiOperation(value = "角色表分页查询", hidden = true)
     public CommonResult<PageResult<SysRolePageResp>> page(SysRolePageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, SysRoleConvert.INSTANCE::convertToDTO, SysRoleConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, SysRoleConvert.INSTANCE::convertToDTO,
+                SysRoleConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")

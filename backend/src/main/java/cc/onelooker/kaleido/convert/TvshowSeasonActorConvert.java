@@ -4,6 +4,7 @@ import cc.onelooker.kaleido.dto.TvshowSeasonActorDTO;
 import cc.onelooker.kaleido.entity.TvshowSeasonActorDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -12,7 +13,7 @@ import org.mapstruct.factory.Mappers;
  * @author cyetstar
  * @date 2023-11-26 23:27:03
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TvshowSeasonActorConvert {
 
     TvshowSeasonActorConvert INSTANCE = Mappers.getMapper(TvshowSeasonActorConvert.class);

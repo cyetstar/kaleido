@@ -4,6 +4,7 @@ import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.TvshowManager;
 import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.zjjcnt.common.core.domain.PageResult;
 import org.springframework.stereotype.Component;
@@ -50,7 +51,9 @@ public class TvshowUpdateSourceRunnable extends AbstractEntityActionRunnable<Pat
             PageResult<Path> pageResult = new PageResult<>();
             pageResult.setSearchCount(true);
             if (pageNumber == 1) {
-                List<Path> pathList = Files.list(importPath).collect(Collectors.toList());
+                List<Path> pathList = Files.list(importPath).filter(
+                                path -> Files.isDirectory(path) && Files.exists(path.resolve(KaleidoConstants.SHOW_NFO)))
+                        .collect(Collectors.toList());
                 pageResult.setTotal((long) pathList.size());
                 pageResult.setRecords(pathList);
             }

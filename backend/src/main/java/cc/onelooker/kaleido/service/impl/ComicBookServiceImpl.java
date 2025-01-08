@@ -6,7 +6,6 @@ import cc.onelooker.kaleido.entity.ComicBookDO;
 import cc.onelooker.kaleido.mapper.ComicBookMapper;
 import cc.onelooker.kaleido.service.ComicBookService;
 import cc.onelooker.kaleido.service.ComicSeriesService;
-import cc.onelooker.kaleido.service.TaskService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zjjcnt.common.core.service.impl.AbstractBaseServiceImpl;
@@ -26,15 +25,13 @@ import java.util.Objects;
  * @date 2024-03-12 17:47:50
  */
 @Service
-public class ComicBookServiceImpl extends AbstractBaseServiceImpl<ComicBookMapper, ComicBookDO, ComicBookDTO> implements ComicBookService {
+public class ComicBookServiceImpl extends AbstractBaseServiceImpl<ComicBookMapper, ComicBookDO, ComicBookDTO>
+        implements ComicBookService {
 
     ComicBookConvert convert = ComicBookConvert.INSTANCE;
 
     @Autowired
     private ComicSeriesService comicSeriesService;
-
-    @Autowired
-    private TaskService taskService;
 
     @Override
     protected Wrapper<ComicBookDO> genQueryWrapper(ComicBookDTO dto) {

@@ -23,7 +23,8 @@ import java.util.Objects;
  * @date 2022-11-13 01:12:24
  */
 @Service
-public class SysMenuServiceImpl extends KaleidoBaseServiceImpl<SysMenuMapper, SysMenuDO, SysMenuDTO> implements SysMenuService {
+public class SysMenuServiceImpl extends KaleidoBaseServiceImpl<Long, SysMenuMapper, SysMenuDO, SysMenuDTO>
+        implements SysMenuService {
 
     SysMenuConvert convert = SysMenuConvert.INSTANCE;
 
@@ -37,7 +38,8 @@ public class SysMenuServiceImpl extends KaleidoBaseServiceImpl<SysMenuMapper, Sy
         query.like(StringUtils.isNotEmpty(sysMenuDTO.getName()), SysMenuDO::getName, sysMenuDTO.getName());
         query.eq(StringUtils.isNotEmpty(sysMenuDTO.getEqName()), SysMenuDO::getName, sysMenuDTO.getEqName());
         query.like(StringUtils.isNotEmpty(sysMenuDTO.getTitle()), SysMenuDO::getTitle, sysMenuDTO.getTitle());
-        query.eq(StringUtils.isNotEmpty(sysMenuDTO.getDescription()), SysMenuDO::getDescription, sysMenuDTO.getDescription());
+        query.eq(StringUtils.isNotEmpty(sysMenuDTO.getDescription()), SysMenuDO::getDescription,
+                sysMenuDTO.getDescription());
         query.eq(StringUtils.isNotEmpty(sysMenuDTO.getRedirect()), SysMenuDO::getRedirect, sysMenuDTO.getRedirect());
         query.eq(StringUtils.isNotEmpty(sysMenuDTO.getComponent()), SysMenuDO::getComponent, sysMenuDTO.getComponent());
         query.eq(StringUtils.isNotEmpty(sysMenuDTO.getIcon()), SysMenuDO::getIcon, sysMenuDTO.getIcon());
@@ -47,7 +49,8 @@ public class SysMenuServiceImpl extends KaleidoBaseServiceImpl<SysMenuMapper, Sy
         query.eq(Objects.nonNull(sysMenuDTO.getOrderNum()), SysMenuDO::getOrderNum, sysMenuDTO.getOrderNum());
         query.eq(Objects.nonNull(sysMenuDTO.getSubCount()), SysMenuDO::getSubCount, sysMenuDTO.getSubCount());
         query.like(StringUtils.isNotEmpty(sysMenuDTO.getApp()), SysMenuDO::getApp, sysMenuDTO.getApp());
-        query.eq(StringUtils.isNotEmpty(sysMenuDTO.getPermission()), SysMenuDO::getPermission, sysMenuDTO.getPermission());
+        query.eq(StringUtils.isNotEmpty(sysMenuDTO.getPermission()), SysMenuDO::getPermission,
+                sysMenuDTO.getPermission());
         query.eq(Objects.nonNull(sysMenuDTO.getIsDeleted()), SysMenuDO::getIsDeleted, sysMenuDTO.getIsDeleted());
         query.eq(Objects.nonNull(sysMenuDTO.getCreateTime()), SysMenuDO::getCreateTime, sysMenuDTO.getCreateTime());
         query.eq(Objects.nonNull(sysMenuDTO.getUpdateTime()), SysMenuDO::getUpdateTime, sysMenuDTO.getUpdateTime());

@@ -34,7 +34,8 @@ public class PTThreadServiceTest {
     public void saveList() {
         int page = 126;
         while (true) {
-            JSONArray jsonArray = restTemplate.getForObject("http://127.0.0.1:6000/pt/list?page=" + page, JSONArray.class);
+            JSONArray jsonArray = restTemplate.getForObject("http://127.0.0.1:6000/pt/list?page=" + page,
+                    JSONArray.class);
             List<Map> list = jsonArray.toList(Map.class);
             if (list.isEmpty()) {
                 break;

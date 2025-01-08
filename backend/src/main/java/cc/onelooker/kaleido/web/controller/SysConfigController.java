@@ -48,7 +48,7 @@ public class SysConfigController extends AbstractCrudController<SysConfigDTO> {
     private TmmApiService tmmApiService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<SysConfigDTO> getService() {
         return sysConfigService;
     }
 
@@ -80,7 +80,8 @@ public class SysConfigController extends AbstractCrudController<SysConfigDTO> {
     @GetMapping("page")
     @ApiOperation(value = "系统配置表分页查询")
     public CommonResult<PageResult<SysConfigPageResp>> page(SysConfigPageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, SysConfigConvert.INSTANCE::convertToDTO, SysConfigConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, SysConfigConvert.INSTANCE::convertToDTO,
+                SysConfigConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -92,7 +93,8 @@ public class SysConfigController extends AbstractCrudController<SysConfigDTO> {
     @PostMapping("create")
     @ApiOperation(value = "新增系统配置表")
     public CommonResult<SysConfigCreateResp> create(@RequestBody SysConfigCreateReq req) {
-        return super.create(req, SysConfigConvert.INSTANCE::convertToDTO, SysConfigConvert.INSTANCE::convertToCreateResp);
+        return super.create(req, SysConfigConvert.INSTANCE::convertToDTO,
+                SysConfigConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")

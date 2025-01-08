@@ -55,7 +55,11 @@
         <template #="{ record }">
           <p>
             <a
-              :href="`https://movie.douban.com/subject/${record.doubanId}/`"
+              :href="
+                isNotEmpty(record.doubanId)
+                  ? `https://movie.douban.com/subject/${record.doubanId}/`
+                  : `https://www.themoviedb.org/tv/${record.tmdbId}`
+              "
               target="_blank"
             >
               {{ record.title }}

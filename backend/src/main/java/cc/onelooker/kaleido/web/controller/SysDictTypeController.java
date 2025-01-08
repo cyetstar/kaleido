@@ -39,14 +39,15 @@ public class SysDictTypeController extends AbstractCrudController<SysDictTypeDTO
     private Dictionary dictionary;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<SysDictTypeDTO> getService() {
         return sysDictTypeService;
     }
 
     @GetMapping("page")
     @ApiOperation(value = "字典表类型表分页查询")
     public CommonResult<PageResult<SysDictTypePageResp>> page(SysDictTypePageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, SysDictTypeConvert.INSTANCE::convertToDTO, SysDictTypeConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, SysDictTypeConvert.INSTANCE::convertToDTO,
+                SysDictTypeConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -58,7 +59,8 @@ public class SysDictTypeController extends AbstractCrudController<SysDictTypeDTO
     @PostMapping("create")
     @ApiOperation(value = "新增字典表类型表")
     public CommonResult<SysDictTypeCreateResp> create(@RequestBody SysDictTypeCreateReq req) {
-        return super.create(req, SysDictTypeConvert.INSTANCE::convertToDTO, SysDictTypeConvert.INSTANCE::convertToCreateResp);
+        return super.create(req, SysDictTypeConvert.INSTANCE::convertToDTO,
+                SysDictTypeConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")

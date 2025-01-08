@@ -1,5 +1,19 @@
 package cc.onelooker.kaleido.web.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.zjjcnt.common.core.domain.CommonResult;
+import com.zjjcnt.common.core.domain.PageParam;
+import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.service.IBaseService;
+import com.zjjcnt.common.core.web.controller.AbstractCrudController;
+
 import cc.onelooker.kaleido.convert.TvshowEpisodeConvert;
 import cc.onelooker.kaleido.dto.TvshowEpisodeDTO;
 import cc.onelooker.kaleido.dto.req.TvshowEpisodeCreateReq;
@@ -9,16 +23,9 @@ import cc.onelooker.kaleido.dto.resp.TvshowEpisodeCreateResp;
 import cc.onelooker.kaleido.dto.resp.TvshowEpisodePageResp;
 import cc.onelooker.kaleido.dto.resp.TvshowEpisodeViewResp;
 import cc.onelooker.kaleido.service.TvshowEpisodeService;
-import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.PageParam;
-import com.zjjcnt.common.core.domain.PageResult;
-import com.zjjcnt.common.core.service.IBaseService;
-import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * 单集前端控制器
@@ -37,14 +44,15 @@ public class TvshowEpisodeController extends AbstractCrudController<TvshowEpisod
     private TvshowEpisodeService tvshowEpisodeService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<TvshowEpisodeDTO> getService() {
         return tvshowEpisodeService;
     }
 
     @GetMapping("page")
     @ApiOperation(value = "查询单集")
     public CommonResult<PageResult<TvshowEpisodePageResp>> page(TvshowEpisodePageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, TvshowEpisodeConvert.INSTANCE::convertToDTO, TvshowEpisodeConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, TvshowEpisodeConvert.INSTANCE::convertToDTO,
+                TvshowEpisodeConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -56,7 +64,8 @@ public class TvshowEpisodeController extends AbstractCrudController<TvshowEpisod
     @PostMapping("create")
     @ApiOperation(value = "新增单集")
     public CommonResult<TvshowEpisodeCreateResp> create(@RequestBody TvshowEpisodeCreateReq req) {
-        return super.create(req, TvshowEpisodeConvert.INSTANCE::convertToDTO, TvshowEpisodeConvert.INSTANCE::convertToCreateResp);
+        return super.create(req, TvshowEpisodeConvert.INSTANCE::convertToDTO,
+                TvshowEpisodeConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")

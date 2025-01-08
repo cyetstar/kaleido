@@ -44,7 +44,7 @@ public class MovieDoubanWeeklyController extends AbstractCrudController<MovieDou
     private MovieManager movieManager;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<MovieDoubanWeeklyDTO> getService() {
         return movieDoubanWeeklyService;
     }
 
@@ -52,7 +52,8 @@ public class MovieDoubanWeeklyController extends AbstractCrudController<MovieDou
     @ApiOperation(value = "查询豆瓣电影口碑榜")
     public CommonResult<PageResult<MovieDoubanWeeklyPageResp>> page(MovieDoubanWeeklyPageReq req, PageParam pageParam) {
         pageParam.setOrderBy("DESC:status;ASC:top;DESC:id");
-        PageResult<MovieDoubanWeeklyPageResp> pageResult = super.doPage(req, pageParam, MovieDoubanWeeklyConvert.INSTANCE::convertToDTO, MovieDoubanWeeklyConvert.INSTANCE::convertToPageResp);
+        PageResult<MovieDoubanWeeklyPageResp> pageResult = super.doPage(req, pageParam,
+                MovieDoubanWeeklyConvert.INSTANCE::convertToDTO, MovieDoubanWeeklyConvert.INSTANCE::convertToPageResp);
         pageResult.getRecords().stream().forEach(s -> {
             MovieBasicDTO movieBasicDTO = movieBasicService.findByDoubanId(s.getDoubanId());
             if (movieBasicDTO != null) {
@@ -72,7 +73,8 @@ public class MovieDoubanWeeklyController extends AbstractCrudController<MovieDou
     @PostMapping("create")
     @ApiOperation(value = "新增豆瓣电影口碑榜")
     public CommonResult<MovieDoubanWeeklyCreateResp> create(@RequestBody MovieDoubanWeeklyCreateReq req) {
-        return super.create(req, MovieDoubanWeeklyConvert.INSTANCE::convertToDTO, MovieDoubanWeeklyConvert.INSTANCE::convertToCreateResp);
+        return super.create(req, MovieDoubanWeeklyConvert.INSTANCE::convertToDTO,
+                MovieDoubanWeeklyConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")

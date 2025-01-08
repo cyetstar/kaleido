@@ -10,7 +10,6 @@ import cc.onelooker.kaleido.service.ActorService;
 import cc.onelooker.kaleido.service.MovieBasicCollectionService;
 import cc.onelooker.kaleido.service.MovieBasicService;
 import cc.onelooker.kaleido.service.MovieManager;
-import cc.onelooker.kaleido.third.plex.PlexApiService;
 import cc.onelooker.kaleido.third.tmm.Movie;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
@@ -66,7 +65,7 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     private TmmApiService tmmApiService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<MovieBasicDTO> getService() {
         return movieBasicService;
     }
 
@@ -74,7 +73,8 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @ApiOperation(value = "查询电影")
     public CommonResult<PageResult<MovieBasicPageResp>> page(MovieBasicPageReq req, PageParam pageParam) {
         pageParam.setOrderBy("DESC:added_at");
-        return super.page(req, pageParam, MovieBasicConvert.INSTANCE::convertToDTO, MovieBasicConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, MovieBasicConvert.INSTANCE::convertToDTO,
+                MovieBasicConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -88,7 +88,8 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     @PostMapping("create")
     @ApiOperation(value = "新增电影")
     public CommonResult<MovieBasicCreateResp> create(@RequestBody MovieBasicCreateReq req) {
-        return super.create(req, MovieBasicConvert.INSTANCE::convertToDTO, MovieBasicConvert.INSTANCE::convertToCreateResp);
+        return super.create(req, MovieBasicConvert.INSTANCE::convertToDTO,
+                MovieBasicConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
@@ -96,10 +97,12 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
     public CommonResult<Boolean> update(@RequestBody MovieBasicUpdateReq req) {
         MovieBasicDTO dto = MovieBasicConvert.INSTANCE.convertToDTO(req);
         if (req.getDirectorList() != null) {
-            dto.setDirectorList(req.getDirectorList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
+            dto.setDirectorList(
+                    req.getDirectorList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
         }
         if (req.getWriterList() != null) {
-            dto.setWriterList(req.getWriterList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
+            dto.setWriterList(
+                    req.getWriterList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
         }
         if (req.getActorList() != null) {
             dto.setActorList(req.getActorList().stream().map(s -> {
@@ -181,8 +184,10 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
 
     @GetMapping("listByCollectionId")
     public CommonResult<List<MovieBasicListByCollectionIdResp>> listByCollectionId(String collectionId) {
-        List<MovieBasicCollectionDTO> movieBasicCollectionDTOList = movieBasicCollectionService.listByCollectionId(collectionId);
-        List<String> movieIdList = movieBasicCollectionDTOList.stream().map(MovieBasicCollectionDTO::getMovieId).collect(Collectors.toList());
+        List<MovieBasicCollectionDTO> movieBasicCollectionDTOList = movieBasicCollectionService
+                .listByCollectionId(collectionId);
+        List<String> movieIdList = movieBasicCollectionDTOList.stream().map(MovieBasicCollectionDTO::getMovieId)
+                .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(movieIdList)) {
             return CommonResult.success(Lists.newArrayList());
         }
@@ -191,7 +196,8 @@ public class MovieBasicController extends AbstractCrudController<MovieBasicDTO> 
         List<MovieBasicDTO> movieBasicDTOList = movieBasicService.list(param);
         List<MovieBasicListByCollectionIdResp> respList = Lists.newArrayList();
         for (MovieBasicDTO movieBasicDTO : movieBasicDTOList) {
-            MovieBasicListByCollectionIdResp resp = MovieBasicConvert.INSTANCE.convertToListByCollectionIdResp(movieBasicDTO);
+            MovieBasicListByCollectionIdResp resp = MovieBasicConvert.INSTANCE
+                    .convertToListByCollectionIdResp(movieBasicDTO);
             respList.add(resp);
         }
         return CommonResult.success(respList);

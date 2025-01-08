@@ -21,12 +21,13 @@ public class KaleidoUtilsTest {
 
     @Test
     public void getMovieFolder() throws JAXBException, URISyntaxException {
-        Path filePath = KaleidoUtil.getMoviePath("/Volumes/movie/1970s/你还好吗? (1976)/俾鬼抓.Ghost.Snatchers.1986.DVD5.x264.2AAC.HALFCD-TLF.mkv");
+        Path filePath = KaleidoUtil.getMoviePath(
+                "/Volumes/movie/1970s/你还好吗? (1976)/俾鬼抓.Ghost.Snatchers.1986.DVD5.x264.2AAC.HALFCD-TLF.mkv");
         URI uri = new URI(StringUtils.replace(filePath.getParent().toString(), "?", "%3F"));
 
         Assertions.assertTrue(Files.exists(Paths.get(uri).resolve("movie.nfo")));
-//        MovieNFO movieNFO = NFOUtil.read(Paths.get(decodePath), "movie.nfo");
-//        Assertions.assertNotNull(movieNFO);
+        // MovieNFO movieNFO = NFOUtil.read(Paths.get(decodePath), "movie.nfo");
+        // Assertions.assertNotNull(movieNFO);
     }
 
     @Test
@@ -38,7 +39,6 @@ public class KaleidoUtilsTest {
 
     @Test
     public void genMusicFolder() {
-        MusicAlbumDTO musicAlbumDTO = new MusicAlbumDTO();
 
     }
 

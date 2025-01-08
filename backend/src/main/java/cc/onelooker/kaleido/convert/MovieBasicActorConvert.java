@@ -4,6 +4,7 @@ import cc.onelooker.kaleido.dto.MovieBasicActorDTO;
 import cc.onelooker.kaleido.entity.MovieBasicActorDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -12,7 +13,7 @@ import org.mapstruct.factory.Mappers;
  * @author cyetstar
  * @date 2023-11-26 01:19:02
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MovieBasicActorConvert {
 
     MovieBasicActorConvert INSTANCE = Mappers.getMapper(MovieBasicActorConvert.class);

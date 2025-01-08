@@ -3,7 +3,7 @@ package cc.onelooker.kaleido.third.plex;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class Media {
 
     @JsonIgnore
     public Part getPart() {
-        return CollectionUtils.get(partList, 0);
+        return IterableUtils.get(partList, 0);
     }
 
     @Data
@@ -51,7 +51,7 @@ public class Media {
 
         @JsonIgnore
         public Stream getStream() {
-            return CollectionUtils.get(streamList, 0);
+            return IterableUtils.get(streamList, 0);
         }
     }
 

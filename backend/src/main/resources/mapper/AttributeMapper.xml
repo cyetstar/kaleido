@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.onelooker.kaleido.mapper.AttributeMapper">
-
     <select id="listBySubjectId" resultType="cc.onelooker.kaleido.entity.AttributeDO">
         select t1.*
-          from attribute t1
-    inner join subject_attribute t2 on t1.id = t2.attribute_id
-         where t2.subject_id = #{subjectId}
+        from attribute t1
+        inner join subject_attribute t2 on t1.id = t2.attribute_id
+        where t2.subject_id = #{subjectId}
     </select>
 </mapper>

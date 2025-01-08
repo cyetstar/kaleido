@@ -5,9 +5,11 @@ import cn.hutool.core.thread.ThreadUtil;
 import com.google.common.collect.ImmutableMap;
 import com.zjjcnt.common.core.domain.PageResult;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 
+import javax.annotation.Nullable;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Map;
@@ -16,12 +18,14 @@ import java.util.Map;
  * Created by cyetstar on 2021/1/14.
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Slf4j
 public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunnable {
 
     private int sleepSecond = 0;
 
-    private Map<Integer, String> stateMap = ImmutableMap.of(TODO, "开始处理", SUCCESS, "处理成功", ERROR, "发生错误", IGNORE, "无需处理");
+    private Map<Integer, String> stateMap = ImmutableMap.of(TODO, "开始处理", SUCCESS, "处理成功", ERROR, "发生错误", IGNORE,
+            "无需处理");
 
     public static final int TODO = 0;
     public static final int SUCCESS = 1;
@@ -49,7 +53,7 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
     }
 
     @Override
-    public void innerRun(Map<String, String> params) {
+    public void innerRun(@Nullable Map<String, String> params) {
         int pageNumber = 1;
         int pageSize = 1000;
         int num = 0;
@@ -94,7 +98,6 @@ public abstract class AbstractEntityActionRunnable<T> extends AbstractActionRunn
 
     protected void processError(Map<String, String> params, T entity, Exception e) {
         log.error("【{}】>>> {} 执行发生错误，{}", getAction(), getMessage(entity, ERROR), ExceptionUtil.getMessage(e));
-        e.printStackTrace();
     }
 
     protected void sleep() {

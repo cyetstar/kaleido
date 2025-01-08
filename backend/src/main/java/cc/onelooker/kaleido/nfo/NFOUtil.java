@@ -53,10 +53,12 @@ public class NFOUtil {
         comicInfoNFO.setYear(comicSeriesDTO.getYear());
         comicInfoNFO.setSummary(comicSeriesDTO.getSummary());
         if (comicSeriesDTO.getWriterList() != null) {
-            comicSeriesDTO.getWriterList().stream().map(AuthorDTO::getName).findFirst().ifPresent(comicInfoNFO::setWriter);
+            comicSeriesDTO.getWriterList().stream().map(AuthorDTO::getName).findFirst()
+                    .ifPresent(comicInfoNFO::setWriter);
         }
         if (comicSeriesDTO.getPencillerList() != null) {
-            comicSeriesDTO.getPencillerList().stream().map(AuthorDTO::getName).findFirst().ifPresent(comicInfoNFO::setPenciller);
+            comicSeriesDTO.getPencillerList().stream().map(AuthorDTO::getName).findFirst()
+                    .ifPresent(comicInfoNFO::setPenciller);
         }
         if (StringUtils.isNotEmpty(comicSeriesDTO.getPublisher())) {
             comicInfoNFO.setPublishers(Lists.newArrayList(comicSeriesDTO.getPublisher()));
@@ -109,13 +111,18 @@ public class NFOUtil {
         }
         movieNFO.setMpaa(movieBasicDTO.getContentRating());
         if (CollectionUtils.isNotEmpty(movieBasicDTO.getDirectorList())) {
-            movieNFO.setDirectors(movieBasicDTO.getDirectorList().stream().map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName())).collect(Collectors.toList()));
+            movieNFO.setDirectors(movieBasicDTO.getDirectorList().stream()
+                    .map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName()))
+                    .collect(Collectors.toList()));
         }
         if (CollectionUtils.isNotEmpty(movieBasicDTO.getWriterList())) {
-            movieNFO.setCredits(movieBasicDTO.getWriterList().stream().map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName())).collect(Collectors.toList()));
+            movieNFO.setCredits(movieBasicDTO.getWriterList().stream()
+                    .map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName()))
+                    .collect(Collectors.toList()));
         }
         if (CollectionUtils.isNotEmpty(movieBasicDTO.getActorList())) {
-            movieNFO.setActors(movieBasicDTO.getActorList().stream().map(NFOUtil::toActorNFO).collect(Collectors.toList()));
+            movieNFO.setActors(
+                    movieBasicDTO.getActorList().stream().map(NFOUtil::toActorNFO).collect(Collectors.toList()));
         }
         if (CollectionUtils.isNotEmpty(movieBasicDTO.getTagList())) {
             movieNFO.setTags(movieBasicDTO.getTagList());
@@ -164,13 +171,18 @@ public class NFOUtil {
             tvshowNFO.setStudios(Lists.newArrayList(tvshowShowDTO.getStudio()));
         }
         if (CollectionUtils.isNotEmpty(tvshowSeasonDTO.getDirectorList())) {
-            tvshowNFO.setDirectors(tvshowSeasonDTO.getDirectorList().stream().map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName())).collect(Collectors.toList()));
+            tvshowNFO.setDirectors(tvshowSeasonDTO.getDirectorList().stream()
+                    .map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName()))
+                    .collect(Collectors.toList()));
         }
         if (CollectionUtils.isNotEmpty(tvshowSeasonDTO.getWriterList())) {
-            tvshowNFO.setCredits(tvshowSeasonDTO.getWriterList().stream().map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName())).collect(Collectors.toList()));
+            tvshowNFO.setCredits(tvshowSeasonDTO.getWriterList().stream()
+                    .map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName()))
+                    .collect(Collectors.toList()));
         }
         if (CollectionUtils.isNotEmpty(tvshowSeasonDTO.getActorList())) {
-            tvshowNFO.setActors(tvshowSeasonDTO.getActorList().stream().map(NFOUtil::toActorNFO).collect(Collectors.toList()));
+            tvshowNFO.setActors(
+                    tvshowSeasonDTO.getActorList().stream().map(NFOUtil::toActorNFO).collect(Collectors.toList()));
         }
         return tvshowNFO;
     }
@@ -200,13 +212,18 @@ public class NFOUtil {
             seasonNFO.setUniqueids(uniqueidNFOList);
         }
         if (CollectionUtils.isNotEmpty(tvshowSeasonDTO.getDirectorList())) {
-            seasonNFO.setCredits(tvshowSeasonDTO.getDirectorList().stream().map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName())).collect(Collectors.toList()));
+            seasonNFO.setCredits(tvshowSeasonDTO.getDirectorList().stream()
+                    .map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName()))
+                    .collect(Collectors.toList()));
         }
         if (CollectionUtils.isNotEmpty(tvshowSeasonDTO.getWriterList())) {
-            seasonNFO.setDirectors(tvshowSeasonDTO.getWriterList().stream().map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName())).collect(Collectors.toList()));
+            seasonNFO.setDirectors(tvshowSeasonDTO.getWriterList().stream()
+                    .map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName()))
+                    .collect(Collectors.toList()));
         }
         if (CollectionUtils.isNotEmpty(tvshowSeasonDTO.getActorList())) {
-            seasonNFO.setActors(tvshowSeasonDTO.getActorList().stream().map(NFOUtil::toActorNFO).collect(Collectors.toList()));
+            seasonNFO.setActors(
+                    tvshowSeasonDTO.getActorList().stream().map(NFOUtil::toActorNFO).collect(Collectors.toList()));
         }
         if (CollectionUtils.isNotEmpty(tvshowShowDTO.getAkaList())) {
             seasonNFO.setAkas(tvshowShowDTO.getAkaList());
@@ -227,7 +244,8 @@ public class NFOUtil {
         return seasonNFO;
     }
 
-    public static EpisodeNFO toEpisodeNFO(TvshowShowDTO tvshowShowDTO, TvshowSeasonDTO tvshowSeasonDTO, TvshowEpisodeDTO tvshowEpisodeDTO) {
+    public static EpisodeNFO toEpisodeNFO(TvshowShowDTO tvshowShowDTO, TvshowSeasonDTO tvshowSeasonDTO,
+                                          TvshowEpisodeDTO tvshowEpisodeDTO) {
         EpisodeNFO episodeNFO = new EpisodeNFO();
         episodeNFO.setTitle(tvshowEpisodeDTO.getTitle());
         episodeNFO.setOriginaltitle(tvshowEpisodeDTO.getOriginalTitle());
@@ -247,17 +265,22 @@ public class NFOUtil {
             episodeNFO.setUniqueids(uniqueidNFOList);
         }
         episodeNFO.setYear(tvshowEpisodeDTO.getYear());
-        //获取season信息
+        // 获取season信息
         if (CollectionUtils.isNotEmpty(tvshowSeasonDTO.getDirectorList())) {
-            episodeNFO.setCredits(tvshowSeasonDTO.getDirectorList().stream().map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName())).collect(Collectors.toList()));
+            episodeNFO.setCredits(tvshowSeasonDTO.getDirectorList().stream()
+                    .map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName()))
+                    .collect(Collectors.toList()));
         }
         if (CollectionUtils.isNotEmpty(tvshowSeasonDTO.getWriterList())) {
-            episodeNFO.setDirectors(tvshowSeasonDTO.getWriterList().stream().map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName())).collect(Collectors.toList()));
+            episodeNFO.setDirectors(tvshowSeasonDTO.getWriterList().stream()
+                    .map(s -> StringUtils.defaultString(s.getName(), s.getOriginalName()))
+                    .collect(Collectors.toList()));
         }
         if (CollectionUtils.isNotEmpty(tvshowSeasonDTO.getActorList())) {
-            episodeNFO.setActors(tvshowSeasonDTO.getActorList().stream().map(NFOUtil::toActorNFO).collect(Collectors.toList()));
+            episodeNFO.setActors(
+                    tvshowSeasonDTO.getActorList().stream().map(NFOUtil::toActorNFO).collect(Collectors.toList()));
         }
-        //获取tvshow信息
+        // 获取tvshow信息
         episodeNFO.setMpaa(tvshowShowDTO.getContentRating());
         if (CollectionUtils.isNotEmpty(tvshowShowDTO.getAkaList())) {
             episodeNFO.setAkas(tvshowShowDTO.getAkaList());
@@ -314,7 +337,9 @@ public class NFOUtil {
         try {
             StringWriter writer = new StringWriter();
             XMLStreamWriter streamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
-            XMLStreamWriter cdataStreamWriter = (XMLStreamWriter) Proxy.newProxyInstance(streamWriter.getClass().getClassLoader(), streamWriter.getClass().getInterfaces(), new CDataHandler(streamWriter));
+            XMLStreamWriter cdataStreamWriter = (XMLStreamWriter) Proxy.newProxyInstance(
+                    streamWriter.getClass().getClassLoader(), streamWriter.getClass().getInterfaces(),
+                    new CDataHandler(streamWriter));
             JAXBContext context = JAXBContext.newInstance(clazz);
             marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -343,7 +368,8 @@ public class NFOUtil {
             }
             JAXBContext context = JAXBContext.newInstance(clazz);
             unmarshaller = context.createUnmarshaller();
-            return clazz.cast(unmarshaller.unmarshal(new InputStreamReader(Files.newInputStream(filePath.toFile().toPath()), StandardCharsets.UTF_8)));
+            return clazz.cast(unmarshaller.unmarshal(
+                    new InputStreamReader(Files.newInputStream(filePath.toFile().toPath()), StandardCharsets.UTF_8)));
         } catch (Exception e) {
             ExceptionUtil.wrapAndThrow(e);
         }
@@ -374,17 +400,16 @@ public class NFOUtil {
         if (CollectionUtils.isEmpty(uniqueids)) {
             return null;
         }
-        return uniqueids.stream().filter(s -> StringUtils.equals(s.getType(), sourceType.name())).map(UniqueidNFO::getValue).findFirst().orElse(null);
+        return uniqueids.stream().filter(s -> StringUtils.equals(s.getType(), sourceType.name()))
+                .map(UniqueidNFO::getValue).findFirst().orElse(null);
     }
 
     public static Float getRating(List<RatingNFO> ratings, SourceType sourceType) {
         if (CollectionUtils.isEmpty(ratings)) {
             return null;
         }
-        return ratings.stream().filter(s -> StringUtils.equals(s.getName(), sourceType.name())).findFirst().map(s -> Float.valueOf(s.getValue())).orElse(null);
+        return ratings.stream().filter(s -> StringUtils.equals(s.getName(), sourceType.name())).findFirst()
+                .map(s -> Float.valueOf(s.getValue())).orElse(null);
     }
 
 }
-
-
-

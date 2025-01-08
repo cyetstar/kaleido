@@ -25,7 +25,9 @@ import java.util.stream.Collectors;
  * @date 2022-08-15 17:38:57
  */
 @Service
-public class SysRoleResourceServiceImpl extends KaleidoBaseServiceImpl<SysRoleResourceMapper, SysRoleResourceDO, SysRoleResourceDTO> implements SysRoleResourceService {
+public class SysRoleResourceServiceImpl
+        extends KaleidoBaseServiceImpl<Long, SysRoleResourceMapper, SysRoleResourceDO, SysRoleResourceDTO>
+        implements SysRoleResourceService {
 
     SysRoleResourceConvert convert = SysRoleResourceConvert.INSTANCE;
 
@@ -33,8 +35,10 @@ public class SysRoleResourceServiceImpl extends KaleidoBaseServiceImpl<SysRoleRe
     protected Wrapper<SysRoleResourceDO> genQueryWrapper(SysRoleResourceDTO sysRoleResourceDTO) {
         LambdaQueryWrapper<SysRoleResourceDO> query = new LambdaQueryWrapper<>();
         query.eq(Objects.nonNull(sysRoleResourceDTO.getId()), SysRoleResourceDO::getId, sysRoleResourceDTO.getId());
-        query.eq(Objects.nonNull(sysRoleResourceDTO.getResourceId()), SysRoleResourceDO::getResourceId, sysRoleResourceDTO.getResourceId());
-        query.eq(Objects.nonNull(sysRoleResourceDTO.getRoleId()), SysRoleResourceDO::getRoleId, sysRoleResourceDTO.getRoleId());
+        query.eq(Objects.nonNull(sysRoleResourceDTO.getResourceId()), SysRoleResourceDO::getResourceId,
+                sysRoleResourceDTO.getResourceId());
+        query.eq(Objects.nonNull(sysRoleResourceDTO.getRoleId()), SysRoleResourceDO::getRoleId,
+                sysRoleResourceDTO.getRoleId());
         return query;
     }
 
@@ -79,7 +83,8 @@ public class SysRoleResourceServiceImpl extends KaleidoBaseServiceImpl<SysRoleRe
         SysRoleResourceDTO queryDto = new SysRoleResourceDTO();
         queryDto.setRoleId(req.getRoleId());
         List<SysRoleResourceDTO> roleResources = list(queryDto);
-        Map<Long, SysRoleResourceDTO> roleResourceMaps = roleResources.stream().collect(Collectors.toMap(SysRoleResourceDTO::getResourceId, item -> item));
+        Map<Long, SysRoleResourceDTO> roleResourceMaps = roleResources.stream()
+                .collect(Collectors.toMap(SysRoleResourceDTO::getResourceId, item -> item));
         for (Long resourceId : req.getResourceIds()) {
             SysRoleResourceDTO sysRoleResourceDTO = roleResourceMaps.remove(resourceId);
             if (sysRoleResourceDTO == null) {

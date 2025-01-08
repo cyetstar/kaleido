@@ -2,33 +2,22 @@ package cc.onelooker.kaleido.third.plex;
 
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.utils.ConfigUtils;
-import cn.hutool.core.exceptions.ExceptionUtil;
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.http.Method;
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zjjcnt.common.core.domain.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UriTemplate;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @Author cyetstar
@@ -52,7 +41,7 @@ public class PlexApiService {
 
     private final static String API_SECTIONS = "/library/sections/?X-Plex-Token={plexToken}";
     private final static String API_SECTIONS_ALL = "/library/sections/{libraryId}/all?type={type}&X-Plex-Token={plexToken}&X-Plex-Container-Start={start}&X-Plex-Container-Size={size}";
-    private final static String API_SECTIONS_REFRESH = "/library/sections/{libraryId}/refresh?force=0&X-Plex-Token={token}";
+    private final static String API_SECTIONS_REFRESH = "/library/sections/{libraryId}/refresh?force=0&X-Plex-Token={plexToken}";
     private final static String API_METADATA = "/library/metadata/{metadataId}?X-Plex-Token={plexToken}";
     private final static String API_METADATA_CHILDREN = "/library/metadata/{metadataId}/children?X-Plex-Token={plexToken}";
     private final static String API_METADATA_REFRESH = "/library/metadata/{metadataId}/refresh?force=1&X-Plex-Token={plexToken}";

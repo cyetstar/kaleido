@@ -1,6 +1,5 @@
 package cc.onelooker.kaleido.dto.resp;
 
-import cc.onelooker.kaleido.dto.ArtistDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

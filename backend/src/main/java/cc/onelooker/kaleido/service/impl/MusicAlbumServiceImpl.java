@@ -1,13 +1,10 @@
 package cc.onelooker.kaleido.service.impl;
 
 import cc.onelooker.kaleido.convert.MusicAlbumConvert;
-import cc.onelooker.kaleido.dto.AlternateTitleDTO;
 import cc.onelooker.kaleido.dto.MusicAlbumArtistDTO;
 import cc.onelooker.kaleido.dto.MusicAlbumDTO;
 import cc.onelooker.kaleido.dto.MusicTrackDTO;
-import cc.onelooker.kaleido.entity.ComicSeriesDO;
 import cc.onelooker.kaleido.entity.MusicAlbumDO;
-import cc.onelooker.kaleido.enums.SubjectType;
 import cc.onelooker.kaleido.mapper.MusicAlbumMapper;
 import cc.onelooker.kaleido.service.MusicAlbumArtistService;
 import cc.onelooker.kaleido.service.MusicAlbumService;
@@ -35,7 +32,8 @@ import java.util.stream.Collectors;
  * @date 2023-11-25 22:16:58
  */
 @Service
-public class MusicAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAlbumMapper, MusicAlbumDO, MusicAlbumDTO> implements MusicAlbumService {
+public class MusicAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAlbumMapper, MusicAlbumDO, MusicAlbumDTO>
+        implements MusicAlbumService {
 
     MusicAlbumConvert convert = MusicAlbumConvert.INSTANCE;
 
@@ -49,20 +47,23 @@ public class MusicAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAlbumMap
     protected Wrapper<MusicAlbumDO> genQueryWrapper(MusicAlbumDTO dto) {
         LambdaQueryWrapper<MusicAlbumDO> query = new LambdaQueryWrapper<>();
         query.eq(StringUtils.isNotEmpty(dto.getId()), MusicAlbumDO::getId, dto.getId());
-        query.eq(StringUtils.isNotEmpty(dto.getMusicbrainzId()), MusicAlbumDO::getMusicbrainzId, dto.getMusicbrainzId());
+        query.eq(StringUtils.isNotEmpty(dto.getMusicbrainzId()), MusicAlbumDO::getMusicbrainzId,
+                dto.getMusicbrainzId());
         query.eq(StringUtils.isNotEmpty(dto.getNeteaseId()), MusicAlbumDO::getNeteaseId, dto.getNeteaseId());
         query.eq(StringUtils.isNotEmpty(dto.getTitle()), MusicAlbumDO::getTitle, dto.getTitle());
         query.eq(StringUtils.isNotEmpty(dto.getArtists()), MusicAlbumDO::getArtists, dto.getArtists());
         query.eq(Objects.nonNull(dto.getSummary()), MusicAlbumDO::getSummary, dto.getSummary());
         query.eq(StringUtils.isNotEmpty(dto.getType()), MusicAlbumDO::getType, dto.getType());
         query.eq(StringUtils.isNotEmpty(dto.getGenre()), MusicAlbumDO::getGenre, dto.getGenre());
-        query.eq(StringUtils.isNotEmpty(dto.getReleaseCountry()), MusicAlbumDO::getReleaseCountry, dto.getReleaseCountry());
+        query.eq(StringUtils.isNotEmpty(dto.getReleaseCountry()), MusicAlbumDO::getReleaseCountry,
+                dto.getReleaseCountry());
         query.eq(StringUtils.isNotEmpty(dto.getLabel()), MusicAlbumDO::getLabel, dto.getLabel());
         query.eq(Objects.nonNull(dto.getTotalDiscs()), MusicAlbumDO::getTotalDiscs, dto.getTotalDiscs());
         query.eq(Objects.nonNull(dto.getTotalTracks()), MusicAlbumDO::getTotalTracks, dto.getTotalTracks());
         query.eq(StringUtils.isNotEmpty(dto.getMedia()), MusicAlbumDO::getMedia, dto.getMedia());
         query.eq(StringUtils.isNotEmpty(dto.getYear()), MusicAlbumDO::getYear, dto.getYear());
-        query.eq(StringUtils.isNotEmpty(dto.getOriginallyAvailableAt()), MusicAlbumDO::getOriginallyAvailableAt, dto.getOriginallyAvailableAt());
+        query.eq(StringUtils.isNotEmpty(dto.getOriginallyAvailableAt()), MusicAlbumDO::getOriginallyAvailableAt,
+                dto.getOriginallyAvailableAt());
         query.eq(StringUtils.isNotEmpty(dto.getThumb()), MusicAlbumDO::getThumb, dto.getThumb());
         query.eq(Objects.nonNull(dto.getAddedAt()), MusicAlbumDO::getAddedAt, dto.getAddedAt());
         query.eq(Objects.nonNull(dto.getUpdatedAt()), MusicAlbumDO::getUpdatedAt, dto.getUpdatedAt());
@@ -70,12 +71,15 @@ public class MusicAlbumServiceImpl extends AbstractBaseServiceImpl<MusicAlbumMap
             List<String> idList = Lists.newArrayList();
             idList.addAll(listAlbumIdByTrackKeyword(dto.getKeyword()));
             if (CollectionUtils.isNotEmpty(idList)) {
-                query.and(q -> q.in(MusicAlbumDO::getId, idList).or().like(MusicAlbumDO::getTitle, dto.getKeyword()).or().like(MusicAlbumDO::getArtists, dto.getKeyword()));
+                query.and(q -> q.in(MusicAlbumDO::getId, idList).or().like(MusicAlbumDO::getTitle, dto.getKeyword())
+                        .or().like(MusicAlbumDO::getArtists, dto.getKeyword()));
             } else {
-                query.and(q -> q.like(MusicAlbumDO::getTitle, dto.getKeyword()).or().like(MusicAlbumDO::getArtists, dto.getKeyword()));
+                query.and(q -> q.like(MusicAlbumDO::getTitle, dto.getKeyword()).or().like(MusicAlbumDO::getArtists,
+                        dto.getKeyword()));
             }
         }
-        query.likeRight(StringUtils.length(dto.getDecade()) > 3, MusicAlbumDO::getYear, StringUtils.substring(dto.getDecade(), 0, 3));
+        query.likeRight(StringUtils.length(dto.getDecade()) > 3, MusicAlbumDO::getYear,
+                StringUtils.substring(dto.getDecade(), 0, 3));
         return query;
     }
 

@@ -1,10 +1,36 @@
 package cc.onelooker.kaleido.web.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.zjjcnt.common.core.domain.CommonResult;
+import com.zjjcnt.common.core.domain.PageParam;
+import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.service.IBaseService;
+import com.zjjcnt.common.core.web.controller.AbstractCrudController;
+
 import cc.onelooker.kaleido.convert.TvshowSeasonConvert;
 import cc.onelooker.kaleido.dto.ActorDTO;
 import cc.onelooker.kaleido.dto.TvshowSeasonDTO;
 import cc.onelooker.kaleido.dto.TvshowShowDTO;
-import cc.onelooker.kaleido.dto.req.*;
+import cc.onelooker.kaleido.dto.req.TvshowSeasonCreateReq;
+import cc.onelooker.kaleido.dto.req.TvshowSeasonDownloadPosterReq;
+import cc.onelooker.kaleido.dto.req.TvshowSeasonMatchInfoReq;
+import cc.onelooker.kaleido.dto.req.TvshowSeasonPageReq;
+import cc.onelooker.kaleido.dto.req.TvshowSeasonUpdateReq;
 import cc.onelooker.kaleido.dto.resp.TvshowSeasonCreateResp;
 import cc.onelooker.kaleido.dto.resp.TvshowSeasonPageResp;
 import cc.onelooker.kaleido.dto.resp.TvshowSeasonViewResp;
@@ -17,23 +43,8 @@ import cc.onelooker.kaleido.third.tmm.Tvshow;
 import cc.onelooker.kaleido.utils.KaleidoConstants;
 import cc.onelooker.kaleido.utils.KaleidoUtil;
 import cn.hutool.http.HttpUtil;
-import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.PageParam;
-import com.zjjcnt.common.core.domain.PageResult;
-import com.zjjcnt.common.core.service.IBaseService;
-import com.zjjcnt.common.core.web.controller.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.stream.Collectors;
 
 /**
  * 单季前端控制器
@@ -63,14 +74,15 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
     private TmmApiService tmmApiService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<TvshowSeasonDTO> getService() {
         return tvshowSeasonService;
     }
 
     @GetMapping("page")
     @ApiOperation(value = "查询单季")
     public CommonResult<PageResult<TvshowSeasonPageResp>> page(TvshowSeasonPageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, TvshowSeasonConvert.INSTANCE::convertToDTO, TvshowSeasonConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, TvshowSeasonConvert.INSTANCE::convertToDTO,
+                TvshowSeasonConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -86,7 +98,8 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
     @PostMapping("create")
     @ApiOperation(value = "新增单季")
     public CommonResult<TvshowSeasonCreateResp> create(@RequestBody TvshowSeasonCreateReq req) {
-        return super.create(req, TvshowSeasonConvert.INSTANCE::convertToDTO, TvshowSeasonConvert.INSTANCE::convertToCreateResp);
+        return super.create(req, TvshowSeasonConvert.INSTANCE::convertToDTO,
+                TvshowSeasonConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
@@ -94,10 +107,12 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
     public CommonResult<Boolean> update(@RequestBody TvshowSeasonUpdateReq req) {
         TvshowSeasonDTO tvshowSeasonDTO = TvshowSeasonConvert.INSTANCE.convertToDTO(req);
         if (req.getDirectorList() != null) {
-            tvshowSeasonDTO.setDirectorList(req.getDirectorList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
+            tvshowSeasonDTO.setDirectorList(
+                    req.getDirectorList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
         }
         if (req.getWriterList() != null) {
-            tvshowSeasonDTO.setWriterList(req.getWriterList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
+            tvshowSeasonDTO.setWriterList(
+                    req.getWriterList().stream().map(s -> actorService.findById(s)).collect(Collectors.toList()));
         }
         if (req.getActorList() != null) {
             tvshowSeasonDTO.setActorList(req.getActorList().stream().map(s -> {
@@ -122,7 +137,8 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
         TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(id);
         TvshowShowDTO tvshowShowDTO = tvshowShowService.findById(tvshowSeasonDTO.getShowId());
         Path folderPath = KaleidoUtil.getTvshowPath(tvshowShowDTO.getPath());
-        Path seasonPath = folderPath.resolve("Season " + StringUtils.leftPad(String.valueOf(tvshowSeasonDTO.getSeasonIndex()), 2, '0'));
+        Path seasonPath = folderPath
+                .resolve("Season " + StringUtils.leftPad(String.valueOf(tvshowSeasonDTO.getSeasonIndex()), 2, '0'));
         return CommonResult.success(seasonPath.toString());
     }
 
@@ -132,6 +148,7 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
         if (StringUtils.equals(req.getMatchType(), "path")) {
             Tvshow tvshow = new Tvshow();
             tvshow.setDoubanId(req.getDoubanId());
+            tvshow.setTmdbId(req.getTmdbId());
             tvshow.setTitle(req.getTitle());
             tvshowManager.matchPath(Paths.get(req.getPath()), tvshow);
         } else {
@@ -149,7 +166,8 @@ public class TvshowSeasonController extends AbstractCrudController<TvshowSeasonD
         String filename = KaleidoUtil.genSeasonPosterFilename(tvshowSeasonDTO.getSeasonIndex());
         HttpUtil.downloadFile(req.getUrl(), path.resolve(filename).toFile());
         if (tvshowSeasonDTO.getSeasonIndex() == 1) {
-            Files.copy(path.resolve(filename), path.resolve(KaleidoConstants.POSTER), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(path.resolve(filename), path.resolve(KaleidoConstants.POSTER),
+                    StandardCopyOption.REPLACE_EXISTING);
         }
         return CommonResult.success(true);
     }

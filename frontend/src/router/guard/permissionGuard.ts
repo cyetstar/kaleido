@@ -15,49 +15,38 @@ import {
   checkAccessToken,
   isRequiresAuthRoute,
 } from "@/router/helper";
-import { iconsole } from "@/utils/console";
-import { ConsoleTypeEnum } from "@/enums/consoleEnum";
 
 export const createPermissionGuard = (router: Router) => {
-  iconsole.SUCCESS(ConsoleTypeEnum.ROUTER, "create permission guard");
   router.beforeEach(async (to, from, next) => {
-    console.log("to:", to.meta.keepAlive);
     const userStore = useUserStore();
     const permissionStore = usePermissionStore();
-    if (isRequiresAuthRoute(to)) {
-      if (!checkAccessToken()) {
-        console.error("token expires");
+    if (to.path === "/login") {
+      next();
+    } else if (!checkAccessToken()) {
+      try {
         await userStore.reLogin();
         await addPermissions();
         next(to.fullPath);
-      } else {
-        // userStore.invalid && (await userStore.setUserInfo())
-        if (!permissionStore.hasPermissions) {
-          await addPermissions();
-          next(to.fullPath);
-        } else {
-          const permissionKeys = permissionStore.permissionKeys;
-          if (to.meta.permissionKey) {
-            if (permissionKeys.includes(to.meta.permissionKey)) {
-              next();
-            } else {
-              alertErrMsg(ErrorCodeEnum.C100, "没有权限");
-              next("");
-            }
-          } else {
-            next();
-          }
-        }
+      } catch (e) {
+        next("/login");
       }
-    } else if (to.path === "/home") {
+    } else {
       if (!permissionStore.hasPermissions) {
         await addPermissions();
         next(to.fullPath);
       } else {
-        next();
+        const permissionKeys = permissionStore.permissionKeys;
+        if (to.meta.permissionKey) {
+          if (permissionKeys.includes(to.meta.permissionKey)) {
+            next();
+          } else {
+            alertErrMsg(ErrorCodeEnum.C100, "没有权限");
+            next("");
+          }
+        } else {
+          next();
+        }
       }
-    } else {
-      next();
     }
   });
 };

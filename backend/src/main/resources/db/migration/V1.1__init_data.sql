@@ -8,7 +8,8 @@ VALUES ('kaleido', 'kaleido', NULL, '$2a$10$9ILIX1HdiIPTtIbU/Ae4pOkXIWIc4StWnGPr
 INSERT INTO sys_user (id, username, password, name, id_card_number, mobile, description, dept_code, dept_id,
                       filter_code, is_enabled, is_account_non_expired, is_credentials_non_expired,
                       is_account_non_locked, is_deleted, create_time, update_time, created_by, updated_by)
-VALUES (1, 'cyetstar', '$2a$10$XwEzK.zpjSNMyHPKGh4mw.768Rc.sLIMiqAW/1sczx91tzuV0.3ce', 'cyetstar', '', '', '', '', 0, '', 1,
+VALUES (1, 'cyetstar', '$2a$10$XwEzK.zpjSNMyHPKGh4mw.768Rc.sLIMiqAW/1sczx91tzuV0.3ce', 'cyetstar', '', '', '', '', 0,
+        '', 1,
         1, 1, 1, 0, now(), now(), 'system', 'system');
 
 INSERT INTO sys_role (id, parent_id, code, name, description, sub_count, is_deleted, create_time, update_time,
@@ -855,7 +856,8 @@ insert into sys_dict (id, dict_type, label, value, sort, is_enabled, is_deleted,
                       updated_by)
 values (4, 'wjzt', '未完结', 'ONGOING', 2, 1, 0, now(), now(), 'system', 'system');
 
-############### init config ###############
+###############
+init config ###############
 
 insert into sys_config (id, config_name, config_key, config_value, is_deleted, create_time,
                         update_time, created_by, updated_by)

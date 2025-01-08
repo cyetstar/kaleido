@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2024-06-27 17:18:04
- *
  */
 @Data
 @ApiModel("任务请求对象")
-public class TaskCreateReq{
+public class TaskCreateReq {
 
     @ApiModelProperty("项目id")
     private String subjectId;

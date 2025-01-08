@@ -44,7 +44,8 @@ public class SysLogController {
     }
 
     @GetMapping("read")
-    public CommonResult<SysLogReadResp> read(String fileName, @RequestParam(defaultValue = "0") Integer lineNumber) throws IOException {
+    public CommonResult<SysLogReadResp> read(String fileName, @RequestParam(defaultValue = "0") Integer lineNumber)
+            throws IOException {
         File logFolder = getLogFolder();
         String filePath = Paths.get(logFolder.getPath(), fileName).toString();
         List<String> logList = readFile(filePath, lineNumber);
@@ -56,7 +57,7 @@ public class SysLogController {
 
     private File getLogFolder() {
         Logger logger = (Logger) LoggerFactory.getLogger("ROOT");
-        RollingFileAppender rollingFileAppender = (RollingFileAppender) logger.getAppender("INFO_FILE");
+        RollingFileAppender<?> rollingFileAppender = (RollingFileAppender<?>) logger.getAppender("INFO_FILE");
         return Paths.get(rollingFileAppender.getFile()).getParent().toFile();
     }
 
@@ -64,7 +65,7 @@ public class SysLogController {
         List<String> logList = Lists.newArrayList();
         File file = new File(filePath);
         LineNumberReader reader = new LineNumberReader(new FileReader(file));
-//        reader.setLineNumber(lineNumber);
+        // reader.setLineNumber(lineNumber);
         String line = null;
         while ((line = reader.readLine()) != null) {
             if (reader.getLineNumber() > lineNumber) {

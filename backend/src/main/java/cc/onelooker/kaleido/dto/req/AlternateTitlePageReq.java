@@ -9,11 +9,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2024-03-12 17:48:21
- *
  */
 @Data
 @ApiModel("别名请求对象")
-public class AlternateTitlePageReq{
+public class AlternateTitlePageReq {
 
     @ApiModelProperty("标题")
     private String title;

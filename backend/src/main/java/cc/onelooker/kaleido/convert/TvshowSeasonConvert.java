@@ -8,10 +8,7 @@ import cc.onelooker.kaleido.dto.resp.TvshowSeasonCreateResp;
 import cc.onelooker.kaleido.dto.resp.TvshowSeasonPageResp;
 import cc.onelooker.kaleido.dto.resp.TvshowSeasonViewResp;
 import cc.onelooker.kaleido.entity.TvshowSeasonDO;
-import org.mapstruct.InheritInverseConfiguration;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Map;
@@ -22,7 +19,7 @@ import java.util.Map;
  * @author cyetstar
  * @date 2023-11-26 23:27:03
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TvshowSeasonConvert {
 
     TvshowSeasonConvert INSTANCE = Mappers.getMapper(TvshowSeasonConvert.class);

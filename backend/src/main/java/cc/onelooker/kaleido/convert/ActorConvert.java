@@ -10,6 +10,7 @@ import cc.onelooker.kaleido.dto.resp.ActorViewResp;
 import cc.onelooker.kaleido.entity.ActorDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -18,7 +19,7 @@ import org.mapstruct.factory.Mappers;
  * @author cyetstar
  * @date 2023-11-26 01:19:02
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ActorConvert {
 
     ActorConvert INSTANCE = Mappers.getMapper(ActorConvert.class);

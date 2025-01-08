@@ -16,4 +16,6 @@ public interface TvshowSeasonService extends IBaseService<TvshowSeasonDTO> {
     List<TvshowSeasonDTO> listByShowId(String showId);
 
     TvshowSeasonDTO findByDoubanId(String doubanId);
+
+    TvshowSeasonDTO findByTmdbId(String tmdbId);
 }

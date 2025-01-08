@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -23,7 +24,8 @@ import java.util.List;
  * @Date 2022-05-31 00:35:00
  * @Description TODO
  */
-public abstract class KaleidoBaseServiceImpl<M extends BaseMapper<T>, T extends IdEntity, D extends BaseDTO> extends AbstractBaseServiceImpl<M, T, D> {
+public abstract class KaleidoBaseServiceImpl<ID extends Serializable, M extends BaseMapper<T>, T extends IdEntity<ID>, D extends BaseDTO<ID>>
+        extends AbstractBaseServiceImpl<M, T, D> {
 
     protected String bizTable = getBizTable();
 
@@ -34,20 +36,21 @@ public abstract class KaleidoBaseServiceImpl<M extends BaseMapper<T>, T extends 
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public PageResult<D> page(@Nullable D dto, Page page) {
         LambdaQueryWrapper<T> queryWrapper = null;
         if (dto != null) {
-            queryWrapper = (LambdaQueryWrapper) genQueryWrapper(dto);
+            queryWrapper = (LambdaQueryWrapper<T>) genQueryWrapper(dto);
         }
-        page = getBaseMapper().selectPage(page, queryWrapper);
-        return convertToDTO(page);
+        Page<T> selectPage = getBaseMapper().selectPage(page, queryWrapper);
+        return convertToDTO(selectPage);
     }
 
     @Override
     public List<D> list(@Nullable D dto) {
         LambdaQueryWrapper<T> queryWrapper = null;
         if (dto != null) {
-            queryWrapper = (LambdaQueryWrapper) genQueryWrapper(dto);
+            queryWrapper = (LambdaQueryWrapper<T>) genQueryWrapper(dto);
         }
         List<T> list = getBaseMapper().selectList(queryWrapper);
         return convertToDTO(list);
@@ -74,7 +77,8 @@ public abstract class KaleidoBaseServiceImpl<M extends BaseMapper<T>, T extends 
             throw new ServiceException(20001, "存在重复(" + getBizTable() + ")");
         }
         if (dto instanceof ISystem) {
-            ISystem systemDTO = (ISystem) dto;
+            @SuppressWarnings("unchecked")
+            ISystem<ID> systemDTO = (ISystem<ID>) dto;
             systemDTO.setCjsj(DateTimeUtils.now());
             systemDTO.setXgsj(DateTimeUtils.now());
         }
@@ -86,7 +90,8 @@ public abstract class KaleidoBaseServiceImpl<M extends BaseMapper<T>, T extends 
             throw new ServiceException(20001, "存在重复(" + getBizTable() + ")");
         }
         if (dto instanceof ISystem) {
-            ISystem systemDTO = (ISystem) dto;
+            @SuppressWarnings("unchecked")
+            ISystem<ID> systemDTO = (ISystem<ID>) dto;
             systemDTO.setXgsj(DateTimeUtils.now());
         }
     }

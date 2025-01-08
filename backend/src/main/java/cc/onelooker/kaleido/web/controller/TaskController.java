@@ -20,22 +20,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
-* 任务前端控制器
-*
-* @author cyetstar
-* @date 2024-06-27 17:18:04
-*/
+ * 任务前端控制器
+ *
+ * @author cyetstar
+ * @date 2024-06-27 17:18:04
+ */
 
 @Api(tags = "任务")
 @RestController
 @RequestMapping("/task")
-public class TaskController extends AbstractCrudController<TaskDTO>{
+public class TaskController extends AbstractCrudController<TaskDTO> {
 
     @Autowired
     private TaskService taskService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<TaskDTO> getService() {
         return taskService;
     }
 

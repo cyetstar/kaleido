@@ -10,6 +10,7 @@ import cc.onelooker.kaleido.dto.resp.TvshowEpisodeViewResp;
 import cc.onelooker.kaleido.entity.TvshowEpisodeDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -18,7 +19,7 @@ import org.mapstruct.factory.Mappers;
  * @author cyetstar
  * @date 2023-11-26 23:27:03
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TvshowEpisodeConvert {
 
     TvshowEpisodeConvert INSTANCE = Mappers.getMapper(TvshowEpisodeConvert.class);

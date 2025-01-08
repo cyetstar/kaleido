@@ -10,11 +10,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2024-06-27 17:18:04
- *
  */
 @Data
 @ApiModel("任务响应对象")
-public class TaskViewResp{
+public class TaskViewResp {
 
     @ApiModelProperty("主键")
     private String id;

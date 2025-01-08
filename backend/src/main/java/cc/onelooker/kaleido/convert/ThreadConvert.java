@@ -10,6 +10,7 @@ import cc.onelooker.kaleido.dto.resp.ThreadViewResp;
 import cc.onelooker.kaleido.entity.ThreadDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -18,7 +19,7 @@ import org.mapstruct.factory.Mappers;
  * @author cyetstar
  * @date 2023-12-18 14:53:14
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ThreadConvert {
 
     ThreadConvert INSTANCE = Mappers.getMapper(ThreadConvert.class);

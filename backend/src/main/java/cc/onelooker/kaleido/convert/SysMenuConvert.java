@@ -12,6 +12,7 @@ import cc.onelooker.kaleido.dto.resp.SysMenuViewResp;
 import cc.onelooker.kaleido.entity.SysMenuDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -20,7 +21,7 @@ import org.mapstruct.factory.Mappers;
  * @author cyetstar
  * @date 2022-11-13 01:12:24
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SysMenuConvert {
     SysMenuConvert INSTANCE = Mappers.getMapper(SysMenuConvert.class);
 

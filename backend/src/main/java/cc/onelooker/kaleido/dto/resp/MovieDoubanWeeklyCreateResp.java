@@ -10,11 +10,10 @@ import lombok.Data;
  *
  * @author cyetstar
  * @date 2023-12-29 16:15:43
- *
  */
 @Data
 @ApiModel("豆瓣电影口碑榜响应对象")
-public class MovieDoubanWeeklyCreateResp{
+public class MovieDoubanWeeklyCreateResp {
 
     @ApiModelProperty("主键")
     private String id;

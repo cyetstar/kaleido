@@ -57,12 +57,12 @@ public class FileController {
             String field = values[0];
             String direction = values[1];
             Comparator<FilePageResp> comparing = null;
-            if (StringUtils.equals(field, "name")) {
-                comparing = Comparator.comparing(FilePageResp::getName);
-            } else if (StringUtils.equals(field, "lastModified")) {
+            if (StringUtils.equals(field, "lastModified")) {
                 comparing = Comparator.comparing(FilePageResp::getLastModified);
             } else if (StringUtils.equals(field, "length")) {
                 comparing = Comparator.comparing(FilePageResp::getLength);
+            } else {
+                comparing = Comparator.comparing(FilePageResp::getName);
             }
             if (StringUtils.equals(direction, "DESC")) {
                 comparing = comparing.reversed();
@@ -103,7 +103,8 @@ public class FileController {
             return CommonResult.success(false);
         }
         String name = "未命名文件夹";
-        String folderName = Files.list(path).map(s -> s.getFileName().toString()).filter(s -> StringUtils.startsWith(s, name)).max(Comparator.naturalOrder()).orElse(null);
+        String folderName = Files.list(path).map(s -> s.getFileName().toString())
+                .filter(s -> StringUtils.startsWith(s, name)).max(Comparator.naturalOrder()).orElse(null);
         if (StringUtils.isNotEmpty(folderName)) {
             String num = StringUtils.defaultIfEmpty(StringUtils.substring(folderName, 6), "0");
             folderName = name + (Integer.parseInt(num) + 1);
@@ -143,7 +144,8 @@ public class FileController {
         if (MediaType.parseMediaType("text/*").isCompatibleWith(mediaType)) {
             mediaType = new MediaType(mediaType, StandardCharsets.UTF_8);
         }
-        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + filename).contentType(mediaType).body(FileUtils.readFileToByteArray(file));
+        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + filename)
+                .contentType(mediaType).body(FileUtils.readFileToByteArray(file));
     }
 
     @PostMapping("upload")

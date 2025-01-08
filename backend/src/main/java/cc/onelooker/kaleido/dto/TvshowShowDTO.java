@@ -185,7 +185,7 @@ public class TvshowShowDTO implements BaseDTO<String>, IUnique {
     public TvshowSeasonDTO getFirstSeason() {
         TvshowSeasonDTO tvshowSeasonDTO = getSeason(1);
         if (tvshowSeasonDTO == null && CollectionUtils.isNotEmpty(seasonList)) {
-            tvshowSeasonDTO = CollectionUtils.get(seasonList, 0);
+            tvshowSeasonDTO = seasonList.get(0);
         }
         return tvshowSeasonDTO;
     }

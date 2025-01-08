@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,7 +33,8 @@ import java.util.Objects;
  * @date 2022-04-26 00:41:00
  */
 @Service
-public class SysDictServiceImpl extends AbstractBaseServiceImpl<SysDictMapper, SysDictDO, SysDictDTO> implements SysDictService {
+public class SysDictServiceImpl extends AbstractBaseServiceImpl<SysDictMapper, SysDictDO, SysDictDTO>
+        implements SysDictService {
 
     SysDictConvert convert = SysDictConvert.INSTANCE;
 
@@ -169,7 +171,7 @@ public class SysDictServiceImpl extends AbstractBaseServiceImpl<SysDictMapper, S
     private List<SysDictDO> getList(String dictType) {
         LambdaQueryWrapper<SysDictDO> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(SysDictDO::getDictType, dictType);
-        queryWrapper.orderByAsc(SysDictDO::getSort, SysDictDO::getValue, SysDictDO::getId);
+        queryWrapper.orderByAsc(Arrays.asList(SysDictDO::getSort, SysDictDO::getValue, SysDictDO::getId));
         return baseMapper.selectList(queryWrapper);
     }
 

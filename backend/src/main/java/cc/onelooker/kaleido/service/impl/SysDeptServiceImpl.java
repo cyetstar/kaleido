@@ -20,7 +20,8 @@ import java.util.Objects;
  * @date 2022-11-13 01:12:24
  */
 @Service
-public class SysDeptServiceImpl extends KaleidoBaseServiceImpl<SysDeptMapper, SysDeptDO, SysDeptDTO> implements SysDeptService {
+public class SysDeptServiceImpl extends KaleidoBaseServiceImpl<Long, SysDeptMapper, SysDeptDO, SysDeptDTO>
+        implements SysDeptService {
 
     SysDeptConvert convert = SysDeptConvert.INSTANCE;
 
@@ -29,7 +30,8 @@ public class SysDeptServiceImpl extends KaleidoBaseServiceImpl<SysDeptMapper, Sy
         LambdaQueryWrapper<SysDeptDO> query = new LambdaQueryWrapper<>();
         query.eq(Objects.nonNull(sysDeptDTO.getId()), SysDeptDO::getId, sysDeptDTO.getId());
         query.eq(StringUtils.isNotEmpty(sysDeptDTO.getDeptCode()), SysDeptDO::getDeptCode, sysDeptDTO.getDeptCode());
-        query.eq(StringUtils.isNotEmpty(sysDeptDTO.getParentCode()), SysDeptDO::getParentCode, sysDeptDTO.getParentCode());
+        query.eq(StringUtils.isNotEmpty(sysDeptDTO.getParentCode()), SysDeptDO::getParentCode,
+                sysDeptDTO.getParentCode());
         query.eq(Objects.nonNull(sysDeptDTO.getParentId()), SysDeptDO::getParentId, sysDeptDTO.getParentId());
         query.eq(StringUtils.isNotEmpty(sysDeptDTO.getDeptName()), SysDeptDO::getDeptName, sysDeptDTO.getDeptName());
         query.eq(StringUtils.isNotEmpty(sysDeptDTO.getLeader()), SysDeptDO::getLeader, sysDeptDTO.getLeader());

@@ -4,6 +4,7 @@ import cc.onelooker.kaleido.dto.ComicSeriesAuthorDTO;
 import cc.onelooker.kaleido.entity.ComicSeriesAuthorDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -12,7 +13,7 @@ import org.mapstruct.factory.Mappers;
  * @author cyetstar
  * @date 2024-03-12 17:47:50
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ComicSeriesAuthorConvert {
 
     ComicSeriesAuthorConvert INSTANCE = Mappers.getMapper(ComicSeriesAuthorConvert.class);

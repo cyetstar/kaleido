@@ -68,7 +68,6 @@ export const useUserStore = defineStore("user", {
       const data = await tokenRefresh();
       setTokenHelper(data);
       await this.setUserInfo();
-      // await this.setUserPermission();
       return data;
     },
 

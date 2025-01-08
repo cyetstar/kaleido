@@ -33,23 +33,24 @@ export const useWebSocketStore = defineStore("websocket", {
       }
       this.websocket = new WebSocket(wsUrl + userStore.userId);
       this.websocket.onopen = () => {
-        console.log("websocket opened");
         this.connected = true;
         if (callback) {
           callback();
         }
       };
       this.websocket.onerror = () => {
-        console.log("websocket occurs error");
+        console.log("websocket连接发生错误");
+        this.message = null;
       };
       this.websocket.onmessage = (message: string) => {
         this.message = message;
       };
       this.websocket.onclose = () => {
-        console.log("websocket closed");
+        console.log("websocket连接关闭");
         setTimeout(() => {
-          connect(callback);
+          this.connect(callback);
         }, 1000);
+        this.message = null;
         this.connected = false;
       };
     },

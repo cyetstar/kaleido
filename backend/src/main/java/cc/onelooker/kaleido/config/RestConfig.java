@@ -1,13 +1,11 @@
 package cc.onelooker.kaleido.config;
 
-import cc.onelooker.kaleido.support.LoggingInterceptor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
-import java.util.HashSet;
 
 /**
  * @author yejianyu

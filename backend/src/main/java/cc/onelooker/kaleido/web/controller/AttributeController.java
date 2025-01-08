@@ -20,29 +20,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
-* 属性前端控制器
-*
-* @author cyetstar
-* @date 2024-03-12 17:48:21
-*/
+ * 属性前端控制器
+ *
+ * @author cyetstar
+ * @date 2024-03-12 17:48:21
+ */
 
 @Api(tags = "属性")
 @RestController
 @RequestMapping("/attribute")
-public class AttributeController extends AbstractCrudController<AttributeDTO>{
+public class AttributeController extends AbstractCrudController<AttributeDTO> {
 
     @Autowired
     private AttributeService attributeService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<AttributeDTO> getService() {
         return attributeService;
     }
 
     @GetMapping("page")
     @ApiOperation(value = "查询属性")
     public CommonResult<PageResult<AttributePageResp>> page(AttributePageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, AttributeConvert.INSTANCE::convertToDTO, AttributeConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, AttributeConvert.INSTANCE::convertToDTO,
+                AttributeConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -54,7 +55,8 @@ public class AttributeController extends AbstractCrudController<AttributeDTO>{
     @PostMapping("create")
     @ApiOperation(value = "新增属性")
     public CommonResult<AttributeCreateResp> create(@RequestBody AttributeCreateReq req) {
-        return super.create(req, AttributeConvert.INSTANCE::convertToDTO, AttributeConvert.INSTANCE::convertToCreateResp);
+        return super.create(req, AttributeConvert.INSTANCE::convertToDTO,
+                AttributeConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
@@ -68,6 +70,5 @@ public class AttributeController extends AbstractCrudController<AttributeDTO>{
     public CommonResult<Boolean> delete(@RequestBody String[] id) {
         return super.delete(id);
     }
-
 
 }

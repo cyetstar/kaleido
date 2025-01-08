@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -212,9 +211,6 @@ public class ArtistServiceImpl extends AbstractBaseServiceImpl<ArtistMapper, Art
     }
 
     private boolean isNeedUpdate(ArtistDTO dto1, ArtistDTO dto2) {
-        if (KaleidoUtil.isOverride(dto1.getTitle(), dto2.getTitle()) || KaleidoUtil.isOverride(dto1.getNeteaseId(), dto2.getNeteaseId()) || KaleidoUtil.isOverride(dto1.getMusicbrainzId(), dto2.getMusicbrainzId()) || KaleidoUtil.isOverride(dto1.getThumb(), dto2.getThumb())) {
-            return true;
-        }
-        return false;
+        return KaleidoUtil.isOverride(dto1.getTitle(), dto2.getTitle()) || KaleidoUtil.isOverride(dto1.getNeteaseId(), dto2.getNeteaseId()) || KaleidoUtil.isOverride(dto1.getMusicbrainzId(), dto2.getMusicbrainzId()) || KaleidoUtil.isOverride(dto1.getThumb(), dto2.getThumb());
     }
 }

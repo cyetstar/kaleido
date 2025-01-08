@@ -27,7 +27,8 @@ import java.util.Objects;
  * @date 2022-04-26 00:41:00
  */
 @Service
-public class SysUserServiceImpl extends KaleidoBaseServiceImpl<SysUserMapper, SysUserDO, SysUserDTO> implements SysUserService {
+public class SysUserServiceImpl extends KaleidoBaseServiceImpl<Long, SysUserMapper, SysUserDO, SysUserDTO>
+        implements SysUserService {
 
     SysUserConvert convert = SysUserConvert.INSTANCE;
 
@@ -41,13 +42,17 @@ public class SysUserServiceImpl extends KaleidoBaseServiceImpl<SysUserMapper, Sy
         query.eq(StringUtils.isNotEmpty(sysUserDTO.getPassword()), SysUserDO::getPassword, sysUserDTO.getPassword());
         query.like(StringUtils.isNotEmpty(sysUserDTO.getName()), SysUserDO::getName, sysUserDTO.getName());
         query.like(StringUtils.isNotEmpty(sysUserDTO.getMobile()), SysUserDO::getMobile, sysUserDTO.getMobile());
-        query.eq(StringUtils.isNotEmpty(sysUserDTO.getDescription()), SysUserDO::getDescription, sysUserDTO.getDescription());
+        query.eq(StringUtils.isNotEmpty(sysUserDTO.getDescription()), SysUserDO::getDescription,
+                sysUserDTO.getDescription());
         query.eq(StringUtils.isNotEmpty(sysUserDTO.getDeptCode()), SysUserDO::getDeptCode, sysUserDTO.getDeptCode());
         query.eq(Objects.nonNull(sysUserDTO.getDeptId()), SysUserDO::getDeptId, sysUserDTO.getDeptId());
         query.eq(Objects.nonNull(sysUserDTO.getEnabled()), SysUserDO::getEnabled, sysUserDTO.getEnabled());
-        query.eq(Objects.nonNull(sysUserDTO.getAccountNonExpired()), SysUserDO::getAccountNonExpired, sysUserDTO.getAccountNonExpired());
-        query.eq(Objects.nonNull(sysUserDTO.getCredentialsNonExpired()), SysUserDO::getCredentialsNonExpired, sysUserDTO.getCredentialsNonExpired());
-        query.eq(Objects.nonNull(sysUserDTO.getAccountNonLocked()), SysUserDO::getAccountNonLocked, sysUserDTO.getAccountNonLocked());
+        query.eq(Objects.nonNull(sysUserDTO.getAccountNonExpired()), SysUserDO::getAccountNonExpired,
+                sysUserDTO.getAccountNonExpired());
+        query.eq(Objects.nonNull(sysUserDTO.getCredentialsNonExpired()), SysUserDO::getCredentialsNonExpired,
+                sysUserDTO.getCredentialsNonExpired());
+        query.eq(Objects.nonNull(sysUserDTO.getAccountNonLocked()), SysUserDO::getAccountNonLocked,
+                sysUserDTO.getAccountNonLocked());
         query.eq(Objects.nonNull(sysUserDTO.getDeleted()), SysUserDO::getDeleted, sysUserDTO.getDeleted());
         return query;
     }

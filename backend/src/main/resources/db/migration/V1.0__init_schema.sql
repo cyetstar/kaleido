@@ -21,14 +21,14 @@ alter table oauth_client_details
 create table sys_config
 (
     id           bigint unsigned  not null auto_increment comment 'id',
-    config_name  varchar(100)     not null comment '配置名称',
-    config_key   varchar(100)     not null comment '配置键名',
-    config_value varchar(3000)    not null comment '配置键值',
+    config_name  varchar(100)  not null comment '配置名称',
+    config_key   varchar(100)  not null comment '配置键名',
+    config_value varchar(3000) not null comment '配置键值',
     is_deleted   tinyint unsigned not null default '0' comment '是否已删除1：已删除，0：未删除',
-    create_time  datetime         not null default CURRENT_TIMESTAMP comment '创建时间',
-    update_time  datetime         not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
-    created_by   varchar(100)     not null default '' comment '创建人',
-    updated_by   varchar(100)     not null default '' comment '更新人',
+    create_time  datetime      not null default CURRENT_TIMESTAMP comment '创建时间',
+    update_time  datetime      not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
+    created_by   varchar(100)  not null default '' comment '创建人',
+    updated_by   varchar(100)  not null default '' comment '更新人',
     primary key (id)
 );
 
@@ -38,16 +38,16 @@ alter table sys_config
 create table sys_dict
 (
     id          bigint unsigned  not null auto_increment comment '字典详情id',
-    dict_type   varchar(50)      not null comment '字典类型',
-    label       varchar(200)     not null comment '字典标签',
-    value       varchar(50)      not null comment '字典值',
-    sort        int              not null default '1' comment '顺序号',
+    dict_type   varchar(50)  not null comment '字典类型',
+    label       varchar(200) not null comment '字典标签',
+    value       varchar(50)  not null comment '字典值',
+    sort        int          not null default '1' comment '顺序号',
     is_enabled  tinyint unsigned not null default '1' comment '是否启用',
     is_deleted  tinyint unsigned not null default '0' comment '是否已删除1：已删除，0：未删除',
-    create_time datetime         not null default CURRENT_TIMESTAMP comment '创建时间',
-    update_time datetime         not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
-    created_by  varchar(100)     not null default '' comment '创建人',
-    updated_by  varchar(100)     not null default '' comment '更新人',
+    create_time datetime     not null default CURRENT_TIMESTAMP comment '创建时间',
+    update_time datetime     not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
+    created_by  varchar(100) not null default '' comment '创建人',
+    updated_by  varchar(100) not null default '' comment '更新人',
     primary key (id)
 );
 
@@ -57,13 +57,13 @@ alter table sys_dict
 create table sys_dict_type
 (
     id          bigint unsigned  not null auto_increment comment '字典id',
-    type        varchar(50)      not null comment '字典类型',
-    name        varchar(100)     not null comment '字典名称',
+    type        varchar(50)  not null comment '字典类型',
+    name        varchar(100) not null comment '字典名称',
     is_deleted  tinyint unsigned not null default '0' comment '是否已删除1：已删除，0：未删除',
-    create_time datetime         not null default CURRENT_TIMESTAMP comment '创建时间',
-    update_time datetime         not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
-    created_by  varchar(100)     not null default '' comment '创建人',
-    updated_by  varchar(100)     not null default '' comment '更新人',
+    create_time datetime     not null default CURRENT_TIMESTAMP comment '创建时间',
+    update_time datetime     not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
+    created_by  varchar(100) not null default '' comment '创建人',
+    updated_by  varchar(100) not null default '' comment '更新人',
     primary key (id)
 );
 
@@ -74,25 +74,25 @@ create table sys_menu
 (
     id           bigint unsigned  not null auto_increment comment 'id',
     parent_id    bigint unsigned  not null default '0' comment '父菜单id',
-    type         varchar(100)     not null default '' comment '菜单类型',
-    path         varchar(200)     not null default '' comment '菜单路径',
-    name         varchar(200)     not null default '' comment '菜单名称',
-    title        varchar(200)     not null default '' comment '菜单标题',
-    description  varchar(500)     not null default '' comment '描述',
-    redirect     varchar(200)     not null default '' comment '重定向路径',
-    component    varchar(200)     not null default '' comment '菜单组件',
-    icon         varchar(200)     not null default '' comment '菜单图标',
-    meta         varchar(1000)    not null default '' comment '额外信息，json格式',
+    type         varchar(100)  not null default '' comment '菜单类型',
+    path         varchar(200)  not null default '' comment '菜单路径',
+    name         varchar(200)  not null default '' comment '菜单名称',
+    title        varchar(200)  not null default '' comment '菜单标题',
+    description  varchar(500)  not null default '' comment '描述',
+    redirect     varchar(200)  not null default '' comment '重定向路径',
+    component    varchar(200)  not null default '' comment '菜单组件',
+    icon         varchar(200)  not null default '' comment '菜单图标',
+    meta         varchar(1000) not null default '' comment '额外信息，json格式',
     is_show_root tinyint unsigned not null default '1' comment '是否显示根',
     is_hidden    tinyint unsigned not null default '0' comment '是否显示',
-    order_num    int              not null default '1' comment '顺序号',
+    order_num    int           not null default '1' comment '顺序号',
     sub_count    int unsigned     not null default '0' comment '子节点数',
-    app          varchar(50)               default '' comment '所属应用',
+    app          varchar(50)            default '' comment '所属应用',
     is_deleted   tinyint unsigned not null default '0' comment '是否已删除1：已删除，0：未删除',
-    create_time  datetime         not null default CURRENT_TIMESTAMP comment '创建时间',
-    update_time  datetime         not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
-    created_by   varchar(100)     not null default '' comment '创建人',
-    updated_by   varchar(100)     not null default '' comment '更新人',
+    create_time  datetime      not null default CURRENT_TIMESTAMP comment '创建时间',
+    update_time  datetime      not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
+    created_by   varchar(100)  not null default '' comment '创建人',
+    updated_by   varchar(100)  not null default '' comment '更新人',
     permission   varchar(100),
     primary key (id)
 );
@@ -103,16 +103,16 @@ alter table sys_menu
 create table sys_resource
 (
     id          bigint unsigned not null auto_increment comment '资源id',
-    code        varchar(100)    not null comment '资源code',
-    type        varchar(100)    not null comment '资源类型',
-    name        varchar(200)    not null comment '资源名称',
-    url         varchar(200)    not null comment '资源url',
-    method      varchar(20)     not null default '' comment '资源方法',
-    description varchar(500)    not null default '' comment '简介',
-    create_time datetime        not null default CURRENT_TIMESTAMP comment '创建时间',
-    update_time datetime        not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
-    created_by  varchar(100)    not null default '' comment '创建人',
-    updated_by  varchar(100)    not null default '' comment '更新人',
+    code        varchar(100) not null comment '资源code',
+    type        varchar(100) not null comment '资源类型',
+    name        varchar(200) not null comment '资源名称',
+    url         varchar(200) not null comment '资源url',
+    method      varchar(20)  not null default '' comment '资源方法',
+    description varchar(500) not null default '' comment '简介',
+    create_time datetime     not null default CURRENT_TIMESTAMP comment '创建时间',
+    update_time datetime     not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
+    created_by  varchar(100) not null default '' comment '创建人',
+    updated_by  varchar(100) not null default '' comment '更新人',
     primary key (id),
     unique key uk_code (code)
 );
@@ -125,15 +125,15 @@ create table sys_role
 (
     id          bigint unsigned  not null auto_increment comment '角色id',
     parent_id   bigint unsigned  not null default '0' comment '父角色id',
-    code        varchar(100)     not null comment '角色code',
-    name        varchar(200)     not null comment '角色名称',
-    description varchar(500)     not null default '' comment '简介',
+    code        varchar(100) not null comment '角色code',
+    name        varchar(200) not null comment '角色名称',
+    description varchar(500) not null default '' comment '简介',
     sub_count   int unsigned     not null default '0' comment '子节点数',
     is_deleted  tinyint unsigned not null default '0' comment '是否已删除1：已删除，0：未删除',
-    create_time datetime         not null default CURRENT_TIMESTAMP comment '创建时间',
-    update_time datetime         not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
-    created_by  varchar(100)     not null default '' comment '创建人',
-    updated_by  varchar(100)     not null default '' comment '更新人',
+    create_time datetime     not null default CURRENT_TIMESTAMP comment '创建时间',
+    update_time datetime     not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
+    created_by  varchar(100) not null default '' comment '创建人',
+    updated_by  varchar(100) not null default '' comment '更新人',
     primary key (id)
 );
 
@@ -143,12 +143,12 @@ alter table sys_role
 create table sys_role_resource
 (
     id          bigint unsigned not null auto_increment comment '关系id',
-    resource_id bigint          not null comment '角色id',
-    role_id     bigint          not null comment '资源id',
-    create_time datetime        not null default CURRENT_TIMESTAMP comment '创建时间',
-    update_time datetime        not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
-    created_by  varchar(100)    not null default '' comment '创建人',
-    updated_by  varchar(100)    not null default '' comment '更新人',
+    resource_id bigint       not null comment '角色id',
+    role_id     bigint       not null comment '资源id',
+    create_time datetime     not null default CURRENT_TIMESTAMP comment '创建时间',
+    update_time datetime     not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
+    created_by  varchar(100) not null default '' comment '创建人',
+    updated_by  varchar(100) not null default '' comment '更新人',
     primary key (id)
 );
 
@@ -158,24 +158,24 @@ alter table sys_role_resource
 create table sys_user
 (
     id                         bigint unsigned  not null auto_increment comment '用户id',
-    username                   varchar(100)     not null comment '用户名',
-    password                   varchar(100)     not null comment '用户密码密文',
-    name                       varchar(200)     not null comment '用户姓名',
-    id_card_number             varchar(100)     not null default '' comment '用户公民身份号码',
-    mobile                     varchar(100)     not null default '' comment '用户手机',
-    description                varchar(500)     not null default '' comment '简介',
-    dept_code                  varchar(32)      not null default '' comment '部门编码',
+    username                   varchar(100) not null comment '用户名',
+    password                   varchar(100) not null comment '用户密码密文',
+    name                       varchar(200) not null comment '用户姓名',
+    id_card_number             varchar(100) not null default '' comment '用户公民身份号码',
+    mobile                     varchar(100) not null default '' comment '用户手机',
+    description                varchar(500) not null default '' comment '简介',
+    dept_code                  varchar(32)  not null default '' comment '部门编码',
     dept_id                    bigint unsigned  not null default '0' comment '部门id',
-    filter_code                varchar(32)      not null default '',
+    filter_code                varchar(32)  not null default '',
     is_enabled                 tinyint unsigned not null default '1' comment '是否有效用户',
     is_account_non_expired     tinyint unsigned not null default '1' comment '账号是否未过期',
     is_credentials_non_expired tinyint unsigned not null default '1' comment '密码是否未过期',
     is_account_non_locked      tinyint unsigned not null default '1' comment '是否未锁定',
     is_deleted                 tinyint unsigned not null default '0' comment '是否已删除1：已删除，0：未删除',
-    create_time                datetime         not null default CURRENT_TIMESTAMP comment '创建时间',
-    update_time                datetime         not null default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment '更新时间',
-    created_by                 varchar(100)     not null default '' comment '创建人',
-    updated_by                 varchar(100)     not null default '' comment '更新人',
+    create_time                datetime     not null default CURRENT_TIMESTAMP comment '创建时间',
+    update_time                datetime     not null default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment '更新时间',
+    created_by                 varchar(100) not null default '' comment '创建人',
+    updated_by                 varchar(100) not null default '' comment '更新人',
     primary key (id),
     unique key uk_username (username)
 );
@@ -188,10 +188,10 @@ create table sys_user_role
     id          bigint unsigned not null auto_increment comment '关系id',
     user_id     bigint unsigned not null comment '用户id',
     role_id     bigint unsigned not null comment '角色id',
-    create_time datetime        not null default CURRENT_TIMESTAMP comment '创建时间',
-    update_time datetime        not null default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment '更新时间',
-    created_by  varchar(100)    not null default '' comment '创建人',
-    updated_by  varchar(100)    not null default '' comment '更新人',
+    create_time datetime     not null default CURRENT_TIMESTAMP comment '创建时间',
+    update_time datetime     not null default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment '更新时间',
+    created_by  varchar(100) not null default '' comment '创建人',
+    updated_by  varchar(100) not null default '' comment '更新人',
     primary key (id)
 );
 

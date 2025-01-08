@@ -39,7 +39,7 @@ public class ActorController extends AbstractCrudController<ActorDTO> {
     private ActorService actorService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<ActorDTO> getService() {
         return actorService;
     }
 
@@ -51,7 +51,8 @@ public class ActorController extends AbstractCrudController<ActorDTO> {
             dto.setIdList(Arrays.asList(StringUtils.split(req.getIds(), Constants.COMMA)));
         }
         PageResult<ActorDTO> dtoPageResult = actorService.page(dto, pageParam.toPage());
-        PageResult<ActorPageResp> pageResult = PageResult.convert(dtoPageResult, ActorConvert.INSTANCE::convertToPageResp);
+        PageResult<ActorPageResp> pageResult = PageResult.convert(dtoPageResult,
+                ActorConvert.INSTANCE::convertToPageResp);
         return CommonResult.success(pageResult);
     }
 

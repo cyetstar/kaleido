@@ -21,5 +21,5 @@ public interface SysDictTypeService extends IBaseService<SysDictTypeDTO> {
     SysDictTypeDTO findByType(String type);
 
 
-     void syncPlex();
+    void syncPlex();
 }

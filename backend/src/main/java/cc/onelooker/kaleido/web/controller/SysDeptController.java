@@ -35,14 +35,15 @@ public class SysDeptController extends AbstractCrudController<SysDeptDTO> {
     private SysDeptService sysDeptService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<SysDeptDTO> getService() {
         return sysDeptService;
     }
 
     @GetMapping("page")
     @ApiOperation(value = "部门表分页查询", hidden = true)
     public CommonResult<PageResult<SysDeptPageResp>> page(SysDeptPageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, SysDeptConvert.INSTANCE::convertToDTO, SysDeptConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, SysDeptConvert.INSTANCE::convertToDTO,
+                SysDeptConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")

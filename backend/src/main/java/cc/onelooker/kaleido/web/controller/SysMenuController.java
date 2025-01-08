@@ -49,7 +49,7 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
     private SysResourceService sysResourceService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<SysMenuDTO> getService() {
         return sysMenuService;
     }
 
@@ -57,7 +57,8 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
     @ApiOperation(value = "菜单表分页查询")
     public CommonResult<PageResult<SysMenuPageResp>> page(SysMenuPageReq req, PageParam pageParam) {
         pageParam.setOrderBy("ASC:order_num,parent_id");
-        return super.page(req, pageParam, SysMenuConvert.INSTANCE::convertToDTO, SysMenuConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, SysMenuConvert.INSTANCE::convertToDTO,
+                SysMenuConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -116,7 +117,8 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
     @GetMapping(value = "/tree2")
     public CommonResult<List<SysMenuTreeResp>> tree2() {
         List<SysMenuDTO> sysMenuDTOList = sysMenuService.list(null);
-        sysMenuDTOList = sysMenuDTOList.stream().sorted(Comparator.comparingInt(SysMenuDTO::getOrderNum)).collect(Collectors.toList());
+        sysMenuDTOList = sysMenuDTOList.stream().sorted(Comparator.comparingInt(SysMenuDTO::getOrderNum))
+                .collect(Collectors.toList());
         List<SysMenuTreeResp> respList = genSysMenuTreeRespList(sysMenuDTOList);
         return CommonResult.success(respList);
     }
@@ -131,15 +133,19 @@ public class SysMenuController extends AbstractCrudController<SysMenuDTO> {
     private List<SysMenuTreeResp> genSysMenuTreeRespList(List<SysMenuDTO> sysMenuDTOList) {
         List<SysResourceDTO> sysResourceDTOList = sysResourceService.listByUserId(CurrentUserUtils.getUserId());
         List<String> permissionList = sysResourceDTOList.stream().map(s -> s.getCode()).collect(Collectors.toList());
-        sysMenuDTOList = sysMenuDTOList.stream().filter(s -> StringUtils.equals(s.getIsHidden(), Constants.NO) && (StringUtils.isEmpty(s.getPermission()) || permissionList.contains(s.getPermission()))).collect(Collectors.toList());
+        sysMenuDTOList = sysMenuDTOList.stream()
+                .filter(s -> StringUtils.equals(s.getIsHidden(), Constants.NO)
+                        && (StringUtils.isEmpty(s.getPermission()) || permissionList.contains(s.getPermission())))
+                .collect(Collectors.toList());
         List<SysMenuTreeResp> respList = Lists.newArrayList();
         for (SysMenuDTO dto : sysMenuDTOList) {
             SysMenuTreeResp resp = SysMenuConvert.INSTANCE.convertToTreeResp(dto);
             respList.add(resp);
         }
         respList = buildTree(respList);
-        //过滤无子节点的数据
-        respList = respList.stream().filter(s -> CollectionUtils.isNotEmpty(s.getChildren())).collect(Collectors.toList());
+        // 过滤无子节点的数据
+        respList = respList.stream().filter(s -> CollectionUtils.isNotEmpty(s.getChildren()))
+                .collect(Collectors.toList());
         return respList;
     }
 

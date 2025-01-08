@@ -13,6 +13,7 @@ import cc.onelooker.kaleido.entity.ComicBookDO;
 import cc.onelooker.kaleido.third.komga.Page;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Map;
@@ -23,7 +24,7 @@ import java.util.Map;
  * @author cyetstar
  * @date 2024-03-12 17:47:50
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ComicBookConvert {
 
     ComicBookConvert INSTANCE = Mappers.getMapper(ComicBookConvert.class);

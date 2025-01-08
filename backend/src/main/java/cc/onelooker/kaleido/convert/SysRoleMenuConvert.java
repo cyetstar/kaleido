@@ -4,6 +4,7 @@ import cc.onelooker.kaleido.dto.SysRoleMenuDTO;
 import cc.onelooker.kaleido.entity.SysRoleMenuDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -12,7 +13,7 @@ import org.mapstruct.factory.Mappers;
  * @author cyetstar
  * @date 2022-11-13 01:12:24
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SysRoleMenuConvert {
     SysRoleMenuConvert INSTANCE = Mappers.getMapper(SysRoleMenuConvert.class);
 

@@ -15,6 +15,7 @@ import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,8 @@ public class TvshowSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
 
     private final Set<String> showIdCache = Sets.newHashSet();
 
-    public TvshowSyncRunnable(PlexApiService plexApiService, TvshowEpisodeService tvshowEpisodeService, TvshowManager tvshowManager) {
+    public TvshowSyncRunnable(PlexApiService plexApiService, TvshowEpisodeService tvshowEpisodeService,
+                              TvshowManager tvshowManager) {
         this.plexApiService = plexApiService;
         this.tvshowEpisodeService = tvshowEpisodeService;
         this.tvshowManager = tvshowManager;
@@ -51,12 +53,13 @@ public class TvshowSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
     }
 
     @Override
-    protected void afterRun(Map<String, String> params) {
+    protected void afterRun(@Nullable Map<String, String> params) {
         String showId = MapUtils.getString(params, "showId");
         String seasonId = MapUtils.getString(params, "seasonId");
         if (StringUtils.isAllEmpty(showId, seasonId)) {
             List<TvshowEpisodeDTO> tvshowEpisodeDTOList = tvshowEpisodeService.list(null);
-            List<String> idList = tvshowEpisodeDTOList.stream().map(TvshowEpisodeDTO::getId).collect(Collectors.toList());
+            List<String> idList = tvshowEpisodeDTOList.stream().map(TvshowEpisodeDTO::getId)
+                    .collect(Collectors.toList());
             Collection<String> deleteIdList = CollectionUtils.subtract(idList, plexIdList);
             if (CollectionUtils.isNotEmpty(deleteIdList)) {
                 deleteIdList.forEach(tvshowEpisodeService::deleteById);
@@ -75,7 +78,8 @@ public class TvshowSyncRunnable extends AbstractEntityActionRunnable<Metadata> {
         if (StringUtils.isAllEmpty(showId, seasonId)) {
             String libraryId = ConfigUtils.getSysConfig(ConfigKey.plexTvshowLibraryId);
             pageResult = plexApiService.pageMetadata(libraryId, PlexApiService.TYPE_EPISODE, pageNumber, pageSize);
-            plexIdList.addAll(pageResult.getRecords().stream().map(Metadata::getRatingKey).collect(Collectors.toList()));
+            plexIdList
+                    .addAll(pageResult.getRecords().stream().map(Metadata::getRatingKey).collect(Collectors.toList()));
         } else if (pageNumber == 1) {
             List<Metadata> records = Lists.newArrayList();
             if (StringUtils.isNotEmpty(showId)) {

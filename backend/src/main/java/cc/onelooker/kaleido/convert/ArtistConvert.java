@@ -12,6 +12,7 @@ import cc.onelooker.kaleido.entity.ArtistDO;
 import cc.onelooker.kaleido.third.tmm.Artist;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -20,7 +21,7 @@ import org.mapstruct.factory.Mappers;
  * @author cyetstar
  * @date 2023-11-25 22:16:58
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ArtistConvert {
 
     ArtistConvert INSTANCE = Mappers.getMapper(ArtistConvert.class);

@@ -1,7 +1,13 @@
 package cc.onelooker.kaleido.service;
 
-import cc.onelooker.kaleido.dto.*;
-import cc.onelooker.kaleido.enums.*;
+import cc.onelooker.kaleido.dto.ArtistDTO;
+import cc.onelooker.kaleido.dto.AttributeDTO;
+import cc.onelooker.kaleido.dto.MusicAlbumDTO;
+import cc.onelooker.kaleido.dto.MusicTrackDTO;
+import cc.onelooker.kaleido.enums.AttributeType;
+import cc.onelooker.kaleido.enums.ConfigKey;
+import cc.onelooker.kaleido.enums.SubjectType;
+import cc.onelooker.kaleido.enums.TaskType;
 import cc.onelooker.kaleido.nfo.AlbumNFO;
 import cc.onelooker.kaleido.nfo.NFOUtil;
 import cc.onelooker.kaleido.third.plex.Metadata;
@@ -15,7 +21,6 @@ import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.http.HttpUtil;
 import com.zjjcnt.common.util.constant.Constants;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -89,7 +94,8 @@ public class MusicManager {
                 renameDirIfChanged(s);
                 if (ConfigUtils.isEnabled(ConfigKey.writeAudioTag)) {
                     List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(s.getId());
-                    musicTrackDTOList.forEach(t -> taskService.newTask(t.getId(), SubjectType.MusicTrack, TaskType.writeAudioTag));
+                    musicTrackDTOList.forEach(
+                            t -> taskService.newTask(t.getId(), SubjectType.MusicTrack, TaskType.writeAudioTag));
                 }
             } catch (IOException e) {
                 ExceptionUtil.wrapAndThrow(e);
@@ -102,7 +108,8 @@ public class MusicManager {
         try {
             artistService.updateAlbumArtists(musicAlbumDTO.getArtistList(), musicAlbumDTO.getId());
             attributeService.updateAttributes(musicAlbumDTO.getStyleList(), musicAlbumDTO.getId(), AttributeType.Style);
-            attributeService.updateAttributes(musicAlbumDTO.getGenreList(), musicAlbumDTO.getId(), AttributeType.MusicGenre);
+            attributeService.updateAttributes(musicAlbumDTO.getGenreList(), musicAlbumDTO.getId(),
+                    AttributeType.MusicGenre);
             attributeService.updateAttributes(musicAlbumDTO.getMoodList(), musicAlbumDTO.getId(), AttributeType.Mood);
             renameDirIfChanged(musicAlbumDTO);
             MusicAlbumDTO existMusicAlbumDTO = musicAlbumService.findById(musicAlbumDTO.getId());
@@ -113,7 +120,8 @@ public class MusicManager {
             }
             if (ConfigUtils.isEnabled(ConfigKey.writeAudioTag)) {
                 List<MusicTrackDTO> musicTrackDTOList = musicTrackService.listByAlbumId(musicAlbumDTO.getId());
-                musicTrackDTOList.forEach(musicTrackDTO -> taskService.newTask(musicTrackDTO.getId(), SubjectType.MusicTrack, TaskType.writeAudioTag));
+                musicTrackDTOList.forEach(musicTrackDTO -> taskService.newTask(musicTrackDTO.getId(),
+                        SubjectType.MusicTrack, TaskType.writeAudioTag));
             }
         } catch (IOException e) {
             ExceptionUtil.wrapAndThrow(e);
@@ -219,9 +227,15 @@ public class MusicManager {
         List<AttributeDTO> attributeDTOList = attributeService.listBySubjectId(musicAlbumDTO.getId());
         List<ArtistDTO> artistDTOList = artistService.listByAlbumId(musicAlbumDTO.getId());
         musicAlbumDTO.setArtistList(artistDTOList);
-        musicAlbumDTO.setStyleList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Style.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
-        musicAlbumDTO.setMoodList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Mood.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
-        musicAlbumDTO.setGenreList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.MusicGenre.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
+        musicAlbumDTO.setStyleList(
+                attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Style.name()))
+                        .map(AttributeDTO::getValue).collect(Collectors.toList()));
+        musicAlbumDTO.setMoodList(
+                attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Mood.name()))
+                        .map(AttributeDTO::getValue).collect(Collectors.toList()));
+        musicAlbumDTO.setGenreList(
+                attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.MusicGenre.name()))
+                        .map(AttributeDTO::getValue).collect(Collectors.toList()));
         return musicAlbumDTO;
     }
 
@@ -255,9 +269,9 @@ public class MusicManager {
                     ExceptionUtil.wrapAndThrow(e);
                 }
             });
-            //下载专辑封面
+            // 下载专辑封面
             downloadAlbumCover(musicAlbumDTO, standardPath);
-            //删除空文件夹
+            // 删除空文件夹
             deletePathIfEmpty(path);
         } catch (IOException e) {
             ExceptionUtil.wrapAndThrow(e);
@@ -372,7 +386,8 @@ public class MusicManager {
 
     private void readAudioTag(MusicAlbumDTO musicAlbumDTO) throws Exception {
         Path path = KaleidoUtil.getMusicPath(musicAlbumDTO.getPath());
-        Path audioPath = Files.list(path).filter(s -> KaleidoUtil.isAudioFile(s.getFileName().toString())).findFirst().orElse(null);
+        Path audioPath = Files.list(path).filter(s -> KaleidoUtil.isAudioFile(s.getFileName().toString())).findFirst()
+                .orElse(null);
         if (audioPath == null || Files.notExists(audioPath)) {
             return;
         }
@@ -405,7 +420,8 @@ public class MusicManager {
                 String lyric = tmmApiService.findLyric(s.getNeteaseId());
                 if (StringUtils.isNotEmpty(lyric)) {
                     Path musicFilePath = KaleidoUtil.getMusicFilePath(musicAlbumDTO.getPath(), s.getFilename());
-                    File lyricFile = musicFilePath.resolveSibling(FilenameUtils.getBaseName(s.getFilename()) + ".lrc").toFile();
+                    File lyricFile = musicFilePath.resolveSibling(FilenameUtils.getBaseName(s.getFilename()) + ".lrc")
+                            .toFile();
                     FileUtils.writeStringToFile(lyricFile, lyric, StandardCharsets.UTF_8);
                 }
             } catch (IOException e) {
@@ -422,8 +438,10 @@ public class MusicManager {
             albumNFO.setMusicbrainzId(album.getMusicbrainzId());
             Path importPath = KaleidoUtil.getMusicImportPath();
             String filename = FilenameUtils.getBaseName(path.getFileName().toString());
-            if (StringUtils.isNotEmpty(album.getTitle()) && !StringUtils.isAllEmpty(album.getNeteaseId(), album.getMusicbrainzId())) {
-                filename = album.getTitle() + "(" + StringUtils.defaultIfEmpty(album.getNeteaseId(), album.getMusicbrainzId()) + ")";
+            if (StringUtils.isNotEmpty(album.getTitle())
+                    && !StringUtils.isAllEmpty(album.getNeteaseId(), album.getMusicbrainzId())) {
+                filename = album.getTitle() + "("
+                        + StringUtils.defaultIfEmpty(album.getNeteaseId(), album.getMusicbrainzId()) + ")";
             }
             Path newPath = importPath.resolve(filename);
             if (Files.isDirectory(path)) {

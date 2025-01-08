@@ -10,22 +10,23 @@ import cc.onelooker.kaleido.dto.resp.MovieDoubanWeeklyViewResp;
 import cc.onelooker.kaleido.entity.MovieDoubanWeeklyDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 豆瓣电影口碑榜Convert
-*
-* @author cyetstar
-* @date 2023-12-29 16:15:43
-*/
-@Mapper
+ * 豆瓣电影口碑榜Convert
+ *
+ * @author cyetstar
+ * @date 2023-12-29 16:15:43
+ */
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MovieDoubanWeeklyConvert {
 
     MovieDoubanWeeklyConvert INSTANCE = Mappers.getMapper(MovieDoubanWeeklyConvert.class);
 
     MovieDoubanWeeklyDTO convert(MovieDoubanWeeklyDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     MovieDoubanWeeklyDO convertToDO(MovieDoubanWeeklyDTO dto);
 
     MovieDoubanWeeklyDTO convertToDTO(MovieDoubanWeeklyPageReq req);
@@ -39,6 +40,5 @@ public interface MovieDoubanWeeklyConvert {
     MovieDoubanWeeklyViewResp convertToViewResp(MovieDoubanWeeklyDTO dto);
 
     MovieDoubanWeeklyCreateResp convertToCreateResp(MovieDoubanWeeklyDTO dto);
-
 
 }

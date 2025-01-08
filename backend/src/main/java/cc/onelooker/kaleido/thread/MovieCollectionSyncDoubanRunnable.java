@@ -13,6 +13,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -44,7 +45,7 @@ public class MovieCollectionSyncDoubanRunnable extends AbstractEntityActionRunna
     }
 
     @Override
-    protected void beforeRun(Map<String, String> params) {
+    protected void beforeRun(@Nullable Map<String, String> params) {
         super.beforeRun(params);
         doubanIdList = Lists.newArrayList();
         movieCollectionDTO = movieManager.syncCollection(MapUtils.getLong(params, "id"));
@@ -69,9 +70,10 @@ public class MovieCollectionSyncDoubanRunnable extends AbstractEntityActionRunna
     }
 
     @Override
-    protected void afterRun(Map<String, String> params) {
+    protected void afterRun(@Nullable Map<String, String> params) {
         super.afterRun(params);
-        List<MovieBasicCollectionDTO> movieBasicCollectionDTOList = movieBasicCollectionService.listByCollectionId(movieCollectionDTO.getId());
+        List<MovieBasicCollectionDTO> movieBasicCollectionDTOList = movieBasicCollectionService
+                .listByCollectionId(movieCollectionDTO.getId());
         for (MovieBasicCollectionDTO movieBasicCollectionDTO : movieBasicCollectionDTOList) {
             if (doubanIdList.contains(movieBasicCollectionDTO.getDoubanId())) {
                 continue;

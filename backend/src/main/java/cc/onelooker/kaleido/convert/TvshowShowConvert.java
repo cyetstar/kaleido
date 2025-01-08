@@ -10,10 +10,7 @@ import cc.onelooker.kaleido.dto.resp.TvshowShowSearchInfoResp;
 import cc.onelooker.kaleido.dto.resp.TvshowShowViewResp;
 import cc.onelooker.kaleido.entity.TvshowShowDO;
 import cc.onelooker.kaleido.third.tmm.Tvshow;
-import org.mapstruct.InheritInverseConfiguration;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -22,7 +19,7 @@ import org.mapstruct.factory.Mappers;
  * @author cyetstar
  * @date 2023-11-26 23:27:03
  */
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TvshowShowConvert {
 
     TvshowShowConvert INSTANCE = Mappers.getMapper(TvshowShowConvert.class);

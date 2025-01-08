@@ -45,14 +45,15 @@ public class SysDictController extends AbstractCrudController<SysDictDTO> {
     private SysDictService sysDictService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<SysDictDTO> getService() {
         return sysDictService;
     }
 
     @GetMapping("page")
     @ApiOperation(value = "字典表分页查询")
     public CommonResult<PageResult<SysDictPageResp>> page(SysDictPageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, SysDictConvert.INSTANCE::convertToDTO, SysDictConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, SysDictConvert.INSTANCE::convertToDTO,
+                SysDictConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -98,7 +99,8 @@ public class SysDictController extends AbstractCrudController<SysDictDTO> {
     @GetMapping(value = "/listByDictType")
     public CommonResult<List<TextValue>> listByDictType(@RequestParam String dictType) {
         Map<String, String> codeMap = Dictionary.get(dictType);
-        List<TextValue> list = codeMap.keySet().stream().map(s -> new TextValue(codeMap.get(s), s)).collect(Collectors.toList());
+        List<TextValue> list = codeMap.keySet().stream().map(s -> new TextValue(codeMap.get(s), s))
+                .collect(Collectors.toList());
         return CommonResult.success(list);
     }
 

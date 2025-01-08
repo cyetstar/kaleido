@@ -57,6 +57,7 @@ public class ActionContext {
     public static void clear(Action action) {
         container.remove(action);
         runnableContainer.remove(action);
+        broadcast();
     }
 
     public static ActionState get(Action action) {

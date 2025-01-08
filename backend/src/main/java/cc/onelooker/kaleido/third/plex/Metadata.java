@@ -2,7 +2,7 @@ package cc.onelooker.kaleido.third.plex;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 
 import java.util.List;
 
@@ -72,11 +72,11 @@ public class Metadata {
     private List<Location> locationList;
 
     public Media getMedia() {
-        return CollectionUtils.get(mediaList, 0);
+        return IterableUtils.get(mediaList, 0);
     }
 
     public Location getLocation() {
-        return CollectionUtils.get(locationList, 0);
+        return IterableUtils.get(locationList, 0);
     }
 
     @Override

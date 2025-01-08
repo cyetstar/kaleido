@@ -13,7 +13,6 @@ import cc.onelooker.kaleido.dto.resp.MusicTrackPageResp;
 import cc.onelooker.kaleido.dto.resp.MusicTrackViewResp;
 import cc.onelooker.kaleido.service.ArtistService;
 import cc.onelooker.kaleido.service.MusicAlbumService;
-import cc.onelooker.kaleido.service.MusicManager;
 import cc.onelooker.kaleido.service.MusicTrackService;
 import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.google.common.collect.Lists;
@@ -22,7 +21,6 @@ import com.zjjcnt.common.core.domain.PageParam;
 import com.zjjcnt.common.core.domain.PageResult;
 import com.zjjcnt.common.core.service.IBaseService;
 import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FileUtils;
@@ -33,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,14 +57,15 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
     private ArtistService artistService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<MusicTrackDTO> getService() {
         return musicTrackService;
     }
 
     @GetMapping("page")
     @ApiOperation(value = "查询曲目")
     public CommonResult<PageResult<MusicTrackPageResp>> page(MusicTrackPageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, MusicTrackConvert.INSTANCE::convertToDTO, MusicTrackConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, MusicTrackConvert.INSTANCE::convertToDTO,
+                MusicTrackConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -77,7 +77,8 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
     @PostMapping("create")
     @ApiOperation(value = "新增曲目")
     public CommonResult<MusicTrackCreateResp> create(@RequestBody MusicTrackCreateReq req) {
-        return super.create(req, MusicTrackConvert.INSTANCE::convertToDTO, MusicTrackConvert.INSTANCE::convertToCreateResp);
+        return super.create(req, MusicTrackConvert.INSTANCE::convertToDTO,
+                MusicTrackConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
@@ -103,7 +104,8 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
             MusicTrackListByAlbumIdResp resp = MusicTrackConvert.INSTANCE.convertToListByAlbumIdResp(musicTrackDTO);
             respList.add(resp);
         }
-        Map<Optional<Integer>, List<MusicTrackListByAlbumIdResp>> result = respList.stream().collect(Collectors.groupingBy(s -> Optional.ofNullable(s.getDiscIndex())));
+        Map<Optional<Integer>, List<MusicTrackListByAlbumIdResp>> result = respList.stream()
+                .collect(Collectors.groupingBy(s -> Optional.ofNullable(s.getDiscIndex())));
         return CommonResult.success(result.values());
     }
 
@@ -111,10 +113,11 @@ public class MusicTrackController extends AbstractCrudController<MusicTrackDTO> 
     public CommonResult<List<String>> viewLyric(String id) throws IOException {
         MusicTrackDTO musicTrackDTO = musicTrackService.findById(id);
         MusicAlbumDTO musicAlbumDTO = musicAlbumService.findById(musicTrackDTO.getAlbumId());
-        File file = KaleidoUtil.getMusicFilePath(musicAlbumDTO.getPath(), FilenameUtils.getBaseName(musicTrackDTO.getFilename()) + ".lrc").toFile();
+        File file = KaleidoUtil.getMusicFilePath(musicAlbumDTO.getPath(),
+                FilenameUtils.getBaseName(musicTrackDTO.getFilename()) + ".lrc").toFile();
         List<String> result = Lists.newArrayList();
         if (file.exists() && file.length() > 0) {
-            String content = FileUtils.readFileToString(file);
+            String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             result = Arrays.asList(StringUtils.split(content, "\n"));
         }
         return CommonResult.success(result);

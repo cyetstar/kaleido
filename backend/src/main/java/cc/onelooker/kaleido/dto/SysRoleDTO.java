@@ -1,7 +1,6 @@
 package cc.onelooker.kaleido.dto;
 
 import cc.onelooker.kaleido.entity.SysRoleDO;
-import com.zjjcnt.common.core.dto.BaseDTO;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -16,7 +15,7 @@ import java.util.List;
  * @see SysRoleDO
  */
 @Data
-public class SysRoleDTO implements BaseDTO<Long>, GrantedAuthority, IDictionary<Long> {
+public class SysRoleDTO implements GrantedAuthority, IDictionary<Long> {
     private static final long serialVersionUID = 1627058453403800691L;
 
     /**

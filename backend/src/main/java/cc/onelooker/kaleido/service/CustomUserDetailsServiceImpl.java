@@ -5,7 +5,6 @@ import cc.onelooker.kaleido.dto.SysUserDTO;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.zjjcnt.common.core.dict.Dictionary;
 import com.zjjcnt.common.security.component.AbstractCustomUserDetailsServiceImpl;
-import com.zjjcnt.common.security.component.CustomUserDetailsService;
 import com.zjjcnt.common.security.domain.CustomUserDetails;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,13 +21,12 @@ import java.util.stream.Collectors;
  * @author Hyliu
  * @version 1.0.0
  * @ClassName CustomUserDetailsServiceImpl.java
- * @Description TODO
  * @createTime 2021年12月04日 01:14:00
  */
 @Service("userDetailsService")
 @DS("auth")
 @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-public class CustomUserDetailsServiceImpl extends AbstractCustomUserDetailsServiceImpl implements CustomUserDetailsService {
+public class CustomUserDetailsServiceImpl extends AbstractCustomUserDetailsServiceImpl {
 
     @Resource
     private SysUserService sysUserService;
@@ -51,8 +49,7 @@ public class CustomUserDetailsServiceImpl extends AbstractCustomUserDetailsServi
                 sysUserDTO.getAccountNonExpired(),
                 sysUserDTO.getCredentialsNonExpired(),
                 sysUserDTO.getAccountNonLocked(),
-                grantedAuthorities
-        );
+                grantedAuthorities);
         customUserDetails.setUserId(sysUserDTO.getId());
         customUserDetails.setName(sysUserDTO.getName());
         customUserDetails.setMobile(sysUserDTO.getMobile());

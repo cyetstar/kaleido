@@ -64,14 +64,15 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
     private ComicManager comicManager;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<ComicBookDTO> getService() {
         return comicBookService;
     }
 
     @GetMapping("page")
     @ApiOperation(value = "查询漫画书籍")
     public CommonResult<PageResult<ComicBookPageResp>> page(ComicBookPageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, ComicBookConvert.INSTANCE::convertToDTO, ComicBookConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, ComicBookConvert.INSTANCE::convertToDTO,
+                ComicBookConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -84,7 +85,8 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
     @PostMapping("create")
     @ApiOperation(value = "新增漫画书籍")
     public CommonResult<ComicBookCreateResp> create(@RequestBody ComicBookCreateReq req) {
-        return super.create(req, ComicBookConvert.INSTANCE::convertToDTO, ComicBookConvert.INSTANCE::convertToCreateResp);
+        return super.create(req, ComicBookConvert.INSTANCE::convertToDTO,
+                ComicBookConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
@@ -105,7 +107,8 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
     @ApiOperation(value = "查看漫画书籍所有页面")
     public CommonResult<List<ComicBookListPageResp>> listPage(String id) {
         List<Page> pageList = komgaApiService.listPageByBook(id);
-        List<ComicBookListPageResp> result = pageList.stream().map(ComicBookConvert.INSTANCE::convertToListPageResp).collect(Collectors.toList());
+        List<ComicBookListPageResp> result = pageList.stream().map(ComicBookConvert.INSTANCE::convertToListPageResp)
+                .collect(Collectors.toList());
         return CommonResult.success(result);
     }
 
@@ -134,7 +137,8 @@ public class ComicBookController extends AbstractCrudController<ComicBookDTO> {
         extractor.extract(tempPath.toFile(), f -> StringUtils.equals(f.getName(), KaleidoConstants.COMIC_INFO));
         extractor.close();
         byte[] data = Files.readAllBytes(tempPath.resolve(KaleidoConstants.COMIC_INFO));
-        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + KaleidoConstants.COMIC_INFO).contentType(MediaType.TEXT_XML).body(data);
+        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + KaleidoConstants.COMIC_INFO)
+                .contentType(MediaType.TEXT_XML).body(data);
     }
 
 }

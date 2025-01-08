@@ -16,8 +16,8 @@ import java.util.Map;
  * @Date 2022-05-31 00:35:00
  * @Description TODO
  */
-public abstract class DictionaryBaseServiceImpl<M extends BaseMapper<T>, T extends IdEntity, D extends IDictionary>
-        extends KaleidoBaseServiceImpl<M, T, D> implements IDictionaryService {
+public abstract class DictionaryBaseServiceImpl<ID extends Serializable, M extends BaseMapper<T>, T extends IdEntity<ID>, D extends IDictionary<ID>>
+        extends KaleidoBaseServiceImpl<ID, M, T, D> implements IDictionaryService {
 
     @Override
     @Transactional

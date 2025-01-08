@@ -31,14 +31,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/modules/user";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 const userStore = useUserStore();
 const name = userStore.name;
-console.log("name", name);
 
 const menuList = ref([
   {

@@ -26,7 +26,8 @@ import java.util.Objects;
  * @date 2023-11-26 23:27:03
  */
 @Service
-public class TvshowSeasonServiceImpl extends AbstractBaseServiceImpl<TvshowSeasonMapper, TvshowSeasonDO, TvshowSeasonDTO> implements TvshowSeasonService {
+public class TvshowSeasonServiceImpl extends
+        AbstractBaseServiceImpl<TvshowSeasonMapper, TvshowSeasonDO, TvshowSeasonDTO> implements TvshowSeasonService {
 
     TvshowSeasonConvert convert = TvshowSeasonConvert.INSTANCE;
 
@@ -81,6 +82,14 @@ public class TvshowSeasonServiceImpl extends AbstractBaseServiceImpl<TvshowSeaso
         TvshowSeasonDTO param = new TvshowSeasonDTO();
         param.setShowId(showId);
         return list(param);
+    }
+
+    @Override
+    public TvshowSeasonDTO findByTmdbId(String tmdbId) {
+        Validate.notEmpty(tmdbId);
+        TvshowSeasonDTO param = new TvshowSeasonDTO();
+        param.setTmdbId(tmdbId);
+        return find(param);
     }
 
     @Override

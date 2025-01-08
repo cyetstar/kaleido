@@ -36,9 +36,10 @@ public class CurrentUserUtils {
         return user.getName();
     }
 
+    @SuppressWarnings("unchecked")
     public static List<String> getRoles() {
         CustomUserDetails user = getUser();
-        return (List) user.getAdditionalInfo("roles");
+        return (List<String>) user.getAdditionalInfo("roles");
     }
 
     public static String getDepartmentId() {

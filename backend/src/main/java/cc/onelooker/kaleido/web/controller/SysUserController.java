@@ -55,14 +55,15 @@ public class SysUserController extends AbstractCrudController<SysUserDTO> {
     private SysResourceService sysResourceService;
 
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<SysUserDTO> getService() {
         return sysUserService;
     }
 
     @GetMapping("page")
     @ApiOperation(value = "用户表分页查询")
     public CommonResult<PageResult<SysUserPageResp>> page(SysUserPageReq req, PageParam pageParam) {
-        PageResult<SysUserPageResp> pageResult = super.doPage(req, pageParam, SysUserConvert.INSTANCE::convertToDTO, SysUserConvert.INSTANCE::convertToPageResp);
+        PageResult<SysUserPageResp> pageResult = super.doPage(req, pageParam, SysUserConvert.INSTANCE::convertToDTO,
+                SysUserConvert.INSTANCE::convertToPageResp);
         for (SysUserPageResp resp : pageResult.getRecords()) {
             List<SysRoleDTO> sysRoleDTOList = sysRoleService.listByUserId(resp.getId());
             List<SysUserPageResp.SysRolePageResp> sysRoleList = Lists.newArrayList();
@@ -119,7 +120,7 @@ public class SysUserController extends AbstractCrudController<SysUserDTO> {
     public CommonResult<SysUserInfoResp> info() {
         CustomUserDetails currentUser = CurrentUserUtils.getUser();
         SysUserInfoResp sysUserInfoResp = new SysUserInfoResp();
-        //注意：该接口返回的信息，前端会存储起来，返回身份证号不安全
+        // 注意：该接口返回的信息，前端会存储起来，返回身份证号不安全
         sysUserInfoResp.setUserId(currentUser.getUserId());
         sysUserInfoResp.setUsername(currentUser.getUsername());
         sysUserInfoResp.setName(currentUser.getName());
@@ -138,7 +139,7 @@ public class SysUserController extends AbstractCrudController<SysUserDTO> {
 
     @ApiOperation("更新用户状态")
     @PostMapping("updateEnable")
-    public CommonResult updateEnable(@RequestBody SysUserUpdateEnableReq req) {
+    public CommonResult<?> updateEnable(@RequestBody SysUserUpdateEnableReq req) {
         SysUserDTO sysUserDTO = new SysUserDTO();
         sysUserDTO.setEnabled(req.getEnable());
         sysUserDTO.setId(req.getUserId());

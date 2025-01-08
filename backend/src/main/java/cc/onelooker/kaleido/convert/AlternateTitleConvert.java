@@ -10,22 +10,23 @@ import cc.onelooker.kaleido.dto.resp.AlternateTitleViewResp;
 import cc.onelooker.kaleido.entity.AlternateTitleDO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 /**
-* 别名Convert
-*
-* @author cyetstar
-* @date 2024-03-12 17:48:21
-*/
-@Mapper
+ * 别名Convert
+ *
+ * @author cyetstar
+ * @date 2024-03-12 17:48:21
+ */
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AlternateTitleConvert {
 
     AlternateTitleConvert INSTANCE = Mappers.getMapper(AlternateTitleConvert.class);
 
     AlternateTitleDTO convert(AlternateTitleDO entity);
 
-    @InheritInverseConfiguration(name="convert")
+    @InheritInverseConfiguration(name = "convert")
     AlternateTitleDO convertToDO(AlternateTitleDTO dto);
 
     AlternateTitleDTO convertToDTO(AlternateTitlePageReq req);
@@ -39,6 +40,5 @@ public interface AlternateTitleConvert {
     AlternateTitleViewResp convertToViewResp(AlternateTitleDTO dto);
 
     AlternateTitleCreateResp convertToCreateResp(AlternateTitleDTO dto);
-
 
 }

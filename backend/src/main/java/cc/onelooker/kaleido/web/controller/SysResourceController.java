@@ -1,5 +1,28 @@
 package cc.onelooker.kaleido.web.controller;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zjjcnt.common.core.domain.CommonResult;
+import com.zjjcnt.common.core.domain.PageParam;
+import com.zjjcnt.common.core.domain.PageResult;
+import com.zjjcnt.common.core.service.IBaseService;
+import com.zjjcnt.common.core.web.controller.AbstractCrudController;
+import com.zjjcnt.common.util.constant.Constants;
+
 import cc.onelooker.kaleido.convert.SysResourceConvert;
 import cc.onelooker.kaleido.dto.SysResourceDTO;
 import cc.onelooker.kaleido.dto.req.SysResourceCreateReq;
@@ -11,25 +34,8 @@ import cc.onelooker.kaleido.dto.resp.SysResourceListTypeResp;
 import cc.onelooker.kaleido.dto.resp.SysResourcePageResp;
 import cc.onelooker.kaleido.dto.resp.SysResourceViewResp;
 import cc.onelooker.kaleido.service.SysResourceService;
-import cc.onelooker.kaleido.service.SysRoleResourceService;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zjjcnt.common.core.domain.CommonResult;
-import com.zjjcnt.common.core.domain.PageParam;
-import com.zjjcnt.common.core.domain.PageResult;
-import com.zjjcnt.common.core.service.IBaseService;
-import com.zjjcnt.common.core.web.controller.AbstractCrudController;
-import com.zjjcnt.common.util.constant.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 /**
  * 资源表前端控制器
@@ -46,18 +52,16 @@ public class SysResourceController extends AbstractCrudController<SysResourceDTO
     @Autowired
     private SysResourceService sysResourceService;
 
-    @Autowired
-    private SysRoleResourceService sysRoleResourceService;
-
     @Override
-    protected IBaseService getService() {
+    protected IBaseService<SysResourceDTO> getService() {
         return sysResourceService;
     }
 
     @GetMapping("page")
     @ApiOperation(value = "资源表分页查询", hidden = true)
     public CommonResult<PageResult<SysResourcePageResp>> page(SysResourcePageReq req, PageParam pageParam) {
-        return super.page(req, pageParam, SysResourceConvert.INSTANCE::convertToDTO, SysResourceConvert.INSTANCE::convertToPageResp);
+        return super.page(req, pageParam, SysResourceConvert.INSTANCE::convertToDTO,
+                SysResourceConvert.INSTANCE::convertToPageResp);
     }
 
     @GetMapping("view")
@@ -69,7 +73,8 @@ public class SysResourceController extends AbstractCrudController<SysResourceDTO
     @PostMapping("create")
     @ApiOperation(value = "新增资源表", hidden = true)
     public CommonResult<SysResourceCreateResp> create(@RequestBody SysResourceCreateReq req) {
-        return super.create(req, SysResourceConvert.INSTANCE::convertToDTO, SysResourceConvert.INSTANCE::convertToCreateResp);
+        return super.create(req, SysResourceConvert.INSTANCE::convertToDTO,
+                SysResourceConvert.INSTANCE::convertToCreateResp);
     }
 
     @PostMapping("update")
@@ -106,7 +111,10 @@ public class SysResourceController extends AbstractCrudController<SysResourceDTO
     @ApiOperation(value = "按类型分组查询资源")
     public CommonResult<Map<String, List<SysResourceListTypeResp>>> listType() {
         List<SysResourceDTO> sysResourceDTOList = sysResourceService.list(null);
-        Map<String, List<SysResourceListTypeResp>> result = sysResourceDTOList.stream().map(s -> SysResourceConvert.INSTANCE.convertToListTypeResp(s)).sorted(Comparator.comparing(SysResourceListTypeResp::getType)).collect(Collectors.groupingBy(SysResourceListTypeResp::getType));
+        Map<String, List<SysResourceListTypeResp>> result = sysResourceDTOList.stream()
+                .map(s -> SysResourceConvert.INSTANCE.convertToListTypeResp(s))
+                .sorted(Comparator.comparing(SysResourceListTypeResp::getType))
+                .collect(Collectors.groupingBy(SysResourceListTypeResp::getType));
         TreeMap<String, List<SysResourceListTypeResp>> treeResult = Maps.newTreeMap();
         treeResult.putAll(result);
         return CommonResult.success(treeResult);
@@ -116,7 +124,9 @@ public class SysResourceController extends AbstractCrudController<SysResourceDTO
     @ApiOperation(value = "按类型分组查询资源")
     public CommonResult<Map<String, List<SysResourceListTypeResp>>> listTypeByRoleId(Long roleId) {
         List<SysResourceDTO> sysResourceDTOList = sysResourceService.listByRoleId(roleId);
-        Map<String, List<SysResourceListTypeResp>> result = sysResourceDTOList.stream().map(s -> SysResourceConvert.INSTANCE.convertToListTypeResp(s)).collect(Collectors.groupingBy(SysResourceListTypeResp::getType));
+        Map<String, List<SysResourceListTypeResp>> result = sysResourceDTOList.stream()
+                .map(s -> SysResourceConvert.INSTANCE.convertToListTypeResp(s))
+                .collect(Collectors.groupingBy(SysResourceListTypeResp::getType));
         return CommonResult.success(result);
     }
 }

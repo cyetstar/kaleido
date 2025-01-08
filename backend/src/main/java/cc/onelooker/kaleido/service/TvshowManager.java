@@ -72,9 +72,12 @@ public class TvshowManager {
         try {
             attributeService.updateAttributes(tvshowShowDTO.getTagList(), tvshowShowDTO.getId(), AttributeType.Tag);
             attributeService.updateAttributes(tvshowShowDTO.getGenreList(), tvshowShowDTO.getId(), AttributeType.Genre);
-            attributeService.updateAttributes(tvshowShowDTO.getCountryList(), tvshowShowDTO.getId(), AttributeType.Country);
-            attributeService.updateAttributes(tvshowShowDTO.getLanguageList(), tvshowShowDTO.getId(), AttributeType.Language);
-            alternateTitleService.updateTitles(tvshowShowDTO.getAkaList(), tvshowShowDTO.getId(), SubjectType.TvshowShow);
+            attributeService.updateAttributes(tvshowShowDTO.getCountryList(), tvshowShowDTO.getId(),
+                    AttributeType.Country);
+            attributeService.updateAttributes(tvshowShowDTO.getLanguageList(), tvshowShowDTO.getId(),
+                    AttributeType.Language);
+            alternateTitleService.updateTitles(tvshowShowDTO.getAkaList(), tvshowShowDTO.getId(),
+                    SubjectType.TvshowShow);
             tvshowShowDTO.setSortTitle(KaleidoUtil.genSortTitle(tvshowShowDTO.getTitle()));
             renameDirIfChanged(tvshowShowDTO);
             TvshowShowDTO existTvshowShowDTO = tvshowShowService.findById(tvshowShowDTO.getId());
@@ -150,30 +153,36 @@ public class TvshowManager {
             tvshowEpisodeDTO = new TvshowEpisodeDTO();
         }
         PlexUtil.toTvshowEpisodeDTO(tvshowEpisodeDTO, metadata);
-        //无需读取nfo
+        // 无需读取nfo
         saveEpisode(tvshowEpisodeDTO);
     }
 
     @Transactional
     public void matchPath(Path path, Tvshow tvshow) {
         try {
+            TvshowNFO tvshowNFO = NFOUtil.read(TvshowNFO.class, path, KaleidoConstants.SHOW_NFO);
+            if (tvshowNFO == null) {
+                tvshowNFO = new TvshowNFO();
+            }
+            tvshowNFO.setDoubanId(StringUtils.defaultIfEmpty(tvshow.getDoubanId(), tvshowNFO.getDoubanId()));
+            tvshowNFO.setTmdbId(StringUtils.defaultIfEmpty(tvshow.getTmdbId(), tvshowNFO.getTmdbId()));
             NioFileUtil.deleteByFilter(path, "nfo");
-            TvshowNFO tvshowNFO = new TvshowNFO();
-            tvshowNFO.setDoubanId(tvshow.getDoubanId());
             Path importPath = KaleidoUtil.getTvshowImportPath();
             String filename = FilenameUtils.getBaseName(path.getFileName().toString());
-            if (StringUtils.isNotEmpty(tvshow.getTitle()) && (StringUtils.isNotEmpty(tvshow.getDoubanId()) || StringUtils.isNotEmpty(tvshow.getTmdbId()))) {
-                filename = tvshow.getTitle() + "(" + StringUtils.defaultIfEmpty(tvshow.getDoubanId(), tvshow.getTmdbId()) + ")";
+            if (StringUtils.isNotEmpty(tvshow.getTitle())
+                    && (StringUtils.isNotEmpty(tvshow.getDoubanId()) || StringUtils.isNotEmpty(tvshow.getTmdbId()))) {
+                filename = tvshow.getTitle() + "("
+                        + StringUtils.defaultIfEmpty(tvshow.getDoubanId(), tvshow.getTmdbId()) + ")";
             }
             Path newPath = importPath.resolve(filename);
             if (Files.isDirectory(path)) {
-                //如果是文件夹，则写入nfo再改名
+                // 如果是文件夹，则写入nfo再改名
                 if (!StringUtils.equals(newPath.toString(), path.toString())) {
                     NioFileUtil.renameDir(path, newPath, StandardCopyOption.REPLACE_EXISTING);
                 }
                 NFOUtil.write(tvshowNFO, TvshowNFO.class, newPath, KaleidoConstants.SHOW_NFO);
             } else {
-                //新建文件夹，写入nfo再移入文件夹
+                // 新建文件夹，写入nfo再移入文件夹
                 if (Files.notExists(newPath)) {
                     Files.createDirectories(newPath);
                 }
@@ -205,7 +214,7 @@ public class TvshowManager {
                     if (Files.notExists(targetPath)) {
                         Files.createDirectories(targetPath);
                     }
-                    //默认第1季
+                    // 默认第1季
                     Path seasonPath = createSeasonPath(targetPath, 1);
                     NioFileUtil.renameDir(path, seasonPath, StandardCopyOption.REPLACE_EXISTING);
                 }
@@ -254,20 +263,32 @@ public class TvshowManager {
         List<TvshowSeasonDTO> tvshowSeasonDTOList = tvshowSeasonService.listByShowId(tvshowShowDTO.getId());
         tvshowShowDTO.setSeasonList(tvshowSeasonDTOList);
         List<AlternateTitleDTO> alternateTitleDTOList = alternateTitleService.listBySubjectId(tvshowShowDTO.getId());
-        tvshowShowDTO.setAkaList(alternateTitleDTOList.stream().map(AlternateTitleDTO::getTitle).collect(Collectors.toList()));
-        tvshowShowDTO.setLanguageList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Language.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
-        tvshowShowDTO.setCountryList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Country.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
-        tvshowShowDTO.setGenreList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Genre.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
-        tvshowShowDTO.setTagList(attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Tag.name())).map(AttributeDTO::getValue).collect(Collectors.toList()));
+        tvshowShowDTO.setAkaList(
+                alternateTitleDTOList.stream().map(AlternateTitleDTO::getTitle).collect(Collectors.toList()));
+        tvshowShowDTO.setLanguageList(
+                attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Language.name()))
+                        .map(AttributeDTO::getValue).collect(Collectors.toList()));
+        tvshowShowDTO.setCountryList(
+                attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Country.name()))
+                        .map(AttributeDTO::getValue).collect(Collectors.toList()));
+        tvshowShowDTO.setGenreList(
+                attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Genre.name()))
+                        .map(AttributeDTO::getValue).collect(Collectors.toList()));
+        tvshowShowDTO.setTagList(
+                attributeDTOList.stream().filter(s -> StringUtils.equals(s.getType(), AttributeType.Tag.name()))
+                        .map(AttributeDTO::getValue).collect(Collectors.toList()));
         return tvshowShowDTO;
     }
 
     public TvshowSeasonDTO findTvshowSeason(String seasonId) {
         TvshowSeasonDTO tvshowSeasonDTO = tvshowSeasonService.findById(seasonId);
         List<ActorDTO> actorDTOList = actorService.listBySeasonId(seasonId);
-        tvshowSeasonDTO.setDirectorList(actorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Director.name())).collect(Collectors.toList()));
-        tvshowSeasonDTO.setWriterList(actorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Writer.name())).collect(Collectors.toList()));
-        tvshowSeasonDTO.setActorList(actorDTOList.stream().filter(s -> StringUtils.equals(s.getRole(), ActorRole.Actor.name())).collect(Collectors.toList()));
+        tvshowSeasonDTO.setDirectorList(actorDTOList.stream()
+                .filter(s -> StringUtils.equals(s.getRole(), ActorRole.Director.name())).collect(Collectors.toList()));
+        tvshowSeasonDTO.setWriterList(actorDTOList.stream()
+                .filter(s -> StringUtils.equals(s.getRole(), ActorRole.Writer.name())).collect(Collectors.toList()));
+        tvshowSeasonDTO.setActorList(actorDTOList.stream()
+                .filter(s -> StringUtils.equals(s.getRole(), ActorRole.Actor.name())).collect(Collectors.toList()));
         return tvshowSeasonDTO;
     }
 
@@ -306,7 +327,7 @@ public class TvshowManager {
         String doubanId = NFOUtil.getUniqueid(tvshowNFO.getUniqueids(), SourceType.douban);
         String imdb = NFOUtil.getUniqueid(tvshowNFO.getUniqueids(), SourceType.imdb);
         String tmdb = NFOUtil.getUniqueid(tvshowNFO.getUniqueids(), SourceType.tmdb);
-        //plex可能不会传递year，通过nfo文件补充该值
+        // plex可能不会传递year，通过nfo文件补充该值
         tvshowShowDTO.setYear(StringUtils.defaultString(tvshowShowDTO.getYear(), tvshowNFO.getYear()));
         tvshowShowDTO.setDoubanId(StringUtils.defaultIfEmpty(doubanId, tvshowNFO.getDoubanId()));
         tvshowShowDTO.setImdbId(StringUtils.defaultIfEmpty(imdb, tvshowNFO.getImdbId()));
@@ -345,13 +366,16 @@ public class TvshowManager {
             tvshowSeasonDTO.setRating(Float.valueOf(seasonNFO.getRatings().get(0).getValue()));
         }
         if (seasonNFO.getDirectors() != null) {
-            tvshowSeasonDTO.setDirectorList(seasonNFO.getDirectors().stream().map(ActorDTO::new).collect(Collectors.toList()));
+            tvshowSeasonDTO
+                    .setDirectorList(seasonNFO.getDirectors().stream().map(ActorDTO::new).collect(Collectors.toList()));
         }
         if (seasonNFO.getCredits() != null) {
-            tvshowSeasonDTO.setWriterList(seasonNFO.getCredits().stream().map(ActorDTO::new).collect(Collectors.toList()));
+            tvshowSeasonDTO
+                    .setWriterList(seasonNFO.getCredits().stream().map(ActorDTO::new).collect(Collectors.toList()));
         }
         if (seasonNFO.getActors() != null) {
-            tvshowSeasonDTO.setActorList(seasonNFO.getActors().stream().map(NFOUtil::toActorDTO).collect(Collectors.toList()));
+            tvshowSeasonDTO
+                    .setActorList(seasonNFO.getActors().stream().map(NFOUtil::toActorDTO).collect(Collectors.toList()));
         }
     }
 
@@ -384,13 +408,14 @@ public class TvshowManager {
                         log.info("== 移动其他文件: {}", fileName);
                         return;
                     } else {
-                        //只有视频文件时才检查是否已经存在，防止多次检查
+                        // 只有视频文件时才检查是否已经存在，防止多次检查
                         moveExistingFilesToRecycleBin(seasonPath, episodeIndex);
                     }
                     Path episodePath = seasonPath.resolve(fileName);
                     TvshowSeasonDTO tvshowSeasonDTO = tvshowShowDTO.getSeason(seasonIndex);
                     if (tvshowSeasonDTO == null) {
                         log.info("== 无法找到季信息，不再处理: {}", fileName);
+                        return;
                     }
                     TvshowEpisodeDTO tvshowEpisodeDTO = tvshowSeasonDTO.getEpisode(episodeIndex);
                     if (tvshowEpisodeDTO == null) {
@@ -402,9 +427,9 @@ public class TvshowManager {
                     downloadEpisodePoster(tvshowEpisodeDTO, episodePath);
                     exportEpisodeNFO(tvshowShowDTO, tvshowSeasonDTO, tvshowEpisodeDTO, episodePath);
                     if (seasonIndexSet.add(seasonIndex)) {
-                        //下载单季图片
+                        // 下载单季图片
                         downloadSeasonPoster(tvshowSeasonDTO, seasonPath);
-                        //生成单季nfo文件
+                        // 生成单季nfo文件
                         exportSeasonNFO(tvshowShowDTO, tvshowSeasonDTO, seasonPath);
                     }
                     Files.move(s, episodePath, StandardCopyOption.REPLACE_EXISTING);
@@ -413,11 +438,11 @@ public class TvshowManager {
                     ExceptionUtil.wrapAndThrow(e);
                 }
             });
-            //下载剧集图片
+            // 下载剧集图片
             downloadTvshowPoster(tvshowShowDTO, showPath);
-            //生成剧集nfo文件
+            // 生成剧集nfo文件
             exportTvshowNFO(tvshowShowDTO, showPath);
-            //删除空文件夹
+            // 删除空文件夹
             deletePathIfEmpty(path);
         } catch (IOException e) {
             ExceptionUtil.wrapAndThrow(e);
@@ -450,7 +475,7 @@ public class TvshowManager {
     }
 
     private void downloadTvshowPoster(TvshowShowDTO tvshowShowDTO, Path tvshowPath) {
-        if (StringUtils.isEmpty(tvshowShowDTO.getThumb())) {
+        if (tvshowShowDTO == null || StringUtils.isEmpty(tvshowShowDTO.getThumb())) {
             return;
         }
         HttpUtil.downloadFile(tvshowShowDTO.getThumb(), tvshowPath.resolve(KaleidoConstants.POSTER).toFile());
@@ -458,7 +483,7 @@ public class TvshowManager {
     }
 
     private void downloadSeasonPoster(TvshowSeasonDTO tvshowSeasonDTO, Path seasonPath) {
-        if (StringUtils.isEmpty(tvshowSeasonDTO.getThumb())) {
+        if (tvshowSeasonDTO == null || StringUtils.isEmpty(tvshowSeasonDTO.getThumb())) {
             return;
         }
         String filename = KaleidoUtil.genSeasonPosterFilename(tvshowSeasonDTO.getSeasonIndex());
@@ -467,7 +492,7 @@ public class TvshowManager {
     }
 
     private void downloadEpisodePoster(TvshowEpisodeDTO tvshowEpisodeDTO, Path videoPath) {
-        if (tvshowEpisodeDTO != null && StringUtils.isEmpty(tvshowEpisodeDTO.getThumb())) {
+        if (tvshowEpisodeDTO == null || StringUtils.isEmpty(tvshowEpisodeDTO.getThumb())) {
             return;
         }
         String filename = KaleidoUtil.genEpisodeThumbFilename(videoPath.getFileName().toString());
@@ -477,6 +502,9 @@ public class TvshowManager {
 
     private void exportTvshowNFO(TvshowShowDTO tvshowShowDTO, Path tvshowPath) {
         TvshowSeasonDTO firstSeason = tvshowShowDTO.getFirstSeason();
+        if (firstSeason == null) {
+            return;
+        }
         TvshowNFO tvshowNFO = NFOUtil.toTvshowNFO(tvshowShowDTO, firstSeason);
         NFOUtil.write(tvshowNFO, TvshowNFO.class, tvshowPath, KaleidoConstants.SHOW_NFO);
         log.info("== 生成剧集NFO文件: {}", tvshowPath.resolve(KaleidoConstants.SHOW_NFO));
@@ -488,7 +516,8 @@ public class TvshowManager {
         log.info("== 生成单季NFO文件: {}", seasonPath.resolve(KaleidoConstants.SEASON_NFO));
     }
 
-    private void exportEpisodeNFO(TvshowShowDTO tvshowShowDTO, TvshowSeasonDTO tvshowSeasonDTO, TvshowEpisodeDTO tvshowEpisodeDTO, Path videoPath) {
+    private void exportEpisodeNFO(TvshowShowDTO tvshowShowDTO, TvshowSeasonDTO tvshowSeasonDTO,
+                                  TvshowEpisodeDTO tvshowEpisodeDTO, Path videoPath) {
         String filename = videoPath.getFileName().toString();
         EpisodeNFO episodeNFO = NFOUtil.toEpisodeNFO(tvshowShowDTO, tvshowSeasonDTO, tvshowEpisodeDTO);
         filename = KaleidoUtil.genEpisodeNfoFilename(filename);
