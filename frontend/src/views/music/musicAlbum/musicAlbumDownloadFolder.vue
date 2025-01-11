@@ -34,10 +34,7 @@ const refFileModal = ref();
 const refMusicAlbumSearchInfo = ref();
 
 const show = () => {
-  const libraryPath = appStore.$state.config["musicLibraryPath"];
-  const parts = libraryPath.split("/");
-  parts[parts.length - 1] = "import";
-  const importPath = parts.join("/");
+  const importPath = appStore.$state.config["musicImportPath"];
   refFileModal.value.show(importPath);
 };
 

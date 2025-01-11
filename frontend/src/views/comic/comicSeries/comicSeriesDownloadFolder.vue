@@ -33,10 +33,7 @@ const refFileModal = ref();
 const refComicSeriesSearchInfo = ref();
 
 const show = () => {
-  const libraryPath = appStore.$state.config["comicLibraryPath"];
-  const parts = libraryPath.split("/");
-  parts[parts.length - 1] = "import";
-  const importPath = parts.join("/");
+  const importPath = appStore.$state.config["comicImportPath"];
   refFileModal.value.show(importPath);
 };
 

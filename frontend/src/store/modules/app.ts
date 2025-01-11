@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { isEmpty, isNotEmpty } from "@ht/util";
-import { apiSysConfigFindByKeys } from "@/api/sysadmin/sysConfigApi";
+import { apiSysConfigLoad } from "@/api/sysadmin/sysConfigApi";
 
 interface AppState {
   config: any;
@@ -18,14 +18,7 @@ export const useAppStore = defineStore("app", {
   }),
   actions: {
     async initAppConfig() {
-      return apiSysConfigFindByKeys([
-        "komgaUrl",
-        "plexUrl",
-        "movieLibraryPath",
-        "tvshowLibraryPath",
-        "musicLibraryPath",
-        "comicLibraryPath",
-      ]).then((res) => {
+      return apiSysConfigLoad().then((res) => {
         this.config = { ...res };
       });
     },

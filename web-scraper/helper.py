@@ -21,8 +21,13 @@ def get_html(url, headers: dict = None, cookies: dict = None, proxies: dict = No
     result = None
     for i in range(retry_times):
         try:
-            result = requests.get(str(url), headers=headers, proxies=proxies,
-                                  cookies=cookies, timeout=timeout)
+            result = requests.get(
+                str(url),
+                headers=headers,
+                proxies=proxies,
+                cookies=cookies,
+                timeout=timeout,
+            )
             if result.status_code == 200:
                 return result
         except Exception as e:
@@ -30,11 +35,13 @@ def get_html(url, headers: dict = None, cookies: dict = None, proxies: dict = No
     return result
 
 
-def post_html(url: str, data: dict = None, json: dict = None, headers: dict = None,
-              timeout=30) -> requests.Response:
+def post_html(
+    url: str, data: dict = None, json: dict = None, headers: dict = None, timeout=30
+) -> requests.Response:
     try:
         result = requests.post(
-            url, data=data, json=json, headers=headers, timeout=timeout)
+            url, data=data, json=json, headers=headers, timeout=timeout
+        )
         return result
     except Exception as e:
         print("POST请求发生错误" + str(e))
@@ -42,15 +49,15 @@ def post_html(url: str, data: dict = None, json: dict = None, headers: dict = No
 
 
 def save_cookies(filename, cookies):
-    path = os.path.join(directory, 'conf/' + filename)
-    with open(path, 'wb') as f:
+    path = os.path.join(directory, "conf/" + filename)
+    with open(path, "wb") as f:
         pickle.dump(cookies, f)
 
 
 def load_cookies(filename):
-    path = os.path.join(directory, 'conf/' + filename)
+    path = os.path.join(directory, "conf/" + filename)
     if os.path.isfile(path):
-        with open(path, 'rb') as f:
+        with open(path, "rb") as f:
             return pickle.load(f)
     else:
         return None
@@ -80,12 +87,13 @@ def get_regex_text(text, regex_str, index=0, default=None):
 
 
 def get_proxies(proxy: str, proxy_type: str = None) -> dict:
-    ''' 获得代理参数，默认http代理
-    '''
+    """获得代理参数，默认http代理"""
     if proxy:
         if proxy_type in SUPPORT_PROXY_TYPE:
-            proxies = {"http": proxy_type + "://" + proxy,
-                       "https": proxy_type + "://" + proxy}
+            proxies = {
+                "http": proxy_type + "://" + proxy,
+                "https": proxy_type + "://" + proxy,
+            }
         else:
             proxies = {"http": "http://" + proxy, "https": "https://" + proxy}
     else:
@@ -108,7 +116,7 @@ def cut_image(filename, data, cut_type="right"):
         elif cut_type == "left":
             img = img.crop((0, 0, w - h / 1, h))
         data = io.BytesIO()
-        img.save(data, format='PNG')
+        img.save(data, format="PNG")
         return data.getvalue()
     except:
         pass
@@ -120,6 +128,10 @@ def cut_image(filename, data, cut_type="right"):
 
 
 def is_chinese_name(name):
-    pattern = r'^[\u4e00-\u9fa5·\-]+$'
+    pattern = r"^[\u4e00-\u9fa5·\-]+$"
     match = re.match(pattern, name)
     return match is not None
+
+
+def is_empty(value):
+    return value is None or value == ""

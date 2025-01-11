@@ -1,23 +1,45 @@
 # _*_ coding:utf-8 _*_
 import sys
 
+from crawler.entity.episode import Episode
+from crawler.entity.season import Season
+
+
 sys.path.append(".")
 sys.path.append("..")
 
 import json
-import re
-import random
 from lxml import etree
 from lxml.html import tostring
 
 from helper import *
+from crawler.entity.tvshow import Tvshow
+from crawler.entity.actor import Actor
 import config
 
 poster_sizes = ["w92", "w154", "w185", "w342", "w500", "w780", "original"]
-
 profile_sizes = ["w45", "w185", "h632", "original"]
-
 still_sizes = ["w92", "w185", "w300", "original"]
+
+
+def get_tmdb_id(imdb_id, type="movie"):
+    if not is_empty(imdb_id):
+        return None
+    url = "https://api.themoviedb.org/3/find/{}?external_source=imdb_id".format(imdb_id)
+    result = __get_result(url)
+    if type == "movie":
+        movie_results = result["movie_results"]
+        if movie_results is not None and len(movie_results) > 0:
+            return str(movie_results[0].get("id"))
+    elif type == "tvshow":
+        tvshow_results = result["tv_results"]
+        tv_episode_results = result["tv_episode_results"]
+        if tvshow_results is not None and len(tvshow_results) > 0:
+            return str(tvshow_results[0].get("id"))
+        elif tv_episode_results is not None and len(tv_episode_results) > 0:
+            return str(tv_episode_results[0].get("show_id"))
+    else:
+        return None
 
 
 def search_tv(keyword):
@@ -37,103 +59,242 @@ def get_movie_by_imdb_id(imdb_id):
     tmdb_id = get_tmdb_id(imdb_id)
     movie = None
     if tmdb_id is not None and len(tmdb_id) > 0:
-        movie = __get_movie_detail(tmdb_id)
+        movie = _req_movie_detail(tmdb_id)
     if movie is not None:
         return __transform_movie(movie)
     return None
 
 
 def get_movie(tmdb_id):
-    movie = __get_movie_detail(tmdb_id)
+    movie = _req_movie_detail(tmdb_id)
     if movie is not None:
         return __transform_movie(movie)
     return None
 
 
-def __get_tvshow_content_rating(tmdb_id):
-    url = "https://api.themoviedb.org/3/tv/{}/content_ratings".format(tmdb_id)
-    result = __get_result(url)
-    results = result["results"]
-    if len(results) == 0:
-        return None
-    data = list(filter(lambda x: x["iso_3166_1"] == "US", results))
-    if len(data) == 0:
-        data = list(filter(lambda x: x["iso_3166_1"] == "UK", results))
-    if len(data) == 0:
-        data = list(filter(lambda x: x["iso_3166_1"] == "JP", results))
-    if len(data) == 0:
-        data = list(filter(lambda x: x["iso_3166_1"] == "HK", results))
-    if len(data) == 0:
-        data = list(filter(lambda x: x["iso_3166_1"] == "TW", results))
-    if len(data) > 0:
-        return data[0]["rating"]
-
-
-def get_tvshow(tmdb_id):
-    if tmdb_id is None:
-        return None
-    tvshow = {
-        "tmdb_id": tmdb_id,
-        "imdb_id": None,
-        "studios": [],
-        "mpaa": None,
-        "seasons": [],
-    }
-    tvshow_detail = __get_tvshow_detail(tmdb_id)
-    series_imdb_id = __get_external_id(tmdb_id)
-    content_rating = __get_tvshow_content_rating(tmdb_id)
-    studios = [
-        list(map(lambda x: x["name"], tvshow_detail["production_companies"])),
-        list(map(lambda x: x["name"], tvshow_detail["networks"])),
-    ]
-    studios = [j for i in studios for j in i]
-    studios = list(set(studios))
-    tvshow["imdb_id"] = series_imdb_id
-    tvshow["studios"] = studios
-    tvshow["mpaa"] = content_rating
-    tvshow["seasons"] = tvshow_detail["seasons"]
-    return tvshow
-
-
-def supply_season(series_id, season):
-    if series_id is not None:
-        season_detail = __get_season_detail(series_id, season["season_number"])
-        if season_detail:
-            season["episodes"] = list(
-                map(lambda x: __transform_episode(x), season_detail["episodes"])
+def get_tv(tmdb_id):
+    try:
+        tvshow_detail = _req_tv_detail(tmdb_id)
+        tvshow = Tvshow()
+        tvshow.tmdb_id = tmdb_id
+        tvshow.imdb_id = _req_tv_external_ids(tmdb_id)
+        tvshow.title = tvshow_detail["name"]
+        tvshow.original_title = tvshow_detail["original_name"]
+        tvshow.year = tvshow_detail["first_air_date"][0:4]
+        tvshow.plot = tvshow_detail["overview"]
+        tvshow.genres = list(map(lambda x: x["name"], tvshow_detail["genres"]))
+        tvshow.premiered = tvshow_detail["first_air_date"]
+        tvshow.votes = tvshow_detail["vote_count"]
+        tvshow.average = tvshow_detail["vote_average"]
+        tvshow.poster = __get_image_url(tvshow_detail["poster_path"])
+        studios = [
+            list(map(lambda x: x["name"], tvshow_detail["production_companies"])),
+            list(map(lambda x: x["name"], tvshow_detail["networks"])),
+        ]
+        studios = [j for i in studios for j in i]
+        studios = list(set(studios))
+        tvshow.studios = studios
+        tvshow.mpaa = _req_tv_content_ratings(tmdb_id)
+        credits = _req_tv_credits(tmdb_id)
+        tvshow.directors = list(
+            map(
+                lambda x: _deal_tv_credits_item(x, "director"),
+                filter(lambda x: x["job"] == "Director", credits["crew"]),
             )
-            season["tmdb_id"] = season_detail["id"]
-    return season
+        )
+        tvshow.writers = list(
+            map(
+                lambda x: _deal_tv_credits_item(x, "writer"),
+                filter(lambda x: x["job"] == "Writer", credits["crew"]),
+            )
+        )
+        tvshow.actors = list(
+            map(lambda x: _deal_tv_credits_item(x, "actor"), credits["cast"])
+        )
+        tvshow.seasons = list(
+            map(
+                lambda x: _deal_tv_seasons_item(x, tmdb_id, tvshow),
+                tvshow_detail["seasons"],
+            )
+        )
+        return tvshow
+    except Exception as e:
+        print("TheMovieDB >> 获取电视剧信息发生错误：" + str(e))
+        return None
 
 
-def __get_external_id(series_id):
-    url = "https://api.themoviedb.org/3/tv/{}/external_ids".format(series_id)
-    result = __get_result(url)
-    return result["imdb_id"]
+def _req_tv_detail(tmdb_id):
+    try:
+        url = "https://api.themoviedb.org/3/tv/{}?language=zh".format(tmdb_id)
+        result = __get_result(url)
+        return result
+    except Exception as e:
+        print("TheMovieDB >> 获取电视剧详情发生错误：" + str(e))
+        return None
 
 
-def __transform_episode(episode):
-    return {
-        "tmdb_id": episode["id"],
-        "premiered": episode["air_date"],
-        "year": episode["air_date"][0:4] if episode["air_date"] is not None else None,
-        "episode_number": episode["episode_number"],
-        "season_number": episode["season_number"],
-        "title": episode["name"],
-        "plot": episode["overview"],
-        "average": episode["vote_average"],
-        "votes": episode["vote_count"],
-        "runtime": episode["runtime"],
-        "thumb": __get_image_url(episode["still_path"]),
-    }
+def _req_tv_external_ids(series_id):
+    try:
+        url = "https://api.themoviedb.org/3/tv/{}/external_ids".format(series_id)
+        result = __get_result(url)
+        return result.get("imdb_id", None)
+    except Exception as e:
+        print("TheMovieDB >> 获取电视剧外部ID发生错误：" + str(e))
+        return None
 
 
-def __get_season_detail(tmdb_id, season_number):
-    url = "https://api.themoviedb.org/3/tv/{}/season/{}?language=zh".format(
-        tmdb_id, season_number
-    )
-    result = __get_result(url)
-    return result
+def _req_tv_content_ratings(tmdb_id):
+    try:
+        url = "https://api.themoviedb.org/3/tv/{}/content_ratings".format(tmdb_id)
+        result = __get_result(url)
+        results = result["results"]
+        if len(results) == 0:
+            return None
+        data = list(filter(lambda x: x["iso_3166_1"] == "US", results))
+        if len(data) == 0:
+            data = list(filter(lambda x: x["iso_3166_1"] == "UK", results))
+        if len(data) == 0:
+            data = list(filter(lambda x: x["iso_3166_1"] == "JP", results))
+        if len(data) == 0:
+            data = list(filter(lambda x: x["iso_3166_1"] == "HK", results))
+        if len(data) == 0:
+            data = list(filter(lambda x: x["iso_3166_1"] == "TW", results))
+        if len(data) > 0:
+            return data[0]["rating"]
+    except Exception as e:
+        print("TheMovieDB >> 获取电视剧内容评级发生错误：" + str(e))
+        return None
+
+
+def _req_tv_credits(tmdb_id):
+    try:
+        url = "https://api.themoviedb.org/3/tv/{}/credits?language=zh".format(tmdb_id)
+        result = __get_result(url)
+        return result
+    except Exception as e:
+        print("TheMovieDB >> 获取电视剧演职员发生错误：" + str(e))
+        return None
+
+
+def _deal_tv_credits_item(item, actor_type):
+    try:
+        actor = Actor()
+        actor.douban_id = None
+        actor.thumb = __get_image_url(item.get("profile_path"), profile_sizes[2])
+        actor.role = item.get("character")
+        actor.cn_name = item.get("name")
+        actor.en_name = item.get("original_name")
+        actor.actor_type = actor_type
+        return actor
+    except Exception as e:
+        print("TheMovieDB >> 处理电视剧演职员发生错误：" + str(e))
+        return None
+
+
+def _deal_tv_seasons_item(item, series_id, tvshow):
+    try:
+        season_number = item.get("season_number")
+        season_detail = _req_tv_season_detail(series_id, season_number)
+        season = Season()
+        season.season_number = season_number
+        season.tmdb_id = season_detail.get("id")
+        season.imdb_id = _req_season_external_ids(series_id, season_number)
+        season.title = season_detail.get("name")
+        season.original_title = season_detail.get("original_name")
+        season.year = (
+            season_detail.get("air_date")[0:4]
+            if season_detail.get("air_date") is not None
+            else None
+        )
+        season.premiered = season_detail.get("air_date")
+        season.plot = season_detail.get("overview")
+        season.poster = __get_image_url(season_detail.get("poster_path"))
+        season.languages = tvshow.languages
+        season.countries = tvshow.countries
+        season.genres = tvshow.genres
+        credits = _req_season_credits(series_id, season_number)
+        season.directors = list(
+            map(
+                lambda x: _deal_tv_credits_item(x, "director"),
+                filter(lambda x: x["job"] == "Director", credits["crew"]),
+            )
+        )
+        season.writers = list(
+            map(
+                lambda x: _deal_tv_credits_item(x, "writer"),
+                filter(lambda x: x["job"] == "Writer", credits["crew"]),
+            )
+        )
+        season.actors = list(
+            map(lambda x: _deal_tv_credits_item(x, "actor"), credits["cast"])
+        )
+        season.votes = season_detail.get("vote_count")
+        season.average = season_detail.get("vote_average")
+        season.episode_count = season_detail.get("episode_count")
+        season.episodes = list(
+            map(lambda x: _deal_tv_episodes_item(x), season_detail.get("episodes"))
+        )
+
+        return season
+    except Exception as e:
+        print("TheMovieDB >> 处理电视剧季集发生错误：" + str(e))
+        return None
+
+
+def _req_tv_season_detail(tmdb_id, season_number):
+    try:
+        url = "https://api.themoviedb.org/3/tv/{}/season/{}?language=zh".format(
+            tmdb_id, season_number
+        )
+        result = __get_result(url)
+        return result
+    except Exception as e:
+        print("TheMovieDB >> 获取电视剧季集详情发生错误：" + str(e))
+        return None
+
+
+def _req_season_external_ids(series_id, season_number):
+    try:
+        url = "https://api.themoviedb.org/3/tv/{}/season/{}/external_ids".format(
+            series_id, season_number
+        )
+        result = __get_result(url)
+        return result.get("imdb_id", None)
+    except Exception as e:
+        print("TheMovieDB >> 获取电视剧季集外部ID发生错误：" + str(e))
+        return None
+
+
+def _req_season_credits(series_id, season_number):
+    try:
+        url = "https://api.themoviedb.org/3/tv/{}/season/{}/credits?language=zh".format(
+            series_id, season_number
+        )
+        result = __get_result(url)
+        return result
+    except Exception as e:
+        print("TheMovieDB >> 获取电视剧季集演职员发生错误：" + str(e))
+        return None
+
+
+def _deal_tv_episodes_item(item):
+    try:
+        episode = Episode()
+        episode.tmdb_id = item["id"]
+        episode.premiered = item["air_date"]
+        episode.year = item["air_date"][0:4] if item["air_date"] is not None else None
+        episode.episode_number = item["episode_number"]
+        episode.season_number = item["season_number"]
+        episode.title = item["name"]
+        episode.plot = item["overview"]
+        episode.average = item["vote_average"]
+        episode.votes = item["vote_count"]
+        episode.runtime = item["runtime"]
+        episode.thumb = __get_image_url(item["still_path"])
+        return episode
+    except Exception as e:
+        print("TheMovieDB >> 处理电视剧季集剧集发生错误：" + str(e))
+        return None
 
 
 def __transform_movie(movie):
@@ -173,36 +334,13 @@ def __transform_movie(movie):
         print("TheMovieDB >> 获取影片信息发生错误：" + str(e))
 
 
-def __get_movie_detail(tmdb_id):
+def _req_movie_detail(tmdb_id):
     url = "https://api.themoviedb.org/3/movie/{}?language=zh".format(tmdb_id)
     result = __get_result(url)
     return result
 
 
-def __get_tvshow_detail(tmdb_id):
-    url = "https://api.themoviedb.org/3/tv/{}?language=zh".format(tmdb_id)
-    result = __get_result(url)
-    return result
-
-
-def get_tmdb_id(imdb_id, type="movie"):
-    if imdb_id is None:
-        return None
-    url = "https://api.themoviedb.org/3/find/{}?external_source=imdb_id".format(imdb_id)
-    result = __get_result(url)
-    if type == "movie":
-        movie_results = result["movie_results"]
-        if movie_results is not None and len(movie_results) > 0:
-            return str(movie_results[0].get("id"))
-    elif type == "tvshow":
-        tvshow_results = result["tv_results"]
-        tv_episode_results = result["tv_episode_results"]
-        if tvshow_results is not None and len(tvshow_results) > 0:
-            return str(tvshow_results[0].get("id"))
-        elif tv_episode_results is not None and len(tv_episode_results) > 0:
-            return str(tv_episode_results[0].get("show_id"))
-    else:
-        return None
+# TV
 
 
 def search_movie(keyword):
@@ -274,7 +412,7 @@ def __get_detail_by_imdb(imdb_id):
     movie_results = result["movie_results"]
     if len(movie_results) > 0:
         movie = movie_results[0]
-        return __get_movie_detail(movie["id"])
+        return _req_movie_detail(movie["id"])
     else:
         return None
 
@@ -314,4 +452,4 @@ def __get_result(url):
 
 
 if __name__ == "__main__":
-    print(get_movie_by_imdb_id("tt11681250"))
+    print(get_tv("274959"))

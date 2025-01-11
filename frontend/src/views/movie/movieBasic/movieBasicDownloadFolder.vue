@@ -34,11 +34,8 @@ const refFileModal = ref();
 const refMovieBasicSearchInfo = ref();
 
 const show = () => {
-  const libraryPath = appStore.$state.config["movieLibraryPath"];
-  const parts = libraryPath.split("/");
-  parts[parts.length - 1] = "import";
-  const importPath = parts.join("/");
-  refFileModal.value.show(importPath);
+  const libraryPath = appStore.$state.config["movieImportPath"];
+  refFileModal.value.show(libraryPath);
 };
 
 const onMatch = () => {

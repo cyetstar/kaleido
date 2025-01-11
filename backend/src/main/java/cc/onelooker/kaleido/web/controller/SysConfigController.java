@@ -6,12 +6,14 @@ import cc.onelooker.kaleido.dto.req.SysConfigCreateReq;
 import cc.onelooker.kaleido.dto.req.SysConfigPageReq;
 import cc.onelooker.kaleido.dto.req.SysConfigUpdateReq;
 import cc.onelooker.kaleido.dto.resp.SysConfigCreateResp;
+import cc.onelooker.kaleido.dto.resp.SysConfigLoadResp;
 import cc.onelooker.kaleido.dto.resp.SysConfigPageResp;
 import cc.onelooker.kaleido.dto.resp.SysConfigViewResp;
 import cc.onelooker.kaleido.enums.ConfigKey;
 import cc.onelooker.kaleido.service.SysConfigService;
 import cc.onelooker.kaleido.third.tmm.TmmApiService;
 import cc.onelooker.kaleido.utils.ConfigUtils;
+import cc.onelooker.kaleido.utils.KaleidoUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zjjcnt.common.core.domain.CommonResult;
@@ -62,8 +64,8 @@ public class SysConfigController extends AbstractCrudController<SysConfigDTO> {
         sysConfigService.save(sysConfigDTOList);
         sysConfigDTOList.stream().filter(s -> StringUtils.isNotEmpty(s.getConfigValue())
                 && ConfigKey.doubanCookie.name().equals(s.getConfigKey())).findFirst().ifPresent(s -> {
-            tmmApiService.setDoubanCookie(s.getConfigValue());
-        });
+                    tmmApiService.setDoubanCookie(s.getConfigValue());
+                });
         return CommonResult.success(true);
     }
 
@@ -88,6 +90,17 @@ public class SysConfigController extends AbstractCrudController<SysConfigDTO> {
     @ApiOperation(value = "系统配置表详细信息")
     public CommonResult<SysConfigViewResp> view(Long id) {
         return super.view(id, SysConfigConvert.INSTANCE::convertToViewResp);
+    }
+
+    @GetMapping("load")
+    @ApiOperation(value = "加载配置")
+    public CommonResult<SysConfigLoadResp> load() {
+        SysConfigLoadResp resp = new SysConfigLoadResp();
+        resp.setMovieImportPath(KaleidoUtil.getMovieImportPath().toString());
+        resp.setTvshowImportPath(KaleidoUtil.getTvshowImportPath().toString());
+        resp.setComicImportPath(KaleidoUtil.getComicImportPath().toString());
+        resp.setMusicImportPath(KaleidoUtil.getMusicImportPath().toString());
+        return CommonResult.success(resp);
     }
 
     @PostMapping("create")

@@ -65,4 +65,10 @@ public class TmmApiServiceTest {
         System.out.println(folder);
     }
 
+    @Test
+    public void findTvshow() throws Exception {
+        Tvshow tvshow = tmmApiService.findShow("5908507",null,null);
+        System.out.printf(tvshow.getTitle());
+    }
+
 }

@@ -62,3 +62,9 @@ export const apiSysConfigSave = (data: any) => {
     data,
   });
 };
+
+export const apiSysConfigLoad = () => {
+  return useFetch.get<any>({
+    url: "/sysConfig/load",
+  });
+};

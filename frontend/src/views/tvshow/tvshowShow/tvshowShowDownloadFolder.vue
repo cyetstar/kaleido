@@ -33,10 +33,7 @@ const refFileModal = ref();
 const refTvshowShowSearchInfo = ref();
 
 const show = () => {
-  const libraryPath = appStore.$state.config["tvshowLibraryPath"];
-  const parts = libraryPath.split("/");
-  parts[parts.length - 1] = "import";
-  const importPath = parts.join("/");
+  const importPath = appStore.$state.config["tvshowImportPath"];
   refFileModal.value.show(importPath);
 };
 

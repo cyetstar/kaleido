@@ -17,6 +17,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -35,12 +37,13 @@ import java.util.regex.Pattern;
  * @Date 2023-12-02 21:16:00
  * @Description TODO
  */
+@Component
 public class KaleidoUtil {
 
     public static final String VIDEO_EXTENSION = "mkv,mp4,mpeg,mov,avi,wmv,rmvb,ts,m2ts";
     public static final String COMIC_ZIP_EXTENSION = "zip,rar,cbz";
     public static final String AUDIO_ZIP_EXTENSION = "mp3,wav,flac";
-    public static String[] lowQualityExtensions = new String[]{"avi", "wmv", "rmvb", "mp4"};
+    public static String[] lowQualityExtensions = new String[] { "avi", "wmv", "rmvb", "mp4" };
 
     private static final Pattern seasonIndexPattern = Pattern.compile("S_?(\\d+)E");
     private static final Pattern episodeIndexPattern = Pattern.compile("E[pP_]?(\\d+)");
@@ -48,6 +51,13 @@ public class KaleidoUtil {
     private static final Pattern trackIndexPattern = Pattern.compile("^(\\d{1,3})[\\s.-]*(.*)$");
     private static final String IMPORT = "import";
     private static final String RECYCLE = "#recycle";
+
+    private static String pathMapping = "";
+
+    @Value("${path-mapping:}")
+    public void setPathMapping(String value) {
+        KaleidoUtil.pathMapping = value;
+    }
 
     // -----------movie--------------//
     public static Path getMovieBasicPath(String path) {
@@ -76,6 +86,7 @@ public class KaleidoUtil {
 
     public static Path getMovieLibraryPath() {
         String libraryPath = ConfigUtils.getSysConfig(ConfigKey.movieLibraryPath);
+        libraryPath = pathMapping + libraryPath;
         return Paths.get(libraryPath);
     }
 
@@ -115,6 +126,7 @@ public class KaleidoUtil {
 
     public static Path getTvshowLibraryPath() {
         String libraryPath = ConfigUtils.getSysConfig(ConfigKey.tvshowLibraryPath);
+        libraryPath = pathMapping + libraryPath;
         return Paths.get(libraryPath);
     }
 
@@ -153,6 +165,7 @@ public class KaleidoUtil {
 
     public static Path getMusicLibraryPath() {
         String libraryPath = ConfigUtils.getSysConfig(ConfigKey.musicLibraryPath);
+        libraryPath = pathMapping + libraryPath;
         return Paths.get(libraryPath);
     }
 
@@ -207,6 +220,7 @@ public class KaleidoUtil {
 
     public static Path getComicLibraryPath() {
         String libraryPath = ConfigUtils.getSysConfig(ConfigKey.comicLibraryPath);
+        libraryPath = pathMapping + libraryPath;
         return Paths.get(libraryPath);
     }
 

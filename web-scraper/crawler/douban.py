@@ -173,7 +173,7 @@ def get_movie(douban_id):
 
 def get_season(douban_id):
     try:
-        if douban_id is None:
+        if douban_id is None or douban_id == "":
             return None
         url = "https://movie.douban.com/subject/{}/".format(douban_id)
         html = __fetch_twice(url, host="movie.douban.com")

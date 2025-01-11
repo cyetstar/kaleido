@@ -1,8 +1,11 @@
+from dataclasses import asdict
 from flask import Flask, request, Response, jsonify, abort
 from flask_cors import cross_origin
 
 from crawler import douban, eastgame, bgm, netease, musicbrainz, tmdb, tlf
 
+from crawler.entity.season import Season
+from crawler.entity.tvshow import Tvshow
 from helper import *
 
 app = Flask(__name__)
@@ -19,9 +22,9 @@ def movie_search():
             data = douban.search(keyword)
         else:
             data = tmdb.search_movie(keyword)
-        return __success(data)
+        return _success(data)
     except Exception as e:
-        return __error(4, str(e))
+        return _error(4, str(e))
 
 
 @app.route("/v1/movie/view")
@@ -53,9 +56,9 @@ def movie_view():
             certification = tmdb.get_movie_certification(tmdb_id)
             data["mpaa"] = certification
 
-        return __success(data)
+        return _success(data)
     except Exception as e:
-        __error(4, str(e))
+        _error(4, str(e))
 
 
 @app.route("/v1/movie/weekly")
@@ -63,9 +66,9 @@ def movie_view():
 def movie_weekly():
     try:
         data = douban.get_weekly()
-        return __success(data)
+        return _success(data)
     except Exception as e:
-        __error(4, str(e))
+        _error(4, str(e))
 
 
 @app.route("/v1/show/search")
@@ -78,9 +81,9 @@ def show_search():
             data = tmdb.search_tv(keyword)
         else:
             data = douban.search(keyword)
-        return __success(data)
+        return _success(data)
     except Exception as e:
-        return __error(4, str(e))
+        return _error(4, str(e))
 
 
 @app.route("/v1/show/view")
@@ -88,30 +91,53 @@ def show_search():
 def show_view():
     try:
         douban_id = request.args.get("douban_id", None)
-        season = douban.get_season(douban_id)
+        tmdb_id = request.args.get("tmdb_id", None)
 
-        tmdb_id = request.args.get("tmdb_id", tmdb.get_tmdb_id(season["imdb_id"]))
-        tvshow = tmdb.get_tvshow(tmdb_id)
+        if is_empty(douban_id) and is_empty(tmdb_id):
+            raise Exception("参数错误")
 
-        first_sesson = None
-        if season["season_number"] == 1 or season["season_number"] is None:
-            first_sesson = season
-            # 如果为第一季，则直接补充剧集信息
-            tvshow = douban.supply_tvshow(season, tvshow)
-        elif tvshow["imdb_id"] is not None:
-            # 通过imdb_id获取第一季信息
-            first_sesson = douban.get_season_by_imdb_id(tvshow["imdb_id"])
+        tvshow = None
+        douban_season = None
+        if not is_empty(douban_id):
+            # 通过豆瓣id获取剧集信息
+            douban_season = douban.get_season(douban_id)
+            # 如果剧集信息中包含imdb_id，则通过imdb_id获取tmdb_id
+            if (
+                is_empty(tmdb_id)
+                and douban_season is not None
+                and not is_empty(douban_season["imdb_id"])
+            ):
+                tmdb_id = tmdb.get_tmdb_id(douban_season["imdb_id"])
 
-        if first_sesson is not None:
-            tvshow = douban.supply_tvshow(first_sesson, tvshow)
-        else:
-            raise Exception("无法补充剧集信息")
+        # 如果tmdb_id不为空，则通过tmdb_id获取剧集信息
+        if not is_empty(tmdb_id):
+            tvshow = tmdb.get_tv(tmdb_id)
 
-        if tvshow.get("tmdb_id") is not None:
-            tvshow["seasons"] = [tmdb.supply_season(tvshow.get("tmdb_id"), season)]
-        return __success(tvshow)
+        if tvshow is not None and douban_season is not None:
+            if douban_season["season_number"] == 1:
+                tvshow = _season_to_show(douban_season, tvshow)
+            elif not is_empty(tvshow.imdb_id):
+                first_sesson = douban.get_season_by_imdb_id(tvshow.imdb_id)
+                tvshow = _season_to_show(first_sesson, tvshow)
+            tvshow.seasons = list(
+                map(
+                    lambda x: (
+                        _season_to_season(douban_season, x)
+                        if x.season_number == douban_season["season_number"]
+                        else x
+                    ),
+                    tvshow.seasons,
+                )
+            )
+        elif tvshow is None and douban_season is not None:
+            tvshow = Tvshow()
+            tvshow = _season_to_show(douban_season, tvshow)
+            tvshow.seasons = [douban_season]
+        elif tvshow is None and douban_season is None:
+            raise Exception("无法查询到剧集信息")
+        return _success(asdict(tvshow))
     except Exception as e:
-        return __error(4, str(e))
+        return _error(4, str(e))
 
 
 @app.route("/v1/album/search")
@@ -124,9 +150,9 @@ def album_search():
             data = musicbrainz.search(keyword)
         else:
             data = netease.search_album(keyword)
-        return __success(data)
+        return _success(data)
     except Exception as e:
-        return __error(4, str(e))
+        return _error(4, str(e))
 
 
 @app.route("/v1/album/view")
@@ -135,9 +161,9 @@ def album_view():
     try:
         netease_id = request.args.get("netease_id", "")
         data = netease.get_album(netease_id)
-        return __success(data)
+        return _success(data)
     except Exception as e:
-        return __error(4, str(e))
+        return _error(4, str(e))
 
 
 @app.route("/v1/lyric/view")
@@ -146,9 +172,9 @@ def lyric_view():
     try:
         netease_id = request.args.get("netease_id", "")
         data = netease.get_lyric(netease_id)
-        return __success(data)
+        return _success(data)
     except Exception as e:
-        return __error(4, str(e))
+        return _error(4, str(e))
 
 
 @app.route("/v1/artist/search")
@@ -161,9 +187,9 @@ def artist_search():
             data = musicbrainz.search(keyword)
         else:
             data = netease.search_artist(keyword)
-        return __success(data)
+        return _success(data)
     except Exception as e:
-        return __error(4, str(e))
+        return _error(4, str(e))
 
 
 @app.route("/v1/comic/search")
@@ -176,9 +202,9 @@ def comic_search():
             data = bgm.search(keyword, "0")
         else:
             data = bgm.search(keyword, "1")
-        return __success(data)
+        return _success(data)
     except Exception as e:
-        return __error(4, str(e))
+        return _error(4, str(e))
 
 
 @app.route("/v1/comic/view")
@@ -187,9 +213,9 @@ def comic_view():
     try:
         bgm_id = request.args.get("bgm_id")
         data = bgm.get_book(bgm_id)
-        return __success(data)
+        return _success(data)
     except Exception as e:
-        return __error(4, str(e))
+        return _error(4, str(e))
 
 
 @app.route("/v1/doulist/view")
@@ -198,9 +224,9 @@ def doulist_view():
     try:
         douban_id = request.args.get("douban_id", "")
         data = douban.get_doulist(douban_id)
-        return __success(data)
+        return _success(data)
     except Exception as e:
-        return __error(4, str(e))
+        return _error(4, str(e))
 
 
 @app.route("/v1/doulist/movies")
@@ -210,20 +236,81 @@ def doulist_movies():
         douban_id = request.args.get("douban_id", "")
         start = request.args.get("start", "0")
         data = douban.get_doulist_movies(douban_id, start)
-        return __success(data)
+        return _success(data)
     except Exception as e:
-        return __error(4, str(e))
+        return _error(4, str(e))
 
 
-def __success(data):
-    return __result(data)
+def _season_to_show(douban_season, tvshow: Tvshow):
+    def _deal_tvshow_title(title):
+        if title:
+            title = re.sub(r"第\w季", "", title).strip()
+            title = re.sub(r"Season\s\d+", "", title).strip()
+            return title
+
+    if douban_season is None:
+        return tvshow
+    tvshow.title = _deal_tvshow_title(douban_season["title"])
+    tvshow.original_title = _deal_tvshow_title(douban_season["original_title"])
+    tvshow.douban_id = douban_season["douban_id"]
+    tvshow.imdb_id = (
+        douban_season["imdb_id"]
+        if not is_empty(douban_season["imdb_id"])
+        else tvshow.imdb_id
+    )
+    tvshow.year = (
+        douban_season["year"] if not is_empty(douban_season["year"]) else tvshow.year
+    )
+    tvshow.plot = (
+        douban_season["plot"] if not is_empty(douban_season["plot"]) else tvshow.plot
+    )
+    tvshow.directors = douban_season["directors"]
+    tvshow.writers = douban_season["credits"]
+    tvshow.actors = douban_season["actors"]
+    tvshow.genres = douban_season["genres"]
+    tvshow.languages = douban_season["languages"]
+    tvshow.countries = douban_season["countries"]
+    tvshow.premiered = douban_season["premiered"]
+    tvshow.votes = douban_season["votes"]
+    tvshow.average = douban_season["average"]
+    tvshow.poster = douban_season["poster"]
+    tvshow.akas = list(map(_deal_tvshow_title, douban_season["akas"]))
+    return tvshow
 
 
-def __error(code, message):
-    return __result(None, code, message)
+def _season_to_season(douban_season, season: Season):
+    season.douban_id = douban_season["douban_id"]
+    season.imdb_id = (
+        douban_season["imdb_id"]
+        if not is_empty(douban_season["imdb_id"])
+        else season.imdb_id
+    )
+    season.year = (
+        douban_season["year"] if not is_empty(douban_season["year"]) else season.year
+    )
+    season.title = douban_season["title"]
+    season.original_title = douban_season["original_title"]
+    season.premiered = douban_season["premiered"]
+    season.plot = douban_season["plot"]
+    season.poster = douban_season["poster"]
+    season.languages = douban_season["languages"]
+    season.countries = douban_season["countries"]
+    season.genres = douban_season["genres"]
+    season.directors = douban_season["directors"]
+    season.writers = douban_season["credits"]
+    season.actors = douban_season["actors"]
+    return season
 
 
-def __result(data, code=0, message=None):
+def _success(data):
+    return _result(data)
+
+
+def _error(code, message):
+    return _result(None, code, message)
+
+
+def _result(data, code=0, message=None):
     result = {
         "data": data,
         "code": code,
