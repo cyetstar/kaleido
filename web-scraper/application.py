@@ -4,6 +4,7 @@ from flask_cors import cross_origin
 
 from crawler import douban, eastgame, bgm, netease, musicbrainz, tmdb, tlf
 
+from crawler.entity.movie import Movie
 from crawler.entity.season import Season
 from crawler.entity.tvshow import Tvshow
 from helper import *
@@ -31,32 +32,32 @@ def movie_search():
 @cross_origin(supports_credentials=True)
 def movie_view():
     try:
-        data = None
-        douban_id = request.args.get("douban_id", "")
-        tmdb_id = request.args.get("tmdb_id", "")
-        imdb_id = request.args.get("imdb_id", "")
+        movie = Movie()
+        douban_id = request.args.get("douban_id", None)
+        tmdb_id = request.args.get("tmdb_id", None)
+        imdb_id = request.args.get("imdb_id", None)
 
-        if len(douban_id) > 0:
-            data = douban.get_movie(douban_id)
-        if data is None and len(imdb_id) > 0:
-            data = douban.get_movie_by_imdb_id(imdb_id)
-        if data is None and len(tmdb_id) > 0:
-            data = tmdb.get_movie(tmdb_id)
-        if data is None and len(imdb_id) > 0:
-            data = tmdb.get_movie_by_imdb_id(imdb_id)
+        if not is_empty(douban_id):
+            movie = douban.get_movie(douban_id)
+        if movie is None and not is_empty(imdb_id):
+            movie = douban.get_movie_by_imdb_id(imdb_id)
+        if movie is None and not is_empty(tmdb_id):
+            movie = tmdb.get_movie(tmdb_id)
+        if movie is None and not is_empty(imdb_id):
+            movie = tmdb.get_movie_by_imdb_id(imdb_id)
 
-        if data is not None:
-            tmdb_id = str(data.get("tmdb_id", ""))
-            imdb_id = str(data.get("imdb_id", ""))
+        if movie is not None:
+            tmdb_id = movie.tmdb_id
+            imdb_id = movie.imdb_id
 
-        if len(tmdb_id) == 0 and len(imdb_id) > 0:
+        if is_empty(tmdb_id) and not is_empty(imdb_id):
             tmdb_id = tmdb.get_tmdb_id(imdb_id)
 
-        if tmdb_id is not None and len(tmdb_id) > 0:
+        if not is_empty(tmdb_id):
             certification = tmdb.get_movie_certification(tmdb_id)
-            data["mpaa"] = certification
+            movie.mpaa = certification
 
-        return _success(data)
+        return _success(asdict(movie))
     except Exception as e:
         _error(4, str(e))
 

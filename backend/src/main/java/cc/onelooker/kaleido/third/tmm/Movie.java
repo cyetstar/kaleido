@@ -44,7 +44,6 @@ public class Movie implements IUnique {
     private String poster;
     private String comment;
     private Integer pos;
-    private String source;
 
     @Override
     public String toString() {

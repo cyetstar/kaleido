@@ -4,6 +4,11 @@ import sys
 
 from flask import jsonify
 
+from crawler.entity.actor import Actor
+from crawler.entity.movie import Movie
+from crawler.entity.season import Season
+from crawler.entity.tvshow import Tvshow
+
 sys.path.append(".")
 sys.path.append("..")
 
@@ -156,64 +161,100 @@ def get_movie_by_imdb_id(imdb_id):
     movie_list = search_movie(imdb_id)
     if movie_list is not None and len(movie_list) > 0:
         douban_id = movie_list[0].get("douban_id")
+    if not is_empty(douban_id):
         return get_movie(douban_id)
     return None
 
 
 def get_movie(douban_id):
+    try:
+        html = _req_movie_detail(douban_id)
+        info = __get_info(html)
+        title = __get_title(html)
+        directors = __get_directors_new(html)
+        if len(directors) == 0:
+            directors = __get_directors(html)
+        credits = __get_credits_new(html)
+        if len(credits) == 0:
+            credits = __get_credits(html)
+        actors = __get_actors_new(html)
+        if len(actors) == 0:
+            actors = __get_actors(html)
+        movie = Movie()
+        movie.douban_id = douban_id
+        movie.imdb_id = info["imdb_id"]
+        movie.title = title
+        movie.original_title = __get_original_title(html, title)
+        movie.year = __get_year(html)
+        movie.plot = __get_summary(html)
+        movie.tags = __get_tags(html)
+        movie.directors = directors
+        movie.writers = credits
+        movie.actors = actors
+        movie.genres = __get_genres(html)
+        movie.languages = info["languages"]
+        movie.countries = info["countries"]
+        movie.premiered = __get_release_date(html)
+        movie.doulists = __get_doulists(html)
+        movie.votes = __get_votes(html)
+        movie.average = __get_average(html)
+        movie.douban_top250 = __get_top250(html)
+        movie.akas = info["akas"]
+        movie.poster = __get_poster(html)
+        movie.website = info["website"]
+        movie.mpaa = None
+        return movie
+    except Exception as e:
+        print("Douban >> 详情电影发生错误：" + str(e))
+        return None
+
+
+def _req_movie_detail(douban_id):
     url = "https://movie.douban.com/subject/{}/".format(douban_id)
     html = __fetch_twice(url, host="movie.douban.com")
-    if html is None:
-        return None
-    try:
-        return __get_movie_detail(douban_id, html)
-    except Exception as e:
-        print("Douban >> 详情发生错误：" + str(e))
+    return html
 
 
 def get_season(douban_id):
     try:
-        if douban_id is None or douban_id == "":
-            return None
-        url = "https://movie.douban.com/subject/{}/".format(douban_id)
-        html = __fetch_twice(url, host="movie.douban.com")
-        if html is not None:
-            return __get_movie_detail(douban_id, html)
+        html = _req_movie_detail(douban_id)
+        info = __get_info(html)
+        title = __get_title(html)
+        directors = __get_directors_new(html)
+        if len(directors) == 0:
+            directors = __get_directors(html)
+        credits = __get_credits_new(html)
+        if len(credits) == 0:
+            credits = __get_credits(html)
+        actors = __get_actors_new(html)
+        if len(actors) == 0:
+            actors = __get_actors(html)
+        season = Season()
+        season.douban_id = douban_id
+        season.imdb_id = info["imdb_id"]
+        season.title = title
+        season.original_title = __get_original_title(html, title)
+        season.year = __get_year(html)
+        season.plot = __get_summary(html)
+        season.directors = directors
+        season.writers = credits
+        season.actors = actors
+        season.genres = __get_genres(html)
+        season.languages = info["languages"]
+        season.countries = info["countries"]
+        season.premiered = __get_release_date(html)
+        season.votes = __get_votes(html)
+        season.average = __get_average(html)
+        season.poster = __get_poster(html)
+        season.season_number = __get_season_number(html)
+        return season
     except Exception as e:
-        print("Douban >> 详情发生错误：" + str(e))
-    return None
+        print("Douban >> 详情剧集发生错误：" + str(e))
+        return None
 
 
 def get_season_by_imdb_id(imdb_id):
     return get_movie_by_imdb_id(imdb_id)
-
-
-def supply_season(imdb_id, season):
-    movie_detail = get_movie_by_imdb_id(imdb_id)
-    movie_detail["episodes"] = season["episodes"]
-    movie_detail["tmdb_id"] = season["tmdb_id"]
-    return movie_detail
-
-
-def supply_tvshow(season, tvshow):
-    tvshow["douban_id"] = season["douban_id"]
-    tvshow["imdb_id"] = season["imdb_id"]
-    tvshow["title"] = __deal_tvshow_title(season["title"])
-    tvshow["original_title"] = __deal_tvshow_title(season["original_title"])
-    tvshow["year"] = season["year"]
-    tvshow["plot"] = season["plot"]
-    tvshow["directors"] = season["directors"]
-    tvshow["credits"] = season["credits"]
-    tvshow["actors"] = season["actors"]
-    tvshow["genres"] = season["genres"]
-    tvshow["languages"] = season["languages"]
-    tvshow["countries"] = season["countries"]
-    tvshow["premiered"] = season["premiered"]
-    tvshow["votes"] = season["votes"]
-    tvshow["average"] = season["average"]
-    tvshow["poster"] = season["poster"]
-    tvshow["akas"] = list(map(__deal_tvshow_title, season["akas"]))
-    return tvshow
 
 
 def get_doulist(douban_id):
@@ -540,7 +581,7 @@ def __get_directors_new(html):
     try:
         return list(
             filter(
-                lambda x: x is not None and x["actor_type"] == "director",
+                lambda x: x is not None and x.actor_type == "director",
                 map(
                     __deal_actor_item_new,
                     html.xpath("//*[@id='celebrities']/ul/li[@class='celebrity']"),
@@ -555,7 +596,7 @@ def __get_credits_new(html):
     try:
         return list(
             filter(
-                lambda x: x is not None and x["actor_type"] == "writer",
+                lambda x: x is not None and x.actor_type == "writer",
                 map(
                     __deal_actor_item_new,
                     html.xpath("//*[@id='celebrities']/ul/li[@class='celebrity']"),
@@ -570,7 +611,7 @@ def __get_actors_new(html):
     try:
         return list(
             filter(
-                lambda x: x is not None and x["actor_type"] == "actor",
+                lambda x: x is not None and x.actor_type == "actor",
                 map(
                     __deal_actor_item_new,
                     html.xpath("//*[@id='celebrities']/ul/li[@class='celebrity']"),
@@ -612,17 +653,17 @@ def __deal_actor_item_new(elm):
         elif "编剧" in role:
             actor_type = "writer"
         role = role.replace("饰", "").replace("配", "").replace("演员", "").strip()
-        return {
-            "douban_id": douban_id,
-            "thumb": thumb,
-            "role": role,
-            "cn_name": cn_name,
-            "en_name": en_name,
-            "actor_type": actor_type,
-        }
+        actor = Actor()
+        actor.douban_id = douban_id
+        actor.thumb = thumb
+        actor.role = role
+        actor.cn_name = cn_name
+        actor.en_name = en_name
+        actor.actor_type = actor_type
+        return actor
     except Exception as e:
-        print("Douban >> 解析new actor发生错误:" + str(e))
-    return None
+        print("Douban >> 解析actor发生错误:" + str(e))
+        return None
 
 
 def __deal_actor_item(elm):
@@ -630,10 +671,14 @@ def __deal_actor_item(elm):
         result = re.search(r".+/(\d+)/", elm.get("href"))
         if result:
             douban_id = result.group(1)
-            return {"douban_id": douban_id, "cn_name": elm.text}
+            actor = Actor()
+            actor.douban_id = douban_id
+            actor.cn_name = elm.text
+            return actor
         return None
     except Exception as e:
         print("Douban >> 解析actor发生错误:" + str(e))
+        return None
 
 
 def __get_genres(html):

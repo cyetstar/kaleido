@@ -2,6 +2,7 @@
 import sys
 
 from crawler.entity.episode import Episode
+from crawler.entity.movie import Movie
 from crawler.entity.season import Season
 
 
@@ -57,19 +58,53 @@ def search_tv(keyword):
 
 def get_movie_by_imdb_id(imdb_id):
     tmdb_id = get_tmdb_id(imdb_id)
-    movie = None
-    if tmdb_id is not None and len(tmdb_id) > 0:
-        movie = _req_movie_detail(tmdb_id)
-    if movie is not None:
-        return __transform_movie(movie)
+    if not is_empty(tmdb_id):
+        return get_movie(imdb_id)
     return None
 
 
 def get_movie(tmdb_id):
-    movie = _req_movie_detail(tmdb_id)
-    if movie is not None:
-        return __transform_movie(movie)
-    return None
+    try:
+        movie_detail = _req_movie_detail(tmdb_id)
+        movie = Movie()
+        movie.tmdb_id = tmdb_id
+        movie.imdb_id = _req_tv_external_ids(tmdb_id)
+        movie.title = movie_detail["name"]
+        movie.original_title = movie_detail["original_name"]
+        movie.year = movie_detail["first_air_date"][0:4]
+        movie.plot = movie_detail["overview"]
+        movie.genres = list(map(lambda x: x["name"], movie_detail["genres"]))
+        movie.premiered = movie_detail["first_air_date"]
+        movie.votes = movie_detail["vote_count"]
+        movie.average = movie_detail["vote_average"]
+        movie.poster = __get_image_url(movie_detail["poster_path"])
+        movie.mpaa = _req_tv_content_ratings(tmdb_id)
+        credits = _req_movie_credits(tmdb_id)
+        movie.directors = list(
+            map(
+                lambda x: _deal_tv_credits_item(x, "director"),
+                filter(lambda x: x["job"] == "Director", credits["crew"]),
+            )
+        )
+        movie.writers = list(
+            map(
+                lambda x: _deal_tv_credits_item(x, "writer"),
+                filter(lambda x: x["job"] == "Writer", credits["crew"]),
+            )
+        )
+        movie.actors = list(
+            map(lambda x: _deal_tv_credits_item(x, "actor"), credits["cast"])
+        )
+        return movie
+    except Exception as e:
+        print("TheMovieDB >> 获取电影信息发生错误：" + str(e))
+        return None
+
+
+def _req_movie_detail(tmdb_id):
+    url = "https://api.themoviedb.org/3/movie/{}?language=zh".format(tmdb_id)
+    result = __get_result(url)
+    return result
 
 
 def get_tv(tmdb_id):
@@ -299,7 +334,7 @@ def _deal_tv_episodes_item(item):
 
 def __transform_movie(movie):
     try:
-        credits = __get_credits(movie["id"])
+        credits = _req_movie_credits(movie["id"])
         return {
             "douban_id": None,
             "tmdb_id": str(movie["id"]),
@@ -332,12 +367,6 @@ def __transform_movie(movie):
         }
     except Exception as e:
         print("TheMovieDB >> 获取影片信息发生错误：" + str(e))
-
-
-def _req_movie_detail(tmdb_id):
-    url = "https://api.themoviedb.org/3/movie/{}?language=zh".format(tmdb_id)
-    result = __get_result(url)
-    return result
 
 
 # TV
@@ -417,7 +446,7 @@ def __get_detail_by_imdb(imdb_id):
         return None
 
 
-def __get_credits(tmdb_id):
+def _req_movie_credits(tmdb_id):
     url = "https://api.themoviedb.org/3/movie/{}/credits?language=zh".format(tmdb_id)
     result = __get_result(url)
     return result
