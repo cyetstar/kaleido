@@ -247,6 +247,7 @@ def get_season(douban_id):
         season.average = __get_average(html)
         season.poster = __get_poster(html)
         season.season_number = __get_season_number(html)
+        season.akas = info["akas"]
         return season
     except Exception as e:
         print("Douban >> 详情剧集发生错误：" + str(e))

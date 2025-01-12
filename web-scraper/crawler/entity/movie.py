@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-
+from typing import List
 from crawler.entity.actor import Actor
 
 
@@ -12,19 +12,19 @@ class Movie:
     original_title: str = None
     year: str = None
     plot: str = None
-    tags: list = field(default_factory=list)
-    directors: list[Actor] = field(default_factory=list)
-    writers: list[Actor] = field(default_factory=list)
-    actors: list[Actor] = field(default_factory=list)
-    genres: list = field(default_factory=list)
-    languages: list = field(default_factory=list)
-    countries: list = field(default_factory=list)
+    tags: List = field(default_factory=list)
+    directors: List[Actor] = field(default_factory=list)
+    writers: List[Actor] = field(default_factory=list)
+    actors: List[Actor] = field(default_factory=list)
+    genres: List = field(default_factory=list)
+    languages: List = field(default_factory=list)
+    countries: List = field(default_factory=list)
     premiered: str = None
     votes: str = None
     average: str = None
     poster: str = None
     mpaa: str = None
-    akas: list = field(default_factory=list)
-    doulists: list = field(default_factory=list)
+    akas: List = field(default_factory=list)
+    doulists: List = field(default_factory=list)
     douban_top250: str = None
     website: str = None

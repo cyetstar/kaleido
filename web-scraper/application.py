@@ -106,16 +106,16 @@ def show_view():
             if (
                 is_empty(tmdb_id)
                 and douban_season is not None
-                and not is_empty(douban_season["imdb_id"])
+                and not is_empty(douban_season.imdb_id)
             ):
-                tmdb_id = tmdb.get_tmdb_id(douban_season["imdb_id"])
+                tmdb_id = tmdb.get_tmdb_id(douban_season.imdb_id)
 
         # 如果tmdb_id不为空，则通过tmdb_id获取剧集信息
         if not is_empty(tmdb_id):
             tvshow = tmdb.get_tv(tmdb_id)
 
         if tvshow is not None and douban_season is not None:
-            if douban_season["season_number"] == 1:
+            if douban_season.season_number == 1:
                 tvshow = _season_to_show(douban_season, tvshow)
             elif not is_empty(tvshow.imdb_id):
                 first_sesson = douban.get_season_by_imdb_id(tvshow.imdb_id)
@@ -124,7 +124,7 @@ def show_view():
                 map(
                     lambda x: (
                         _season_to_season(douban_season, x)
-                        if x.season_number == douban_season["season_number"]
+                        if x.season_number == douban_season.season_number
                         else x
                     ),
                     tvshow.seasons,
@@ -242,7 +242,7 @@ def doulist_movies():
         return _error(4, str(e))
 
 
-def _season_to_show(douban_season, tvshow: Tvshow):
+def _season_to_show(douban_season: Season, tvshow: Tvshow):
     def _deal_tvshow_title(title):
         if title:
             title = re.sub(r"第\w季", "", title).strip()
@@ -251,55 +251,52 @@ def _season_to_show(douban_season, tvshow: Tvshow):
 
     if douban_season is None:
         return tvshow
-    tvshow.title = _deal_tvshow_title(douban_season["title"])
-    tvshow.original_title = _deal_tvshow_title(douban_season["original_title"])
-    tvshow.douban_id = douban_season["douban_id"]
+
+    tvshow.title = _deal_tvshow_title(douban_season.title)
+    tvshow.original_title = _deal_tvshow_title(douban_season.original_title)
+    tvshow.douban_id = douban_season.douban_id
     tvshow.imdb_id = (
-        douban_season["imdb_id"]
-        if not is_empty(douban_season["imdb_id"])
-        else tvshow.imdb_id
+        douban_season.imdb_id if not is_empty(douban_season.imdb_id) else tvshow.imdb_id
     )
     tvshow.year = (
-        douban_season["year"] if not is_empty(douban_season["year"]) else tvshow.year
+        douban_season.year if not is_empty(douban_season.year) else tvshow.year
     )
     tvshow.plot = (
-        douban_season["plot"] if not is_empty(douban_season["plot"]) else tvshow.plot
+        douban_season.plot if not is_empty(douban_season.plot) else tvshow.plot
     )
-    tvshow.directors = douban_season["directors"]
-    tvshow.writers = douban_season["credits"]
-    tvshow.actors = douban_season["actors"]
-    tvshow.genres = douban_season["genres"]
-    tvshow.languages = douban_season["languages"]
-    tvshow.countries = douban_season["countries"]
-    tvshow.premiered = douban_season["premiered"]
-    tvshow.votes = douban_season["votes"]
-    tvshow.average = douban_season["average"]
-    tvshow.poster = douban_season["poster"]
-    tvshow.akas = list(map(_deal_tvshow_title, douban_season["akas"]))
+    tvshow.directors = douban_season.directors
+    tvshow.writers = douban_season.writers
+    tvshow.actors = douban_season.actors
+    tvshow.genres = douban_season.genres
+    tvshow.languages = douban_season.languages
+    tvshow.countries = douban_season.countries
+    tvshow.premiered = douban_season.premiered
+    tvshow.votes = douban_season.votes
+    tvshow.average = douban_season.average
+    tvshow.poster = douban_season.poster
+    tvshow.akas = list(map(_deal_tvshow_title, douban_season.akas))
     return tvshow
 
 
-def _season_to_season(douban_season, season: Season):
-    season.douban_id = douban_season["douban_id"]
+def _season_to_season(douban_season: Season, season: Season):
+    season.douban_id = douban_season.douban_id
     season.imdb_id = (
-        douban_season["imdb_id"]
-        if not is_empty(douban_season["imdb_id"])
-        else season.imdb_id
+        douban_season.imdb_id if not is_empty(douban_season.imdb_id) else season.imdb_id
     )
     season.year = (
-        douban_season["year"] if not is_empty(douban_season["year"]) else season.year
+        douban_season.year if not is_empty(douban_season.year) else season.year
     )
-    season.title = douban_season["title"]
-    season.original_title = douban_season["original_title"]
-    season.premiered = douban_season["premiered"]
-    season.plot = douban_season["plot"]
-    season.poster = douban_season["poster"]
-    season.languages = douban_season["languages"]
-    season.countries = douban_season["countries"]
-    season.genres = douban_season["genres"]
-    season.directors = douban_season["directors"]
-    season.writers = douban_season["credits"]
-    season.actors = douban_season["actors"]
+    season.title = douban_season.title
+    season.original_title = douban_season.original_title
+    season.premiered = douban_season.premiered
+    season.plot = douban_season.plot
+    season.poster = douban_season.poster
+    season.languages = douban_season.languages
+    season.countries = douban_season.countries
+    season.genres = douban_season.genres
+    season.directors = douban_season.directors
+    season.writers = douban_season.writers
+    season.actors = douban_season.actors
     return season
 
 
