@@ -157,8 +157,8 @@ public class TmmUtil {
         tvshowSeasonDTO.setOriginallyAvailableAt(season.getPremiered());
         tvshowSeasonDTO.setRating(season.getAverage());
         tvshowSeasonDTO.setThumb(season.getPoster());
-        if (CollectionUtils.isNotEmpty(season.getCredits())) {
-            tvshowSeasonDTO.setWriterList(season.getCredits().stream().map(TmmUtil::toActorDTO).collect(Collectors.toList()));
+        if (CollectionUtils.isNotEmpty(season.getWriters())) {
+            tvshowSeasonDTO.setWriterList(season.getWriters().stream().map(TmmUtil::toActorDTO).collect(Collectors.toList()));
         }
         if (CollectionUtils.isNotEmpty(season.getDirectors())) {
             tvshowSeasonDTO.setDirectorList(season.getDirectors().stream().map(TmmUtil::toActorDTO).collect(Collectors.toList()));

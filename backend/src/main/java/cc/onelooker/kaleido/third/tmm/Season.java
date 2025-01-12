@@ -31,7 +31,7 @@ public class Season {
     private String premiered;
     @JsonProperty("season_number")
     private Integer seasonNumber;
-    private List<Actor> credits;
+    private List<Actor> writers;
     private List<Actor> directors;
     private List<Actor> actors;
     private List<Episode> episodes;
